@@ -1,0 +1,31 @@
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
+
+interface MarkdownRendererProps {
+  content: string;
+}
+
+export default function MarkdownRenderer({ content }: MarkdownRendererProps) {
+  return (
+    <div className="prose prose-sm max-w-none dark:prose-invert
+      prose-headings:font-display prose-headings:tracking-tight
+      prose-h2:text-xl prose-h2:mt-6 prose-h2:mb-3 prose-h2:border-b-2 prose-h2:border-foreground/20 prose-h2:pb-2
+      prose-h3:text-lg prose-h3:mt-4 prose-h3:mb-2
+      prose-h4:text-base prose-h4:mt-3 prose-h4:mb-1
+      prose-p:text-sm prose-p:leading-relaxed prose-p:mb-3
+      prose-li:text-sm prose-li:leading-relaxed
+      prose-strong:text-foreground
+      prose-table:border-2 prose-table:border-foreground
+      prose-th:bg-muted prose-th:px-3 prose-th:py-2 prose-th:text-left prose-th:font-bold prose-th:border prose-th:border-foreground/30 prose-th:text-sm
+      prose-td:px-3 prose-td:py-2 prose-td:border prose-td:border-foreground/20 prose-td:text-sm
+      prose-blockquote:border-l-4 prose-blockquote:border-primary prose-blockquote:bg-primary/5 prose-blockquote:px-4 prose-blockquote:py-2 prose-blockquote:text-sm prose-blockquote:italic
+      prose-code:bg-muted prose-code:px-1.5 prose-code:py-0.5 prose-code:text-sm prose-code:font-mono
+    "
+    style={{ fontFamily: "'Inter', sans-serif" }}
+    >
+      <ReactMarkdown remarkPlugins={[remarkGfm]}>
+        {content}
+      </ReactMarkdown>
+    </div>
+  );
+}

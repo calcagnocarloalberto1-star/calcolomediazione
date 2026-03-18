@@ -1,0 +1,528 @@
+import { useState } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Separator } from "@/components/ui/separator";
+import { Badge } from "@/components/ui/badge";
+import { Calculator, Info, Building2, Globe, CheckCircle, Scale } from "lucide-react";
+import {
+  calcolaIndennita,
+  getScaglioni,
+  getScaglioniGenovaIndeterminabili,
+  formatEuro,
+  type ModalitaTariffaria,
+  type TipoMediazione,
+  type EsitoMediazione,
+  type TipoValore,
+  type CalcoloRisultato,
+} from "@shared/calcolo-indennita";
+
+export default function Calcolatore() {
+  const [modalitaTariffaria, setModalitaTariffaria] = useState<ModalitaTariffaria>("nazionale");
+  const [tipoMediazione, setTipoMediazione] = useState<TipoMediazione>("obbligatoria");
+  const [tipoValore, setTipoValore] = useState<TipoValore>("determinato");
+  const [valoreLite, setValoreLite] = useState<string>("25000");
+  const [esito, setEsito] = useState<EsitoMediazione>("nessuno_primo");
+  const [risultato, setRisultato] = useState<CalcoloRisultato | null>(null);
+
+  const scaglioni = getScaglioni(modalitaTariffaria);
+
+  const handleCalcola = () => {
+    const input = {
+      valoreLite: tipoValore === "determinato" ? parseFloat(valoreLite) || 0 : 0,
+      tipoMediazione,
+      esito,
+      tipoValore,
+      modalitaTariffaria,
+    };
+    const result = calcolaIndennita(input);
+    setRisultato(result);
+  };
+
+  return (
+    <div className="min-h-screen py-8 px-4">
+      <div className="max-w-5xl mx-auto">
+        {/* Page Header */}
+        <div className="mb-8">
+          <div className="flex items-center gap-3 mb-3">
+            <div className="w-10 h-10 bg-primary flex items-center justify-center border-2 border-foreground shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]">
+              <Calculator className="w-5 h-5 text-primary-foreground" />
+            </div>
+            <h1
+              className="text-2xl sm:text-3xl font-bold"
+              style={{ fontFamily: "'Space Grotesk', sans-serif" }}
+              data-testid="text-page-title"
+            >
+              Calcolatore Indennità Mediazione
+            </h1>
+          </div>
+          <p className="text-muted-foreground">
+            Calcolo delle indennità con tariffe nazionali (D.M. 150/2023) o tariffe COA Genova
+          </p>
+        </div>
+
+        {/* Tariff Mode Selector */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-6" data-testid="tariff-mode-selector">
+          <button
+            onClick={() => { setModalitaTariffaria("nazionale"); setRisultato(null); }}
+            className={`flex items-center gap-3 p-4 border-2 transition-all duration-150 ${
+              modalitaTariffaria === "nazionale"
+                ? "border-foreground bg-primary/10 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
+                : "border-foreground/30 bg-card hover:border-foreground/60"
+            }`}
+            data-testid="button-mode-nazionale"
+          >
+            <Globe className={`w-6 h-6 ${modalitaTariffaria === "nazionale" ? "text-primary" : "text-muted-foreground"}`} />
+            <div className="text-left">
+              <div className="font-bold text-sm" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
+                Tariffe Nazionali
+              </div>
+              <div className="text-xs text-muted-foreground">D.M. 150/2023 — Tabella A</div>
+            </div>
+            {modalitaTariffaria === "nazionale" && (
+              <Badge className="ml-auto bg-primary text-primary-foreground text-xs">Attivo</Badge>
+            )}
+          </button>
+
+          <button
+            onClick={() => { setModalitaTariffaria("coa_genova"); setRisultato(null); }}
+            className={`flex items-center gap-3 p-4 border-2 transition-all duration-150 ${
+              modalitaTariffaria === "coa_genova"
+                ? "border-foreground bg-primary/10 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
+                : "border-foreground/30 bg-card hover:border-foreground/60"
+            }`}
+            data-testid="button-mode-genova"
+          >
+            <Building2 className={`w-6 h-6 ${modalitaTariffaria === "coa_genova" ? "text-primary" : "text-muted-foreground"}`} />
+            <div className="text-left">
+              <div className="font-bold text-sm" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
+                Tariffe COA Genova
+              </div>
+              <div className="text-xs text-muted-foreground">Ordine degli Avvocati di Genova</div>
+            </div>
+            {modalitaTariffaria === "coa_genova" && (
+              <Badge className="ml-auto bg-primary text-primary-foreground text-xs">Attivo</Badge>
+            )}
+          </button>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
+          {/* Form */}
+          <div className="lg:col-span-2">
+            <Card className="border-2 border-foreground shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]" data-testid="card-form">
+              <CardHeader className="pb-4">
+                <CardTitle className="text-lg" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
+                  Parametri Calcolo
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-5">
+                {/* Tipo Mediazione */}
+                <div className="space-y-2">
+                  <Label htmlFor="tipoMediazione" className="text-sm font-semibold">
+                    Tipo Mediazione
+                  </Label>
+                  <Select value={tipoMediazione} onValueChange={(v) => setTipoMediazione(v as TipoMediazione)}>
+                    <SelectTrigger className="border-2 border-foreground" data-testid="select-tipo-mediazione">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent className="border-2 border-foreground">
+                      <SelectItem value="volontaria">Volontaria (tariffe piene)</SelectItem>
+                      <SelectItem value="obbligatoria">Obbligatoria (riduzione {modalitaTariffaria === "coa_genova" ? "20%" : "1/5"})</SelectItem>
+                      <SelectItem value="demandata">Demandata dal giudice (riduzione {modalitaTariffaria === "coa_genova" ? "20%" : "1/5"})</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {/* Tipo Valore */}
+                <div className="space-y-2">
+                  <Label htmlFor="tipoValore" className="text-sm font-semibold">
+                    Tipo Valore
+                  </Label>
+                  <Select value={tipoValore} onValueChange={(v) => setTipoValore(v as TipoValore)}>
+                    <SelectTrigger className="border-2 border-foreground" data-testid="select-tipo-valore">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent className="border-2 border-foreground">
+                      <SelectItem value="determinato">Determinato</SelectItem>
+                      <SelectItem value="indeterminabile_basso">Indeterminabile — complessità bassa</SelectItem>
+                      <SelectItem value="indeterminabile_medio">Indeterminabile — complessità media</SelectItem>
+                      <SelectItem value="indeterminabile_alto">Indeterminabile — complessità alta</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {/* Valore Lite */}
+                {tipoValore === "determinato" && (
+                  <div className="space-y-2">
+                    <Label htmlFor="valoreLite" className="text-sm font-semibold">
+                      Valore della Lite (€)
+                    </Label>
+                    <Input
+                      id="valoreLite"
+                      type="number"
+                      value={valoreLite}
+                      onChange={(e) => setValoreLite(e.target.value)}
+                      placeholder="Es. 25000"
+                      className="border-2 border-foreground font-mono"
+                      style={{ fontFamily: "'JetBrains Mono', monospace" }}
+                      data-testid="input-valore-lite"
+                    />
+                  </div>
+                )}
+
+                {/* Esito */}
+                <div className="space-y-2">
+                  <Label htmlFor="esito" className="text-sm font-semibold">
+                    Esito Mediazione
+                  </Label>
+                  <Select value={esito} onValueChange={(v) => setEsito(v as EsitoMediazione)}>
+                    <SelectTrigger className="border-2 border-foreground" data-testid="select-esito">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent className="border-2 border-foreground">
+                      <SelectItem value="nessuno_primo">Nessun accordo — primo incontro</SelectItem>
+                      <SelectItem value="accordo_primo">Accordo al primo incontro</SelectItem>
+                      <SelectItem value="accordo_successivi">Accordo agli incontri successivi</SelectItem>
+                      <SelectItem value="nessuno_successivi">Nessun accordo — incontri successivi</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <Button
+                  onClick={handleCalcola}
+                  className="w-full py-6 text-base font-bold border-2 border-foreground shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] transition-all duration-150"
+                  data-testid="button-calcola"
+                >
+                  <Calculator className="w-5 h-5 mr-2" />
+                  Calcola Indennità
+                </Button>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Results */}
+          <div className="lg:col-span-3">
+            {risultato ? (
+              <Card className="border-2 border-foreground shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]" data-testid="card-risultato">
+                <CardHeader className="pb-4">
+                  <div className="flex items-center justify-between flex-wrap gap-2">
+                    <CardTitle className="text-lg" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
+                      Risultato Calcolo
+                    </CardTitle>
+                    <div className="flex gap-2 flex-wrap">
+                      <Badge className="bg-primary/10 text-primary border-2 border-primary text-xs">
+                        {risultato.scaglione}
+                      </Badge>
+                      <Badge className={`text-xs border-2 ${
+                        risultato.modalitaTariffaria === "coa_genova"
+                          ? "bg-amber-100 text-amber-800 border-amber-400"
+                          : "bg-blue-100 text-blue-800 border-blue-400"
+                      }`}>
+                        {risultato.modalitaTariffaria === "coa_genova" ? "COA Genova" : "Nazionale"}
+                      </Badge>
+                    </div>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  {/* Breakdown */}
+                  <div className="space-y-3">
+                    <div className="flex justify-between items-center py-2">
+                      <span className="text-sm text-muted-foreground">Spese Avvio</span>
+                      <span className="font-mono font-semibold" style={{ fontFamily: "'JetBrains Mono', monospace" }} data-testid="text-spese-avvio">
+                        {formatEuro(risultato.speseAvvio)}
+                      </span>
+                    </div>
+
+                    <div className="flex justify-between items-center py-2">
+                      <span className="text-sm text-muted-foreground">Indennità Base (primo incontro)</span>
+                      <span className="font-mono font-semibold" style={{ fontFamily: "'JetBrains Mono', monospace" }} data-testid="text-spese-base">
+                        {formatEuro(risultato.speseBase)}
+                      </span>
+                    </div>
+
+                    {risultato.riduzioneObbligatoria > 0 && (
+                      <div className="flex justify-between items-center py-2 text-green-700">
+                        <span className="text-sm">
+                          Riduzione {tipoMediazione === "obbligatoria" ? "obbligatoria" : "demandata"} ({modalitaTariffaria === "coa_genova" ? "-20%" : "-1/5"})
+                        </span>
+                        <span className="font-mono font-semibold" style={{ fontFamily: "'JetBrains Mono', monospace" }} data-testid="text-riduzione">
+                          -{formatEuro(risultato.riduzioneObbligatoria)}
+                        </span>
+                      </div>
+                    )}
+
+                    <Separator className="border-foreground/20" />
+
+                    <div className="flex justify-between items-center py-2">
+                      <span className="text-sm font-semibold">Totale Primo Incontro</span>
+                      <span className="font-mono font-bold" style={{ fontFamily: "'JetBrains Mono', monospace" }} data-testid="text-totale-primo">
+                        {formatEuro(risultato.totalePrimoIncontro)}
+                      </span>
+                    </div>
+
+                    {risultato.ulterioriSpese > 0 && (
+                      <>
+                        <Separator className="border-foreground/20" />
+                        <div className="flex justify-between items-center py-2">
+                          <span className="text-sm text-muted-foreground">Ulteriori Spese (incontri successivi)</span>
+                          <span className="font-mono font-semibold" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
+                            {formatEuro(risultato.ulterioriSpese)}
+                          </span>
+                        </div>
+                      </>
+                    )}
+
+                    {risultato.detrazioneSpese > 0 && (
+                      <div className="flex justify-between items-center py-2 text-green-700">
+                        <span className="text-sm">Detrazione spese avvio</span>
+                        <span className="font-mono font-semibold" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
+                          -{formatEuro(risultato.detrazioneSpese)}
+                        </span>
+                      </div>
+                    )}
+
+                    {risultato.maggiorazioneSuccesso > 0 && (
+                      <div className="flex justify-between items-center py-2 text-primary">
+                        <span className="text-sm">Maggiorazione per accordo (+1/5)</span>
+                        <span className="font-mono font-semibold" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
+                          +{formatEuro(risultato.maggiorazioneSuccesso)}
+                        </span>
+                      </div>
+                    )}
+
+                    <Separator className="border-foreground" />
+
+                    {/* Totals */}
+                    <div className="bg-muted/50 border-2 border-foreground p-4 space-y-3">
+                      <div className="flex justify-between items-center">
+                        <span className="text-base font-bold" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
+                          Totale per Parte
+                        </span>
+                        <span
+                          className="text-xl font-bold text-primary font-mono"
+                          style={{ fontFamily: "'JetBrains Mono', monospace" }}
+                          data-testid="text-totale-per-parte"
+                        >
+                          {formatEuro(risultato.totalePerParte)}
+                        </span>
+                      </div>
+
+                      <div className="flex justify-between items-center">
+                        <span className="text-sm text-muted-foreground">IVA 22%</span>
+                        <span className="font-mono text-sm" style={{ fontFamily: "'JetBrains Mono', monospace" }} data-testid="text-iva">
+                          {formatEuro(risultato.iva)}
+                        </span>
+                      </div>
+
+                      <div className="flex justify-between items-center">
+                        <span className="text-sm font-semibold">Totale con IVA (per parte)</span>
+                        <span className="font-mono font-bold" style={{ fontFamily: "'JetBrains Mono', monospace" }} data-testid="text-totale-con-iva">
+                          {formatEuro(risultato.totaleConIva)}
+                        </span>
+                      </div>
+
+                      <Separator className="border-foreground/30" />
+
+                      <div className="flex justify-between items-center">
+                        <span className="text-base font-bold" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
+                          Totale Complessivo (2 parti)
+                        </span>
+                        <span
+                          className="text-xl font-bold font-mono"
+                          style={{ fontFamily: "'JetBrains Mono', monospace" }}
+                          data-testid="text-totale-complessivo"
+                        >
+                          {formatEuro(risultato.totaleComplessivo)}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Agevolazioni Fiscali Art. 17 */}
+                  <div className="mt-6 border-2 border-green-600 bg-green-50 dark:bg-green-950/20" data-testid="card-esenzione-art17">
+                    <div className="flex items-center gap-2 px-4 py-3 border-b-2 border-green-600 bg-green-100 dark:bg-green-900/30">
+                      <Scale className="w-5 h-5 text-green-700" />
+                      <h3 className="text-sm font-bold text-green-800 dark:text-green-300" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
+                        Agevolazioni Fiscali Art. 17 D.Lgs. 28/2010
+                      </h3>
+                    </div>
+                    <div className="p-4 space-y-3">
+                      <div className="flex items-start gap-2">
+                        <CheckCircle className="w-4 h-4 text-green-600 flex-shrink-0 mt-0.5" />
+                        <div>
+                          <span className="text-sm font-semibold text-foreground">Esenzione imposta di bollo</span>
+                          <p className="text-xs text-muted-foreground">
+                            {risultato.esenzioneArt17.esenteBollo
+                              ? "Si - Tutti gli atti, documenti e provvedimenti del procedimento di mediazione"
+                              : "No"}
+                          </p>
+                        </div>
+                      </div>
+
+                      <div className="flex items-start gap-2">
+                        {risultato.esenzioneArt17.esenteRegistro ? (
+                          <CheckCircle className="w-4 h-4 text-green-600 flex-shrink-0 mt-0.5" />
+                        ) : (
+                          <div className="w-4 h-4 border-2 border-muted-foreground/30 flex-shrink-0 mt-0.5" />
+                        )}
+                        <div>
+                          <span className="text-sm font-semibold text-foreground">Esenzione imposta di registro</span>
+                          <p className="text-xs text-muted-foreground">
+                            {risultato.esenzioneArt17.esenteRegistro
+                              ? `Si - Fino a ${formatEuro(risultato.esenzioneArt17.limiteEsenzione)} del valore dell'accordo`
+                              : "Non applicabile (solo in caso di accordo)"}
+                          </p>
+                        </div>
+                      </div>
+
+                      {risultato.esenzioneArt17.impostaRegistroRisparmiata > 0 && (
+                        <div className="flex items-start gap-2">
+                          <CheckCircle className="w-4 h-4 text-green-600 flex-shrink-0 mt-0.5" />
+                          <div>
+                            <span className="text-sm font-semibold text-foreground">Risparmio imposta di registro</span>
+                            <p className="text-xs text-muted-foreground">
+                              Imposta di registro risparmiata (3% fino a {formatEuro(risultato.esenzioneArt17.limiteEsenzione)})
+                            </p>
+                            <span
+                              className="text-base font-bold text-green-700 dark:text-green-400"
+                              style={{ fontFamily: "'JetBrains Mono', monospace" }}
+                              data-testid="text-risparmio-registro"
+                            >
+                              {formatEuro(risultato.esenzioneArt17.impostaRegistroRisparmiata)}
+                            </span>
+                          </div>
+                        </div>
+                      )}
+
+                      <div className="mt-2 pt-2 border-t border-green-300 dark:border-green-700">
+                        <p className="text-xs text-muted-foreground leading-relaxed">
+                          {risultato.esenzioneArt17.note}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            ) : (
+              <Card className="border-2 border-dashed border-foreground/30 bg-muted/20" data-testid="card-placeholder">
+                <CardContent className="flex flex-col items-center justify-center py-16">
+                  <div className="w-16 h-16 bg-muted border-2 border-foreground/20 flex items-center justify-center mb-4">
+                    <Calculator className="w-8 h-8 text-muted-foreground" />
+                  </div>
+                  <h3 className="text-lg font-bold mb-2" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
+                    Inserisci i parametri
+                  </h3>
+                  <p className="text-sm text-muted-foreground text-center max-w-xs">
+                    Compila il modulo a sinistra e premi "Calcola Indennità" per visualizzare il risultato.
+                  </p>
+                </CardContent>
+              </Card>
+            )}
+          </div>
+        </div>
+
+        {/* Reference Table */}
+        <div className="mt-12">
+          <Card className="border-2 border-foreground shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]" data-testid="card-scaglioni">
+            <CardHeader>
+              <div className="flex items-center gap-2">
+                <Info className="w-5 h-5 text-primary" />
+                <CardTitle className="text-lg" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
+                  {modalitaTariffaria === "coa_genova"
+                    ? "Scaglioni Tariffe COA Genova — Valore Determinato"
+                    : "Scaglioni D.M. 150/2023 — Tabella A"}
+                </CardTitle>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <div className="overflow-x-auto">
+                <table className="w-full text-sm" data-testid="table-scaglioni">
+                  <thead>
+                    <tr className="border-b-2 border-foreground">
+                      <th className="text-left py-3 px-4 font-bold" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
+                        Valore della Lite
+                      </th>
+                      <th className="text-right py-3 px-4 font-bold" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
+                        Spese Avvio
+                      </th>
+                      <th className="text-right py-3 px-4 font-bold" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
+                        Indennità
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {scaglioni.map((s, i) => (
+                      <tr
+                        key={i}
+                        className={`border-b border-muted ${risultato && risultato.scaglione === s.label ? "bg-primary/10 font-semibold" : ""}`}
+                        data-testid={`row-scaglione-${i}`}
+                      >
+                        <td className="py-3 px-4">{s.label}</td>
+                        <td className="py-3 px-4 text-right font-mono" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
+                          {formatEuro(s.speseAvvio)}
+                        </td>
+                        <td className="py-3 px-4 text-right font-mono" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
+                          {formatEuro(s.indennita)}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+
+              {/* Genova indeterminabili extra table */}
+              {modalitaTariffaria === "coa_genova" && (
+                <div className="mt-6">
+                  <h4 className="text-sm font-bold mb-3" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
+                    Tariffe COA Genova — Valore Indeterminabile
+                  </h4>
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-sm" data-testid="table-scaglioni-indet">
+                      <thead>
+                        <tr className="border-b-2 border-foreground">
+                          <th className="text-left py-3 px-4 font-bold" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
+                            Complessità
+                          </th>
+                          <th className="text-right py-3 px-4 font-bold" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
+                            Spese Avvio
+                          </th>
+                          <th className="text-right py-3 px-4 font-bold" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
+                            Acconto Mediazione
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {getScaglioniGenovaIndeterminabili().map((s, i) => (
+                          <tr key={i} className="border-b border-muted" data-testid={`row-indet-${i}`}>
+                            <td className="py-3 px-4">{s.label}</td>
+                            <td className="py-3 px-4 text-right font-mono" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
+                              {formatEuro(s.speseAvvio)}
+                            </td>
+                            <td className="py-3 px-4 text-right font-mono" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
+                              {formatEuro(s.indennita)}
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                  <p className="text-xs text-muted-foreground mt-2">
+                    Per mediazioni obbligatorie/demandate si applica la riduzione del 20% su spese avvio e acconto.
+                  </p>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    </div>
+  );
+}
