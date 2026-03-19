@@ -6,10 +6,11 @@ export async function analisiEconomica(
   valoreLite: number | null,
   tipoAnalisi: string,
   previousAnalysis: string,
-  opzioniEconomiche: { materiaImmobiliare: boolean; primaCasa: boolean; gratuitoPatrocinio: boolean; mediatoreEsperto: boolean; proceduraComplessa: boolean } = { materiaImmobiliare: false, primaCasa: false, gratuitoPatrocinio: false, mediatoreEsperto: false, proceduraComplessa: false }
+  opzioniEconomiche: { materiaImmobiliare: boolean; primaCasa: boolean; gratuitoPatrocinio: boolean; mediatoreEsperto: boolean; proceduraComplessa: boolean; modalitaTariffaria: string } = { materiaImmobiliare: false, primaCasa: false, gratuitoPatrocinio: false, mediatoreEsperto: false, proceduraComplessa: false, modalitaTariffaria: "nazionale" }
 ): Promise<string> {
   const valore = valoreLite || 25000;
-  const { materiaImmobiliare, primaCasa, gratuitoPatrocinio, mediatoreEsperto, proceduraComplessa } = opzioniEconomiche;
+  const { materiaImmobiliare, primaCasa, gratuitoPatrocinio, mediatoreEsperto, proceduraComplessa, modalitaTariffaria } = opzioniEconomiche;
+  const isGenova = modalitaTariffaria === "coa_genova";
 
   // Build dynamic sections based on flags
   let notaioSection = "";
@@ -64,11 +65,50 @@ ESENZIONE ART. 17 D.LGS. 28/2010 — SEMPRE PER ACCORDO POSITIVO:
 - Esenzione imposta di bollo su tutti gli atti del procedimento
 - Questa esenzione si applica SEMPRE in caso di accordo positivo in mediazione`;
 
+  // Build tariff reference section
+  let tariffSection = "";
+  if (isGenova) {
+    tariffSection = `
+TARIFFARIO APPLICATO: COA GENOVA (Ordine degli Avvocati di Genova)
+ATTENZIONE: NON usare le tariffe nazionali D.M. 150/2023. Usa ESCLUSIVAMENTE gli scaglioni COA Genova:
+- Fino a EUR 1.000: spese avvio EUR 40, indennità EUR 110
+- EUR 1.001-5.000: spese avvio EUR 80, indennità EUR 220
+- EUR 5.001-10.000: spese avvio EUR 100, indennità EUR 260
+- EUR 10.001-25.000: spese avvio EUR 120, indennità EUR 360
+- EUR 25.001-50.000: spese avvio EUR 180, indennità EUR 520
+- EUR 50.001-100.000: spese avvio EUR 220, indennità EUR 780
+- EUR 100.001-250.000: spese avvio EUR 260, indennità EUR 1.560
+- EUR 250.001-500.000: spese avvio EUR 300, indennità EUR 2.600
+- Oltre EUR 500.000: spese avvio EUR 340, indennità EUR 3.900
+Per mediazione obbligatoria/demandata: riduzione del 20% sull'indennità.
+L'indennità Genova è un importo unico (non c'è distinzione primo incontro / successivi come nel D.M. 150/2023).`;
+  } else {
+    tariffSection = `
+TARIFFARIO APPLICATO: NAZIONALE (D.M. 150/2023 — Tabella A)
+Scaglioni tariffe nazionali:
+- Fino a EUR 1.000: spese avvio EUR 40, indennità EUR 80
+- EUR 1.001-5.000: spese avvio EUR 75, indennità EUR 160
+- EUR 5.001-10.000: spese avvio EUR 75, indennità EUR 290
+- EUR 10.001-25.000: spese avvio EUR 75, indennità EUR 440
+- EUR 25.001-50.000: spese avvio EUR 75, indennità EUR 720
+- EUR 50.001-150.000: spese avvio EUR 110, indennità EUR 1.200
+- EUR 150.001-250.000: spese avvio EUR 110, indennità EUR 1.500
+- EUR 250.001-500.000: spese avvio EUR 110, indennità EUR 2.500
+- EUR 500.001-1.500.000: spese avvio EUR 110, indennità EUR 3.900
+- EUR 1.500.001-2.500.000: spese avvio EUR 110, indennità EUR 4.600
+- EUR 2.500.001-5.000.000: spese avvio EUR 110, indennità EUR 6.500
+- Oltre EUR 5.000.000: spese avvio EUR 110, indennità EUR 10.000
+Per mediazione obbligatoria/demandata: riduzione di 1/5 sull'indennità.
+Struttura: spese avvio (art. 28 co. 4) + primo incontro (art. 28 co. 5: EUR 60/120/170) + incontri successivi (Tabella A).
+Maggiorazione +25% per accordo, +10% per più parti, detrazione art. 34 co. 2.`;
+  }
+
   const systemPrompt = `Sei un esperto di costi legali e fiscalità della mediazione civile e commerciale italiana.
 Devi produrre una SEZIONE ECONOMICA COMPARATIVA dettagliata che confronti due scenari:
+${tariffSection}
 
 SCENARIO A: MEDIAZIONE POSITIVA (accordo raggiunto)
-- Indennità organismo di mediazione (D.M. 150/2023) per valore EUR ${valore.toLocaleString("it-IT")}
+- Indennità organismo di mediazione ${isGenova ? "(tariffe COA Genova)" : "(D.M. 150/2023)"} per valore EUR ${valore.toLocaleString("it-IT")}
 - Compenso avvocato (parametri forensi stragiudiziali D.M. 55/2014 agg. D.M. 147/2022)
 - Spese generali 15%, CPA 4%, IVA 22%
 ${esenzioneNote}
@@ -105,7 +145,8 @@ IMPORTANTE:
 - Usa trattini (-) per gli elenchi, MAI emoji
 - Usa tabelle markdown standard con |
 - Tutti gli importi in EUR con separatore migliaia
-- Sii preciso nei calcoli, usa gli scaglioni normativi corretti
+- Sii preciso nei calcoli, usa gli scaglioni normativi corretti del tariffario indicato sopra
+- TARIFFARIO SELEZIONATO: ${isGenova ? "COA GENOVA" : "NAZIONALE D.M. 150/2023"} — usa SOLO questi scaglioni per l'indennità
 - Considera che il tipo di analisi è: ${tipoAnalisi}
 - Il valore della lite è: EUR ${valore.toLocaleString("it-IT")}
 ${gratuitoPatrocinio ? "- ATTENZIONE: il gratuito patrocinio è ATTIVO — azzera indennità, compenso avvocato e accessori per la parte. Calcola di conseguenza." : ""}
@@ -116,6 +157,7 @@ ${mediatoreEsperto || proceduraComplessa ? "- ATTENZIONE: maggiorazione art. 31 
 Parti: ${parti.map(p => `${p.nome} (${p.ruolo})`).join(", ")}
 Valore della lite: EUR ${valore.toLocaleString("it-IT")}
 Tipo: ${tipoAnalisi === "mediazione" ? "Mediazione civile e commerciale" : "Negoziazione assistita"}
+Tariffario: ${isGenova ? "COA Genova (tariffe locali)" : "Nazionale (D.M. 150/2023)"}
 ${materiaImmobiliare ? `Materia: IMMOBILIARE — ${primaCasa ? "Prima casa" : "Seconda casa / altro immobile"}` : "Materia: NON immobiliare"}
 ${gratuitoPatrocinio ? "Gratuito patrocinio: ATTIVO" : "Gratuito patrocinio: NON attivo"}
 ${mediatoreEsperto || proceduraComplessa ? `Maggiorazione art. 31 co. 3: ATTIVA (${[mediatoreEsperto && "mediatore esperto", proceduraComplessa && "procedura complessa"].filter(Boolean).join(" + ")}) — +20% sull'indennità` : "Maggiorazione art. 31 co. 3: NON attiva"}

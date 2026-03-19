@@ -89,6 +89,7 @@ export default function AnalisiCasoAI() {
   const [titolo, setTitolo] = useState("");
   const [descrizione, setDescrizione] = useState("");
   const [tipoAnalisi, setTipoAnalisi] = useState("mediazione");
+  const [modalitaTariffaria, setModalitaTariffaria] = useState("nazionale");
   const [tipoValore, setTipoValore] = useState("determinato");
   const [valoreLite, setValoreLite] = useState("");
   const [parti, setParti] = useState<Party[]>([
@@ -254,6 +255,7 @@ export default function AnalisiCasoAI() {
         titolo,
         descrizione,
         tipoAnalisi,
+        modalitaTariffaria,
         tipoValore,
         valoreLite: tipoValore === "determinato" ? parseFloat(valoreLite) || null : null,
         parti: parti.filter((p) => p.nome.trim()),
@@ -886,8 +888,8 @@ export default function AnalisiCasoAI() {
               </div>
             </div>
 
-            {/* Tipo Analisi + Valore */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {/* Tipo Analisi + Tariffario + Valore */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <div className="space-y-2">
                 <Label className="text-sm font-semibold">Tipo Analisi</Label>
                 <Select value={tipoAnalisi} onValueChange={setTipoAnalisi}>
@@ -897,6 +899,19 @@ export default function AnalisiCasoAI() {
                   <SelectContent className="border-2 border-foreground">
                     <SelectItem value="mediazione">Mediazione</SelectItem>
                     <SelectItem value="negoziazione_assistita">Negoziazione Assistita</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-2">
+                <Label className="text-sm font-semibold">Tariffario</Label>
+                <Select value={modalitaTariffaria} onValueChange={setModalitaTariffaria}>
+                  <SelectTrigger className="border-2 border-foreground" data-testid="select-analisi-tariffario">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent className="border-2 border-foreground">
+                    <SelectItem value="nazionale">Nazionale (D.M. 150/2023)</SelectItem>
+                    <SelectItem value="coa_genova">COA Genova</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
