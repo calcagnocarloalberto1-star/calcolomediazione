@@ -75,8 +75,36 @@ export default function Footer() {
           </div>
         </div>
 
+        {/* Social links */}
+        <div className="flex justify-center gap-3 mt-10 mb-6">
+          <SocialLink
+            href="https://www.linkedin.com/in/carlo-alberto-calcagno-22253920"
+            label="LinkedIn"
+            bgColor="#0A66C2"
+            icon={<svg viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>}
+          />
+          <SocialLink
+            href="https://www.facebook.com/carloalberto.calcagno/"
+            label="Facebook"
+            bgColor="#1877F2"
+            icon={<svg viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>}
+          />
+          <SocialLink
+            href="https://www.youtube.com/@CarloAlbertoCalcagnoGenova"
+            label="YouTube"
+            bgColor="#FF0000"
+            icon={<svg viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4"><path d="M23.498 6.186a3.016 3.016 0 00-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 00.502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 002.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 002.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>}
+          />
+          <SocialLink
+            href="https://x.com"
+            label="X"
+            bgColor="#000000"
+            icon={<svg viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4"><path d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932L18.901 1.153zM17.61 20.644h2.039L6.486 3.24H4.298L17.61 20.644z"/></svg>}
+          />
+        </div>
+
         {/* Bottom bar */}
-        <div className="border-t border-background/20 mt-10 pt-6">
+        <div className="border-t border-background/20 pt-6">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
             <div className="flex items-center gap-2">
               <Scale className="w-4 h-4" style={{ color: 'var(--primary)' }} />
@@ -132,6 +160,25 @@ function FooterExternalLink({ href, children }: { href: string; children: React.
     >
       {children}
       <ExternalLink className="w-3 h-3 opacity-50" />
+    </a>
+  );
+}
+
+function SocialLink({ href, label, bgColor, icon }: { href: string; label: string; bgColor: string; icon: React.ReactNode }) {
+  return (
+    <a
+      href={href}
+      target="_blank"
+      rel="noopener noreferrer"
+      aria-label={label}
+      className="group relative flex items-center justify-center w-10 h-10 border-2 border-background/30 transition-all duration-200 hover:scale-110 hover:border-background/60"
+      style={{ backgroundColor: bgColor }}
+      data-testid={`social-${label.toLowerCase()}`}
+    >
+      <span className="text-white">{icon}</span>
+      <span className="absolute -bottom-6 left-1/2 -translate-x-1/2 text-[10px] text-background/60 opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap font-semibold" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
+        {label}
+      </span>
     </a>
   );
 }
