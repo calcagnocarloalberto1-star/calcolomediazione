@@ -100,6 +100,9 @@ export default function Header() {
             <Link href="/guida-dm-150">
               <span className="px-3 py-2 text-sm font-medium hover:bg-muted transition-colors duration-150">Guide</span>
             </Link>
+            <Link href="/strategie-negoziazione">
+              <span className="px-3 py-2 text-sm font-medium hover:bg-muted transition-colors duration-150">Strategie</span>
+            </Link>
             <Link href="/faq">
               <span className="px-3 py-2 text-sm font-medium hover:bg-muted transition-colors duration-150">Risorse</span>
             </Link>
@@ -168,6 +171,9 @@ export default function Header() {
                     <div className="border-t-2 border-muted mt-2 pt-2">
                       <Link href="/guida-dm-150" onClick={() => setMobileOpen(false)}>
                         <div className="px-4 py-3 text-sm font-medium hover:bg-muted cursor-pointer">Guide</div>
+                      </Link>
+                      <Link href="/strategie-negoziazione" onClick={() => setMobileOpen(false)}>
+                        <div className="px-4 py-3 text-sm font-medium hover:bg-muted cursor-pointer">Strategie di Negoziazione</div>
                       </Link>
                       <Link href="/faq" onClick={() => setMobileOpen(false)}>
                         <div className="px-4 py-3 text-sm font-medium hover:bg-muted cursor-pointer">Risorse</div>

@@ -20,6 +20,7 @@ export default function Footer() {
               <li><FooterLink href="/giurisprudenza">Giurisprudenza</FooterLink></li>
               <li><FooterLink href="/guida-dm-150">Guida D.M. 150/2023</FooterLink></li>
               <li><FooterLink href="/confronto-costi">Confronto Costi</FooterLink></li>
+              <li><FooterLink href="/strategie-negoziazione">Strategie di Negoziazione</FooterLink></li>
             </ul>
           </div>
 

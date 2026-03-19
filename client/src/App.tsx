@@ -24,6 +24,7 @@ import Giurisprudenza from "@/pages/Giurisprudenza";
 import CreditoImposta from "@/pages/CreditoImposta";
 import NotFound from "@/pages/not-found";
 import Admin from "@/pages/Admin";
+import StrategieNegoziazione from "@/pages/StrategieNegoziazione";
 import { usePageTracker } from "@/hooks/use-page-tracker";
 
 function AppRouter() {
@@ -45,6 +46,7 @@ function AppRouter() {
       <Route path="/generatore-procura" component={GeneratoreProcura} />
       <Route path="/giurisprudenza" component={Giurisprudenza} />
       <Route path="/credito-imposta" component={CreditoImposta} />
+      <Route path="/strategie-negoziazione" component={StrategieNegoziazione} />
       <Route path="/admin" component={Admin} />
       <Route component={NotFound} />
     </Switch>
