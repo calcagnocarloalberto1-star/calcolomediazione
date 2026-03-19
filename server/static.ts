@@ -2,6 +2,24 @@ import express, { type Express } from "express";
 import fs from "fs";
 import path from "path";
 
+// SEO pages metadata
+const SEO_PAGES: Record<string, { title: string; description: string }> = {
+  "/": { title: "CalcoloMediazione - Calcolatore Indennit\u00e0 Mediazione D.M. 150/2023", description: "Piattaforma professionale per il calcolo delle indennit\u00e0 di mediazione secondo il D.M. 150/2023. Analisi AI, calcolatore indennit\u00e0 e generatore documenti." },
+  "/calcolatore": { title: "Calcolatore Indennit\u00e0 Mediazione D.M. 150/2023", description: "Calcola le indennit\u00e0 di mediazione civile e commerciale secondo le tariffe del D.M. 150/2023. Doppia tariffa, esenzioni e compensi avvocato." },
+  "/analisi-caso-ai": { title: "Analisi AI del Caso di Mediazione", description: "Analisi completa del caso di mediazione con intelligenza artificiale: analisi giuridica, MAAN/BATNA, bias cognitivi, bozza accordo e confronto economico." },
+  "/confronto-costi": { title: "Confronto Costi Mediazione vs Processo", description: "Confronta i costi della mediazione civile con quelli del processo ordinario. Calcolo dettagliato di indennit\u00e0, contributo unificato, compensi avvocato." },
+  "/faq": { title: "FAQ Mediazione Civile - Domande Frequenti", description: "Domande frequenti sulla mediazione civile e commerciale: indennit\u00e0, costi, credito d'imposta, gratuito patrocinio e analisi AI." },
+  "/guida-dm-150": { title: "Guida Completa D.M. 150/2023 - Tariffe Mediazione", description: "Guida dettagliata al Decreto Ministeriale 150/2023 sulle tariffe di mediazione civile e commerciale." },
+  "/generatore-procura": { title: "Generatore Procura Speciale per Mediazione", description: "Genera la procura speciale per la mediazione civile con tutti i poteri necessari. Conforme al D.Lgs. 28/2010." },
+  "/giurisprudenza": { title: "Giurisprudenza Mediazione - Database Sentenze", description: "Database di giurisprudenza sulla mediazione civile e commerciale. Sentenze di Cassazione, Tribunali e Corti d'Appello." },
+  "/credito-imposta": { title: "Credito d'Imposta e Gratuito Patrocinio in Mediazione", description: "Guida completa al credito d'imposta per la mediazione civile e al gratuito patrocinio. Requisiti, importi e procedura." },
+  "/glossario": { title: "Glossario della Mediazione Civile", description: "Glossario completo dei termini utilizzati nella mediazione civile e commerciale." },
+  "/chi-siamo": { title: "Chi Siamo - CalcoloMediazione", description: "Scopri il team dietro CalcoloMediazione." },
+  "/contatti": { title: "Contatti - CalcoloMediazione", description: "Contatta il team di CalcoloMediazione." },
+};
+
+const SITE_URL = "https://calcolomediazione.it";
+
 export function serveStatic(app: Express) {
   const distPath = path.resolve(__dirname, "public");
   if (!fs.existsSync(distPath)) {
@@ -13,7 +31,38 @@ export function serveStatic(app: Express) {
   app.use(express.static(distPath));
 
   // fall through to index.html if the file doesn't exist
-  app.use("/{*path}", (_req, res) => {
-    res.sendFile(path.resolve(distPath, "index.html"));
+  // For SEO: inject proper meta tags for known pages
+  app.use("/{*path}", (req, res) => {
+    const reqPath = req.params["path"] ? `/${req.params["path"]}` : "/";
+    const indexPath = path.resolve(distPath, "index.html");
+    let html = fs.readFileSync(indexPath, "utf-8");
+
+    const seoPage = SEO_PAGES[reqPath];
+    if (seoPage && reqPath !== "/") {
+      // Replace title
+      html = html.replace(
+        /<title>.*?<\/title>/,
+        `<title>${seoPage.title}</title>`
+      );
+      // Replace description
+      html = html.replace(
+        /<meta name="description" content=".*?" \/>/,
+        `<meta name="description" content="${seoPage.description}" />`
+      );
+      // Add canonical URL
+      html = html.replace(
+        '</head>',
+        `  <link rel="canonical" href="${SITE_URL}${reqPath}" />\n    <meta property="og:title" content="${seoPage.title}" />\n    <meta property="og:description" content="${seoPage.description}" />\n    <meta property="og:url" content="${SITE_URL}${reqPath}" />\n    <meta property="og:type" content="website" />\n    <meta property="og:site_name" content="CalcoloMediazione" />\n    <script>if(!window.location.hash || window.location.hash === '#/') window.location.hash = '#${reqPath}';</script>\n  </head>`
+      );
+    } else if (reqPath === "/") {
+      // Home page - add canonical and OG tags
+      html = html.replace(
+        '</head>',
+        `  <link rel="canonical" href="${SITE_URL}/" />\n    <meta property="og:title" content="CalcoloMediazione - Calcolatore Indennit\u00e0 Mediazione D.M. 150/2023" />\n    <meta property="og:description" content="Piattaforma professionale per il calcolo delle indennit\u00e0 di mediazione secondo il D.M. 150/2023." />\n    <meta property="og:url" content="${SITE_URL}/" />\n    <meta property="og:type" content="website" />\n    <meta property="og:site_name" content="CalcoloMediazione" />\n  </head>`
+      );
+    }
+
+    res.setHeader("Content-Type", "text/html");
+    res.send(html);
   });
 }

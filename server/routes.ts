@@ -325,6 +325,61 @@ Rispondi alle domande dell'utente sul caso, fornendo approfondimenti, chiariment
     res.json(calcoli);
   });
 
+  // === SEO ENDPOINTS ===
+
+  const SITE_URL = "https://calcolomediazione.it";
+
+  const PAGES = [
+    { path: "/", title: "CalcoloMediazione - Calcolatore Indennità Mediazione", desc: "Piattaforma professionale per il calcolo delle indennità di mediazione secondo il D.M. 150/2023. Analisi AI, calcolatore indennità e generatore documenti.", priority: "1.0", changefreq: "weekly" },
+    { path: "/calcolatore", title: "Calcolatore Indennità Mediazione D.M. 150/2023", desc: "Calcola le indennità di mediazione civile e commerciale secondo le tariffe del D.M. 150/2023. Doppia tariffa, esenzioni e compensi avvocato.", priority: "0.9", changefreq: "monthly" },
+    { path: "/analisi-caso-ai", title: "Analisi AI del Caso di Mediazione", desc: "Analisi completa del caso di mediazione con intelligenza artificiale: analisi giuridica, MAAN/BATNA, bias cognitivi, bozza accordo e confronto economico.", priority: "0.9", changefreq: "monthly" },
+    { path: "/confronto-costi", title: "Confronto Costi Mediazione vs Processo", desc: "Confronta i costi della mediazione civile con quelli del processo ordinario. Calcolo dettagliato di indennità, contributo unificato, compensi avvocato.", priority: "0.8", changefreq: "monthly" },
+    { path: "/faq", title: "FAQ Mediazione Civile - Domande Frequenti", desc: "Domande frequenti sulla mediazione civile e commerciale: indennità, costi, credito d'imposta, gratuito patrocinio e analisi AI.", priority: "0.7", changefreq: "monthly" },
+    { path: "/guida-dm-150", title: "Guida Completa D.M. 150/2023 - Tariffe Mediazione", desc: "Guida dettagliata al Decreto Ministeriale 150/2023 sulle tariffe di mediazione civile e commerciale. Tabelle, calcoli ed esempi pratici.", priority: "0.7", changefreq: "monthly" },
+    { path: "/generatore-procura", title: "Generatore Procura Speciale per Mediazione", desc: "Genera la procura speciale per la mediazione civile con tutti i poteri necessari. Conforme al D.Lgs. 28/2010.", priority: "0.8", changefreq: "monthly" },
+    { path: "/giurisprudenza", title: "Giurisprudenza Mediazione - Database Sentenze", desc: "Database di giurisprudenza sulla mediazione civile e commerciale. Sentenze di Cassazione, Tribunali e Corti d'Appello con ricerca avanzata.", priority: "0.7", changefreq: "weekly" },
+    { path: "/credito-imposta", title: "Credito d'Imposta e Gratuito Patrocinio in Mediazione", desc: "Guida completa al credito d'imposta per la mediazione civile (D.M. 1° agosto 2023) e al gratuito patrocinio. Requisiti, importi e procedura.", priority: "0.7", changefreq: "monthly" },
+    { path: "/glossario", title: "Glossario della Mediazione Civile", desc: "Glossario completo dei termini utilizzati nella mediazione civile e commerciale. Definizioni chiare e riferimenti normativi.", priority: "0.5", changefreq: "monthly" },
+    { path: "/chi-siamo", title: "Chi Siamo - CalcoloMediazione", desc: "Scopri il team dietro CalcoloMediazione, la piattaforma professionale per mediatori civili e commerciali.", priority: "0.4", changefreq: "yearly" },
+    { path: "/contatti", title: "Contatti - CalcoloMediazione", desc: "Contatta il team di CalcoloMediazione per informazioni, supporto tecnico e collaborazioni.", priority: "0.4", changefreq: "yearly" },
+  ];
+
+  // Sitemap XML
+  app.get("/sitemap.xml", (_req, res) => {
+    const today = new Date().toISOString().slice(0, 10);
+    let xml = `<?xml version="1.0" encoding="UTF-8"?>\n`;
+    xml += `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n`;
+
+    for (const page of PAGES) {
+      // Use clean URLs that the server will redirect to hash URLs for browsers
+      xml += `  <url>\n`;
+      xml += `    <loc>${SITE_URL}${page.path === "/" ? "" : page.path}</loc>\n`;
+      xml += `    <lastmod>${today}</lastmod>\n`;
+      xml += `    <changefreq>${page.changefreq}</changefreq>\n`;
+      xml += `    <priority>${page.priority}</priority>\n`;
+      xml += `  </url>\n`;
+    }
+
+    xml += `</urlset>`;
+    res.setHeader("Content-Type", "application/xml");
+    res.send(xml);
+  });
+
+  // Robots.txt
+  app.get("/robots.txt", (_req, res) => {
+    const txt = `User-agent: *
+Allow: /
+
+Sitemap: ${SITE_URL}/sitemap.xml
+
+# Disallow admin and API
+Disallow: /api/
+Disallow: /#/admin
+`;
+    res.setHeader("Content-Type", "text/plain");
+    res.send(txt);
+  });
+
   return httpServer;
 }
 
