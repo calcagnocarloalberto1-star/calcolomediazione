@@ -39,7 +39,7 @@ export async function callLLM(systemPrompt: string, userPrompt: string, maxToken
   if (gemini) {
     try {
       const model = gemini.getGenerativeModel({ 
-        model: "gemini-2.0-flash",
+        model: "gemini-2.5-flash",
         systemInstruction: systemPrompt + FORMAT_CONSTRAINT,
       });
       const result = await model.generateContent(userPrompt);
