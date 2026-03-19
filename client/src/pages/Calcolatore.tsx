@@ -12,7 +12,8 @@ import {
 } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
-import { Calculator, Info, Building2, Globe, CheckCircle, Scale } from "lucide-react";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Calculator, Info, Building2, Globe, CheckCircle, Scale, UserCheck, Puzzle } from "lucide-react";
 import {
   calcolaIndennita,
   getScaglioni,
@@ -32,6 +33,8 @@ export default function Calcolatore() {
   const [valoreLite, setValoreLite] = useState<string>("25000");
   const [esito, setEsito] = useState<EsitoMediazione>("nessuno_primo");
   const [risultato, setRisultato] = useState<CalcoloRisultato | null>(null);
+  const [mediatoreEsperto, setMediatoreEsperto] = useState(false);
+  const [proceduraComplessa, setProceduraComplessa] = useState(false);
 
   const scaglioni = getScaglioni(modalitaTariffaria);
 
@@ -42,6 +45,8 @@ export default function Calcolatore() {
       esito,
       tipoValore,
       modalitaTariffaria,
+      mediatoreEsperto,
+      proceduraComplessa,
     };
     const result = calcolaIndennita(input);
     setRisultato(result);
@@ -196,6 +201,59 @@ export default function Calcolatore() {
                   </Select>
                 </div>
 
+                {/* Art. 31, co. 3 — Maggiorazioni per esperienza/complessità */}
+                {esito === "accordo_successivi" && (
+                  <div className="space-y-3 p-4 border-2 border-foreground/30 bg-muted/30" data-testid="card-art31">
+                    <div className="flex items-center gap-2 mb-2">
+                      <Scale className="w-4 h-4 text-primary" />
+                      <span className="text-sm font-bold" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
+                        Maggiorazioni art. 31, co. 3
+                      </span>
+                    </div>
+                    <p className="text-xs text-muted-foreground leading-relaxed mb-3">
+                      In caso di conciliazione in incontri successivi al primo, le spese possono essere maggiorate fino al 20% in presenza di almeno uno dei seguenti criteri:
+                    </p>
+
+                    <div className="flex items-start gap-3">
+                      <Checkbox
+                        id="mediatoreEsperto"
+                        checked={mediatoreEsperto}
+                        onCheckedChange={(checked) => setMediatoreEsperto(checked === true)}
+                        className="mt-0.5 border-2 border-foreground"
+                        data-testid="checkbox-mediatore-esperto"
+                      />
+                      <label htmlFor="mediatoreEsperto" className="cursor-pointer">
+                        <div className="flex items-center gap-1.5">
+                          <UserCheck className="w-3.5 h-3.5 text-primary" />
+                          <span className="text-sm font-semibold">Mediatore esperto</span>
+                        </div>
+                        <p className="text-xs text-muted-foreground mt-0.5">
+                          Mediatore di esperienza e competenza designato su concorde indicazione delle parti (lett. a)
+                        </p>
+                      </label>
+                    </div>
+
+                    <div className="flex items-start gap-3">
+                      <Checkbox
+                        id="proceduraComplessa"
+                        checked={proceduraComplessa}
+                        onCheckedChange={(checked) => setProceduraComplessa(checked === true)}
+                        className="mt-0.5 border-2 border-foreground"
+                        data-testid="checkbox-procedura-complessa"
+                      />
+                      <label htmlFor="proceduraComplessa" className="cursor-pointer">
+                        <div className="flex items-center gap-1.5">
+                          <Puzzle className="w-3.5 h-3.5 text-primary" />
+                          <span className="text-sm font-semibold">Procedura complessa</span>
+                        </div>
+                        <p className="text-xs text-muted-foreground mt-0.5">
+                          Complessità delle questioni, impegno richiesto al mediatore, numero degli incontri (lett. b)
+                        </p>
+                      </label>
+                    </div>
+                  </div>
+                )}
+
                 <Button
                   onClick={handleCalcola}
                   className="w-full py-6 text-base font-bold border-2 border-foreground shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] transition-all duration-150"
@@ -282,7 +340,7 @@ export default function Calcolatore() {
 
                     {risultato.detrazioneSpese > 0 && (
                       <div className="flex justify-between items-center py-2 text-green-700">
-                        <span className="text-sm">Detrazione spese avvio</span>
+                        <span className="text-sm">Detrazione spese primo incontro (art. 34, co. 2)</span>
                         <span className="font-mono font-semibold" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
                           -{formatEuro(risultato.detrazioneSpese)}
                         </span>
@@ -291,9 +349,29 @@ export default function Calcolatore() {
 
                     {risultato.maggiorazioneSuccesso > 0 && (
                       <div className="flex justify-between items-center py-2 text-primary">
-                        <span className="text-sm">Maggiorazione per accordo (+1/5)</span>
+                        <span className="text-sm">
+                          Maggiorazione per accordo ({esito === "accordo_primo" ? "+10%" : "+25%"})
+                        </span>
                         <span className="font-mono font-semibold" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
                           +{formatEuro(risultato.maggiorazioneSuccesso)}
+                        </span>
+                      </div>
+                    )}
+
+                    {risultato.maggiorazioneArt31 > 0 && (
+                      <div className="flex justify-between items-center py-2 text-amber-700 dark:text-amber-400">
+                        <span className="text-sm">
+                          Maggiorazione art. 31, co. 3 (+20%)
+                          <span className="block text-xs text-muted-foreground">
+                            {mediatoreEsperto && proceduraComplessa
+                              ? "Mediatore esperto + procedura complessa"
+                              : mediatoreEsperto
+                                ? "Mediatore esperto"
+                                : "Procedura complessa"}
+                          </span>
+                        </span>
+                        <span className="font-mono font-semibold" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
+                          +{formatEuro(risultato.maggiorazioneArt31)}
                         </span>
                       </div>
                     )}

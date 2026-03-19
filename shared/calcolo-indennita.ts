@@ -59,6 +59,10 @@ export interface InputCalcolo {
   modalitaTariffaria?: ModalitaTariffaria;
   numeroProcedure?: number;
   gratuitoPatrocinio?: boolean;
+  /** Art. 31, co. 3, lett. a) — mediatore di esperienza e competenza designato su concorde indicazione delle parti */
+  mediatoreEsperto?: boolean;
+  /** Art. 31, co. 3, lett. b) — complessità delle questioni oggetto della procedura */
+  proceduraComplessa?: boolean;
 }
 
 // ========================
@@ -358,15 +362,24 @@ export function calcolaIndennita(input: InputCalcolo): CalcoloRisultato {
   const detrazioneSpese = spesePrimoIncontroRidotte;
   ulterioriSpeseCalc -= detrazioneSpese;
 
-  // Maggiorazione per accordo: +25% per conciliazione agli incontri successivi (art. 31, co. 3)
+  // Maggiorazione per accordo: +25% per conciliazione agli incontri successivi (art. 30, co. 2)
   let maggiorazioneSuccesso = 0;
   if (esito === "accordo_successivi") {
     maggiorazioneSuccesso = Math.round((ulterioriSpeseBase - riduzioneObbligatoriaUlteriori) * 0.25);
     ulterioriSpeseCalc += maggiorazioneSuccesso;
   }
 
-  // Art. 31: maggiorazione per competenza mediatore (non implementata qui, opzionale)
-  const maggiorazioneArt31 = 0;
+  // Art. 31, co. 3 — Maggiorazione fino al 20% per:
+  // a) esperienza e competenza del mediatore designato su concorde indicazione delle parti
+  // b) complessità delle questioni oggetto della procedura
+  // Si applica SOLO in caso di conciliazione in incontri successivi al primo (art. 31, co. 3)
+  let maggiorazioneArt31 = 0;
+  if (esito === "accordo_successivi" && (input.mediatoreEsperto || input.proceduraComplessa)) {
+    // Maggiorazione calcolata sulle spese di mediazione ridotte (dopo riduzione 1/5)
+    const basePerMaggiorazione = ulterioriSpeseBase - riduzioneObbligatoriaUlteriori;
+    maggiorazioneArt31 = Math.round(basePerMaggiorazione * 0.20);
+    ulterioriSpeseCalc += maggiorazioneArt31;
+  }
 
   const ulterioriSpeseNette = Math.max(0, ulterioriSpeseCalc);
   const totalePerParte = totalePrimoIncontro + ulterioriSpeseNette;
