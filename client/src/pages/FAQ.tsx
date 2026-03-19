@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { Link } from "wouter";
 import { HelpCircle, Euro, Brain, ArrowLeft, TrendingUp, Shield, FileText, Scale, AlertTriangle, CheckCircle, ExternalLink } from "lucide-react";
 import {
@@ -199,6 +200,42 @@ const faqSections: FAQSection[] = [
 ];
 
 export default function FAQ() {
+  // Inject FAQ JSON-LD structured data for Google rich snippets
+  useEffect(() => {
+    const allQuestions = faqSections.flatMap((section) => section.questions);
+    const jsonLd = {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "name": "Domande Frequenti sulla Mediazione Civile",
+      "description": "FAQ sulla mediazione civile e commerciale: costi, indennità, credito d'imposta, gratuito patrocinio e analisi AI.",
+      "creator": {
+        "@type": "SoftwareApplication",
+        "name": "Perplexity Computer",
+        "url": "https://www.perplexity.ai/computer"
+      },
+      "mainEntity": allQuestions.map((item) => ({
+        "@type": "Question",
+        "name": item.q,
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": item.a,
+        },
+      })),
+    };
+    const script = document.createElement("script");
+    script.type = "application/ld+json";
+    script.textContent = JSON.stringify(jsonLd);
+    script.id = "faq-jsonld";
+    // Remove existing if present (e.g. on re-render)
+    const existing = document.getElementById("faq-jsonld");
+    if (existing) existing.remove();
+    document.head.appendChild(script);
+    return () => {
+      const el = document.getElementById("faq-jsonld");
+      if (el) el.remove();
+    };
+  }, []);
+
   return (
     <div className="min-h-screen py-12 px-4">
       <div className="max-w-4xl mx-auto">

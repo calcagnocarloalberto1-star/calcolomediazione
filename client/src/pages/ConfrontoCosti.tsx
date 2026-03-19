@@ -27,7 +27,19 @@ import {
   Globe,
   Building2,
   Home,
+  BarChart3,
 } from "lucide-react";
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+  Cell,
+} from "recharts";
 import {
   calcolaConfronto,
   type InputConfronto,
@@ -316,6 +328,109 @@ export default function ConfrontoCosti() {
                 </CardContent>
               </Card>
             </div>
+
+            {/* Visual Bar Chart Comparison */}
+            <Card className="border-2 border-foreground shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] mb-8" data-testid="card-grafico-confronto">
+              <CardHeader className="pb-2">
+                <CardTitle className="text-lg flex items-center gap-2" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
+                  <BarChart3 className="w-5 h-5 text-primary" />
+                  Confronto Visivo dei Costi
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <ResponsiveContainer width="100%" height={320}>
+                  <BarChart
+                    data={[
+                      {
+                        name: "Spese avvio / C.U.",
+                        Mediazione: Math.round(risultato.costiMediazione.indennitaOrganismo),
+                        "Causa Civile": Math.round(risultato.costiCausaCivile.contributoUnificato + risultato.costiCausaCivile.marcaDaBollo + risultato.costiCausaCivile.dirittoCopia),
+                      },
+                      {
+                        name: "Compenso avv.",
+                        Mediazione: Math.round(risultato.costiMediazione.compensoAvvocato + risultato.costiMediazione.speseGenerali15 + risultato.costiMediazione.cpa4Avvocato + risultato.costiMediazione.iva22Avvocato),
+                        "Causa Civile": Math.round(risultato.costiCausaCivile.compensoAvvocato + risultato.costiCausaCivile.speseGenerali15 + risultato.costiCausaCivile.cpa4Avvocato + risultato.costiCausaCivile.iva22Avvocato),
+                      },
+                      {
+                        name: "Imposte",
+                        Mediazione: Math.round(
+                          risultato.costiMediazione.imposteImmobiliari
+                            ? risultato.costiMediazione.imposteImmobiliari.impostaRegistro + risultato.costiMediazione.imposteImmobiliari.impostaIpotecaria + risultato.costiMediazione.imposteImmobiliari.impostaCatastale
+                            : risultato.costiMediazione.impostaRegistro
+                        ),
+                        "Causa Civile": Math.round(risultato.costiCausaCivile.impostaRegistroSentenza),
+                      },
+                      {
+                        name: "CTU / Notaio",
+                        Mediazione: Math.round(risultato.costiMediazione.costoNotaio || 0),
+                        "Causa Civile": Math.round(risultato.costiCausaCivile.stimaCTU),
+                      },
+                      {
+                        name: "TOTALE",
+                        Mediazione: Math.round(risultato.costiMediazione.totaleNettoPerParte),
+                        "Causa Civile": Math.round(risultato.costiCausaCivile.totalePerParte),
+                      },
+                    ]}
+                    margin={{ top: 10, right: 10, left: 10, bottom: 5 }}
+                    barGap={4}
+                    barCategoryGap="20%"
+                  >
+                    <CartesianGrid strokeDasharray="3 3" stroke="#e5e0db" />
+                    <XAxis
+                      dataKey="name"
+                      tick={{ fontSize: 11, fontFamily: "'Space Grotesk', sans-serif", fill: "#2d2926" }}
+                      axisLine={{ stroke: "#2d2926", strokeWidth: 2 }}
+                      tickLine={{ stroke: "#2d2926" }}
+                    />
+                    <YAxis
+                      tick={{ fontSize: 11, fontFamily: "'JetBrains Mono', monospace", fill: "#2d2926" }}
+                      axisLine={{ stroke: "#2d2926", strokeWidth: 2 }}
+                      tickLine={{ stroke: "#2d2926" }}
+                      tickFormatter={(value: number) => value >= 1000 ? `${(value / 1000).toFixed(0)}k` : `${value}`}
+                    />
+                    <Tooltip
+                      formatter={(value: number) => formatEuro(value)}
+                      contentStyle={{
+                        border: "2px solid #2d2926",
+                        borderRadius: 0,
+                        fontFamily: "'JetBrains Mono', monospace",
+                        fontSize: 12,
+                        boxShadow: "3px 3px 0px 0px rgba(0,0,0,1)",
+                      }}
+                      labelStyle={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 700 }}
+                    />
+                    <Legend
+                      wrapperStyle={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: 13 }}
+                    />
+                    <Bar dataKey="Mediazione" fill="#16a34a" stroke="#2d2926" strokeWidth={2} radius={0}>
+                      {[
+                        { name: "Spese avvio / C.U." },
+                        { name: "Compenso avv." },
+                        { name: "Imposte" },
+                        { name: "CTU / Notaio" },
+                        { name: "TOTALE" },
+                      ].map((entry, index) => (
+                        <Cell key={`med-${index}`} fill={index === 4 ? "#15803d" : "#16a34a"} />
+                      ))}
+                    </Bar>
+                    <Bar dataKey="Causa Civile" fill="#dc2626" stroke="#2d2926" strokeWidth={2} radius={0}>
+                      {[
+                        { name: "Spese avvio / C.U." },
+                        { name: "Compenso avv." },
+                        { name: "Imposte" },
+                        { name: "CTU / Notaio" },
+                        { name: "TOTALE" },
+                      ].map((entry, index) => (
+                        <Cell key={`causa-${index}`} fill={index === 4 ? "#b91c1c" : "#dc2626"} />
+                      ))}
+                    </Bar>
+                  </BarChart>
+                </ResponsiveContainer>
+                <p className="text-xs text-muted-foreground text-center mt-3">
+                  Il totale mediazione è al netto del credito d'imposta (art. 20 D.Lgs. 28/2010). Compenso avvocato include spese generali, CPA e IVA.
+                </p>
+              </CardContent>
+            </Card>
 
             {/* Imposte Immobiliari Info Box */}
             {risultato.costiMediazione.imposteImmobiliari && (

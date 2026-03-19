@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, Fragment } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -32,6 +32,9 @@ import {
   Home,
   Shield,
   EyeOff,
+  ChevronDown,
+  ChevronUp,
+  Eye,
 } from "lucide-react";
 import MarkdownRenderer from "@/components/MarkdownRenderer";
 import { apiRequest } from "@/lib/queryClient";
@@ -841,6 +844,9 @@ export default function AnalisiCasoAI() {
           </p>
         </div>
 
+        {/* Example Output Preview */}
+        <ExampleOutputPreview />
+
         <Card className="border-2 border-foreground shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]" data-testid="card-analisi-form">
           <CardContent className="pt-6 space-y-6">
             {/* Titolo */}
@@ -1140,5 +1146,104 @@ export default function AnalisiCasoAI() {
         </Card>
       </div>
     </div>
+  );
+}
+
+// ========================
+// EXAMPLE OUTPUT PREVIEW
+// ========================
+
+const EXAMPLE_SECTIONS = [
+  {
+    step: 1,
+    title: "Estrazione Entit\u00e0 (NER)",
+    content: "**Parti identificate:**\n- **Rossi Mario** (Istante) \u2014 proprietario unit\u00e0 immobiliare piano 2\u00b0\n- **Condominio Via Garibaldi 15** (Convenuto) \u2014 amministrato da Geom. Bianchi\n\n**Importi rilevanti:**\n| Voce | Importo |\n|---|---|\n| Danno da infiltrazioni | \u20ac 35.000 |\n| Preventivo riparazione | \u20ac 12.500 |\n| Lucro cessante (mancato affitto) | \u20ac 4.800 |\n\n**Date chiave:** Evento dannoso: 15/03/2025 \u2014 Diffida: 10/04/2025 \u2014 Deposito mediazione: 05/05/2025\n\n**Riferimenti normativi:** Art. 1117, 1123, 1126 c.c. \u2014 Art. 5 D.Lgs. 28/2010 (mediazione obbligatoria in materia condominiale)",
+  },
+  {
+    step: 2,
+    title: "Analisi Giuridica",
+    content: "**Materia:** Condominio (art. 5, co. 1, D.Lgs. 28/2010) \u2014 Mediazione obbligatoria\n\n**Inquadramento normativo:**\nLa controversia rientra nella responsabilit\u00e0 del condominio per danni derivanti da parti comuni (art. 1117 c.c.). La Cassazione (Sez. II, sent. n. 3847/2024) ha confermato che il condominio \u00e8 responsabile per le infiltrazioni originate dal lastrico solare o dalla facciata condominiale, con ripartizione dei costi ex art. 1126 c.c.\n\n**Punti di forza dell\u2019istante:**\n1. Perizia tecnica giurata che documenta l\u2019origine condominiale delle infiltrazioni\n2. Documentazione fotografica ante/post danno\n3. Diffida formale con raccomandata A/R\n\n**Punti di criticit\u00e0:**\n1. Necessit\u00e0 di quantificazione precisa del danno con CTU\n2. Possibile concorso di colpa per mancata tempestiva segnalazione",
+  },
+  {
+    step: 3,
+    title: "Guida Strategica",
+    content: "**Strategia negoziale consigliata: Approccio collaborativo con ZOPA identificata**\n\n1. **Apertura:** Presentare la quantificazione completa (\u20ac 35.000) con documentazione a supporto, segnalando disponibilit\u00e0 a soluzioni creative\n2. **ZOPA stimata:** \u20ac 20.000 \u2013 \u20ac 28.000 (fascia di possibile accordo)\n3. **Concessioni graduali:** Partire dalla richiesta piena, concedere sullo sconto per pagamento rapido e sulla tempistica dei lavori\n4. **Leva temporale:** Evidenziare i costi della causa ordinaria (stima \u20ac 8.000\u201312.000 per parte) vs. il costo della mediazione\n5. **Piano B:** Se la mediazione fallisce, proposta di mediazione valutativa con il mediatore",
+  },
+  {
+    step: 8,
+    title: "Analisi Economica Comparativa",
+    content: "**Confronto costi per parte (Valore lite: \u20ac 35.000)**\n\n| Voce | Mediazione | Causa Civile |\n|---|---|---|\n| Indennit\u00e0 organismo / C.U. | \u20ac 528 | \u20ac 518 |\n| Compenso avvocato (+ accessori) | \u20ac 2.847 | \u20ac 5.936 |\n| Imposta di registro | ESENTE (< \u20ac 100.000) | \u20ac 1.050 |\n| CTU / Notaio | \u20ac 0 | \u20ac 1.500 |\n| **Totale** | **\u20ac 3.375** | **\u20ac 9.004** |\n| Credito d\u2019imposta | -\u20ac 600 | \u2014 |\n| **Netto per parte** | **\u20ac 2.775** | **\u20ac 9.004** |\n\n**Risparmio con mediazione: \u20ac 6.229 (69%)**\n\nDurata stimata: Mediazione 1\u20133 mesi vs. Causa civile 3\u20135 anni (primo grado)",
+  },
+];
+
+function ExampleOutputPreview() {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <Card className="border-2 border-dashed border-primary/40 bg-primary/5 mb-6" data-testid="card-example-output">
+      <button
+        onClick={() => setOpen(!open)}
+        className="w-full flex items-center justify-between px-6 py-4 text-left hover:bg-primary/10 transition-colors duration-150"
+        data-testid="button-toggle-example"
+      >
+        <div className="flex items-center gap-3">
+          <Eye className="w-5 h-5 text-primary" />
+          <div>
+            <span
+              className="font-bold text-sm"
+              style={{ fontFamily: "'Space Grotesk', sans-serif" }}
+            >
+              Esempio di Output dell'Analisi AI
+            </span>
+            <span className="block text-xs text-muted-foreground">
+              Caso dimostrativo: controversia condominiale per infiltrazioni (€ 35.000)
+            </span>
+          </div>
+        </div>
+        {open ? (
+          <ChevronUp className="w-5 h-5 text-primary flex-shrink-0" />
+        ) : (
+          <ChevronDown className="w-5 h-5 text-primary flex-shrink-0" />
+        )}
+      </button>
+
+      {open && (
+        <div className="px-6 pb-6 space-y-4">
+          <p className="text-xs text-muted-foreground bg-muted/50 p-3 border border-foreground/10">
+            Questo è un esempio dimostrativo dell'output generato dall'analisi AI.
+            L'analisi reale produce 8 sezioni complete personalizzate sul caso inserito, incluse bozza d'accordo, analisi MAAN/BATNA e controllo bias cognitivi.
+          </p>
+          {EXAMPLE_SECTIONS.map((section) => (
+            <div
+              key={section.step}
+              className="border-2 border-foreground/20 bg-card"
+            >
+              <div className="flex items-center gap-2 px-4 py-3 border-b border-foreground/10 bg-muted/30">
+                <span
+                  className="w-6 h-6 bg-primary flex items-center justify-center text-primary-foreground text-xs font-bold border border-foreground"
+                  style={{ fontFamily: "'JetBrains Mono', monospace" }}
+                >
+                  {section.step}
+                </span>
+                <span
+                  className="font-bold text-sm"
+                  style={{ fontFamily: "'Space Grotesk', sans-serif" }}
+                >
+                  {section.title}
+                </span>
+              </div>
+              <div className="px-4 py-3 text-sm">
+                <MarkdownRenderer content={section.content} />
+              </div>
+            </div>
+          ))}
+          <div className="text-center pt-2">
+            <Badge variant="outline" className="border-primary/30 text-primary">
+              + 4 sezioni aggiuntive: Analisi MAAN/BATNA, Compatibilità Interessi, Bias Cognitivi, Bozza Accordo
+            </Badge>
+          </div>
+        </div>
+      )}
+    </Card>
   );
 }
