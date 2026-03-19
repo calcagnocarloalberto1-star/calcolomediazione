@@ -15,6 +15,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Switch } from "@/components/ui/switch";
 import {
   Brain,
   Plus,
@@ -28,6 +29,9 @@ import {
   Download,
   RotateCcw,
   FileDown,
+  Home,
+  Shield,
+  EyeOff,
 } from "lucide-react";
 import MarkdownRenderer from "@/components/MarkdownRenderer";
 import { apiRequest } from "@/lib/queryClient";
@@ -39,7 +43,7 @@ const PIPELINE_STEPS = [
   "Guida Strategica",
   "Analisi MAAN/BATNA",
   "Compatibilità Interessi",
-  "Controllo Bias Cognitivi",
+  "Bias Cognitivi e Analisi Decisionale",
   "Bozza Accordo",
   "Analisi Economica Comparativa",
 ];
@@ -51,6 +55,10 @@ const TEORIE_OPTIONS = [
   { id: "overconfidence", label: "Overconfidence" },
   { id: "sunk_cost", label: "Sunk Cost" },
   { id: "availability", label: "Availability Bias" },
+  { id: "teoria_giochi", label: "Teoria dei Giochi" },
+  { id: "decision_analysis", label: "Decision Analysis" },
+  { id: "mcda", label: "MCDA" },
+  { id: "teoria_prospetto", label: "Teoria del Prospetto" },
 ];
 
 const QUICK_ACTIONS = [
@@ -85,6 +93,10 @@ export default function AnalisiCasoAI() {
   const [teorieSelezionate, setTeorieSelezionate] = useState<string[]>(
     TEORIE_OPTIONS.map((t) => t.id)
   );
+  const [materiaImmobiliare, setMateriaImmobiliare] = useState(false);
+  const [primaCasa, setPrimaCasa] = useState(true);
+  const [gratuitoPatrocinio, setGratuitoPatrocinio] = useState(false);
+  const [anonimizza, setAnonimizza] = useState(false);
   const [dragActive, setDragActive] = useState(false);
   const [files, setFiles] = useState<File[]>([]);
 
@@ -240,6 +252,9 @@ export default function AnalisiCasoAI() {
         parti: parti.filter((p) => p.nome.trim()),
         teorieSelezionate,
         documentiText: documentiCombinati,
+        materiaImmobiliare,
+        primaCasa: materiaImmobiliare ? primaCasa : false,
+        gratuitoPatrocinio,
       };
 
       const res = await apiRequest("POST", "/api/analisi", body);
@@ -281,19 +296,23 @@ export default function AnalisiCasoAI() {
   const progressPercent = (currentStep / PIPELINE_STEPS.length) * 100;
 
   const [exportingPdf, setExportingPdf] = useState(false);
+  // Anonymization state for study purposes
+  const [isAnonymized, setIsAnonymized] = useState(false);
 
   const handleExportPdf = async () => {
     if (!analisi) return;
     setExportingPdf(true);
     try {
       const API_BASE = "__PORT_5000__".startsWith("__") ? "" : "__PORT_5000__";
-      const res = await fetch(`${API_BASE}/api/analisi/${analisi.id}/pdf`);
+      const anonParam = isAnonymized ? '?anonimizza=1' : '';
+      const res = await fetch(`${API_BASE}/api/analisi/${analisi.id}/pdf${anonParam}`);
       if (!res.ok) throw new Error(`PDF export failed: ${res.status}`);
       const blob = await res.blob();
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `analisi-${analisi.titolo.replace(/[^a-zA-Z0-9]/g, '-').toLowerCase()}.pdf`;
+      const prefix = isAnonymized ? 'anonimo-' : '';
+      a.download = `${prefix}analisi-${analisi.titolo.replace(/[^a-zA-Z0-9]/g, '-').toLowerCase()}.pdf`;
       a.click();
       URL.revokeObjectURL(url);
     } catch (error) {
@@ -380,18 +399,21 @@ export default function AnalisiCasoAI() {
 
   const handleExportText = () => {
     if (!analisi) return;
+    // Apply anonymization to text export if active
+    const t = (text: string | null | undefined) => anonymizeText(text) || '';
     const rawSections = [
-      `# Analisi AI - ${analisi.titolo}`,
+      `# Analisi AI - ${t(analisi.titolo)}`,
+      isAnonymized ? '(VERSIONE ANONIMIZZATA)' : '',
       `Data: ${new Date().toLocaleDateString('it-IT')}`,
       '',
-      analisi.prospettoEconomico ? `## Estrazione Entita (NER)\n\n${analisi.prospettoEconomico}` : '',
-      analisi.analisiGiuridica ? `## Analisi Giuridica\n\n${analisi.analisiGiuridica}` : '',
-      analisi.guidaStrategica ? `## Guida Strategica\n\n${analisi.guidaStrategica}` : '',
-      analisi.analisiMaanBatna ? `## Analisi MAAN/BATNA\n\n${analisi.analisiMaanBatna}` : '',
-      analisi.compatibilitaInteressi ? `## Compatibilita Interessi\n\n${analisi.compatibilitaInteressi}` : '',
-      analisi.controlloBiasCognitivi ? `## Controllo Bias Cognitivi\n\n${analisi.controlloBiasCognitivi}` : '',
-      analisi.bozzaAccordo ? `## Bozza Accordo\n\n${analisi.bozzaAccordo}` : '',
-      analisi.analisiEconomica ? `## Analisi Economica Comparativa\n\n${analisi.analisiEconomica}` : '',
+      analisi.prospettoEconomico ? `## Estrazione Entita (NER)\n\n${t(analisi.prospettoEconomico)}` : '',
+      analisi.analisiGiuridica ? `## Analisi Giuridica\n\n${t(analisi.analisiGiuridica)}` : '',
+      analisi.guidaStrategica ? `## Guida Strategica\n\n${t(analisi.guidaStrategica)}` : '',
+      analisi.analisiMaanBatna ? `## Analisi MAAN/BATNA\n\n${t(analisi.analisiMaanBatna)}` : '',
+      analisi.compatibilitaInteressi ? `## Compatibilita Interessi\n\n${t(analisi.compatibilitaInteressi)}` : '',
+      analisi.controlloBiasCognitivi ? `## Controllo Bias Cognitivi\n\n${t(analisi.controlloBiasCognitivi)}` : '',
+      analisi.bozzaAccordo ? `## Bozza Accordo\n\n${t(analisi.bozzaAccordo)}` : '',
+      analisi.analisiEconomica ? `## Analisi Economica Comparativa\n\n${t(analisi.analisiEconomica)}` : '',
       '',
       '---',
       'Documento generato da CalcoloMediazione - Analisi AI',
@@ -405,7 +427,8 @@ export default function AnalisiCasoAI() {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `analisi-${analisi.titolo.replace(/[^a-zA-Z0-9]/g, '-').toLowerCase()}.txt`;
+    const prefix = isAnonymized ? 'anonimo-' : '';
+    a.download = `${prefix}analisi-${analisi.titolo.replace(/[^a-zA-Z0-9]/g, '-').toLowerCase()}.txt`;
     a.click();
     URL.revokeObjectURL(url);
   };
@@ -421,6 +444,34 @@ export default function AnalisiCasoAI() {
     setFiles([]);
     setUploadedTexts([]);
     setUploadingFiles(false);
+    setIsAnonymized(false);
+  };
+
+  // Anonymization: replace real party names with "Parte A", "Parte B", etc.
+  const anonymizeText = (text: string | null | undefined): string => {
+    if (!text || !isAnonymized || !analisi) return text || "";
+    const partiList = (analisi.parti as Array<{ nome: string; ruolo: string }>) || [];
+    const labels = ["Parte A", "Parte B", "Parte C", "Parte D", "Parte E", "Parte F"];
+    let result = text;
+    partiList.forEach((p, i) => {
+      if (p.nome && p.nome.trim()) {
+        const nome = p.nome.trim();
+        const label = labels[i] || `Parte ${String.fromCharCode(65 + i)}`;
+        // Replace full name (case insensitive, word boundary)
+        const regex = new RegExp(nome.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi');
+        result = result.replace(regex, label);
+        // Also try replacing surname only (last word of name) if name has multiple words
+        const parts = nome.split(/\s+/);
+        if (parts.length > 1) {
+          const cognome = parts[parts.length - 1];
+          if (cognome.length >= 3) {
+            const cognomeRegex = new RegExp(`\\b${cognome.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`, 'gi');
+            result = result.replace(cognomeRegex, label);
+          }
+        }
+      }
+    });
+    return result;
   };
 
   // If we have analysis results, show them
@@ -445,6 +496,11 @@ export default function AnalisiCasoAI() {
                 <Badge className={`text-xs ${analisi.stato === "completata" ? "bg-green-100 text-green-800 border-green-300" : "bg-yellow-100 text-yellow-800 border-yellow-300"} border`}>
                   {analisi.stato === "completata" ? "Completata" : "In corso..."}
                 </Badge>
+                {isAnonymized && (
+                  <Badge className="text-xs bg-amber-100 text-amber-800 border-amber-300 border ml-2">
+                    Anonimizzato
+                  </Badge>
+                )}
               </div>
             </div>
             {analisi.stato === "completata" && (
@@ -472,6 +528,16 @@ export default function AnalisiCasoAI() {
                 >
                   <Download className="w-3 h-3 mr-1" />
                   Esporta TXT
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setIsAnonymized(!isAnonymized)}
+                  className={`text-xs border-2 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[1px] hover:translate-y-[1px] transition-all duration-150 ${isAnonymized ? "border-primary bg-primary/10" : "border-foreground"}`}
+                  data-testid="button-anonimizza"
+                >
+                  <EyeOff className="w-3 h-3 mr-1" />
+                  {isAnonymized ? "Dati reali" : "Anonimizza"}
                 </Button>
                 <Button
                   variant="outline"
@@ -537,7 +603,7 @@ export default function AnalisiCasoAI() {
               <Card className="border-2 border-foreground shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
                 <CardContent className="pt-6">
                   {analisi.prospettoEconomico ? (
-                    <MarkdownRenderer content={analisi.prospettoEconomico} />
+                    <MarkdownRenderer content={anonymizeText(analisi.prospettoEconomico)} />
                   ) : (
                     <div className="flex items-center gap-2 text-muted-foreground py-8 justify-center">
                       <Loader2 className="w-5 h-5 animate-spin" />
@@ -552,7 +618,7 @@ export default function AnalisiCasoAI() {
               <Card className="border-2 border-foreground shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
                 <CardContent className="pt-6">
                   {analisi.analisiGiuridica ? (
-                    <MarkdownRenderer content={analisi.analisiGiuridica} />
+                    <MarkdownRenderer content={anonymizeText(analisi.analisiGiuridica)} />
                   ) : (
                     <div className="flex items-center gap-2 text-muted-foreground py-8 justify-center">
                       <Loader2 className="w-5 h-5 animate-spin" />
@@ -567,7 +633,7 @@ export default function AnalisiCasoAI() {
               <Card className="border-2 border-foreground shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
                 <CardContent className="pt-6">
                   {analisi.guidaStrategica ? (
-                    <MarkdownRenderer content={analisi.guidaStrategica} />
+                    <MarkdownRenderer content={anonymizeText(analisi.guidaStrategica)} />
                   ) : (
                     <div className="flex items-center gap-2 text-muted-foreground py-8 justify-center">
                       <Loader2 className="w-5 h-5 animate-spin" />
@@ -582,7 +648,7 @@ export default function AnalisiCasoAI() {
               <Card className="border-2 border-foreground shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
                 <CardContent className="pt-6">
                   {analisi.analisiMaanBatna ? (
-                    <MarkdownRenderer content={analisi.analisiMaanBatna} />
+                    <MarkdownRenderer content={anonymizeText(analisi.analisiMaanBatna)} />
                   ) : (
                     <div className="flex items-center gap-2 text-muted-foreground py-8 justify-center">
                       <Loader2 className="w-5 h-5 animate-spin" />
@@ -597,7 +663,7 @@ export default function AnalisiCasoAI() {
               <Card className="border-2 border-foreground shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
                 <CardContent className="pt-6">
                   {analisi.compatibilitaInteressi ? (
-                    <MarkdownRenderer content={analisi.compatibilitaInteressi} />
+                    <MarkdownRenderer content={anonymizeText(analisi.compatibilitaInteressi)} />
                   ) : (
                     <div className="flex items-center gap-2 text-muted-foreground py-8 justify-center">
                       <Loader2 className="w-5 h-5 animate-spin" />
@@ -612,7 +678,7 @@ export default function AnalisiCasoAI() {
               <Card className="border-2 border-foreground shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
                 <CardContent className="pt-6">
                   {analisi.controlloBiasCognitivi ? (
-                    <MarkdownRenderer content={analisi.controlloBiasCognitivi} />
+                    <MarkdownRenderer content={anonymizeText(analisi.controlloBiasCognitivi)} />
                   ) : (
                     <div className="flex items-center gap-2 text-muted-foreground py-8 justify-center">
                       <Loader2 className="w-5 h-5 animate-spin" />
@@ -627,7 +693,7 @@ export default function AnalisiCasoAI() {
               <Card className="border-2 border-foreground shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
                 <CardContent className="pt-6">
                   {analisi.bozzaAccordo ? (
-                    <MarkdownRenderer content={analisi.bozzaAccordo} />
+                    <MarkdownRenderer content={anonymizeText(analisi.bozzaAccordo)} />
                   ) : (
                     <div className="flex items-center gap-2 text-muted-foreground py-8 justify-center">
                       <Loader2 className="w-5 h-5 animate-spin" />
@@ -650,7 +716,7 @@ export default function AnalisiCasoAI() {
                 </CardHeader>
                 <CardContent className="pt-6">
                   {analisi.analisiEconomica ? (
-                    <MarkdownRenderer content={analisi.analisiEconomica} />
+                    <MarkdownRenderer content={anonymizeText(analisi.analisiEconomica)} />
                   ) : (
                     <div className="flex items-center gap-2 text-muted-foreground py-8 justify-center">
                       <Loader2 className="w-5 h-5 animate-spin" />
@@ -708,9 +774,9 @@ export default function AnalisiCasoAI() {
                         }`}
                       >
                         {msg.role === "assistant" ? (
-                          <MarkdownRenderer content={msg.content} />
+                          <MarkdownRenderer content={anonymizeText(msg.content)} />
                         ) : (
-                          msg.content
+                          anonymizeText(msg.content)
                         )}
                       </div>
                     </div>
@@ -854,6 +920,53 @@ export default function AnalisiCasoAI() {
               </div>
             )}
 
+            {/* Opzioni Economiche */}
+            <div className="space-y-3">
+              <Label className="text-sm font-semibold">Opzioni per l'Analisi Economica</Label>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 p-4 border-2 border-foreground/20 bg-muted/30">
+                {/* Materia Immobiliare */}
+                <div className="flex items-center gap-3">
+                  <Switch
+                    checked={materiaImmobiliare}
+                    onCheckedChange={setMateriaImmobiliare}
+                    data-testid="switch-analisi-immobiliare"
+                  />
+                  <div className="flex items-center gap-1.5">
+                    <Home className="w-4 h-4 text-muted-foreground" />
+                    <span className="text-sm">{materiaImmobiliare ? "Materia immobiliare" : "Non immobiliare"}</span>
+                  </div>
+                </div>
+
+                {/* Prima Casa (only if immobiliare) */}
+                {materiaImmobiliare && (
+                  <div className="flex items-center gap-3">
+                    <Switch
+                      checked={primaCasa}
+                      onCheckedChange={setPrimaCasa}
+                      data-testid="switch-analisi-prima-casa"
+                    />
+                    <span className="text-sm">{primaCasa ? "Prima casa (registro 2%)" : "Seconda casa (registro 9%)"}</span>
+                  </div>
+                )}
+
+                {/* Gratuito Patrocinio */}
+                <div className="flex items-center gap-3">
+                  <Switch
+                    checked={gratuitoPatrocinio}
+                    onCheckedChange={setGratuitoPatrocinio}
+                    data-testid="switch-analisi-gp"
+                  />
+                  <div className="flex items-center gap-1.5">
+                    <Shield className="w-4 h-4 text-muted-foreground" />
+                    <span className="text-sm">{gratuitoPatrocinio ? "Gratuito patrocinio" : "No patrocinio"}</span>
+                  </div>
+                </div>
+              </div>
+              <p className="text-xs text-muted-foreground">
+                Queste opzioni influenzano i calcoli nella card "Analisi Economica Comparativa": necessità del notaio, imposte di trasferimento, e azzeramento costi a carico dell'erario.
+              </p>
+            </div>
+
             {/* Parti */}
             <div className="space-y-3">
               <div className="flex items-center justify-between">
@@ -982,8 +1095,8 @@ export default function AnalisiCasoAI() {
 
             {/* Teorie Cognitive */}
             <div className="space-y-3">
-              <Label className="text-sm font-semibold">Teorie Cognitive da Analizzare</Label>
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+              <Label className="text-sm font-semibold">Teorie Cognitive e Framework Decisionali</Label>
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
                 {TEORIE_OPTIONS.map((teoria) => (
                   <div
                     key={teoria.id}

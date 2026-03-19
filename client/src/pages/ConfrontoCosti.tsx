@@ -26,6 +26,7 @@ import {
   CheckCircle,
   Globe,
   Building2,
+  Home,
 } from "lucide-react";
 import {
   calcolaConfronto,
@@ -41,7 +42,9 @@ export default function ConfrontoCosti() {
   const [valoreLite, setValoreLite] = useState("50000");
   const [tipoMediazione, setTipoMediazione] = useState<"volontaria" | "obbligatoria" | "demandata">("obbligatoria");
   const [materiaImmobiliare, setMateriaImmobiliare] = useState(false);
+  const [primaCasa, setPrimaCasa] = useState(true);
   const [redditoAnnuo, setRedditoAnnuo] = useState("");
+  const [gratuitoPatrocinio, setGratuitoPatrocinio] = useState(false);
   const [showDetails, setShowDetails] = useState(false);
   const [showVantaggi, setShowVantaggi] = useState(true);
 
@@ -50,9 +53,11 @@ export default function ConfrontoCosti() {
     tipoValore: tipoValore as InputConfronto["tipoValore"],
     tipoMediazione,
     materiaImmobiliare,
+    primaCasa: materiaImmobiliare ? primaCasa : undefined,
     modalitaTariffaria,
     redditoAnnuo: redditoAnnuo ? parseFloat(redditoAnnuo) : undefined,
-  }), [valoreLite, tipoValore, tipoMediazione, materiaImmobiliare, modalitaTariffaria, redditoAnnuo]);
+    gratuitoPatrocinio,
+  }), [valoreLite, tipoValore, tipoMediazione, materiaImmobiliare, primaCasa, modalitaTariffaria, redditoAnnuo, gratuitoPatrocinio]);
 
   const risultato: RisultatoConfronto | null = useMemo(() => {
     if (tipoValore === "determinato" && (!valoreLite || parseFloat(valoreLite) <= 0)) return null;
@@ -191,7 +196,39 @@ export default function ConfrontoCosti() {
                     data-testid="switch-immobiliare"
                   />
                   <span className="text-sm text-muted-foreground">
-                    {materiaImmobiliare ? "Si (intervento notarile)" : "No"}
+                    {materiaImmobiliare ? "Sì (intervento notarile)" : "No"}
+                  </span>
+                </div>
+              </div>
+
+              {/* Prima Casa (solo se materia immobiliare) */}
+              {materiaImmobiliare && (
+                <div className="space-y-2">
+                  <Label className="text-sm font-semibold">Agevolazione prima casa</Label>
+                  <div className="flex items-center gap-3 h-10">
+                    <Switch
+                      checked={primaCasa}
+                      onCheckedChange={setPrimaCasa}
+                      data-testid="switch-prima-casa"
+                    />
+                    <span className="text-sm text-muted-foreground">
+                      {primaCasa ? "Sì — registro 2%" : "No — registro 9%"}
+                    </span>
+                  </div>
+                </div>
+              )}
+
+              {/* Gratuito Patrocinio toggle */}
+              <div className="space-y-2">
+                <Label className="text-sm font-semibold">Gratuito Patrocinio</Label>
+                <div className="flex items-center gap-3 h-10">
+                  <Switch
+                    checked={gratuitoPatrocinio}
+                    onCheckedChange={setGratuitoPatrocinio}
+                    data-testid="switch-gratuito-patrocinio"
+                  />
+                  <span className="text-sm text-muted-foreground">
+                    {gratuitoPatrocinio ? "Attivo — costi a carico erario" : "No"}
                   </span>
                 </div>
               </div>
@@ -280,6 +317,35 @@ export default function ConfrontoCosti() {
               </Card>
             </div>
 
+            {/* Imposte Immobiliari Info Box */}
+            {risultato.costiMediazione.imposteImmobiliari && (
+              <div className="bg-blue-50 border-2 border-blue-200 p-4 mb-8" data-testid="card-imposte-immobiliari">
+                <div className="flex items-start gap-3">
+                  <Home className="w-5 h-5 text-blue-700 flex-shrink-0 mt-0.5" />
+                  <div>
+                    <p className="text-sm font-bold text-blue-800 mb-1" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
+                      Imposte Trasferimento Immobiliare {risultato.costiMediazione.imposteImmobiliari.isPrimaCasa ? "(Prima Casa)" : "(Seconda Casa / Altro)"}
+                    </p>
+                    <div className="grid grid-cols-3 gap-4 text-sm">
+                      <div>
+                        <span className="text-blue-600 text-xs">Registro ({risultato.costiMediazione.imposteImmobiliari.aliquotaRegistro})</span>
+                        <div className="font-bold font-mono text-blue-900" style={{ fontFamily: "'JetBrains Mono', monospace" }}>{formatEuro(risultato.costiMediazione.imposteImmobiliari.impostaRegistro)}</div>
+                      </div>
+                      <div>
+                        <span className="text-blue-600 text-xs">Ipotecaria</span>
+                        <div className="font-bold font-mono text-blue-900" style={{ fontFamily: "'JetBrains Mono', monospace" }}>{formatEuro(risultato.costiMediazione.imposteImmobiliari.impostaIpotecaria)}</div>
+                      </div>
+                      <div>
+                        <span className="text-blue-600 text-xs">Catastale</span>
+                        <div className="font-bold font-mono text-blue-900" style={{ fontFamily: "'JetBrains Mono', monospace" }}>{formatEuro(risultato.costiMediazione.imposteImmobiliari.impostaCatastale)}</div>
+                      </div>
+                    </div>
+                    <p className="text-xs text-blue-600 mt-2">{risultato.costiMediazione.imposteImmobiliari.note}</p>
+                  </div>
+                </div>
+              </div>
+            )}
+
             {/* Duration + Gratuito Patrocinio */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
               {/* Durata stimata */}
@@ -309,15 +375,31 @@ export default function ConfrontoCosti() {
               </Card>
 
               {/* Gratuito Patrocinio */}
-              <Card className="border-2 border-foreground shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]" data-testid="card-gratuito-patrocinio">
+              <Card className={`border-2 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] ${gratuitoPatrocinio ? "border-green-600 bg-green-50" : "border-foreground"}`} data-testid="card-gratuito-patrocinio">
                 <CardContent className="pt-6">
                   <div className="flex items-center gap-2 mb-4">
-                    <Shield className="w-5 h-5 text-primary" />
+                    <Shield className={`w-5 h-5 ${gratuitoPatrocinio ? "text-green-700" : "text-primary"}`} />
                     <span className="text-sm font-bold" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
                       Gratuito Patrocinio
                     </span>
+                    {gratuitoPatrocinio && (
+                      <Badge className="bg-green-100 text-green-800 border-green-300 border ml-auto">ATTIVO</Badge>
+                    )}
                   </div>
-                  {risultato.gratuitoPatrocinio.redditoInserito > 0 ? (
+                  {gratuitoPatrocinio ? (
+                    <div>
+                      <p className="text-sm text-green-800 font-medium mb-2">
+                        Simulazione con gratuito patrocinio attivo (D.P.R. 115/2002, artt. 74-141):
+                      </p>
+                      <div className="space-y-1 text-xs text-green-700">
+                        <p>- Indennità organismo mediazione: a carico dell'erario</p>
+                        <p>- Compenso avvocato: a carico dell'erario</p>
+                        <p>- Contributo unificato: prenotato a debito</p>
+                        <p>- CTU: prenotata a debito</p>
+                        <p>- Restano a carico: imposte di registro e notaio (se dovuti)</p>
+                      </div>
+                    </div>
+                  ) : risultato.gratuitoPatrocinio.redditoInserito > 0 ? (
                     <div>
                       <Badge
                         className={`mb-2 ${risultato.gratuitoPatrocinio.ammissibile 
@@ -334,7 +416,7 @@ export default function ConfrontoCosti() {
                         Limite reddito 2025: <span className="font-mono font-bold" style={{ fontFamily: "'JetBrains Mono', monospace" }}>{formatEuro(risultato.gratuitoPatrocinio.limiteReddito)}</span>
                       </p>
                       <p className="text-xs text-muted-foreground">
-                        Inserisci il reddito annuo nel form per verificare l'ammissibilità (D.M. 22/04/2025).
+                        Inserisci il reddito annuo nel form per verificare l'ammissibilità (D.M. 22/04/2025). Oppure attiva il toggle per simulare i costi con il gratuito patrocinio.
                       </p>
                     </div>
                   )}
@@ -392,7 +474,15 @@ export default function ConfrontoCosti() {
                           <CostRow label="Spese generali 15%" med={risultato.costiMediazione.speseGenerali15} causa={risultato.costiCausaCivile.speseGenerali15} />
                           <CostRow label="CPA 4%" med={risultato.costiMediazione.cpa4Avvocato} causa={risultato.costiCausaCivile.cpa4Avvocato} />
                           <CostRow label="IVA 22%" med={risultato.costiMediazione.iva22Avvocato} causa={risultato.costiCausaCivile.iva22Avvocato} />
-                          <CostRow label="Imposta di registro" med={risultato.costiMediazione.impostaRegistro} causa={risultato.costiCausaCivile.impostaRegistroSentenza} />
+                          {risultato.costiMediazione.imposteImmobiliari ? (
+                            <>
+                              <CostRow label={`Imposta di registro (${risultato.costiMediazione.imposteImmobiliari.aliquotaRegistro})`} med={risultato.costiMediazione.imposteImmobiliari.impostaRegistro} causa={risultato.costiCausaCivile.impostaRegistroSentenza} />
+                              <CostRow label="Imposta ipotecaria" med={risultato.costiMediazione.imposteImmobiliari.impostaIpotecaria} causa={0} />
+                              <CostRow label="Imposta catastale" med={risultato.costiMediazione.imposteImmobiliari.impostaCatastale} causa={0} />
+                            </>
+                          ) : (
+                            <CostRow label="Imposta di registro" med={risultato.costiMediazione.impostaRegistro} causa={risultato.costiCausaCivile.impostaRegistroSentenza} />
+                          )}
                           {risultato.costiMediazione.costoNotaio > 0 && (
                             <CostRow label="Costi notarili" med={risultato.costiMediazione.costoNotaio} causa={0} />
                           )}
@@ -430,11 +520,34 @@ export default function ConfrontoCosti() {
                       <DetailItem label="Spese generali forfettarie" value={risultato.costiMediazione.speseGenerali15} note="15% sul compenso (art. 2 D.M. 55/2014)" />
                       <DetailItem label="CPA — Cassa Previdenza Avvocati" value={risultato.costiMediazione.cpa4Avvocato} note="4% su compenso + spese generali" />
                       <DetailItem label="IVA" value={risultato.costiMediazione.iva22Avvocato} note="22% su compenso + spese generali + CPA" />
-                      {risultato.costiMediazione.impostaRegistro > 0 && (
-                        <DetailItem label="Imposta di registro" value={risultato.costiMediazione.impostaRegistro} note="Esente fino a €100.000 (art. 17 D.Lgs. 28/2010) — dovuta solo sulla parte eccedente al 3%" />
-                      )}
-                      {risultato.costiMediazione.impostaRegistro === 0 && (
-                        <DetailItem label="Imposta di registro" value={0} note="ESENTE — Valore inferiore a €100.000 (art. 17 D.Lgs. 28/2010)" highlight />
+                      {risultato.costiMediazione.imposteImmobiliari ? (
+                        <>
+                          <DetailItem
+                            label={`Imposta di registro (${risultato.costiMediazione.imposteImmobiliari.aliquotaRegistro})`}
+                            value={risultato.costiMediazione.imposteImmobiliari.impostaRegistro}
+                            note={risultato.costiMediazione.imposteImmobiliari.note}
+                            highlight={risultato.costiMediazione.imposteImmobiliari.impostaRegistro === 0}
+                          />
+                          <DetailItem
+                            label="Imposta ipotecaria"
+                            value={risultato.costiMediazione.imposteImmobiliari.impostaIpotecaria}
+                            note="Misura fissa €50 (D.Lgs. 347/1990, art. 10)"
+                          />
+                          <DetailItem
+                            label="Imposta catastale"
+                            value={risultato.costiMediazione.imposteImmobiliari.impostaCatastale}
+                            note="Misura fissa €50 (D.Lgs. 347/1990, art. 10)"
+                          />
+                        </>
+                      ) : (
+                        <>
+                          {risultato.costiMediazione.impostaRegistro > 0 && (
+                            <DetailItem label="Imposta di registro" value={risultato.costiMediazione.impostaRegistro} note="Esente fino a €100.000 (art. 17 D.Lgs. 28/2010) — dovuta solo sulla parte eccedente al 3%" />
+                          )}
+                          {risultato.costiMediazione.impostaRegistro === 0 && (
+                            <DetailItem label="Imposta di registro" value={0} note="ESENTE — Valore inferiore a €100.000 (art. 17 D.Lgs. 28/2010)" highlight />
+                          )}
+                        </>
                       )}
                       {risultato.costiMediazione.costoNotaio > 0 && (
                         <DetailItem label="Costo notaio" value={risultato.costiMediazione.costoNotaio} note="Onorario notarile per autenticazione accordo con effetti reali (art. 11 D.Lgs. 28/2010)" />

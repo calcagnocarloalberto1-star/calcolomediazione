@@ -52,13 +52,18 @@ const glossaryEntries: GlossaryEntry[] = [
     references: "Art. 20 D.Lgs. 28/2010"
   },
   {
+    term: "Correttivo Cartabia (D.Lgs. 216/2024)",
+    definition: "Decreto legislativo 21 novembre 2024, n. 216, recante disposizioni integrative e correttive del D.Lgs. 149/2022 (Riforma Cartabia). In vigore dal 25 gennaio 2025, ha modificato l'art. 6 del D.Lgs. 28/2010 portando la durata massima del procedimento di mediazione da tre a sei mesi. Ha inoltre precisato le regole sulle proroghe: nelle mediazioni volontarie e obbligatorie si possono concedere proroghe successive di tre mesi ciascuna; nelle mediazioni demandate la proroga è possibile una sola volta per tre mesi.",
+    references: "D.Lgs. 216/2024; Art. 6 D.Lgs. 28/2010"
+  },
+  {
     term: "CTU (Consulenza Tecnica d'Ufficio)",
     definition: "Perizia disposta dal giudice nel corso del processo civile, affidata a un esperto (consulente tecnico) iscritto nell'albo del tribunale. I costi della CTU sono anticipati dalla parte che ne fa richiesta e definitivamente posti a carico della parte soccombente. In mediazione la CTU non è prevista, con conseguente risparmio.",
   },
   {
     term: "D.Lgs. 28/2010",
-    definition: "Decreto legislativo 4 marzo 2010, n. 28, che ha introdotto nell'ordinamento italiano la disciplina organica della mediazione finalizzata alla conciliazione delle controversie civili e commerciali. È stato significativamente modificato dalla Riforma Cartabia (D.Lgs. 149/2022).",
-    references: "D.Lgs. 28/2010"
+    definition: "Decreto legislativo 4 marzo 2010, n. 28, che ha introdotto nell'ordinamento italiano la disciplina organica della mediazione finalizzata alla conciliazione delle controversie civili e commerciali. È stato significativamente modificato dalla Riforma Cartabia (D.Lgs. 149/2022) e dal Correttivo Cartabia (D.Lgs. 216/2024, in vigore dal 25 gennaio 2025), che ha portato la durata massima del procedimento a sei mesi.",
+    references: "D.Lgs. 28/2010; D.Lgs. 149/2022; D.Lgs. 216/2024"
   },
   {
     term: "D.M. 150/2023",
@@ -81,6 +86,11 @@ const glossaryEntries: GlossaryEntry[] = [
     references: "Art. 17, co. 3, D.Lgs. 28/2010"
   },
   {
+    term: "Imposte trasferimento immobiliare",
+    definition: "Insieme delle imposte dovute in caso di trasferimento immobiliare: imposta di registro (2% per prima casa, 9% per seconda casa/altro, con minimo di €1.000), imposta ipotecaria (€50 fissa) e imposta catastale (€50 fissa). In mediazione, l'accordo avente ad oggetto un trasferimento immobiliare gode dell'esenzione dall'imposta di registro fino a €100.000 (art. 17 D.Lgs. 28/2010). L'autenticazione dell'accordo è effettuata da un notaio ai sensi dell'art. 11 D.Lgs. 28/2010.",
+    references: "D.P.R. 131/1986; D.Lgs. 347/1990; Art. 17 D.Lgs. 28/2010"
+  },
+  {
     term: "Indennità di mediazione",
     definition: "Compenso dovuto all'organismo di mediazione da ciascuna parte per lo svolgimento del procedimento. L'importo è determinato in base al valore della controversia secondo le tabelle del D.M. 150/2023. Sono previste riduzioni per le mediazioni obbligatorie (-20%) e maggiorazioni in caso di accordo (+20%).",
     references: "D.M. 150/2023"
@@ -96,13 +106,13 @@ const glossaryEntries: GlossaryEntry[] = [
   },
   {
     term: "Mediazione civile e commerciale",
-    definition: "Procedimento stragiudiziale di risoluzione delle controversie in cui un terzo imparziale (mediatore) assiste le parti nel trovare un accordo amichevole per la composizione della lite. Può essere volontaria, obbligatoria (per le materie indicate dall'art. 5 D.Lgs. 28/2010) o demandata dal giudice.",
-    references: "Art. 1, lett. a), D.Lgs. 28/2010"
+    definition: "Procedimento stragiudiziale di risoluzione delle controversie in cui un terzo imparziale (mediatore) assiste le parti nel trovare un accordo amichevole per la composizione della lite. Il procedimento ha una durata massima di sei mesi (art. 6, come modificato dal D.Lgs. 216/2024), prorogabile di tre mesi alla volta. Può essere volontaria, obbligatoria (per le materie indicate dall'art. 5 D.Lgs. 28/2010) o demandata dal giudice.",
+    references: "Art. 1, lett. a), D.Lgs. 28/2010; Art. 6 D.Lgs. 28/2010"
   },
   {
     term: "Mediazione demandata",
-    definition: "Mediazione disposta dal giudice nel corso del processo, quando lo ritiene opportuno per la natura della causa, lo stato dell'istruzione e il comportamento delle parti. Il giudice fissa una successiva udienza dopo la scadenza del termine di durata della mediazione.",
-    references: "Art. 5-quater D.Lgs. 28/2010"
+    definition: "Mediazione disposta dal giudice nel corso del processo, quando lo ritiene opportuno per la natura della causa, lo stato dell'istruzione e il comportamento delle parti. Ha durata massima di sei mesi, prorogabile per una sola volta di ulteriori tre mesi (6 + 3). Il giudice fissa una successiva udienza dopo la scadenza del termine di durata della mediazione.",
+    references: "Art. 5-quater D.Lgs. 28/2010; Art. 6 D.Lgs. 28/2010"
   },
   {
     term: "Mediazione obbligatoria",
@@ -131,7 +141,7 @@ const glossaryEntries: GlossaryEntry[] = [
   },
   {
     term: "Primo incontro",
-    definition: "Prima sessione del procedimento di mediazione. Con la Riforma Cartabia, il primo incontro ha acquisito una funzione non più meramente informativa ma sostanziale: il mediatore illustra il programma e invita le parti a esporre la propria posizione. La mancata partecipazione senza giustificato motivo può avere conseguenze processuali.",
+    definition: "Prima sessione del procedimento di mediazione. Con la Riforma Cartabia, il primo incontro ha acquisito una funzione non più meramente informativa ma sostanziale: il mediatore illustra il programma e invita le parti a esporre la propria posizione. Il primo incontro si svolge non prima di venti e non oltre quaranta giorni dal deposito della domanda, salvo diversa indicazione delle parti. La mancata partecipazione senza giustificato motivo può avere conseguenze processuali.",
     references: "Art. 8 D.Lgs. 28/2010"
   },
   {
@@ -141,8 +151,8 @@ const glossaryEntries: GlossaryEntry[] = [
   },
   {
     term: "Riforma Cartabia",
-    definition: "Insieme di riforme della giustizia civile introdotte dal D.Lgs. 149/2022, in attuazione della delega contenuta nella L. 206/2021. Ha significativamente modificato la disciplina della mediazione, ampliando le materie obbligatorie, rafforzando il primo incontro, introducendo la mediazione telematica e potenziando gli incentivi fiscali.",
-    references: "D.Lgs. 149/2022; L. 206/2021"
+    definition: "Insieme di riforme della giustizia civile introdotte dal D.Lgs. 149/2022, in attuazione della delega contenuta nella L. 206/2021. Ha significativamente modificato la disciplina della mediazione, ampliando le materie obbligatorie, rafforzando il primo incontro, introducendo la mediazione telematica e potenziando gli incentivi fiscali. Il Correttivo Cartabia (D.Lgs. 216/2024, in vigore dal 25 gennaio 2025) ha poi portato la durata massima del procedimento a sei mesi.",
+    references: "D.Lgs. 149/2022; L. 206/2021; D.Lgs. 216/2024"
   },
   {
     term: "Scaglioni di valore",

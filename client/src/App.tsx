@@ -19,6 +19,8 @@ import ChiSiamo from "@/pages/ChiSiamo";
 import Contatti from "@/pages/Contatti";
 import Glossario from "@/pages/Glossario";
 import GeneratoreProcura from "@/pages/GeneratoreProcura";
+import Giurisprudenza from "@/pages/Giurisprudenza";
+import CreditoImposta from "@/pages/CreditoImposta";
 import NotFound from "@/pages/not-found";
 
 function AppRouter() {
@@ -37,6 +39,8 @@ function AppRouter() {
       <Route path="/contatti" component={Contatti} />
       <Route path="/glossario" component={Glossario} />
       <Route path="/generatore-procura" component={GeneratoreProcura} />
+      <Route path="/giurisprudenza" component={Giurisprudenza} />
+      <Route path="/credito-imposta" component={CreditoImposta} />
       <Route component={NotFound} />
     </Switch>
   );

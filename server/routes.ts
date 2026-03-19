@@ -66,7 +66,7 @@ export async function registerRoutes(
   // Create new analysis and run pipeline
   app.post("/api/analisi", async (req, res) => {
     try {
-      const { titolo, descrizione, tipoAnalisi, valoreLite, tipoValore, parti, teorieSelezionate, documentiText } = req.body;
+      const { titolo, descrizione, tipoAnalisi, valoreLite, tipoValore, parti, teorieSelezionate, documentiText, materiaImmobiliare, primaCasa, gratuitoPatrocinio } = req.body;
 
       if (!titolo || !descrizione) {
         return res.status(400).json({ error: "Titolo e descrizione sono obbligatori" });
@@ -93,7 +93,11 @@ export async function registerRoutes(
       });
 
       // Run pipeline async
-      runPipeline(analisi.id, descrizione, parti || [], tipoAnalisi || "mediazione", valoreLite, teorieSelezionate || ["ancoraggio", "avversione_perdita", "framing", "overconfidence", "sunk_cost", "availability"], documentiText || "");
+      runPipeline(analisi.id, descrizione, parti || [], tipoAnalisi || "mediazione", valoreLite, teorieSelezionate || ["ancoraggio", "avversione_perdita", "framing", "overconfidence", "sunk_cost", "availability", "teoria_giochi", "decision_analysis", "mcda", "teoria_prospetto"], documentiText || "", {
+        materiaImmobiliare: materiaImmobiliare || false,
+        primaCasa: primaCasa || false,
+        gratuitoPatrocinio: gratuitoPatrocinio || false,
+      });
 
       res.json(analisi);
     } catch (error) {
@@ -130,8 +134,54 @@ export async function registerRoutes(
         return res.status(400).json({ error: "Analisi non ancora completata" });
       }
 
-      const pdfBuffer = generateAnalisiPdf(analisi);
-      const filename = `analisi-${analisi.titolo.replace(/[^a-zA-Z0-9]/g, "-").toLowerCase()}.pdf`;
+      // Anonymization support
+      const shouldAnonymize = req.query.anonimizza === '1';
+      let analisiForPdf = analisi;
+      if (shouldAnonymize) {
+        const partiList = (analisi.parti as Array<{ nome: string; ruolo: string }>) || [];
+        const labels = ["Parte A", "Parte B", "Parte C", "Parte D", "Parte E", "Parte F"];
+        const anonReplace = (text: string | null): string | null => {
+          if (!text) return text;
+          let result = text;
+          partiList.forEach((p, i) => {
+            if (p.nome && p.nome.trim()) {
+              const nome = p.nome.trim();
+              const label = labels[i] || `Parte ${String.fromCharCode(65 + i)}`;
+              const regex = new RegExp(nome.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi');
+              result = result.replace(regex, label);
+              const parts = nome.split(/\s+/);
+              if (parts.length > 1) {
+                const cognome = parts[parts.length - 1];
+                if (cognome.length >= 3) {
+                  const cognomeRegex = new RegExp(`\\b${cognome.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`, 'gi');
+                  result = result.replace(cognomeRegex, label);
+                }
+              }
+            }
+          });
+          return result;
+        };
+        // Create anonymized copy
+        const anonParti = partiList.map((p, i) => ({ nome: labels[i] || `Parte ${String.fromCharCode(65 + i)}`, ruolo: p.ruolo }));
+        analisiForPdf = {
+          ...analisi,
+          titolo: anonReplace(analisi.titolo) || analisi.titolo,
+          descrizione: anonReplace(analisi.descrizione) || analisi.descrizione,
+          parti: anonParti,
+          prospettoEconomico: anonReplace(analisi.prospettoEconomico),
+          analisiGiuridica: anonReplace(analisi.analisiGiuridica),
+          guidaStrategica: anonReplace(analisi.guidaStrategica),
+          analisiMaanBatna: anonReplace(analisi.analisiMaanBatna),
+          compatibilitaInteressi: anonReplace(analisi.compatibilitaInteressi),
+          controlloBiasCognitivi: anonReplace(analisi.controlloBiasCognitivi),
+          bozzaAccordo: anonReplace(analisi.bozzaAccordo),
+          analisiEconomica: anonReplace(analisi.analisiEconomica),
+        };
+      }
+
+      const pdfBuffer = generateAnalisiPdf(analisiForPdf);
+      const prefix = shouldAnonymize ? 'anonimo-' : '';
+      const filename = `${prefix}analisi-${analisi.titolo.replace(/[^a-zA-Z0-9]/g, "-").toLowerCase()}.pdf`;
 
       res.setHeader("Content-Type", "application/pdf");
       res.setHeader("Content-Disposition", `attachment; filename="${filename}"`);
@@ -231,7 +281,7 @@ Rispondi alle domande dell'utente sul caso, fornendo approfondimenti, chiariment
   return httpServer;
 }
 
-// Run the 7-step AI pipeline
+// Run the 8-step AI pipeline
 async function runPipeline(
   id: number,
   descrizione: string,
@@ -239,7 +289,8 @@ async function runPipeline(
   tipoAnalisi: string,
   valoreLite: number | null,
   teorieSelezionate: string[],
-  documentiText: string
+  documentiText: string,
+  opzioniEconomiche: { materiaImmobiliare: boolean; primaCasa: boolean; gratuitoPatrocinio: boolean } = { materiaImmobiliare: false, primaCasa: false, gratuitoPatrocinio: false }
 ) {
   try {
     // Step 1: NER Extraction
@@ -279,7 +330,7 @@ async function runPipeline(
     // Truncate context to prevent token overflow - keep first 6000 chars of each
     const truncGiuridica = giuridicaResult.length > 6000 ? giuridicaResult.slice(0, 6000) + '\n\n[...analisi giuridica troncata per brevità...]' : giuridicaResult;
     const truncMaan = maanResult.length > 6000 ? maanResult.slice(0, 6000) + '\n\n[...analisi MAAN troncata per brevità...]' : maanResult;
-    const economicaResult = await analisiEconomica(descrizione, parti, valoreLite, tipoAnalisi, `${truncGiuridica}\n\n${truncMaan}`);
+    const economicaResult = await analisiEconomica(descrizione, parti, valoreLite, tipoAnalisi, `${truncGiuridica}\n\n${truncMaan}`, opzioniEconomiche);
     await storage.updateAnalisi(id, { analisiEconomica: economicaResult, stato: "completata" });
 
   } catch (error) {

@@ -75,6 +75,8 @@ export default function GuidaDM150() {
                 Questo decreto attua le disposizioni introdotte dalla <strong className="text-foreground">Riforma Cartabia</strong> (D.Lgs. 149/2022),
                 che ha profondamente modificato il D.Lgs. 28/2010 in materia di mediazione. Il D.M. 150/2023 sostituisce il precedente
                 D.M. 180/2010, aggiornando la Tabella delle indennità e introducendo nuove regole per il calcolo dei costi.
+                Il quadro normativo è stato ulteriormente aggiornato dal <strong className="text-foreground">Correttivo Cartabia</strong> (D.Lgs. 216/2024, in vigore dal 25 gennaio 2025),
+                che ha portato la durata massima del procedimento di mediazione a sei mesi (art. 6 D.Lgs. 28/2010).
               </p>
               <div className="border-2 border-primary bg-primary/5 p-4 mt-4">
                 <p className="text-sm font-semibold text-foreground">
@@ -347,6 +349,11 @@ export default function GuidaDM150() {
                   title="D.Lgs. 149/2022 (Riforma Cartabia)"
                   description="Decreto Legislativo 10 ottobre 2022, n. 149 — Attuazione della legge 26 novembre 2021, n. 206, recante delega al Governo per l'efficienza del processo civile"
                   url="https://www.normattiva.it/uri-res/N2Ls?urn:nir:stato:decreto.legislativo:2022-10-10;149"
+                />
+                <ReferenceLink
+                  title="D.Lgs. 216/2024 (Correttivo Cartabia)"
+                  description="Decreto Legislativo 21 novembre 2024, n. 216 — Disposizioni integrative e correttive del D.Lgs. 149/2022. In vigore dal 25 gennaio 2025: durata mediazione portata a 6 mesi (art. 6 D.Lgs. 28/2010)"
+                  url="https://www.normattiva.it/uri-res/N2Ls?urn:nir:stato:decreto.legislativo:2024-11-21;216"
                 />
                 <ReferenceLink
                   title="Art. 5 D.Lgs. 28/2010"

@@ -120,8 +120,11 @@ export default function TerminiCondizioni() {
               <li>D.Lgs. 28/2010 — Mediazione civile e commerciale</li>
               <li>D.M. 150/2023 — Regolamento indennità di mediazione</li>
               <li>D.Lgs. 149/2022 — Riforma Cartabia</li>
+              <li>D.Lgs. 216/2024 — Correttivo Cartabia (durata mediazione 6 mesi)</li>
               <li>D.M. 55/2014 (agg. D.M. 147/2022) — Parametri forensi</li>
               <li>D.P.R. 115/2002 — Contributo unificato</li>
+              <li>D.P.R. 131/1986 — Imposta di registro</li>
+              <li>D.Lgs. 347/1990 — Imposte ipotecaria e catastale</li>
               <li>Art. 17 D.Lgs. 28/2010 — Agevolazioni fiscali</li>
               <li>Art. 20 D.Lgs. 28/2010 — Credito d'imposta</li>
             </ul>

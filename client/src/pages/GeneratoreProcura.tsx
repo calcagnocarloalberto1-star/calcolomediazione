@@ -191,12 +191,21 @@ ${delegato.nomeCognome ? `l'Avv. ${delegato.nomeCognome}` : "l'Avv. ____________
 
 a rappresentarlo/a e partecipare, in sua vece e per suo conto, al procedimento di mediazione n. ${procedimento.numeroProcedimento || "______"}${procedimento.organismoDiMediazione ? ` presso ${procedimento.organismoDiMediazione}` : ""}${procedimento.materia ? `, in materia di ${procedimento.materia}` : ""}, con ogni più ampio potere, nessuno escluso, ivi compreso il potere di:
 
-— partecipare a tutti gli incontri di mediazione, sia in presenza che in modalità telematica con collegamento audiovisivo;
+— partecipare a tutti gli incontri di mediazione, sia in presenza che in modalità telematica o da remoto con collegamento audiovisivo;
+— chiedere rinvii della mediazione;
+— chiedere la mediazione in modalità telematica o in modalità da remoto;
 — formulare proposte, controproposte e dichiarazioni;
 — prendere visione di documenti e informazioni;
 — accettare o rifiutare proposte del mediatore;
+— chiedere ed accettare la proposta del mediatore;
 — sottoscrivere il verbale di mediazione e l'eventuale accordo;
+— firmare il verbale in luogo del rappresentante sia in presenza, sia in modalità telematica e da remoto;
+— firmare per la prosecuzione dell'incontro (passaggio dal primo al secondo incontro);
 — sottoscrivere l'eventuale accordo di conciliazione, conferendogli altresì il potere di disporre dei diritti sostanziali oggetto della controversia;
+— chiedere la CTM (consulenza tecnica in mediazione) ed accettare o meno che la stessa sia producibile in giudizio;
+— chiedere la partecipazione del consulente di parte in caso di richiesta di CTM;
+— chiedere l'eventuale sostituzione del mediatore;
+— chiamare terzi in mediazione che siano rilevanti per una eventuale intesa;
 — rinunciare alla mediazione;
 — compiere ogni atto utile e necessario ai fini del buon esito della procedura di mediazione.
 
@@ -211,11 +220,11 @@ Firma del delegante: ____________________________
 ${delegante.nomeCognome || "(Nome e Cognome del Delegante)"}
 
 
-Per autentica della firma
+Per accettazione
 
-L'Avv. ${delegato.nomeCognome || "____________________"} dichiara che la firma sopra apposta è stata resa in sua presenza dal/la sig./sig.ra ${delegante.nomeCognome || "____________________"}, previamente identificato/a a mezzo del documento di identità sopra indicato.
+L'Avv. ${delegato.nomeCognome || "____________________"} firma per accettazione della procura conferita dal/la sig./sig.ra ${delegante.nomeCognome || "____________________"}, previamente identificato/a a mezzo del documento di identità sopra indicato.
 
-Firma dell'Avvocato: ____________________________
+Firma dell'Avvocato per accettazione: ____________________________
 ${delegato.nomeCognome || "(Nome e Cognome dell'Avvocato)"}`;
 }
 
@@ -277,12 +286,21 @@ async function generaDocx(
   delegatoText += ",";
 
   const poteri = [
-    "partecipare a tutti gli incontri di mediazione, sia in presenza che in modalità telematica con collegamento audiovisivo;",
+    "partecipare a tutti gli incontri di mediazione, sia in presenza che in modalità telematica o da remoto con collegamento audiovisivo;",
+    "chiedere rinvii della mediazione;",
+    "chiedere la mediazione in modalità telematica o in modalità da remoto;",
     "formulare proposte, controproposte e dichiarazioni;",
     "prendere visione di documenti e informazioni;",
     "accettare o rifiutare proposte del mediatore;",
+    "chiedere ed accettare la proposta del mediatore;",
     "sottoscrivere il verbale di mediazione e l'eventuale accordo;",
+    "firmare il verbale in luogo del rappresentante sia in presenza, sia in modalità telematica e da remoto;",
+    "firmare per la prosecuzione dell'incontro (passaggio dal primo al secondo incontro);",
     "sottoscrivere l'eventuale accordo di conciliazione, conferendogli altresì il potere di disporre dei diritti sostanziali oggetto della controversia;",
+    "chiedere la CTM (consulenza tecnica in mediazione) ed accettare o meno che la stessa sia producibile in giudizio;",
+    "chiedere la partecipazione del consulente di parte in caso di richiesta di CTM;",
+    "chiedere l'eventuale sostituzione del mediatore;",
+    "chiamare terzi in mediazione che siano rilevanti per una eventuale intesa;",
     "rinunciare alla mediazione;",
     "compiere ogni atto utile e necessario ai fini del buon esito della procedura di mediazione.",
   ];
@@ -456,7 +474,7 @@ async function generaDocx(
             spacing: { before: 400, after: 200 },
             children: [
               new TextRun({
-                text: "Per autentica della firma",
+                text: "Per accettazione",
                 bold: true,
                 size: 24,
                 font: "Times New Roman",
@@ -468,7 +486,7 @@ async function generaDocx(
             spacing: { after: 300 },
             children: [
               new TextRun({
-                text: `L'Avv. ${delegato.nomeCognome || "____________________"} dichiara che la firma sopra apposta è stata resa in sua presenza dal/la sig./sig.ra ${delegante.nomeCognome || "____________________"}, previamente identificato/a a mezzo del documento di identità sopra indicato.`,
+                text: `L'Avv. ${delegato.nomeCognome || "____________________"} firma per accettazione della procura conferita dal/la sig./sig.ra ${delegante.nomeCognome || "____________________"}, previamente identificato/a a mezzo del documento di identità sopra indicato.`,
                 size: 24,
                 font: "Times New Roman",
               }),
@@ -479,7 +497,7 @@ async function generaDocx(
             spacing: { after: 100 },
             children: [
               new TextRun({
-                text: "Firma dell'Avvocato: ____________________________",
+                text: "Firma dell'Avvocato per accettazione: ____________________________",
                 size: 24,
                 font: "Times New Roman",
               }),
@@ -565,7 +583,7 @@ function generaPdf(
     }
 
     // Bold section headers
-    if (line.startsWith("Per autentica")) {
+    if (line.startsWith("Per accettazione")) {
       doc.setFont("helvetica", "bold");
       doc.setFontSize(11);
       if (y > 270) { doc.addPage(); y = 20; }
@@ -740,9 +758,9 @@ export default function GeneratoreProcura() {
           <div className="text-sm text-amber-900">
             <p className="font-semibold mb-1">Riferimento normativo</p>
             <p>
-              La procura per la partecipazione alla mediazione deve essere conferita
-              con atto pubblico o scrittura privata autenticata (art. 8, comma 4,
-              D.Lgs. 28/2010). Il delegato deve essere a conoscenza dei fatti.
+              La procura speciale per la partecipazione alla mediazione deve essere conferita
+              ai sensi dell'art. 8, commi 4 e 4-bis, D.Lgs. 28/2010. L'avvocato firma per accettazione.
+              Il delegato deve essere a conoscenza dei fatti.
               I campi contrassegnati con * sono obbligatori.
             </p>
           </div>

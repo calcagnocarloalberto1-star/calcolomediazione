@@ -17,6 +17,7 @@ export default function Footer() {
             <ul className="space-y-2">
               <li><FooterLink href="/faq">Domande Frequenti (FAQ)</FooterLink></li>
               <li><FooterLink href="/glossario">Glossario Mediazione</FooterLink></li>
+              <li><FooterLink href="/giurisprudenza">Giurisprudenza</FooterLink></li>
               <li><FooterLink href="/guida-dm-150">Guida D.M. 150/2023</FooterLink></li>
               <li><FooterLink href="/confronto-costi">Confronto Costi</FooterLink></li>
             </ul>
@@ -35,6 +36,7 @@ export default function Footer() {
               <li><FooterLink href="/analisi-caso-ai">Analisi AI Caso</FooterLink></li>
               <li><FooterLink href="/confronto-costi">Confronto Mediazione vs Processo</FooterLink></li>
               <li><FooterLink href="/generatore-procura">Generatore Procura</FooterLink></li>
+              <li><FooterLink href="/credito-imposta">Credito d'Imposta</FooterLink></li>
             </ul>
           </div>
 

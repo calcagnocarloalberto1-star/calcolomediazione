@@ -27,9 +27,21 @@ export interface InputConfronto {
   tipoValore: "determinato" | "indeterminabile_basso" | "indeterminabile_medio" | "indeterminabile_alto";
   tipoMediazione: "volontaria" | "obbligatoria" | "demandata";
   materiaImmobiliare: boolean;
+  primaCasa?: boolean;
   modalitaTariffaria?: ModalitaTariffaria;
   redditoAnnuo?: number;
   numeroProcedure?: number;
+  gratuitoPatrocinio?: boolean;
+}
+
+export interface ImposteImmobiliari {
+  impostaRegistro: number;
+  impostaIpotecaria: number;
+  impostaCatastale: number;
+  totaleImposte: number;
+  aliquotaRegistro: string;
+  isPrimaCasa: boolean;
+  note: string;
 }
 
 export interface CostiMediazione {
@@ -40,6 +52,7 @@ export interface CostiMediazione {
   iva22Avvocato: number;
   cpa4Avvocato: number;
   impostaRegistro: number;
+  imposteImmobiliari: ImposteImmobiliari | null;
   costoNotaio: number;
   totalePerParte: number;
   totaleComplessivo: number;
@@ -150,7 +163,7 @@ const GENOVA_INDETERMINABILI = {
   indeterminabile_alto: 780,
 };
 
-// Costi notarili CNN
+// Costi notarili — onorario medio indicativo (libero post D.L. 1/2012)
 const COSTI_NOTARILI = [
   { min: 0, max: 10000, onorario: 1000 },
   { min: 10000.01, max: 25000, onorario: 1200 },
@@ -161,6 +174,72 @@ const COSTI_NOTARILI = [
   { min: 2500000.01, max: 5000000, onorario: 3000 },
   { min: 5000000.01, max: Infinity, onorario: 4000 },
 ];
+
+// ========================
+// IMPOSTE TRASFERIMENTO IMMOBILIARE
+// Fonti: D.P.R. 131/1986, D.Lgs. 347/1990, Art. 1 nota II-bis Tariffa Parte I
+// ========================
+
+/**
+ * Calcola le imposte sui trasferimenti immobiliari
+ * 
+ * PRIMA CASA (persona fisica, requisiti art. 1 nota II-bis Tariffa):
+ * - Imposta di registro: 2% (minimo €1.000)
+ * - Imposta ipotecaria: €50 (fissa)
+ * - Imposta catastale: €50 (fissa)
+ * 
+ * SECONDA CASA / ALTRI IMMOBILI:
+ * - Imposta di registro: 9% (minimo €1.000)
+ * - Imposta ipotecaria: €50 (fissa)
+ * - Imposta catastale: €50 (fissa)
+ * 
+ * In mediazione con accordo (art. 17 D.Lgs. 28/2010):
+ * - Esenzione imposta di registro fino a €100.000
+ * - Imposta di bollo esente
+ */
+function calcolaImposteImmobiliari(
+  valoreImmobile: number,
+  primaCasa: boolean,
+  inMediazione: boolean
+): ImposteImmobiliari {
+  const aliquota = primaCasa ? 0.02 : 0.09;
+  const aliquotaLabel = primaCasa ? "2%" : "9%";
+  
+  let impostaRegistro = Math.round(valoreImmobile * aliquota);
+  // Minimo €1.000 per imposta di registro
+  if (impostaRegistro < 1000) impostaRegistro = 1000;
+  
+  // In mediazione: esenzione registro fino a €100.000 (art. 17 D.Lgs. 28/2010)
+  if (inMediazione) {
+    const valoreImponibile = Math.max(0, valoreImmobile - 100000);
+    impostaRegistro = Math.round(valoreImponibile * aliquota);
+    if (valoreImmobile <= 100000) impostaRegistro = 0;
+  }
+  
+  // Imposte ipotecaria e catastale: €50 fisse ciascuna (acquisto da privato)
+  const impostaIpotecaria = 50;
+  const impostaCatastale = 50;
+  
+  const totaleImposte = impostaRegistro + impostaIpotecaria + impostaCatastale;
+  
+  let note = primaCasa
+    ? `Aliquota agevolata ${aliquotaLabel} (prima casa, art. 1 nota II-bis Tariffa Parte I, D.P.R. 131/1986). Imposte ipotecaria e catastale: €50 fisse ciascuna.`
+    : `Aliquota ordinaria ${aliquotaLabel} (seconda casa/altro immobile). Imposte ipotecaria e catastale: €50 fisse ciascuna.`;
+  
+  if (inMediazione) {
+    note += " Esenzione imposta di registro fino a €100.000 (art. 17, co. 3, D.Lgs. 28/2010).";
+  }
+  
+  return {
+    impostaRegistro,
+    impostaIpotecaria,
+    impostaCatastale,
+    totaleImposte,
+    aliquotaRegistro: aliquotaLabel,
+    isPrimaCasa: primaCasa,
+    note,
+  };
+}
 
 // Valori per controversie indeterminabili
 const VALORI_INDETERMINABILI: Record<string, number> = {
@@ -189,6 +268,7 @@ function isObbligatoria(tipo: string): boolean {
 
 function calcolaCostiMediazione(input: InputConfronto, valoreEffettivo: number): CostiMediazione {
   const modalita = input.modalitaTariffaria || "nazionale";
+  const isGP = input.gratuitoPatrocinio === true;
   
   let speseAvvio: number;
   let indennita: number;
@@ -219,12 +299,17 @@ function calcolaCostiMediazione(input: InputConfronto, valoreEffettivo: number):
     }
   }
 
-  const indennitaOrganismo = speseAvvio + indennita;
+  // Gratuito patrocinio: indennità a carico dell'erario → 0 per la parte
+  let indennitaOrganismo = speseAvvio + indennita;
+  if (isGP) {
+    indennitaOrganismo = 0;
+  }
 
   // Compenso avvocato — parametri forensi stragiudiziali
   const paramStrag = findScaglione(PARAMETRI_FORENSI_STRAGIUDIZIALI, valoreEffettivo);
   const compensoBase = paramStrag.attivazione * 1.3 + paramStrag.negoziazione * 1.3 + paramStrag.conciliazione;
-  const compensoAvvocato = Math.round(compensoBase);
+  // Gratuito patrocinio: avvocato a carico dell'erario → 0 per la parte
+  const compensoAvvocato = isGP ? 0 : Math.round(compensoBase);
   
   // Spese generali forfettarie 15%
   const speseGenerali15 = Math.round(compensoAvvocato * 0.15);
@@ -235,10 +320,20 @@ function calcolaCostiMediazione(input: InputConfronto, valoreEffettivo: number):
   // IVA 22%
   const iva22Avvocato = Math.round((compensoAvvocato + speseGenerali15 + cpa4Avvocato) * 0.22);
 
-  // Imposta di registro — esente fino a €100.000 (art. 17 D.Lgs. 28/2010)
+  // Imposte di registro / trasferimento immobiliare
   let impostaRegistro = 0;
-  if (valoreEffettivo > 100000) {
-    impostaRegistro = Math.round((valoreEffettivo - 100000) * 0.03);
+  let imposteImmobiliari: ImposteImmobiliari | null = null;
+
+  if (input.materiaImmobiliare) {
+    // Materia immobiliare: calcola imposte dettagliate (registro + ipotecaria + catastale)
+    const primaCasa = input.primaCasa ?? false;
+    imposteImmobiliari = calcolaImposteImmobiliari(valoreEffettivo, primaCasa, true);
+    impostaRegistro = imposteImmobiliari.totaleImposte;
+  } else {
+    // Non immobiliare: imposta di registro generica — esente fino a €100.000 (art. 17 D.Lgs. 28/2010)
+    if (valoreEffettivo > 100000) {
+      impostaRegistro = Math.round((valoreEffettivo - 100000) * 0.03);
+    }
   }
 
   // Costo notaio (solo se materia immobiliare)
@@ -251,8 +346,8 @@ function calcolaCostiMediazione(input: InputConfronto, valoreEffettivo: number):
   const totalePerParte = indennitaOrganismo + compensoAvvocato + speseGenerali15 + cpa4Avvocato + iva22Avvocato + impostaRegistro + costoNotaio;
   const totaleComplessivo = totalePerParte * 2;
   
-  // Credito d'imposta fino a €600
-  const creditoImposta = Math.min(600, indennitaOrganismo + compensoAvvocato);
+  // Credito d'imposta fino a €600 (non applicabile se GP — costi già azzerati)
+  const creditoImposta = isGP ? 0 : Math.min(600, indennitaOrganismo + compensoAvvocato);
   const totaleNettoPerParte = totalePerParte - creditoImposta;
 
   return {
@@ -263,6 +358,7 @@ function calcolaCostiMediazione(input: InputConfronto, valoreEffettivo: number):
     iva22Avvocato,
     cpa4Avvocato,
     impostaRegistro,
+    imposteImmobiliari,
     costoNotaio,
     totalePerParte,
     totaleComplessivo,
@@ -277,13 +373,17 @@ function calcolaCostiMediazione(input: InputConfronto, valoreEffettivo: number):
 // ========================
 
 function calcolaCostiCausaCivile(input: InputConfronto, valoreEffettivo: number): CostiCausaCivile {
+  const isGP = input.gratuitoPatrocinio === true;
+  
   const scagCU = findScaglione(CONTRIBUTO_UNIFICATO, valoreEffettivo);
-  const contributoUnificato = scagCU.importo;
-  const marcaDaBollo = 27;
-  const dirittoCopia = 30;
+  // Gratuito patrocinio: contributo unificato prenotato a debito (a carico erario)
+  const contributoUnificato = isGP ? 0 : scagCU.importo;
+  const marcaDaBollo = isGP ? 0 : 27;
+  const dirittoCopia = isGP ? 0 : 30;
 
   const paramGiud = findScaglione(PARAMETRI_FORENSI_GIUDIZIALI, valoreEffettivo);
-  const compensoAvvocato = paramGiud.studio + paramGiud.introduttiva + paramGiud.istruttoria + paramGiud.decisionale;
+  // Gratuito patrocinio: compenso avvocato a carico erario
+  const compensoAvvocato = isGP ? 0 : (paramGiud.studio + paramGiud.introduttiva + paramGiud.istruttoria + paramGiud.decisionale);
   
   const speseGenerali15 = Math.round(compensoAvvocato * 0.15);
   const cpa4Avvocato = Math.round((compensoAvvocato + speseGenerali15) * 0.04);
@@ -297,6 +397,8 @@ function calcolaCostiCausaCivile(input: InputConfronto, valoreEffettivo: number)
   else if (valoreEffettivo <= 250000) stimaCTU = 3000;
   else if (valoreEffettivo <= 520000) stimaCTU = 5000;
   else stimaCTU = 8000;
+  // Gratuito patrocinio: CTU prenotata a debito
+  if (isGP) stimaCTU = 0;
 
   const totalePerParte = contributoUnificato + marcaDaBollo + dirittoCopia + 
     compensoAvvocato + speseGenerali15 + cpa4Avvocato + iva22Avvocato + 
@@ -383,7 +485,7 @@ export function calcolaConfronto(input: InputConfronto): RisultatoConfronto {
     percentualeRisparmio,
     gratuitoPatrocinio,
     durataMediaStimata: {
-      mediazione: "1-3 mesi",
+      mediazione: "fino a 6 mesi (prorogabili di 3 in 3)",
       causaCivile: "2-5 anni (primo grado)",
     },
     vantaggiFiscali,

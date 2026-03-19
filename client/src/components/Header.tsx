@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useLocation } from "wouter";
-import { Scale, Menu, X, Brain, Calculator, ChevronDown, BarChart3, FileText } from "lucide-react";
+import { Scale, Menu, X, Brain, Calculator, ChevronDown, BarChart3, FileText, BookOpen, TrendingUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 
@@ -68,11 +68,29 @@ export default function Header() {
                     </div>
                   </Link>
                   <Link href="/generatore-procura" onClick={() => setStrumentiOpen(false)}>
-                    <div className="flex items-center gap-3 px-4 py-3 hover:bg-muted transition-colors duration-150 cursor-pointer" data-testid="nav-generatore-procura">
+                    <div className="flex items-center gap-3 px-4 py-3 hover:bg-muted transition-colors duration-150 cursor-pointer border-b border-muted" data-testid="nav-generatore-procura">
                       <FileText className="w-4 h-4 text-primary" />
                       <div>
                         <div className="text-sm font-semibold">Generatore Procura</div>
                         <div className="text-xs text-muted-foreground">Art. 8, D.Lgs. 28/2010</div>
+                      </div>
+                    </div>
+                  </Link>
+                  <Link href="/giurisprudenza" onClick={() => setStrumentiOpen(false)}>
+                    <div className="flex items-center gap-3 px-4 py-3 hover:bg-muted transition-colors duration-150 cursor-pointer border-b border-muted" data-testid="nav-giurisprudenza">
+                      <BookOpen className="w-4 h-4 text-primary" />
+                      <div>
+                        <div className="text-sm font-semibold">Giurisprudenza</div>
+                        <div className="text-xs text-muted-foreground">Sentenze sulla mediazione dal 2010</div>
+                      </div>
+                    </div>
+                  </Link>
+                  <Link href="/credito-imposta" onClick={() => setStrumentiOpen(false)}>
+                    <div className="flex items-center gap-3 px-4 py-3 hover:bg-muted transition-colors duration-150 cursor-pointer" data-testid="nav-credito-imposta">
+                      <TrendingUp className="w-4 h-4 text-primary" />
+                      <div>
+                        <div className="text-sm font-semibold">Credito d'Imposta</div>
+                        <div className="text-xs text-muted-foreground">Art. 20, D.Lgs. 28/2010</div>
                       </div>
                     </div>
                   </Link>
@@ -133,6 +151,18 @@ export default function Header() {
                       <div className="flex items-center gap-3 px-4 py-3 hover:bg-muted transition-colors duration-150 cursor-pointer" data-testid="mobile-nav-generatore-procura">
                         <FileText className="w-5 h-5 text-primary" />
                         <span className="font-medium">Generatore Procura</span>
+                      </div>
+                    </Link>
+                    <Link href="/giurisprudenza" onClick={() => setMobileOpen(false)}>
+                      <div className="flex items-center gap-3 px-4 py-3 hover:bg-muted transition-colors duration-150 cursor-pointer" data-testid="mobile-nav-giurisprudenza">
+                        <BookOpen className="w-5 h-5 text-primary" />
+                        <span className="font-medium">Giurisprudenza</span>
+                      </div>
+                    </Link>
+                    <Link href="/credito-imposta" onClick={() => setMobileOpen(false)}>
+                      <div className="flex items-center gap-3 px-4 py-3 hover:bg-muted transition-colors duration-150 cursor-pointer" data-testid="mobile-nav-credito-imposta">
+                        <TrendingUp className="w-5 h-5 text-primary" />
+                        <span className="font-medium">Credito d'Imposta</span>
                       </div>
                     </Link>
                     <div className="border-t-2 border-muted mt-2 pt-2">
