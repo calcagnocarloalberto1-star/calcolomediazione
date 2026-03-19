@@ -108,7 +108,7 @@ export async function registerRoutes(
   // Create new analysis and run pipeline
   app.post("/api/analisi", async (req, res) => {
     try {
-      const { titolo, descrizione, tipoAnalisi, valoreLite, tipoValore, parti, teorieSelezionate, documentiText, materiaImmobiliare, primaCasa, gratuitoPatrocinio } = req.body;
+      const { titolo, descrizione, tipoAnalisi, valoreLite, tipoValore, parti, teorieSelezionate, documentiText, materiaImmobiliare, primaCasa, gratuitoPatrocinio, mediatoreEsperto, proceduraComplessa } = req.body;
 
       if (!titolo || !descrizione) {
         return res.status(400).json({ error: "Titolo e descrizione sono obbligatori" });
@@ -141,6 +141,8 @@ export async function registerRoutes(
         materiaImmobiliare: materiaImmobiliare || false,
         primaCasa: primaCasa || false,
         gratuitoPatrocinio: gratuitoPatrocinio || false,
+        mediatoreEsperto: mediatoreEsperto || false,
+        proceduraComplessa: proceduraComplessa || false,
       });
 
       res.json(analisi);
@@ -407,7 +409,7 @@ async function runPipeline(
   valoreLite: number | null,
   teorieSelezionate: string[],
   documentiText: string,
-  opzioniEconomiche: { materiaImmobiliare: boolean; primaCasa: boolean; gratuitoPatrocinio: boolean } = { materiaImmobiliare: false, primaCasa: false, gratuitoPatrocinio: false }
+  opzioniEconomiche: { materiaImmobiliare: boolean; primaCasa: boolean; gratuitoPatrocinio: boolean; mediatoreEsperto: boolean; proceduraComplessa: boolean } = { materiaImmobiliare: false, primaCasa: false, gratuitoPatrocinio: false, mediatoreEsperto: false, proceduraComplessa: false }
 ) {
   try {
     // Step 1: NER Extraction

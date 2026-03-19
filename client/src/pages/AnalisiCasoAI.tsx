@@ -35,6 +35,8 @@ import {
   ChevronDown,
   ChevronUp,
   Eye,
+  Scale,
+  Award,
 } from "lucide-react";
 import MarkdownRenderer from "@/components/MarkdownRenderer";
 import { apiRequest } from "@/lib/queryClient";
@@ -99,6 +101,8 @@ export default function AnalisiCasoAI() {
   const [materiaImmobiliare, setMateriaImmobiliare] = useState(false);
   const [primaCasa, setPrimaCasa] = useState(true);
   const [gratuitoPatrocinio, setGratuitoPatrocinio] = useState(false);
+  const [mediatoreEsperto, setMediatoreEsperto] = useState(false);
+  const [proceduraComplessa, setProceduraComplessa] = useState(false);
   const [anonimizza, setAnonimizza] = useState(false);
   const [dragActive, setDragActive] = useState(false);
   const [files, setFiles] = useState<File[]>([]);
@@ -258,6 +262,8 @@ export default function AnalisiCasoAI() {
         materiaImmobiliare,
         primaCasa: materiaImmobiliare ? primaCasa : false,
         gratuitoPatrocinio,
+        mediatoreEsperto,
+        proceduraComplessa,
       };
 
       const res = await apiRequest("POST", "/api/analisi", body);
@@ -968,8 +974,44 @@ export default function AnalisiCasoAI() {
                   </div>
                 </div>
               </div>
+
+              {/* Art. 31 co. 3 — Maggiorazioni */}
+              <div className="p-4 border-2 border-foreground/20 bg-muted/30 space-y-3">
+                <div className="flex items-center gap-2">
+                  <Scale className="w-4 h-4 text-muted-foreground" />
+                  <span className="text-sm font-semibold">Maggiorazioni art. 31, co. 3</span>
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  In caso di accordo agli incontri successivi al primo, le spese possono essere maggiorate fino al 20% in presenza di almeno uno dei seguenti criteri:
+                </p>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div className="flex items-center gap-3">
+                    <Switch
+                      checked={mediatoreEsperto}
+                      onCheckedChange={setMediatoreEsperto}
+                      data-testid="switch-analisi-mediatore-esperto"
+                    />
+                    <div className="flex items-center gap-1.5">
+                      <Award className="w-4 h-4 text-muted-foreground" />
+                      <span className="text-sm">Mediatore esperto</span>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <Switch
+                      checked={proceduraComplessa}
+                      onCheckedChange={setProceduraComplessa}
+                      data-testid="switch-analisi-procedura-complessa"
+                    />
+                    <div className="flex items-center gap-1.5">
+                      <Scale className="w-4 h-4 text-muted-foreground" />
+                      <span className="text-sm">Procedura complessa</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
               <p className="text-xs text-muted-foreground">
-                Queste opzioni influenzano i calcoli nella card "Analisi Economica Comparativa": necessità del notaio, imposte di trasferimento, e azzeramento costi a carico dell'erario.
+                Queste opzioni influenzano i calcoli nella card "Analisi Economica Comparativa": necessità del notaio, imposte di trasferimento, azzeramento costi a carico dell'erario e maggiorazioni art. 31.
               </p>
             </div>
 

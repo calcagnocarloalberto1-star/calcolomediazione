@@ -6,10 +6,10 @@ export async function analisiEconomica(
   valoreLite: number | null,
   tipoAnalisi: string,
   previousAnalysis: string,
-  opzioniEconomiche: { materiaImmobiliare: boolean; primaCasa: boolean; gratuitoPatrocinio: boolean } = { materiaImmobiliare: false, primaCasa: false, gratuitoPatrocinio: false }
+  opzioniEconomiche: { materiaImmobiliare: boolean; primaCasa: boolean; gratuitoPatrocinio: boolean; mediatoreEsperto: boolean; proceduraComplessa: boolean } = { materiaImmobiliare: false, primaCasa: false, gratuitoPatrocinio: false, mediatoreEsperto: false, proceduraComplessa: false }
 ): Promise<string> {
   const valore = valoreLite || 25000;
-  const { materiaImmobiliare, primaCasa, gratuitoPatrocinio } = opzioniEconomiche;
+  const { materiaImmobiliare, primaCasa, gratuitoPatrocinio, mediatoreEsperto, proceduraComplessa } = opzioniEconomiche;
 
   // Build dynamic sections based on flags
   let notaioSection = "";
@@ -26,6 +26,22 @@ MATERIA IMMOBILIARE - ${tipoImmobile}:
 - E' NECESSARIO IL NOTAIO per l'autenticazione dell'accordo con effetti reali (art. 11 D.Lgs. 28/2010)
 - Includere il costo del notaio (stimare in base alle tabelle CNN)
 - In causa civile: registro 3% sulla sentenza, imposte ipotecaria/catastale piene`;
+  }
+
+  // Art. 31 co. 3 — Maggiorazione indennità
+  let art31Section = "";
+  if (mediatoreEsperto || proceduraComplessa) {
+    const criteri: string[] = [];
+    if (mediatoreEsperto) criteri.push("mediatore di esperienza e competenza designato su concorde indicazione delle parti (lett. a)");
+    if (proceduraComplessa) criteri.push("complessità delle questioni, impegno richiesto al mediatore, numero degli incontri (lett. b)");
+    art31Section = `
+MAGGIORAZIONE ART. 31, CO. 3, D.M. 150/2023:
+In caso di conciliazione in incontri successivi al primo, le spese possono essere maggiorate fino al 20% in presenza di almeno uno dei seguenti criteri:
+- ${criteri.join("\n- ")}
+Criteri selezionati: ${criteri.length}
+DEVI APPLICARE una maggiorazione del +20% sull'indennità di mediazione (incontri successivi) nello Scenario A.
+Questa maggiorazione si calcola SULL'INDENNITA' degli incontri successivi al primo, NON sulle spese di avvio.
+La maggiorazione si applica UNA SOLA VOLTA anche se entrambi i criteri sono presenti (max +20%).`;
   }
 
   let gpSection = "";
@@ -60,6 +76,7 @@ ${esenzioneNote}
 ${materiaImmobiliare ? "- Costo notaio OBBLIGATORIO (autenticazione accordo con effetti reali)" : "- Costo notaio: non necessario (materia non immobiliare)"}
 - Durata stimata: 1-3 mesi
 ${notaioSection}
+${art31Section}
 ${gpSection}
 
 SCENARIO B: PROCESSO CIVILE (mediazione negativa + contenzioso)
@@ -92,7 +109,8 @@ IMPORTANTE:
 - Considera che il tipo di analisi è: ${tipoAnalisi}
 - Il valore della lite è: EUR ${valore.toLocaleString("it-IT")}
 ${gratuitoPatrocinio ? "- ATTENZIONE: il gratuito patrocinio è ATTIVO — azzera indennità, compenso avvocato e accessori per la parte. Calcola di conseguenza." : ""}
-${materiaImmobiliare ? `- ATTENZIONE: materia immobiliare — includi SEMPRE il costo del notaio e le imposte di trasferimento (${primaCasa ? "prima casa — registro 2%" : "seconda casa — registro 9%"})` : ""}`;
+${materiaImmobiliare ? `- ATTENZIONE: materia immobiliare — includi SEMPRE il costo del notaio e le imposte di trasferimento (${primaCasa ? "prima casa — registro 2%" : "seconda casa — registro 9%"})` : ""}
+${mediatoreEsperto || proceduraComplessa ? "- ATTENZIONE: maggiorazione art. 31 co. 3 ATTIVA — applica +20% sull'indennità degli incontri successivi nella tabella Mediazione Positiva. Evidenzia la voce come riga separata nella tabella." : ""}`;
 
   const userPrompt = `Caso: ${descrizione}
 Parti: ${parti.map(p => `${p.nome} (${p.ruolo})`).join(", ")}
@@ -100,6 +118,7 @@ Valore della lite: EUR ${valore.toLocaleString("it-IT")}
 Tipo: ${tipoAnalisi === "mediazione" ? "Mediazione civile e commerciale" : "Negoziazione assistita"}
 ${materiaImmobiliare ? `Materia: IMMOBILIARE — ${primaCasa ? "Prima casa" : "Seconda casa / altro immobile"}` : "Materia: NON immobiliare"}
 ${gratuitoPatrocinio ? "Gratuito patrocinio: ATTIVO" : "Gratuito patrocinio: NON attivo"}
+${mediatoreEsperto || proceduraComplessa ? `Maggiorazione art. 31 co. 3: ATTIVA (${[mediatoreEsperto && "mediatore esperto", proceduraComplessa && "procedura complessa"].filter(Boolean).join(" + ")}) — +20% sull'indennità` : "Maggiorazione art. 31 co. 3: NON attiva"}
 
 Contesto dall'analisi precedente:
 ${previousAnalysis}
