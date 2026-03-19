@@ -1,13 +1,26 @@
+import { GoogleGenerativeAI } from "@google/generative-ai";
 import Anthropic from "@anthropic-ai/sdk";
 
-let client: Anthropic | null = null;
+// Google Gemini client
+let geminiClient: GoogleGenerativeAI | null = null;
 
-function getClient(): Anthropic | null {
-  if (client) return client;
-  // The API key is injected via api_credentials when the server starts
+function getGeminiClient(): GoogleGenerativeAI | null {
+  if (geminiClient) return geminiClient;
+  if (process.env.GEMINI_API_KEY) {
+    geminiClient = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+    return geminiClient;
+  }
+  return null;
+}
+
+// Anthropic client (fallback)
+let anthropicClient: Anthropic | null = null;
+
+function getAnthropicClient(): Anthropic | null {
+  if (anthropicClient) return anthropicClient;
   if (process.env.ANTHROPIC_API_KEY) {
-    client = new Anthropic();
-    return client;
+    anthropicClient = new Anthropic();
+    return anthropicClient;
   }
   return null;
 }
@@ -21,11 +34,28 @@ const FORMAT_CONSTRAINT = `\n\nIMPORTANTE — Regole di formattazione obbligator
 - Scrivi in italiano professionale e chiaro.`;
 
 export async function callLLM(systemPrompt: string, userPrompt: string, maxTokens: number = 4096): Promise<string> {
-  const anthropicClient = getClient();
-  
-  if (anthropicClient) {
+  // Priority 1: Google Gemini
+  const gemini = getGeminiClient();
+  if (gemini) {
     try {
-      const message = await anthropicClient.messages.create({
+      const model = gemini.getGenerativeModel({ 
+        model: "gemini-2.0-flash",
+        systemInstruction: systemPrompt + FORMAT_CONSTRAINT,
+      });
+      const result = await model.generateContent(userPrompt);
+      const text = result.response.text();
+      if (text) return text;
+    } catch (error) {
+      console.error("Errore chiamata Gemini:", error);
+      // Fall through to Anthropic or placeholder
+    }
+  }
+
+  // Priority 2: Anthropic Claude
+  const anthropic = getAnthropicClient();
+  if (anthropic) {
+    try {
+      const message = await anthropic.messages.create({
         model: "claude_sonnet_4_6",
         max_tokens: maxTokens,
         messages: [
@@ -80,7 +110,7 @@ La controversia si inquadra nel perimetro del **D.Lgs. 28/2010** come modificato
 
 ### Analisi dei Rischi Processuali
 | Rischio | Probabilità | Impatto |
-|---------|------------|---------|
+|---------|------------|---------| 
 | Improcedibilità domanda | Media | Alto |
 | Condanna spese ex art. 13 | Bassa | Medio |
 | Mancata partecipazione | Media | Alto |
@@ -108,7 +138,7 @@ La controversia si inquadra nel perimetro del **D.Lgs. 28/2010** come modificato
 
 ### Tecniche Suggerite
 | Fase | Tecnica | Obiettivo |
-|------|---------|-----------|
+|------|---------|-----------| 
 | Apertura | Reality testing | Allineare aspettative |
 | Esplorazione | Domande circolari | Far emergere interessi |
 | Negoziazione | BATNA analysis | Valutare alternative |
