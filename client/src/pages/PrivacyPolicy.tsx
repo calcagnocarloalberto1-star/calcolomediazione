@@ -22,7 +22,7 @@ export default function PrivacyPolicy() {
           <p className="text-sm opacity-60">Ultimo aggiornamento: Marzo 2026</p>
 
           <Section title="1. Titolare del Trattamento">
-            <p>Il titolare del trattamento dei dati personali è Carlo Alberto Calcagno, responsabile del sito web CalcoloMediazione.com (di seguito "il Sito").</p>
+            <p>Il titolare del trattamento dei dati personali è Carlo Alberto Calcagno, responsabile del sito web CalcoloMediazione.it (di seguito "il Sito").</p>
             <p>Per qualsiasi richiesta relativa al trattamento dei dati personali, è possibile contattare il Titolare tramite la pagina <Link href="/contatti"><span className="underline cursor-pointer" style={{ color: 'var(--primary)' }}>Contatti</span></Link>.</p>
           </Section>
 

@@ -21,10 +21,10 @@ export default function ChiSiamo() {
         {/* Hero section */}
         <div className="bg-card border-[2px] border-foreground shadow-[4px_4px_0px_0px] shadow-foreground/20 p-6 sm:p-8 mb-6">
           <h2 className="text-xl font-bold mb-4" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
-            CalcoloMediazione.com
+            CalcoloMediazione.it
           </h2>
           <p className="text-sm leading-relaxed opacity-90 mb-4">
-            CalcoloMediazione.com è uno strumento professionale gratuito dedicato al calcolo delle indennità di mediazione civile e commerciale, conforme al D.M. 150/2023. Il progetto nasce dall'esperienza diretta nel campo della mediazione e della risoluzione alternativa delle controversie (ADR), con l'obiettivo di fornire a mediatori, avvocati e cittadini uno strumento preciso, aggiornato e accessibile.
+            CalcoloMediazione.it è uno strumento professionale gratuito dedicato al calcolo delle indennità di mediazione civile e commerciale, conforme al D.M. 150/2023. Il progetto nasce dall'esperienza diretta nel campo della mediazione e della risoluzione alternativa delle controversie (ADR), con l'obiettivo di fornire a mediatori, avvocati e cittadini uno strumento preciso, aggiornato e accessibile.
           </p>
           <p className="text-sm leading-relaxed opacity-90">
             Il sito integra un sistema di intelligenza artificiale avanzato per l'analisi dei casi di mediazione, offrendo supporto nell'analisi giuridica, nella valutazione strategica, nel confronto economico tra mediazione e processo civile, e nella redazione di bozze di accordo.
@@ -84,7 +84,7 @@ export default function ChiSiamo() {
           </h2>
           <div className="space-y-3 text-sm leading-relaxed opacity-90">
             <p>
-              La mediazione civile e commerciale rappresenta uno strumento fondamentale per la risoluzione efficace delle controversie, ma spesso la comprensione dei suoi costi e benefici rimane poco accessibile. CalcoloMediazione.com nasce per colmare questa lacuna.
+              La mediazione civile e commerciale rappresenta uno strumento fondamentale per la risoluzione efficace delle controversie, ma spesso la comprensione dei suoi costi e benefici rimane poco accessibile. CalcoloMediazione.it nasce per colmare questa lacuna.
             </p>
             <p>I nostri obiettivi:</p>
             <ul className="list-disc list-inside space-y-1 ml-4">

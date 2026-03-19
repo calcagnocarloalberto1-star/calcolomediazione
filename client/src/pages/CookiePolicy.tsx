@@ -26,7 +26,7 @@ export default function CookiePolicy() {
           </Section>
 
           <Section title="2. Tipologie di Cookie Utilizzati">
-            <p>Il Sito CalcoloMediazione.com utilizza le seguenti categorie di cookie:</p>
+            <p>Il Sito CalcoloMediazione.it utilizza le seguenti categorie di cookie:</p>
 
             <h3 className="font-bold mt-3">2.1 Cookie Tecnici (necessari)</h3>
             <p>Sono essenziali per il corretto funzionamento del Sito e non possono essere disattivati. Includono:</p>

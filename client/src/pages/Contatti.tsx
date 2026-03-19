@@ -63,7 +63,7 @@ export default function Contatti() {
                 Segnalazioni e Suggerimenti
               </h2>
               <p className="text-sm leading-relaxed opacity-90 mb-4">
-                Il tuo feedback è importante per migliorare CalcoloMediazione.com. Puoi scriverci per:
+                Il tuo feedback è importante per migliorare CalcoloMediazione.it. Puoi scriverci per:
               </p>
               <ul className="space-y-3">
                 <SuggestionItem title="Errori di calcolo" description="Se riscontri imprecisioni nei calcoli delle indennità o nei confronti economici" />

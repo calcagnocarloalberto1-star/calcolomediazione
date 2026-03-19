@@ -22,7 +22,7 @@ export default function TerminiCondizioni() {
           <p className="text-sm opacity-60">Ultimo aggiornamento: Marzo 2026</p>
 
           <Section title="1. Premessa">
-            <p>I presenti Termini e Condizioni regolano l'accesso e l'utilizzo del sito web CalcoloMediazione.com (di seguito "il Sito"), di proprietà di Carlo Alberto Calcagno. L'utilizzo del Sito implica l'accettazione integrale dei presenti Termini.</p>
+            <p>I presenti Termini e Condizioni regolano l'accesso e l'utilizzo del sito web CalcoloMediazione.it (di seguito "il Sito"), di proprietà di Carlo Alberto Calcagno. L'utilizzo del Sito implica l'accettazione integrale dei presenti Termini.</p>
           </Section>
 
           <Section title="2. Descrizione del Servizio">
@@ -100,7 +100,7 @@ export default function TerminiCondizioni() {
 
         <div className="bg-card border-[2px] border-foreground shadow-[4px_4px_0px_0px] shadow-foreground/20 p-6 sm:p-8 space-y-6">
           <Section title="Informazioni sul Sito">
-            <p>CalcoloMediazione.com è un progetto personale di Carlo Alberto Calcagno, mediatore civile e commerciale.</p>
+            <p>CalcoloMediazione.it è un progetto personale di Carlo Alberto Calcagno, mediatore civile e commerciale.</p>
             <p>Il Sito è uno strumento professionale gratuito per il calcolo delle indennità di mediazione civile e commerciale, conforme al D.M. 150/2023.</p>
           </Section>
 
