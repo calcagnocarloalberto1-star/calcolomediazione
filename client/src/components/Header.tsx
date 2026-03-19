@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useLocation } from "wouter";
-import { Scale, Menu, X, Brain, Calculator, ChevronDown, BarChart3 } from "lucide-react";
+import { Scale, Menu, X, Brain, Calculator, ChevronDown, BarChart3, FileText } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 
@@ -59,11 +59,20 @@ export default function Header() {
                     </div>
                   </Link>
                   <Link href="/confronto-costi" onClick={() => setStrumentiOpen(false)}>
-                    <div className="flex items-center gap-3 px-4 py-3 hover:bg-muted transition-colors duration-150 cursor-pointer" data-testid="nav-confronto-costi">
+                    <div className="flex items-center gap-3 px-4 py-3 hover:bg-muted transition-colors duration-150 cursor-pointer border-b border-muted" data-testid="nav-confronto-costi">
                       <BarChart3 className="w-4 h-4 text-primary" />
                       <div>
                         <div className="text-sm font-semibold">Confronto Costi</div>
                         <div className="text-xs text-muted-foreground">Mediazione vs Causa Civile</div>
+                      </div>
+                    </div>
+                  </Link>
+                  <Link href="/generatore-procura" onClick={() => setStrumentiOpen(false)}>
+                    <div className="flex items-center gap-3 px-4 py-3 hover:bg-muted transition-colors duration-150 cursor-pointer" data-testid="nav-generatore-procura">
+                      <FileText className="w-4 h-4 text-primary" />
+                      <div>
+                        <div className="text-sm font-semibold">Generatore Procura</div>
+                        <div className="text-xs text-muted-foreground">Art. 8, D.Lgs. 28/2010</div>
                       </div>
                     </div>
                   </Link>
@@ -118,6 +127,12 @@ export default function Header() {
                       <div className="flex items-center gap-3 px-4 py-3 hover:bg-muted transition-colors duration-150 cursor-pointer" data-testid="mobile-nav-confronto-costi">
                         <BarChart3 className="w-5 h-5 text-primary" />
                         <span className="font-medium">Confronto Costi</span>
+                      </div>
+                    </Link>
+                    <Link href="/generatore-procura" onClick={() => setMobileOpen(false)}>
+                      <div className="flex items-center gap-3 px-4 py-3 hover:bg-muted transition-colors duration-150 cursor-pointer" data-testid="mobile-nav-generatore-procura">
+                        <FileText className="w-5 h-5 text-primary" />
+                        <span className="font-medium">Generatore Procura</span>
                       </div>
                     </Link>
                     <div className="border-t-2 border-muted mt-2 pt-2">

@@ -43,10 +43,10 @@ const features = [
   },
   {
     icon: FileText,
-    title: "Generatore Documenti",
-    description: "Genera verbali, bozze di accordo e documenti per la mediazione in formato professionale.",
-    href: "#",
-    active: false,
+    title: "Generatore Procura",
+    description: "Genera la procura speciale per la partecipazione alla mediazione ai sensi dell'art. 8, D.Lgs. 28/2010 in formato Word e PDF.",
+    href: "/generatore-procura",
+    active: true,
   },
   {
     icon: Scale,

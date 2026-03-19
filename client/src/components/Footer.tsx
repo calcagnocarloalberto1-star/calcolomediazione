@@ -34,6 +34,7 @@ export default function Footer() {
               <li><FooterLink href="/calcolatore">Calcolatore Indennità</FooterLink></li>
               <li><FooterLink href="/analisi-caso-ai">Analisi AI Caso</FooterLink></li>
               <li><FooterLink href="/confronto-costi">Confronto Mediazione vs Processo</FooterLink></li>
+              <li><FooterLink href="/generatore-procura">Generatore Procura</FooterLink></li>
             </ul>
           </div>
 
