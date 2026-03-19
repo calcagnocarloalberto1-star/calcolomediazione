@@ -327,7 +327,15 @@ Rispondi alle domande dell'utente sul caso, fornendo approfondimenti, chiariment
 
   // === SEO ENDPOINTS ===
 
-  const SITE_URL = "https://calcolomediazione.it";
+  const PRIMARY_URL = "https://calcolomediazione.it";
+
+  // Detect the actual domain from the request for multi-domain support
+  function getSiteUrl(req: any): string {
+    const host = req.hostname || req.headers.host?.split(':')[0] || 'calcolomediazione.it';
+    if (host.includes('calcolomediazione.org')) return 'https://calcolomediazione.org';
+    if (host.includes('calcolomediazione.it')) return 'https://calcolomediazione.it';
+    return PRIMARY_URL;
+  }
 
   const PAGES = [
     { path: "/", title: "CalcoloMediazione - Calcolatore Indennità Mediazione", desc: "Piattaforma professionale per il calcolo delle indennità di mediazione secondo il D.M. 150/2023. Analisi AI, calcolatore indennità e generatore documenti.", priority: "1.0", changefreq: "weekly" },
@@ -345,15 +353,15 @@ Rispondi alle domande dell'utente sul caso, fornendo approfondimenti, chiariment
   ];
 
   // Sitemap XML
-  app.get("/sitemap.xml", (_req, res) => {
+  app.get("/sitemap.xml", (req, res) => {
+    const siteUrl = getSiteUrl(req);
     const today = new Date().toISOString().slice(0, 10);
     let xml = `<?xml version="1.0" encoding="UTF-8"?>\n`;
     xml += `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n`;
 
     for (const page of PAGES) {
-      // Use clean URLs that the server will redirect to hash URLs for browsers
       xml += `  <url>\n`;
-      xml += `    <loc>${SITE_URL}${page.path === "/" ? "" : page.path}</loc>\n`;
+      xml += `    <loc>${siteUrl}${page.path === "/" ? "" : page.path}</loc>\n`;
       xml += `    <lastmod>${today}</lastmod>\n`;
       xml += `    <changefreq>${page.changefreq}</changefreq>\n`;
       xml += `    <priority>${page.priority}</priority>\n`;
@@ -372,11 +380,12 @@ Rispondi alle domande dell'utente sul caso, fornendo approfondimenti, chiariment
   });
 
   // Robots.txt
-  app.get("/robots.txt", (_req, res) => {
+  app.get("/robots.txt", (req, res) => {
+    const siteUrl = getSiteUrl(req);
     const txt = `User-agent: *
 Allow: /
 
-Sitemap: ${SITE_URL}/sitemap.xml
+Sitemap: ${siteUrl}/sitemap.xml
 
 # Disallow admin and API
 Disallow: /api/

@@ -18,7 +18,14 @@ const SEO_PAGES: Record<string, { title: string; description: string }> = {
   "/contatti": { title: "Contatti - CalcoloMediazione", description: "Contatta il team di CalcoloMediazione." },
 };
 
-const SITE_URL = "https://calcolomediazione.it";
+const PRIMARY_URL = "https://calcolomediazione.it";
+
+function getSiteUrl(req: any): string {
+  const host = req.hostname || req.headers.host?.split(':')[0] || 'calcolomediazione.it';
+  if (host.includes('calcolomediazione.org')) return 'https://calcolomediazione.org';
+  if (host.includes('calcolomediazione.it')) return 'https://calcolomediazione.it';
+  return PRIMARY_URL;
+}
 
 export function serveStatic(app: Express) {
   const distPath = path.resolve(__dirname, "public");
@@ -37,6 +44,7 @@ export function serveStatic(app: Express) {
     const indexPath = path.resolve(distPath, "index.html");
     let html = fs.readFileSync(indexPath, "utf-8");
 
+    const siteUrl = getSiteUrl(req);
     const seoPage = SEO_PAGES[reqPath];
     if (seoPage && reqPath !== "/") {
       // Replace title
@@ -52,13 +60,13 @@ export function serveStatic(app: Express) {
       // Add canonical URL
       html = html.replace(
         '</head>',
-        `  <link rel="canonical" href="${SITE_URL}${reqPath}" />\n    <meta property="og:title" content="${seoPage.title}" />\n    <meta property="og:description" content="${seoPage.description}" />\n    <meta property="og:url" content="${SITE_URL}${reqPath}" />\n    <meta property="og:type" content="website" />\n    <meta property="og:site_name" content="CalcoloMediazione" />\n    <script>if(!window.location.hash || window.location.hash === '#/') window.location.hash = '#${reqPath}';</script>\n  </head>`
+        `  <link rel="canonical" href="${siteUrl}${reqPath}" />\n    <meta property="og:title" content="${seoPage.title}" />\n    <meta property="og:description" content="${seoPage.description}" />\n    <meta property="og:url" content="${siteUrl}${reqPath}" />\n    <meta property="og:type" content="website" />\n    <meta property="og:site_name" content="CalcoloMediazione" />\n    <script>if(!window.location.hash || window.location.hash === '#/') window.location.hash = '#${reqPath}';</script>\n  </head>`
       );
     } else if (reqPath === "/") {
       // Home page - add canonical and OG tags
       html = html.replace(
         '</head>',
-        `  <link rel="canonical" href="${SITE_URL}/" />\n    <meta property="og:title" content="CalcoloMediazione - Calcolatore Indennit\u00e0 Mediazione D.M. 150/2023" />\n    <meta property="og:description" content="Piattaforma professionale per il calcolo delle indennit\u00e0 di mediazione secondo il D.M. 150/2023." />\n    <meta property="og:url" content="${SITE_URL}/" />\n    <meta property="og:type" content="website" />\n    <meta property="og:site_name" content="CalcoloMediazione" />\n  </head>`
+        `  <link rel="canonical" href="${siteUrl}/" />\n    <meta property="og:title" content="CalcoloMediazione - Calcolatore Indennit\u00e0 Mediazione D.M. 150/2023" />\n    <meta property="og:description" content="Piattaforma professionale per il calcolo delle indennit\u00e0 di mediazione secondo il D.M. 150/2023." />\n    <meta property="og:url" content="${siteUrl}/" />\n    <meta property="og:type" content="website" />\n    <meta property="og:site_name" content="CalcoloMediazione" />\n  </head>`
       );
     }
 
