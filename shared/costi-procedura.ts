@@ -32,6 +32,8 @@ export interface InputConfronto {
   redditoAnnuo?: number;
   numeroProcedure?: number;
   gratuitoPatrocinio?: boolean;
+  mediatoreEsperto?: boolean;
+  proceduraComplessa?: boolean;
 }
 
 export interface ImposteImmobiliari {
@@ -317,6 +319,13 @@ function calcolaCostiMediazione(input: InputConfronto, valoreEffettivo: number):
       indennita = indennita * 0.8;
       speseAvvio = Math.round(speseAvvio * 0.8);
     }
+  }
+
+  // Maggiorazione art. 31, co. 3: +20% sull'indennità se mediatore esperto o procedura complessa
+  let maggiorazioneArt31 = 0;
+  if (input.mediatoreEsperto || input.proceduraComplessa) {
+    maggiorazioneArt31 = Math.round(indennita * 0.2);
+    indennita = indennita + maggiorazioneArt31;
   }
 
   // Gratuito patrocinio: indennità a carico dell'erario → 0 per la parte

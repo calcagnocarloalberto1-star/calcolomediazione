@@ -218,32 +218,94 @@ function extractStructuredSections(text: string): Array<{ level: number; heading
   return sections;
 }
 
+// Draw the Scale (bilancia) logo icon using jsPDF vector drawing
+function drawLogoIcon(doc: jsPDF, x: number, y: number, size: number, color: [number, number, number]) {
+  doc.setDrawColor(...color);
+  doc.setFillColor(...color);
+  const cx = x + size / 2;
+  const cy = y + size / 2;
+  const s = size;
+
+  // Base/stand (triangle at bottom)
+  const baseW = s * 0.4;
+  const baseH = s * 0.1;
+  doc.setLineWidth(0.3);
+  doc.triangle(
+    cx - baseW / 2, cy + s * 0.38,
+    cx + baseW / 2, cy + s * 0.38,
+    cx, cy + s * 0.38 - baseH,
+    "F"
+  );
+
+  // Central pillar
+  doc.setLineWidth(s * 0.04);
+  doc.line(cx, cy - s * 0.3, cx, cy + s * 0.28);
+
+  // Cross beam
+  const beamW = s * 0.4;
+  doc.line(cx - beamW, cy - s * 0.3, cx + beamW, cy - s * 0.3);
+
+  // Left pan (small arc/cup)
+  const panW = s * 0.16;
+  const panY = cy - s * 0.1;
+  const leftX = cx - beamW;
+  // Left chain
+  doc.setLineWidth(s * 0.02);
+  doc.line(leftX, cy - s * 0.3, leftX, panY - s * 0.04);
+  // Left cup
+  doc.setLineWidth(s * 0.03);
+  doc.line(leftX - panW, panY, leftX + panW, panY);
+  // Arc (simplified with lines)
+  doc.line(leftX - panW, panY, leftX - panW * 0.6, panY + s * 0.1);
+  doc.line(leftX + panW, panY, leftX + panW * 0.6, panY + s * 0.1);
+  doc.line(leftX - panW * 0.6, panY + s * 0.1, leftX + panW * 0.6, panY + s * 0.1);
+
+  // Right pan
+  const rightX = cx + beamW;
+  // Right chain
+  doc.setLineWidth(s * 0.02);
+  doc.line(rightX, cy - s * 0.3, rightX, panY - s * 0.04);
+  // Right cup
+  doc.setLineWidth(s * 0.03);
+  doc.line(rightX - panW, panY, rightX + panW, panY);
+  doc.line(rightX - panW, panY, rightX - panW * 0.6, panY + s * 0.1);
+  doc.line(rightX + panW, panY, rightX + panW * 0.6, panY + s * 0.1);
+  doc.line(rightX - panW * 0.6, panY + s * 0.1, rightX + panW * 0.6, panY + s * 0.1);
+}
+
 
 export function generateAnalisiPdf(analisi: AnalisiCaso): Buffer {
   ensureAutoTable();
   const doc = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
   const pageWidth = doc.internal.pageSize.getWidth();
   const pageHeight = doc.internal.pageSize.getHeight();
-  const marginLeft = 20;
-  const marginRight = 20;
+  const marginLeft = 18;
+  const marginRight = 18;
   const contentWidth = pageWidth - marginLeft - marginRight;
   const marginBottom = 25;
   const maxY = pageHeight - marginBottom;
 
-  let y = 25;
+  let y = 0;
 
-  // Colors
-  const primaryColor: [number, number, number] = [197, 90, 43];
-  const darkColor: [number, number, number] = [35, 35, 35];
-  const grayColor: [number, number, number] = [120, 120, 120];
-  const lightBg: [number, number, number] = [245, 242, 237];
-  const tableHeaderBg: [number, number, number] = [240, 235, 228];
-  const tableAltBg: [number, number, number] = [250, 248, 245];
+  // Colors — CalcoloMediazione design system
+  const primaryColor: [number, number, number] = [197, 90, 43];   // burnt orange #c55a2b
+  const darkColor: [number, number, number] = [45, 41, 38];       // deep charcoal #2d2926
+  const grayColor: [number, number, number] = [120, 115, 110];
+  const lightGray: [number, number, number] = [160, 155, 150];
+  const warmBg: [number, number, number] = [245, 240, 235];       // warm gray #f5f0eb
+  const tableHeaderBg: [number, number, number] = [197, 90, 43];  // orange headers
+  const tableHeaderText: [number, number, number] = [255, 255, 255];
+  const tableAltBg: [number, number, number] = [250, 247, 243];
+  const white: [number, number, number] = [255, 255, 255];
+  const sectionBg: [number, number, number] = [248, 244, 240];
+
+  const now = new Date();
+  const dateStr = now.toLocaleDateString("it-IT", { day: "2-digit", month: "long", year: "numeric" });
 
   function checkNewPage(neededSpace: number = 15) {
     if (y + neededSpace > maxY) {
       doc.addPage();
-      y = 25;
+      y = 20;
     }
   }
 
@@ -282,45 +344,42 @@ export function generateAnalisiPdf(analisi: AnalisiCaso): Buffer {
     const sanitizedHeaders = table.headers.map(cleanCell);
     const sanitizedRows = table.rows.map(row => row.map(cleanCell));
 
-    // Calculate column widths based on content
-    const colCount = sanitizedHeaders.length;
-    const availWidth = contentWidth;
-
     (doc as any).autoTable({
       startY: y,
       head: [sanitizedHeaders],
       body: sanitizedRows,
       margin: { left: marginLeft, right: marginRight },
-      tableWidth: availWidth,
+      tableWidth: contentWidth,
       styles: {
         fontSize: 8,
-        cellPadding: 2.5,
-        lineColor: [180, 170, 160],
-        lineWidth: 0.3,
+        cellPadding: 3,
+        lineColor: [220, 215, 210],
+        lineWidth: 0.25,
         textColor: darkColor,
         font: "helvetica",
         overflow: "linebreak",
       },
       headStyles: {
         fillColor: tableHeaderBg,
-        textColor: darkColor,
+        textColor: tableHeaderText,
         fontStyle: "bold",
         fontSize: 8,
-        lineWidth: 0.5,
-        lineColor: [150, 140, 130],
+        lineWidth: 0,
+        cellPadding: 3.5,
       },
       alternateRowStyles: {
         fillColor: tableAltBg,
       },
-      columnStyles: colCount <= 3 ? {} : undefined,
-      didDrawPage: () => {
-        // Reset y after page break within table
+      bodyStyles: {
+        lineColor: [230, 225, 220],
+        lineWidth: 0.15,
       },
+      didDrawPage: () => {},
     });
 
     // Update y position after table
     y = (doc as any).lastAutoTable?.finalY ?? y + 10;
-    y += 4;
+    y += 5;
   }
 
   function renderContentBody(body: string) {
@@ -364,7 +423,6 @@ export function generateAnalisiPdf(analisi: AnalisiCaso): Buffer {
               }
             } else {
               // Regular paragraph text
-              // Check for bold patterns (text between **)
               const clean = sanitizeText(l);
               doc.setFontSize(9);
               doc.setTextColor(...darkColor);
@@ -383,168 +441,356 @@ export function generateAnalisiPdf(analisi: AnalisiCaso): Buffer {
     }
   }
 
-  // ========== COVER / HEADER ==========
-  // Orange top bar
-  doc.setFillColor(...primaryColor);
-  doc.rect(0, 0, pageWidth, 4, "F");
+  // ========================================================================
+  //  PAGE 1: COVER PAGE
+  // ========================================================================
 
-  y = 28;
-  doc.setFontSize(9);
-  doc.setTextColor(...primaryColor);
+  // Full-width orange header bar
+  doc.setFillColor(...primaryColor);
+  doc.rect(0, 0, pageWidth, 48, "F");
+
+  // Logo icon in header
+  drawLogoIcon(doc, marginLeft, 8, 28, white);
+
+  // Site name next to logo
+  doc.setFontSize(18);
+  doc.setTextColor(...white);
   doc.setFont("helvetica", "bold");
-  doc.text("CALCOLOMEDIAZIONE - ANALISI AI", marginLeft, y);
-  y += 12;
+  doc.text("CalcoloMediazione", marginLeft + 32, 22);
+
+  // Subtitle
+  doc.setFontSize(9);
+  doc.setFont("helvetica", "normal");
+  doc.text("Piattaforma professionale per la mediazione civile", marginLeft + 32, 30);
+  doc.text("calcolomediazione.it", marginLeft + 32, 37);
+
+  y = 62;
+
+  // Report type badge
+  doc.setFillColor(...warmBg);
+  doc.setDrawColor(...primaryColor);
+  doc.setLineWidth(0.5);
+  const badgeText = "RELAZIONE ANALISI AI";
+  doc.setFontSize(9);
+  doc.setFont("helvetica", "bold");
+  const badgeWidth = doc.getTextWidth(badgeText) + 10;
+  doc.roundedRect(marginLeft, y, badgeWidth, 8, 1, 1, "FD");
+  doc.setTextColor(...primaryColor);
+  doc.text(badgeText, marginLeft + 5, y + 5.5);
+  y += 16;
 
   // Title
-  doc.setFontSize(20);
+  doc.setFontSize(22);
   doc.setTextColor(...darkColor);
   doc.setFont("helvetica", "bold");
   const titleLines = doc.splitTextToSize(sanitizeText(analisi.titolo), contentWidth);
   for (const line of titleLines) {
     doc.text(line, marginLeft, y);
-    y += 9;
+    y += 10;
   }
-  y += 4;
+  y += 6;
 
-  // Meta info box
-  doc.setFillColor(...lightBg);
+  // Thin orange separator
   doc.setDrawColor(...primaryColor);
-  doc.setLineWidth(0.6);
-  const boxHeight = 20;
-  doc.rect(marginLeft, y, contentWidth, boxHeight, "FD");
+  doc.setLineWidth(1.5);
+  doc.line(marginLeft, y, marginLeft + 40, y);
+  y += 10;
 
-  doc.setFontSize(8.5);
-  doc.setTextColor(...grayColor);
-  doc.setFont("helvetica", "normal");
-  const now = new Date();
-  const dateStr = now.toLocaleDateString("it-IT", { day: "2-digit", month: "long", year: "numeric" });
-  doc.text(`Data: ${dateStr}`, marginLeft + 4, y + 6);
-  doc.text(`Tipo: ${analisi.tipoAnalisi === "mediazione" ? "Mediazione" : "Negoziazione Assistita"}`, marginLeft + 4, y + 12);
+  // Info box — structured metadata
+  const infoBoxY = y;
+  const infoBoxH = 50;
+  doc.setFillColor(...warmBg);
+  doc.setDrawColor(220, 215, 210);
+  doc.setLineWidth(0.3);
+  doc.roundedRect(marginLeft, infoBoxY, contentWidth, infoBoxH, 2, 2, "FD");
+
+  // Left column labels + values
+  const col1X = marginLeft + 6;
+  const col2X = pageWidth / 2 + 5;
+  let infoY = infoBoxY + 9;
+
+  // Label style helper
+  const drawInfoLabel = (label: string, value: string, x: number, iy: number) => {
+    doc.setFontSize(7);
+    doc.setTextColor(...lightGray);
+    doc.setFont("helvetica", "bold");
+    doc.text(label.toUpperCase(), x, iy);
+    doc.setFontSize(9.5);
+    doc.setTextColor(...darkColor);
+    doc.setFont("helvetica", "normal");
+    doc.text(sanitizeText(value), x, iy + 5);
+  };
+
+  drawInfoLabel("Data", dateStr, col1X, infoY);
+  drawInfoLabel("Tipo Procedura", analisi.tipoAnalisi === "mediazione" ? "Mediazione Civile" : "Negoziazione Assistita", col2X, infoY);
+
+  infoY += 16;
   if (analisi.valoreLite) {
-    doc.text(`Valore lite: EUR ${Number(analisi.valoreLite).toLocaleString("it-IT")}`, marginLeft + 4, y + 18);
+    drawInfoLabel("Valore della Lite", `EUR ${Number(analisi.valoreLite).toLocaleString("it-IT", { minimumFractionDigits: 2 })}`, col1X, infoY);
+  } else {
+    drawInfoLabel("Valore della Lite", "Indeterminato", col1X, infoY);
   }
 
-  // Parti on right side
+  // Parti
   const parti = analisi.parti as Array<{ nome: string; ruolo: string }> | null;
   if (parti && parti.length > 0) {
     const partiStr = parti.map(p => `${sanitizeText(p.nome)} (${p.ruolo})`).join(", ");
-    const partiLines = doc.splitTextToSize(`Parti: ${partiStr}`, contentWidth / 2 - 5);
-    let partiY = y + 6;
-    for (const line of partiLines) {
-      doc.text(line, pageWidth / 2 + 5, partiY);
-      partiY += 4.5;
+    drawInfoLabel("Parti", partiStr.length > 60 ? partiStr.substring(0, 57) + "..." : partiStr, col2X, infoY);
+  }
+
+  infoY += 16;
+  drawInfoLabel("Stato", analisi.stato === "completata" ? "Analisi Completata" : analisi.stato, col1X, infoY);
+  drawInfoLabel("Generato da", "CalcoloMediazione AI (Gemini)", col2X, infoY);
+
+  y = infoBoxY + infoBoxH + 12;
+
+  // Description preview (if present)
+  if (analisi.descrizione) {
+    doc.setFontSize(8);
+    doc.setTextColor(...grayColor);
+    doc.setFont("helvetica", "bold");
+    doc.text("DESCRIZIONE DEL CASO", marginLeft, y);
+    y += 5;
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(8.5);
+    doc.setTextColor(...darkColor);
+    const descClean = sanitizeText(analisi.descrizione);
+    // Show max ~600 chars on the cover
+    const descTrunc = descClean.length > 600 ? descClean.substring(0, 597) + "..." : descClean;
+    const descLines = doc.splitTextToSize(descTrunc, contentWidth);
+    for (const dl of descLines) {
+      if (y > maxY - 30) break;
+      doc.text(dl, marginLeft, y);
+      y += 4.2;
     }
   }
 
-  y += boxHeight + 8;
+  // Table of contents at bottom of cover page
+  y = Math.max(y + 10, pageHeight - 95);
+  doc.setFillColor(...sectionBg);
+  doc.setDrawColor(230, 225, 220);
+  doc.setLineWidth(0.2);
+  const tocH = 78;
+  doc.roundedRect(marginLeft, y, contentWidth, tocH, 2, 2, "FD");
 
-  // Divider line
-  doc.setDrawColor(...primaryColor);
-  doc.setLineWidth(1.2);
-  doc.line(marginLeft, y, marginLeft + 35, y);
-  y += 10;
+  doc.setFontSize(9);
+  doc.setTextColor(...primaryColor);
+  doc.setFont("helvetica", "bold");
+  doc.text("INDICE DELLA RELAZIONE", marginLeft + 6, y + 8);
 
-  // ========== CONTENT SECTIONS ==========
-  const analysisSections: Array<{ title: string; content: string | null }> = [
-    { title: "1. Estrazione Entita (NER)", content: analisi.prospettoEconomico },
-    { title: "2. Analisi Giuridica", content: analisi.analisiGiuridica },
-    { title: "3. Guida Strategica", content: analisi.guidaStrategica },
-    { title: "4. Analisi MAAN/BATNA", content: analisi.analisiMaanBatna },
-    { title: "5. Compatibilita Interessi", content: analisi.compatibilitaInteressi },
-    { title: "6. Controllo Bias Cognitivi", content: analisi.controlloBiasCognitivi },
-    { title: "7. Bozza Accordo", content: analisi.bozzaAccordo },
-    { title: "8. Analisi Economica Comparativa", content: analisi.analisiEconomica },
+  const tocItems = [
+    "1. Estrazione Entita (NER)",
+    "2. Analisi Giuridica",
+    "3. Guida Strategica",
+    "4. Analisi MAAN/BATNA",
+    "5. Compatibilita Interessi",
+    "6. Controllo Bias Cognitivi",
+    "7. Bozza Accordo",
+    "8. Analisi Economica Comparativa",
+  ];
+
+  doc.setFontSize(8.5);
+  doc.setFont("helvetica", "normal");
+  doc.setTextColor(...darkColor);
+  let tocY = y + 15;
+  const tocCol1 = marginLeft + 8;
+  const tocCol2 = marginLeft + contentWidth / 2 + 4;
+  for (let i = 0; i < tocItems.length; i++) {
+    const tx = i < 4 ? tocCol1 : tocCol2;
+    const ty = tocY + (i < 4 ? i : i - 4) * 7;
+    doc.text(tocItems[i], tx, ty);
+    // Dot separator
+    const dotXStart = tx + doc.getTextWidth(tocItems[i]) + 2;
+    const dotXEnd = (i < 4 ? tocCol2 - 12 : marginLeft + contentWidth - 8);
+    if (dotXEnd > dotXStart + 5) {
+      doc.setTextColor(...lightGray);
+      let dots = "";
+      while (doc.getTextWidth(dots + " .") < (dotXEnd - dotXStart)) {
+        dots += " .";
+      }
+      doc.text(dots, dotXStart, ty);
+      doc.setTextColor(...darkColor);
+    }
+  }
+
+  // Footer on cover page
+  doc.setFontSize(7);
+  doc.setTextColor(...lightGray);
+  doc.setFont("helvetica", "normal");
+  doc.text(
+    "Questo documento ha valore informativo e non sostituisce la consulenza legale professionale.",
+    pageWidth / 2, pageHeight - 15,
+    { align: "center" }
+  );
+
+  // ========================================================================
+  //  CONTENT PAGES
+  // ========================================================================
+
+  const analysisSections: Array<{ title: string; content: string | null; icon: string }> = [
+    { title: "1. Estrazione Entita (NER)", content: analisi.prospettoEconomico, icon: "NER" },
+    { title: "2. Analisi Giuridica", content: analisi.analisiGiuridica, icon: "GIU" },
+    { title: "3. Guida Strategica", content: analisi.guidaStrategica, icon: "STR" },
+    { title: "4. Analisi MAAN/BATNA", content: analisi.analisiMaanBatna, icon: "MAA" },
+    { title: "5. Compatibilita Interessi", content: analisi.compatibilitaInteressi, icon: "INT" },
+    { title: "6. Controllo Bias Cognitivi", content: analisi.controlloBiasCognitivi, icon: "BIA" },
+    { title: "7. Bozza Accordo", content: analisi.bozzaAccordo, icon: "ACC" },
+    { title: "8. Analisi Economica Comparativa", content: analisi.analisiEconomica, icon: "ECO" },
   ];
 
   for (const section of analysisSections) {
     if (!section.content) continue;
 
-    // Section title with accent bar
-    checkNewPage(20);
+    // Start each major section on a new page
+    doc.addPage();
+    y = 15;
+
+    // Section header band
     doc.setFillColor(...primaryColor);
-    doc.rect(marginLeft, y - 1, 3, 7, "F");
-    doc.setFontSize(12);
+    doc.rect(0, 0, pageWidth, 5, "F");
+
+    y = 18;
+
+    // Section icon badge
+    doc.setFillColor(...primaryColor);
+    doc.roundedRect(marginLeft, y - 3, 14, 8, 1, 1, "F");
+    doc.setFontSize(6.5);
+    doc.setTextColor(...white);
+    doc.setFont("helvetica", "bold");
+    doc.text(section.icon, marginLeft + 7, y + 2.5, { align: "center" });
+
+    // Section title
+    doc.setFontSize(14);
     doc.setTextColor(...darkColor);
     doc.setFont("helvetica", "bold");
-    doc.text(section.title, marginLeft + 7, y + 4);
+    doc.text(sanitizeText(section.title), marginLeft + 18, y + 2.5);
     y += 12;
+
+    // Thin line under title
+    doc.setDrawColor(...primaryColor);
+    doc.setLineWidth(0.6);
+    doc.line(marginLeft, y, marginLeft + contentWidth, y);
+    y += 8;
 
     // Parse sub-sections from the content
     const subSections = extractStructuredSections(section.content);
 
     for (const sub of subSections) {
       if (sub.heading) {
-        checkNewPage(12);
+        checkNewPage(14);
 
         const headClean = sanitizeText(sub.heading);
         if (sub.level <= 2) {
-          // Major sub-heading
+          // Major sub-heading with background
+          doc.setFillColor(...sectionBg);
+          doc.roundedRect(marginLeft, y - 3, contentWidth, 8, 1, 1, "F");
           doc.setFontSize(10);
           doc.setTextColor(...primaryColor);
           doc.setFont("helvetica", "bold");
-          doc.text(headClean, marginLeft + 2, y);
-          y += 6;
+          doc.text(headClean, marginLeft + 4, y + 2);
+          y += 9;
         } else {
           // Minor sub-heading
           doc.setFontSize(9.5);
           doc.setTextColor(...darkColor);
           doc.setFont("helvetica", "bold");
           doc.text(headClean, marginLeft + 2, y);
-          y += 5.5;
+          y += 6;
         }
       }
 
       if (sub.body) {
         renderContentBody(sub.body);
       }
-      y += 1.5;
+      y += 2;
     }
-
-    y += 5; // Section spacing
   }
 
-  // ========== FINAL FOOTER ==========
-  checkNewPage(25);
-  y += 4;
+  // ========================================================================
+  //  FINAL PAGE: DISCLAIMER & FOOTER
+  // ========================================================================
+  checkNewPage(50);
+  y += 6;
+
+  // Closing separator
   doc.setDrawColor(...primaryColor);
-  doc.setLineWidth(0.8);
+  doc.setLineWidth(1);
   doc.line(marginLeft, y, pageWidth - marginRight, y);
-  y += 8;
+  y += 10;
+
+  // Disclaimer box
+  doc.setFillColor(...warmBg);
+  doc.setDrawColor(220, 215, 210);
+  doc.setLineWidth(0.3);
+  const disclaimerH = 30;
+  doc.roundedRect(marginLeft, y, contentWidth, disclaimerH, 2, 2, "FD");
 
   doc.setFontSize(7.5);
+  doc.setTextColor(...primaryColor);
+  doc.setFont("helvetica", "bold");
+  doc.text("AVVERTENZE", marginLeft + 5, y + 7);
+
+  doc.setFontSize(7);
   doc.setTextColor(...grayColor);
   doc.setFont("helvetica", "normal");
-  doc.text(
-    "Documento generato automaticamente da CalcoloMediazione - Analisi AI",
-    marginLeft, y
-  );
-  y += 4;
-  doc.text(
-    `Data generazione: ${dateStr} | calcolomediazione.com`,
-    marginLeft, y
-  );
-  y += 4;
-  doc.text(
-    "Questo documento ha valore informativo e non sostituisce la consulenza legale professionale.",
-    marginLeft, y
-  );
+  const disclaimer1 = "Questo documento e stato generato automaticamente dalla piattaforma CalcoloMediazione con l'ausilio di intelligenza artificiale.";
+  const disclaimer2 = "Le informazioni contenute hanno valore puramente informativo e orientativo. Non sostituiscono in alcun modo la consulenza legale professionale di un avvocato abilitato.";
+  const disclaimer3 = `Generato il ${dateStr} | calcolomediazione.it`;
 
-  // ========== PAGE FOOTERS ==========
+  const d1Lines = doc.splitTextToSize(disclaimer1, contentWidth - 10);
+  let dY = y + 12;
+  for (const dl of d1Lines) { doc.text(dl, marginLeft + 5, dY); dY += 3.5; }
+  const d2Lines = doc.splitTextToSize(disclaimer2, contentWidth - 10);
+  for (const dl of d2Lines) { doc.text(dl, marginLeft + 5, dY); dY += 3.5; }
+  doc.setTextColor(...lightGray);
+  doc.text(disclaimer3, marginLeft + 5, dY + 1);
+
+  // ========================================================================
+  //  PAGE HEADERS & FOOTERS ON ALL PAGES
+  // ========================================================================
   const totalPages = doc.getNumberOfPages();
   for (let i = 1; i <= totalPages; i++) {
     doc.setPage(i);
-    doc.setDrawColor(...primaryColor);
-    doc.setLineWidth(0.4);
-    doc.line(marginLeft, pageHeight - 17, pageWidth - marginRight, pageHeight - 17);
-    doc.setFontSize(7.5);
-    doc.setTextColor(...grayColor);
+
+    if (i > 1) {
+      // Page header (not on cover)
+      doc.setFontSize(7);
+      doc.setTextColor(...lightGray);
+      doc.setFont("helvetica", "normal");
+      doc.text("CalcoloMediazione", marginLeft, 10);
+      doc.text("Relazione Analisi AI", pageWidth - marginRight, 10, { align: "right" });
+
+      // Top orange line (already drawn by section headers on section pages, 
+      // but add for pages that start mid-section)
+    }
+
+    // Footer line
+    doc.setDrawColor(220, 215, 210);
+    doc.setLineWidth(0.3);
+    doc.line(marginLeft, pageHeight - 16, pageWidth - marginRight, pageHeight - 16);
+
+    // Footer text
+    doc.setFontSize(7);
+    doc.setTextColor(...lightGray);
     doc.setFont("helvetica", "normal");
-    doc.text(
-      `CalcoloMediazione | Analisi AI | Pagina ${i} di ${totalPages}`,
-      pageWidth / 2,
-      pageHeight - 12,
-      { align: "center" }
-    );
+
+    if (i === 1) {
+      // Cover footer - just page number
+      doc.text(
+        `Pagina ${i} di ${totalPages}`,
+        pageWidth / 2, pageHeight - 10,
+        { align: "center" }
+      );
+    } else {
+      // Content page footer
+      doc.text("calcolomediazione.it", marginLeft, pageHeight - 10);
+      doc.text(
+        `Pagina ${i} di ${totalPages}`,
+        pageWidth / 2, pageHeight - 10,
+        { align: "center" }
+      );
+      doc.text(dateStr, pageWidth - marginRight, pageHeight - 10, { align: "right" });
+    }
   }
 
   const arrayBuffer = doc.output("arraybuffer");

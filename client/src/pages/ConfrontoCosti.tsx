@@ -57,6 +57,8 @@ export default function ConfrontoCosti() {
   const [primaCasa, setPrimaCasa] = useState(true);
   const [redditoAnnuo, setRedditoAnnuo] = useState("");
   const [gratuitoPatrocinio, setGratuitoPatrocinio] = useState(false);
+  const [mediatoreEsperto, setMediatoreEsperto] = useState(false);
+  const [proceduraComplessa, setProceduraComplessa] = useState(false);
   const [showDetails, setShowDetails] = useState(false);
   const [showVantaggi, setShowVantaggi] = useState(true);
 
@@ -69,7 +71,9 @@ export default function ConfrontoCosti() {
     modalitaTariffaria,
     redditoAnnuo: redditoAnnuo ? parseFloat(redditoAnnuo) : undefined,
     gratuitoPatrocinio,
-  }), [valoreLite, tipoValore, tipoMediazione, materiaImmobiliare, primaCasa, modalitaTariffaria, redditoAnnuo, gratuitoPatrocinio]);
+    mediatoreEsperto,
+    proceduraComplessa,
+  }), [valoreLite, tipoValore, tipoMediazione, materiaImmobiliare, primaCasa, modalitaTariffaria, redditoAnnuo, gratuitoPatrocinio, mediatoreEsperto, proceduraComplessa]);
 
   const risultato: RisultatoConfronto | null = useMemo(() => {
     if (tipoValore === "determinato" && (!valoreLite || parseFloat(valoreLite) <= 0)) return null;
@@ -242,6 +246,33 @@ export default function ConfrontoCosti() {
                   <span className="text-sm text-muted-foreground">
                     {gratuitoPatrocinio ? "Attivo — costi a carico erario" : "No"}
                   </span>
+                </div>
+              </div>
+
+              {/* Maggiorazioni art. 31, co. 3 */}
+              <div className="space-y-2">
+                <Label className="text-sm font-semibold">Maggiorazioni art. 31, co. 3</Label>
+                <div className="flex flex-col gap-2">
+                  <div className="flex items-center gap-3 h-10">
+                    <Switch
+                      checked={mediatoreEsperto}
+                      onCheckedChange={setMediatoreEsperto}
+                      data-testid="switch-mediatore-esperto"
+                    />
+                    <span className="text-sm text-muted-foreground">
+                      Mediatore esperto {mediatoreEsperto ? "(+20%)" : ""}
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-3 h-10">
+                    <Switch
+                      checked={proceduraComplessa}
+                      onCheckedChange={setProceduraComplessa}
+                      data-testid="switch-procedura-complessa"
+                    />
+                    <span className="text-sm text-muted-foreground">
+                      Procedura complessa {proceduraComplessa ? "(+20%)" : ""}
+                    </span>
+                  </div>
                 </div>
               </div>
 

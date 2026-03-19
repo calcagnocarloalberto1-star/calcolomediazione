@@ -37,6 +37,10 @@ import {
   Eye,
   Scale,
   Award,
+  History,
+  FolderOpen,
+  Trash,
+  CalendarDays,
 } from "lucide-react";
 import MarkdownRenderer from "@/components/MarkdownRenderer";
 import { apiRequest } from "@/lib/queryClient";
@@ -852,6 +856,24 @@ export default function AnalisiCasoAI() {
           </p>
         </div>
 
+        {/* Storico Analisi */}
+        <StoricoAnalisi onLoadAnalisi={(a) => {
+          setAnalisi(a);
+          // Count completed steps
+          let completed = 0;
+          if (a.prospettoEconomico) completed++;
+          if (a.analisiGiuridica) completed++;
+          if (a.guidaStrategica) completed++;
+          if (a.analisiMaanBatna) completed++;
+          if (a.compatibilitaInteressi) completed++;
+          if (a.controlloBiasCognitivi) completed++;
+          if (a.bozzaAccordo) completed++;
+          if (a.analisiEconomica) completed++;
+          setCurrentStep(completed);
+          if (a.stato === "in_corso") setIsRunning(true);
+          if (a.chatHistory && a.chatHistory.length > 0) setChatMessages(a.chatHistory);
+        }} />
+
         {/* Example Output Preview */}
         <ExampleOutputPreview />
 
@@ -1203,6 +1225,198 @@ export default function AnalisiCasoAI() {
         </Card>
       </div>
     </div>
+  );
+}
+
+// ========================
+// STORICO ANALISI
+// ========================
+
+function StoricoAnalisi({ onLoadAnalisi }: { onLoadAnalisi: (a: AnalisiCaso) => void }) {
+  const [open, setOpen] = useState(false);
+  const [analisiList, setAnalisiList] = useState<AnalisiCaso[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [deleting, setDeleting] = useState<number | null>(null);
+
+  const loadStorico = async () => {
+    if (analisiList.length > 0) return; // already loaded
+    setLoading(true);
+    try {
+      const res = await apiRequest("GET", "/api/analisi");
+      const data: AnalisiCaso[] = await res.json();
+      setAnalisiList(data);
+    } catch (error) {
+      console.error("Errore caricamento storico:", error);
+    }
+    setLoading(false);
+  };
+
+  const handleToggle = () => {
+    const next = !open;
+    setOpen(next);
+    if (next) loadStorico();
+  };
+
+  const handleLoad = async (id: number) => {
+    try {
+      const res = await apiRequest("GET", `/api/analisi/${id}`);
+      const data: AnalisiCaso = await res.json();
+      onLoadAnalisi(data);
+    } catch (error) {
+      console.error("Errore caricamento analisi:", error);
+    }
+  };
+
+  const handleDelete = async (id: number) => {
+    setDeleting(id);
+    try {
+      await apiRequest("DELETE", `/api/analisi/${id}`);
+      setAnalisiList(prev => prev.filter(a => a.id !== id));
+    } catch (error) {
+      console.error("Errore eliminazione analisi:", error);
+    }
+    setDeleting(null);
+  };
+
+  const formatDate = (date: string | Date) => {
+    return new Date(date).toLocaleDateString("it-IT", {
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  };
+
+  const completedCount = analisiList.filter(a => a.stato === "completata").length;
+  const totalCount = analisiList.length;
+
+  return (
+    <Card
+      className="border-2 border-foreground/30 bg-card mb-6"
+      data-testid="card-storico-analisi"
+    >
+      <button
+        onClick={handleToggle}
+        className="w-full flex items-center justify-between px-6 py-4 text-left hover:bg-muted/50 transition-colors duration-150"
+        data-testid="button-toggle-storico"
+      >
+        <div className="flex items-center gap-3">
+          <History className="w-5 h-5 text-primary" />
+          <div>
+            <span
+              className="font-bold text-sm"
+              style={{ fontFamily: "'Space Grotesk', sans-serif" }}
+            >
+              Storico Analisi
+            </span>
+            <span className="block text-xs text-muted-foreground">
+              {totalCount > 0
+                ? `${totalCount} analis${totalCount === 1 ? "i" : "i"} salvat${totalCount === 1 ? "a" : "e"} (${completedCount} completat${completedCount === 1 ? "a" : "e"})`
+                : "Carica analisi precedenti"}
+            </span>
+          </div>
+        </div>
+        {open ? (
+          <ChevronUp className="w-5 h-5 text-muted-foreground flex-shrink-0" />
+        ) : (
+          <ChevronDown className="w-5 h-5 text-muted-foreground flex-shrink-0" />
+        )}
+      </button>
+
+      {open && (
+        <div className="px-6 pb-6">
+          {loading ? (
+            <div className="flex items-center justify-center gap-2 py-6 text-muted-foreground">
+              <Loader2 className="w-4 h-4 animate-spin" />
+              <span className="text-sm">Caricamento...</span>
+            </div>
+          ) : analisiList.length === 0 ? (
+            <div className="text-center py-6 text-muted-foreground">
+              <FolderOpen className="w-8 h-8 mx-auto mb-2 opacity-40" />
+              <p className="text-sm">Nessuna analisi precedente.</p>
+              <p className="text-xs mt-1">Le analisi verranno salvate automaticamente qui.</p>
+            </div>
+          ) : (
+            <div className="space-y-2">
+              {analisiList.map((a) => {
+                const partiList = (a.parti as Array<{ nome: string; ruolo: string }>) || [];
+                const stepsCompleted = [a.prospettoEconomico, a.analisiGiuridica, a.guidaStrategica, a.analisiMaanBatna, a.compatibilitaInteressi, a.controlloBiasCognitivi, a.bozzaAccordo, a.analisiEconomica].filter(Boolean).length;
+
+                return (
+                  <div
+                    key={a.id}
+                    className="flex items-start gap-3 p-3 border-2 border-foreground/15 hover:border-foreground/30 transition-colors duration-150 group"
+                    data-testid={`storico-item-${a.id}`}
+                  >
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 mb-1">
+                        <span className="font-semibold text-sm truncate" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
+                          {a.titolo}
+                        </span>
+                        <Badge
+                          className={`text-[10px] flex-shrink-0 ${
+                            a.stato === "completata"
+                              ? "bg-green-100 text-green-800 border-green-300"
+                              : a.stato === "errore"
+                              ? "bg-red-100 text-red-800 border-red-300"
+                              : "bg-yellow-100 text-yellow-800 border-yellow-300"
+                          } border`}
+                        >
+                          {a.stato === "completata" ? `${stepsCompleted}/8` : a.stato}
+                        </Badge>
+                      </div>
+                      <div className="flex items-center gap-3 text-xs text-muted-foreground">
+                        <span className="flex items-center gap-1">
+                          <CalendarDays className="w-3 h-3" />
+                          {formatDate(a.createdAt)}
+                        </span>
+                        {a.valoreLite && (
+                          <span className="font-mono" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
+                            EUR {Number(a.valoreLite).toLocaleString("it-IT")}
+                          </span>
+                        )}
+                        {partiList.length > 0 && (
+                          <span className="truncate max-w-[200px]">
+                            {partiList.map(p => p.nome).filter(Boolean).join(" vs ")}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-1 flex-shrink-0">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handleLoad(a.id)}
+                        className="text-xs border-2 border-foreground shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[1px] hover:translate-y-[1px] transition-all duration-150"
+                        data-testid={`button-load-${a.id}`}
+                      >
+                        <FolderOpen className="w-3 h-3 mr-1" />
+                        Apri
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => handleDelete(a.id)}
+                        disabled={deleting === a.id}
+                        className="text-xs text-muted-foreground hover:text-destructive"
+                        data-testid={`button-delete-${a.id}`}
+                      >
+                        {deleting === a.id ? (
+                          <Loader2 className="w-3 h-3 animate-spin" />
+                        ) : (
+                          <Trash className="w-3 h-3" />
+                        )}
+                      </Button>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </div>
+      )}
+    </Card>
   );
 }
 
