@@ -365,6 +365,12 @@ Rispondi alle domande dell'utente sul caso, fornendo approfondimenti, chiariment
     res.send(xml);
   });
 
+  // Google Search Console verification
+  app.get("/googleb2392e1f3564a1be.html", (_req, res) => {
+    res.setHeader("Content-Type", "text/html");
+    res.send("google-site-verification: googleb2392e1f3564a1be.html");
+  });
+
   // Robots.txt
   app.get("/robots.txt", (_req, res) => {
     const txt = `User-agent: *
