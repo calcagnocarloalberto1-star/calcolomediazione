@@ -134,7 +134,7 @@ export default function GuidaDM150() {
               <div className="p-6 border-b-2 border-foreground">
                 <p className="text-muted-foreground leading-relaxed">
                   La Tabella A allegata al D.M. 150/2023 stabilisce le indennità di mediazione in base al valore della controversia.
-                  Ogni scaglione prevede un importo fisso per le spese di avvio e un'indennità base per ciascuna parte.
+                  Le spese di avvio variano per tre fasce di valore (€40/€75/€110), mentre le spese di mediazione per il primo incontro sono €60/€120/€170 (art. 28, co. 4-5). Per gli incontri successivi e per gli accordi, si applica la Tabella A.
                 </p>
               </div>
               <div className="overflow-x-auto">
@@ -203,7 +203,7 @@ export default function GuidaDM150() {
                 <ReductionCard
                   title="Primo incontro senza accordo"
                   reduction="Solo spese avvio + indennità primo incontro"
-                  description="Se le parti non raggiungono l'accordo al primo incontro e decidono di non proseguire, sono dovute solo le spese di avvio (€40) e l'indennità relativa al primo incontro, con le eventuali riduzioni applicabili."
+                  description="Se le parti non raggiungono l'accordo al primo incontro e decidono di non proseguire, sono dovute esclusivamente le spese di avvio (€40/€75/€110 in base al valore della lite) e le spese di mediazione del primo incontro (€60/€120/€170), con le eventuali riduzioni di un quinto per obbligatoria/demandata (art. 28, co. 6 e 8)."
                 />
                 <ReductionCard
                   title="Gratuito patrocinio"
@@ -211,9 +211,9 @@ export default function GuidaDM150() {
                   description="La parte ammessa al patrocinio a spese dello Stato è esente dal pagamento dell'indennità di mediazione. L'organismo non può richiedere alcun compenso a tale parte. L'indennità è posta a carico dell'erario."
                 />
                 <ReductionCard
-                  title="Detrazione spese di avvio"
-                  reduction="-€40"
-                  description="Negli incontri successivi al primo, le spese di avvio (€40) già versate vengono detratte dall'indennità complessiva, evitando una doppia imposizione a carico delle parti."
+                  title="Detrazione spese primo incontro"
+                  reduction="art. 34, co. 2"
+                  description="In caso di accordo o prosecuzione con incontri successivi, le spese di mediazione già versate per il primo incontro vengono detratte dalle ulteriori spese della Tabella A, evitando una doppia imposizione a carico delle parti."
                 />
               </div>
             </div>
@@ -300,19 +300,22 @@ export default function GuidaDM150() {
               </div>
 
               <div className="space-y-3">
-                <ExampleRow label="1. Spese di avvio" value="€40,00" />
-                <ExampleRow label="2. Indennità base (scaglione €25.001-€50.000)" value="€600,00" />
-                <ExampleRow label="3. Riduzione obbligatoria (-20% di €600)" value="-€120,00" highlight="reduction" />
-                <ExampleRow label="4. Indennità primo incontro (€600 - €120)" value="€480,00" />
-                <ExampleRow label="5. Totale primo incontro (€40 + €480)" value="€520,00" />
-                <ExampleRow label="6. Maggiorazione accordo (+20% di €600)" value="+€120,00" highlight="increase" />
+                <ExampleRow label="1. Spese di avvio (art. 28, co. 4 — fascia €1.001-€50.000)" value="€75,00" />
+                <ExampleRow label="2. Riduzione 1/5 spese avvio (obbligatoria)" value="-€15,00" highlight="reduction" />
+                <ExampleRow label="3. Spese mediazione primo incontro (art. 28, co. 5)" value="€120,00" />
+                <ExampleRow label="4. Riduzione 1/5 spese mediazione (obbligatoria)" value="-€24,00" highlight="reduction" />
+                <ExampleRow label="5. Totale primo incontro (€60 + €96)" value="€156,00" />
+                <ExampleRow label="6. Tabella A minimo (scaglione €25.001-€50.000)" value="€720,00" />
+                <ExampleRow label="7. Riduzione 1/5 Tabella A (obbligatoria)" value="-€144,00" highlight="reduction" />
+                <ExampleRow label="8. Maggiorazione +10% (conciliazione al primo incontro)" value="+€57,60" highlight="increase" />
+                <ExampleRow label="9. Detrazione spese mediazione primo incontro (art. 34, co. 2)" value="-€96,00" highlight="reduction" />
                 <div className="border-t-2 border-foreground pt-3">
-                  <ExampleRow label="Totale per parte" value="€640,00" bold />
+                  <ExampleRow label="Totale per parte (IVA esclusa)" value="€693,60" bold />
                 </div>
-                <ExampleRow label="IVA 22%" value="€140,80" />
+                <ExampleRow label="IVA 22%" value="€152,59" />
                 <div className="border-t-2 border-foreground pt-3">
-                  <ExampleRow label="Totale per parte (IVA inclusa)" value="€780,80" bold />
-                  <ExampleRow label="Totale complessivo (2 parti, IVA esclusa)" value="€1.280,00" bold />
+                  <ExampleRow label="Totale per parte (IVA inclusa)" value="€846,19" bold />
+                  <ExampleRow label="Totale complessivo (2 parti, IVA esclusa)" value="€1.387,20" bold />
                 </div>
               </div>
 

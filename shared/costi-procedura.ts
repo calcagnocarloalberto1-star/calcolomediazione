@@ -127,19 +127,35 @@ const PARAMETRI_FORENSI_STRAGIUDIZIALI = [
   { min: 260000.01, max: 520000, attivazione: 1134, negoziazione: 1454, conciliazione: 1701 },
 ];
 
-// Indennità Mediazione D.M. 150/2023 - Tabella A Nazionale
-const INDENNITA_MEDIAZIONE_NAZIONALE = [
-  { min: 0, max: 1000, speseAvvio: 40, indennita: 60 },
-  { min: 1000.01, max: 5000, speseAvvio: 40, indennita: 120 },
-  { min: 5000.01, max: 10000, speseAvvio: 40, indennita: 200 },
-  { min: 10000.01, max: 25000, speseAvvio: 40, indennita: 360 },
-  { min: 25000.01, max: 50000, speseAvvio: 40, indennita: 600 },
-  { min: 50000.01, max: 100000, speseAvvio: 40, indennita: 880 },
-  { min: 100000.01, max: 250000, speseAvvio: 40, indennita: 1200 },
-  { min: 250000.01, max: 500000, speseAvvio: 40, indennita: 1800 },
-  { min: 500000.01, max: 2500000, speseAvvio: 40, indennita: 3600 },
-  { min: 2500000.01, max: 5000000, speseAvvio: 40, indennita: 5400 },
-  { min: 5000000.01, max: Infinity, speseAvvio: 40, indennita: 9200 },
+// Spese primo incontro — D.M. 150/2023, Art. 28 commi 4-5
+// Art. 28, co. 4: Spese avvio = €40 (fino €1k), €75 (€1k-50k), €110 (>€50k e indeterminabili)
+// Art. 28, co. 5: Spese mediazione primo incontro = €60 (fino €1k), €120 (€1k-50k), €170 (>€50k)
+function getSpeseAvvioNazionaliConfronto(valoreLite: number): number {
+  if (valoreLite <= 1000) return 40;
+  if (valoreLite <= 50000) return 75;
+  return 110;
+}
+
+function getSpeseMediazionePrimoIncontroConfronto(valoreLite: number): number {
+  if (valoreLite <= 1000) return 60;
+  if (valoreLite <= 50000) return 120;
+  return 170;
+}
+
+// Tabella A — D.M. 150/2023 (spese mediazione incontri successivi, importi minimi)
+const TABELLA_A_MEDIAZIONE_NAZIONALE = [
+  { min: 0, max: 1000, minimoTabA: 80 },
+  { min: 1000.01, max: 5000, minimoTabA: 160 },
+  { min: 5000.01, max: 10000, minimoTabA: 290 },
+  { min: 10000.01, max: 25000, minimoTabA: 440 },
+  { min: 25000.01, max: 50000, minimoTabA: 720 },
+  { min: 50000.01, max: 150000, minimoTabA: 1200 },
+  { min: 150000.01, max: 250000, minimoTabA: 1500 },
+  { min: 250000.01, max: 500000, minimoTabA: 2500 },
+  { min: 500000.01, max: 1500000, minimoTabA: 3900 },
+  { min: 1500000.01, max: 2500000, minimoTabA: 4600 },
+  { min: 2500000.01, max: 5000000, minimoTabA: 6500 },
+  { min: 5000000.01, max: Infinity, minimoTabA: 10000 },
 ];
 
 // Indennità Mediazione COA Genova (tariffe piene, riduzione 20% per obbligatoria)
@@ -271,7 +287,7 @@ function calcolaCostiMediazione(input: InputConfronto, valoreEffettivo: number):
   const isGP = input.gratuitoPatrocinio === true;
   
   let speseAvvio: number;
-  let indennita: number;
+  let indennita: number; // spese di mediazione (Tabella A minimi per incontri successivi)
 
   if (modalita === "coa_genova") {
     // Tariffe COA Genova
@@ -290,12 +306,16 @@ function calcolaCostiMediazione(input: InputConfronto, valoreEffettivo: number):
     }
   } else {
     // Tariffe Nazionali D.M. 150/2023
-    const scaglione = findScaglione(INDENNITA_MEDIAZIONE_NAZIONALE, valoreEffettivo);
-    speseAvvio = scaglione.speseAvvio;
-    indennita = scaglione.indennita;
-    // Riduzione 1/5 per obbligatoria/demandata
+    // Il Confronto Costi assume accordo raggiunto in mediazione → usa:
+    // - Spese avvio: art. 28, co. 4 (€40/€75/€110)
+    // - Spese mediazione: Tabella A minimi (art. 30) per incontri successivi
+    speseAvvio = getSpeseAvvioNazionaliConfronto(valoreEffettivo);
+    const scagTabA = findScaglione(TABELLA_A_MEDIAZIONE_NAZIONALE, valoreEffettivo);
+    indennita = scagTabA.minimoTabA;
+    // Riduzione 1/5 per obbligatoria/demandata (art. 28, co. 8 + art. 30, co. 4)
     if (isObbligatoria(input.tipoMediazione)) {
       indennita = indennita * 0.8;
+      speseAvvio = Math.round(speseAvvio * 0.8);
     }
   }
 
@@ -346,8 +366,18 @@ function calcolaCostiMediazione(input: InputConfronto, valoreEffettivo: number):
   const totalePerParte = indennitaOrganismo + compensoAvvocato + speseGenerali15 + cpa4Avvocato + iva22Avvocato + impostaRegistro + costoNotaio;
   const totaleComplessivo = totalePerParte * 2;
   
-  // Credito d'imposta fino a €600 (non applicabile se GP — costi già azzerati)
-  const creditoImposta = isGP ? 0 : Math.min(600, indennitaOrganismo + compensoAvvocato);
+  // Credito d'imposta (art. 20 D.Lgs. 28/2010):
+  // - Fino a €600 per indennità organismo (accordo) o €300 (mancato accordo)
+  // - Fino a €600 per compenso avvocato (solo obbligatoria/demandata)
+  // - Tetto €600 per procedura (lett. a + b)
+  // Il Confronto Costi assume accordo → max €600
+  let creditoImpostaIndennita = isGP ? 0 : Math.min(600, indennitaOrganismo);
+  let creditoImpostaAvvocato = 0;
+  if (!isGP && isObbligatoria(input.tipoMediazione)) {
+    creditoImpostaAvvocato = Math.min(600, compensoAvvocato);
+  }
+  // Tetto €600 per procedura
+  const creditoImposta = Math.min(600, creditoImpostaIndennita + creditoImpostaAvvocato);
   const totaleNettoPerParte = totalePerParte - creditoImposta;
 
   return {

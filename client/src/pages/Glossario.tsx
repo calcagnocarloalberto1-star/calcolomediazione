@@ -21,7 +21,7 @@ const glossaryEntries: GlossaryEntry[] = [
   },
   {
     term: "Avvio del procedimento",
-    definition: "L'atto con cui il procedimento di mediazione viene formalmente attivato, mediante il deposito della domanda presso un organismo di mediazione accreditato. Le spese di avvio ammontano a 40 euro per ciascuna parte.",
+    definition: "L'atto con cui il procedimento di mediazione viene formalmente attivato, mediante il deposito della domanda presso un organismo di mediazione accreditato. Le spese di avvio variano in base al valore della lite: €40 (fino a €1.000), €75 (da €1.001 a €50.000), €110 (oltre €50.000 e indeterminato) — art. 28, co. 4, D.M. 150/2023.",
     references: "Art. 4 D.Lgs. 28/2010; D.M. 150/2023"
   },
   {

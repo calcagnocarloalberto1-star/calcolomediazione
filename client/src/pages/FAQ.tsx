@@ -39,7 +39,7 @@ const faqSections: FAQSection[] = [
       },
       {
         q: "Quanto costa la mediazione?",
-        a: "I costi della mediazione sono regolati dal D.M. 150/2023 e comprendono le spese di avvio (€40 per ciascuna parte) e le indennità di mediazione, che variano in base al valore della controversia secondo scaglioni predefiniti. Per una controversia fino a €1.000, l'indennità è di €60; per una controversia tra €250.001 e €500.000, l'indennità è di €1.800. Sono previste riduzioni per le mediazioni obbligatorie e demandate (-20%) e maggiorazioni in caso di accordo (+20%). Il nostro calcolatore permette di determinare l'importo esatto in base ai parametri specifici del caso.",
+        a: "I costi della mediazione sono regolati dal D.M. 150/2023 e comprendono le spese di avvio e le spese di mediazione per il primo incontro, che variano in base al valore della controversia. Le spese di avvio sono: €40 per liti fino a €1.000, €75 per liti da €1.001 a €50.000, €110 per liti oltre €50.000 e di valore indeterminato. Le spese di mediazione per il primo incontro sono: €60 (fino a €1.000), €120 (€1.001-€50.000), €170 (oltre €50.000). In caso di prosecuzione o accordo si applicano le ulteriori spese di mediazione della Tabella A. Per le mediazioni obbligatorie e demandate dal giudice è prevista una riduzione di un quinto (art. 28, co. 8). Il nostro calcolatore permette di determinare l'importo esatto in base ai parametri specifici del caso.",
       },
     ],
   },
@@ -49,15 +49,15 @@ const faqSections: FAQSection[] = [
     questions: [
       {
         q: "Come si calcola l'indennità di mediazione secondo il D.M. 150/2023?",
-        a: "L'indennità di mediazione si calcola in base al valore della controversia, secondo la Tabella A allegata al D.M. 150/2023. Il calcolo prevede: 1) Individuazione dello scaglione in base al valore della lite; 2) Determinazione delle spese di avvio (€40); 3) Applicazione dell'indennità base per lo scaglione; 4) Applicazione delle eventuali riduzioni (mediazione obbligatoria/demandata: -20%); 5) Applicazione delle eventuali maggiorazioni (accordo raggiunto: +20%); 6) Aggiunta dell'IVA al 22%. Per gli incontri successivi al primo, le spese di avvio vengono detratte dall'indennità.",
+        a: "L'indennità di mediazione si calcola in base al valore della controversia secondo il D.M. 150/2023. Il calcolo prevede: 1) Individuazione delle spese di avvio in base al valore della lite (€40/€75/€110); 2) Determinazione delle spese di mediazione per il primo incontro (€60/€120/€170); 3) In caso di accordo o prosecuzione: applicazione delle ulteriori spese dalla Tabella A del D.M. 150/2023; 4) Riduzione di un quinto per mediazione obbligatoria/demandata (art. 28, co. 8); 5) Maggiorazione del 10% per conciliazione al primo incontro o del 25% per conciliazione agli incontri successivi; 6) Detrazione delle spese di mediazione già versate per il primo incontro (art. 34, co. 2); 7) Aggiunta dell'IVA al 22%.",
       },
       {
         q: "Quali sono le spese di avvio?",
-        a: "Le spese di avvio ammontano a €40 per ciascuna parte e sono dovute al momento del deposito della domanda di mediazione. Queste spese sono fisse e non variano in base al valore della controversia. Negli incontri successivi al primo, le spese di avvio vengono detratte dall'indennità complessiva dovuta, per evitare una doppia imposizione.",
+        a: "Le spese di avvio sono dovute da ciascuna parte e variano in base al valore della lite (art. 28, co. 4, D.M. 150/2023): €40 per liti fino a €1.000, €75 per liti da €1.001 a €50.000, €110 per liti di valore superiore a €50.000 e per quelle di valore indeterminato. Sono versate dall'istante al momento del deposito della domanda di mediazione e dalla parte chiamata al momento dell'adesione.",
       },
       {
         q: "Ci sono riduzioni per mancato accordo al primo incontro?",
-        a: "Sì. Se la mediazione si conclude al primo incontro senza accordo, le parti devono corrispondere solo le spese di avvio (€40) e l'indennità relativa al primo incontro, eventualmente ridotta del 20% se la mediazione è obbligatoria o demandata. Non sono dovute le indennità per gli incontri successivi. Questa previsione mira a contenere i costi per le parti quando la mediazione non prosegue oltre il primo incontro informativo.",
+        a: "Sì. Se la mediazione si conclude al primo incontro senza accordo, le parti devono corrispondere esclusivamente le spese di avvio (€40/€75/€110 in base al valore della lite) e le spese di mediazione per il primo incontro (€60/€120/€170), eventualmente ridotte di un quinto se la mediazione è obbligatoria o demandata (art. 28, co. 6 e 8, D.M. 150/2023). Non sono dovute le ulteriori spese di mediazione previste dalla Tabella A. Questa previsione mira a contenere i costi per le parti quando la mediazione non prosegue oltre il primo incontro.",
       },
       {
         q: "L'accordo di mediazione è esente da imposta di registro?",
