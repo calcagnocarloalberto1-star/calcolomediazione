@@ -22,8 +22,11 @@ import GeneratoreProcura from "@/pages/GeneratoreProcura";
 import Giurisprudenza from "@/pages/Giurisprudenza";
 import CreditoImposta from "@/pages/CreditoImposta";
 import NotFound from "@/pages/not-found";
+import Admin from "@/pages/Admin";
+import { usePageTracker } from "@/hooks/use-page-tracker";
 
 function AppRouter() {
+  usePageTracker();
   return (
     <Switch>
       <Route path="/" component={Home} />
@@ -41,6 +44,7 @@ function AppRouter() {
       <Route path="/generatore-procura" component={GeneratoreProcura} />
       <Route path="/giurisprudenza" component={Giurisprudenza} />
       <Route path="/credito-imposta" component={CreditoImposta} />
+      <Route path="/admin" component={Admin} />
       <Route component={NotFound} />
     </Switch>
   );

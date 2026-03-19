@@ -13,6 +13,7 @@ import { bozzaAccordo } from "./ai/bozza-accordo.js";
 import { analisiEconomica } from "./ai/analisi-economica.js";
 import { callLLM } from "./ai/llm.js";
 import { generateAnalisiPdf } from "./pdf-export.js";
+import { stats } from "./stats.js";
 
 const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 20 * 1024 * 1024 } });
 
@@ -20,6 +21,46 @@ export async function registerRoutes(
   httpServer: Server,
   app: Express
 ): Promise<Server> {
+
+  // Track all page views (non-API requests are tracked via a dedicated endpoint)
+  app.post("/api/track", (req, res) => {
+    const { path } = req.body;
+    const ip = req.headers['x-forwarded-for'] as string || req.socket.remoteAddress || '';
+    const userAgent = req.headers['user-agent'] || '';
+    stats.track('page_view', path, userAgent, ip);
+    res.json({ ok: true });
+  });
+
+  // Admin stats - password protected
+  const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "CalcoloMediazione2026!";
+
+  app.post("/api/admin/login", (req, res) => {
+    const { password } = req.body;
+    if (password === ADMIN_PASSWORD) {
+      // Simple token - in production use JWT
+      const token = Buffer.from(`admin:${Date.now()}`).toString('base64');
+      res.json({ success: true, token });
+    } else {
+      res.status(401).json({ error: "Password errata" });
+    }
+  });
+
+  app.get("/api/admin/stats", (req, res) => {
+    const auth = req.headers.authorization;
+    if (!auth || !auth.startsWith("Bearer ")) {
+      return res.status(401).json({ error: "Non autorizzato" });
+    }
+    const token = auth.slice(7);
+    try {
+      const decoded = Buffer.from(token, 'base64').toString();
+      if (!decoded.startsWith("admin:")) {
+        return res.status(401).json({ error: "Token non valido" });
+      }
+      res.json(stats.getStats());
+    } catch {
+      res.status(401).json({ error: "Token non valido" });
+    }
+  });
 
   // === ANALISI AI ===
 
@@ -56,6 +97,7 @@ export async function registerRoutes(
         }
       }
 
+      stats.track('upload_pdf');
       res.json({ files: results });
     } catch (error) {
       console.error("Errore upload PDF:", error);
@@ -91,6 +133,8 @@ export async function registerRoutes(
         prospettoEconomico: null,
         chatHistory: [],
       });
+
+      stats.track('analisi_ai');
 
       // Run pipeline async
       runPipeline(analisi.id, descrizione, parti || [], tipoAnalisi || "mediazione", valoreLite, teorieSelezionate || ["ancoraggio", "avversione_perdita", "framing", "overconfidence", "sunk_cost", "availability", "teoria_giochi", "decision_analysis", "mcda", "teoria_prospetto"], documentiText || "", {
@@ -183,6 +227,7 @@ export async function registerRoutes(
       const prefix = shouldAnonymize ? 'anonimo-' : '';
       const filename = `${prefix}analisi-${analisi.titolo.replace(/[^a-zA-Z0-9]/g, "-").toLowerCase()}.pdf`;
 
+      stats.track('pdf_export');
       res.setHeader("Content-Type", "application/pdf");
       res.setHeader("Content-Disposition", `attachment; filename="${filename}"`);
       res.setHeader("Content-Length", pdfBuffer.length);
@@ -252,6 +297,7 @@ Rispondi alle domande dell'utente sul caso, fornendo approfondimenti, chiariment
       chatHistory.push({ role: "user", content: message, timestamp: now });
       chatHistory.push({ role: "assistant", content: aiResponse, timestamp: now });
 
+      stats.track('chat_message');
       await storage.updateAnalisi(id, { chatHistory });
 
       res.json({ response: aiResponse, chatHistory });
@@ -266,6 +312,7 @@ Rispondi alle domande dell'utente sul caso, fornendo approfondimenti, chiariment
   app.post("/api/calcolo", async (req, res) => {
     try {
       const calcolo = await storage.createCalcolo(req.body);
+      stats.track('calcolo');
       res.json(calcolo);
     } catch (error) {
       console.error("Errore salvataggio calcolo:", error);
@@ -332,9 +379,11 @@ async function runPipeline(
     const truncMaan = maanResult.length > 6000 ? maanResult.slice(0, 6000) + '\n\n[...analisi MAAN troncata per brevità...]' : maanResult;
     const economicaResult = await analisiEconomica(descrizione, parti, valoreLite, tipoAnalisi, `${truncGiuridica}\n\n${truncMaan}`, opzioniEconomiche);
     await storage.updateAnalisi(id, { analisiEconomica: economicaResult, stato: "completata" });
+    stats.track('analisi_complete');
 
   } catch (error) {
     console.error("Errore pipeline AI:", error);
+    stats.track('analisi_error');
     await storage.updateAnalisi(id, { stato: "errore" });
   }
 }
