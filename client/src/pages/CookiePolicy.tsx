@@ -37,8 +37,8 @@ export default function CookiePolicy() {
             </ul>
             <p className="mt-2 text-xs opacity-70">Questi cookie non richiedono il consenso preventivo dell'utente ai sensi dell'art. 122, comma 1, del Codice Privacy (D.Lgs. 196/2003) e del Provvedimento del Garante dell'8 maggio 2014.</p>
 
-            <h3 className="font-bold mt-4">2.2 Cookie Analitici</h3>
-            <p>Utilizzati per raccogliere informazioni statistiche aggregate sull'utilizzo del Sito (numero di visitatori, pagine visitate, tempo di permanenza). Questi dati sono raccolti in forma anonima e aggregata.</p>
+            <h3 className="font-bold mt-4">2.2 Cookie Analitici (Google Analytics)</h3>
+            <p>Il Sito utilizza Google Analytics (ID: G-MS9CY7VC3S) per raccogliere informazioni statistiche aggregate sull'utilizzo del Sito (numero di visitatori, pagine visitate, tempo di permanenza). Questi cookie vengono installati solo dopo che l'utente ha espresso il proprio consenso tramite il banner presente sul Sito. Senza consenso, Google Analytics non viene caricato e nessun cookie analitico viene installato.</p>
 
             <h3 className="font-bold mt-4">2.3 Cookie di Terze Parti</h3>
             <p>Il Sito potrebbe utilizzare servizi di terze parti che installano propri cookie. In particolare:</p>
@@ -53,12 +53,17 @@ export default function CookiePolicy() {
                 </thead>
                 <tbody>
                   <tr className="border-b border-foreground/10">
-                    <td className="py-2 pr-4">Servizi AI (Anthropic)</td>
-                    <td className="py-2 pr-4">Elaborazione analisi AI</td>
-                    <td className="py-2"><a href="https://www.anthropic.com/privacy" target="_blank" rel="noopener noreferrer" className="underline" style={{ color: 'var(--primary)' }}>Privacy Policy</a></td>
+                    <td className="py-2 pr-4">Google Analytics (G-MS9CY7VC3S)</td>
+                    <td className="py-2 pr-4">Statistiche di navigazione (cookie analitico &mdash; richiede consenso)</td>
+                    <td className="py-2"><a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer" className="underline" style={{ color: 'var(--primary)' }}>Privacy Policy</a></td>
                   </tr>
                   <tr className="border-b border-foreground/10">
-                    <td className="py-2 pr-4">Font CDN (Google Fonts / Fontsource)</td>
+                    <td className="py-2 pr-4">Servizi AI (Google Gemini)</td>
+                    <td className="py-2 pr-4">Elaborazione analisi AI</td>
+                    <td className="py-2"><a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer" className="underline" style={{ color: 'var(--primary)' }}>Privacy Policy</a></td>
+                  </tr>
+                  <tr className="border-b border-foreground/10">
+                    <td className="py-2 pr-4">Font CDN (Google Fonts)</td>
                     <td className="py-2 pr-4">Caricamento font tipografici</td>
                     <td className="py-2"><a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer" className="underline" style={{ color: 'var(--primary)' }}>Privacy Policy</a></td>
                   </tr>

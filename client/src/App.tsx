@@ -6,6 +6,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import CookieConsent from "@/components/CookieConsent";
 import Home from "@/pages/Home";
 import Calcolatore from "@/pages/Calcolatore";
 import AnalisiCasoAI from "@/pages/AnalisiCasoAI";
@@ -62,6 +63,7 @@ function App() {
               <AppRouter />
             </main>
             <Footer />
+            <CookieConsent />
           </div>
         </Router>
       </TooltipProvider>
