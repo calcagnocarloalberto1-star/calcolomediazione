@@ -389,6 +389,9 @@ export default function ConfrontoCosti() {
                       <div className="flex justify-between"><span>CU (maggiorato 50%)</span><span className="font-mono" style={{ fontFamily: "'JetBrains Mono', monospace" }}>{formatEuro(risultato.costiAppello.contributoUnificato)}</span></div>
                       <div className="flex justify-between"><span>Compenso avv. (Tab. 12)</span><span className="font-mono" style={{ fontFamily: "'JetBrains Mono', monospace" }}>{formatEuro(risultato.costiAppello.compensoAvvocato)}</span></div>
                       <div className="flex justify-between"><span>Spese + CPA + IVA</span><span className="font-mono" style={{ fontFamily: "'JetBrains Mono', monospace" }}>{formatEuro(risultato.costiAppello.speseGenerali15 + risultato.costiAppello.cpa4Avvocato + risultato.costiAppello.iva22Avvocato)}</span></div>
+                      {risultato.costiAppello.stimaCTU > 0 && (
+                        <div className="flex justify-between"><span>Stima CTU (art. 356 c.p.c.)</span><span className="font-mono" style={{ fontFamily: "'JetBrains Mono', monospace" }}>{formatEuro(risultato.costiAppello.stimaCTU)}</span></div>
+                      )}
                     </div>
                   </div>
 
@@ -871,6 +874,7 @@ export default function ConfrontoCosti() {
                       <DetailItem label="Spese generali forfettarie" value={risultato.costiAppello.speseGenerali15} note="15% sul compenso (art. 2 D.M. 55/2014)" />
                       <DetailItem label="CPA — Cassa Previdenza Avvocati" value={risultato.costiAppello.cpa4Avvocato} note="4% su compenso + spese generali" />
                       <DetailItem label="IVA" value={risultato.costiAppello.iva22Avvocato} note="22% su compenso + spese generali + CPA" />
+                      <DetailItem label="Stima CTU (consulenza tecnica)" value={risultato.costiAppello.stimaCTU} note="Eventuale rinnovo o nuova CTU in appello (art. 356 c.p.c.) — stima prudenziale" />
                       <div className="border-t-2 border-foreground pt-3 flex justify-between items-center">
                         <span className="font-bold text-red-800" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>Totale per parte (Appello)</span>
                         <span className="font-bold font-mono text-lg text-red-800" style={{ fontFamily: "'JetBrains Mono', monospace" }}>{formatEuro(risultato.costiAppello.totalePerParte)}</span>
@@ -891,6 +895,7 @@ export default function ConfrontoCosti() {
                       <DetailItem label="Spese generali forfettarie" value={risultato.costiCassazione.speseGenerali15} note="15% sul compenso (art. 2 D.M. 55/2014)" />
                       <DetailItem label="CPA — Cassa Previdenza Avvocati" value={risultato.costiCassazione.cpa4Avvocato} note="4% su compenso + spese generali" />
                       <DetailItem label="IVA" value={risultato.costiCassazione.iva22Avvocato} note="22% su compenso + spese generali + CPA" />
+                      <DetailItem label="CTU" value={0} note="Non prevista in Cassazione (giudizio di legittimità, non di merito)" />
                       <div className="border-t-2 border-foreground pt-3 flex justify-between items-center">
                         <span className="font-bold text-red-800" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>Totale per parte (Cassazione)</span>
                         <span className="font-bold font-mono text-lg text-red-800" style={{ fontFamily: "'JetBrains Mono', monospace" }}>{formatEuro(risultato.costiCassazione.totalePerParte)}</span>

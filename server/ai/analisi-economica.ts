@@ -141,6 +141,7 @@ Se la parte soccombente impugna la sentenza di primo grado:
 - Marca da bollo EUR 27
 - Compenso avvocato: parametri forensi D.M. 55/2014 agg. D.M. 147/2022 — TABELLA 12 (Appello): fase studio + introduttiva + istruttoria + decisionale
 - Spese generali 15%, CPA 4%, IVA 22%
+- Stima CTU: eventuale rinnovo o nuova CTU in appello (art. 356 c.p.c.) — stimare gli stessi importi del primo grado come ipotesi prudenziale
 - Durata stimata: 2-3 anni
 
 SCENARIO B-ter: CASSAZIONE — III GRADO (Corte di Cassazione)
@@ -149,6 +150,7 @@ Se la sentenza d'appello viene impugnata:
 - Marca da bollo EUR 27
 - Compenso avvocato: parametri forensi D.M. 55/2014 agg. D.M. 147/2022 — TABELLA 13 (Cassazione): fase studio + introduttiva + decisionale (NON C'E' FASE ISTRUTTORIA in Cassazione)
 - Spese generali 15%, CPA 4%, IVA 22%
+- CTU: NON prevista (la Cassazione è giudizio di legittimità, non di merito)
 - Durata stimata: 2-4 anni
 - Durata complessiva tre gradi: 6-12 anni
 

@@ -85,6 +85,7 @@ export interface CostiGradoSuccessivo {
   speseGenerali15: number;
   iva22Avvocato: number;
   cpa4Avvocato: number;
+  stimaCTU: number;
   totalePerParte: number;
   durataStimata: string;
   note: string;
@@ -555,7 +556,17 @@ function calcolaCostiAppello(input: InputConfronto, valoreEffettivo: number): Co
   const cpa4Avvocato = Math.round((compensoAvvocato + speseGenerali15) * 0.04);
   const iva22Avvocato = Math.round((compensoAvvocato + speseGenerali15 + cpa4Avvocato) * 0.22);
 
-  const totalePerParte = contributoUnificato + marcaDaBollo + compensoAvvocato + speseGenerali15 + cpa4Avvocato + iva22Avvocato;
+  // CTU in appello: possibile rinnovo o nuova CTU (art. 356 c.p.c.)
+  // Stima prudenziale: stesse fasce del primo grado
+  let stimaCTU = 0;
+  if (valoreEffettivo <= 10000) stimaCTU = 500;
+  else if (valoreEffettivo <= 50000) stimaCTU = 1500;
+  else if (valoreEffettivo <= 250000) stimaCTU = 3000;
+  else if (valoreEffettivo <= 520000) stimaCTU = 5000;
+  else stimaCTU = 8000;
+  if (isGP) stimaCTU = 0; // prenotata a debito
+
+  const totalePerParte = contributoUnificato + marcaDaBollo + compensoAvvocato + speseGenerali15 + cpa4Avvocato + iva22Avvocato + stimaCTU;
 
   return {
     grado: "appello",
@@ -565,9 +576,10 @@ function calcolaCostiAppello(input: InputConfronto, valoreEffettivo: number): Co
     speseGenerali15,
     iva22Avvocato,
     cpa4Avvocato,
+    stimaCTU,
     totalePerParte,
     durataStimata: "2-3 anni",
-    note: `CU maggiorato del 50% (art. 13 D.P.R. 115/2002). Parametri forensi Tabella 12 D.M. 55/2014 agg. D.M. 147/2022.${isGP ? " Gratuito patrocinio: costi a carico dell'erario." : ""}`,
+    note: `CU maggiorato del 50% (art. 13 D.P.R. 115/2002). Parametri forensi Tabella 12 D.M. 55/2014 agg. D.M. 147/2022.${stimaCTU > 0 ? " Include stima CTU (eventuale rinnovo art. 356 c.p.c.)." : ""}${isGP ? " Gratuito patrocinio: costi a carico dell'erario." : ""}`,
   };
 }
 
@@ -590,6 +602,9 @@ function calcolaCostiCassazione(input: InputConfronto, valoreEffettivo: number):
   const cpa4Avvocato = Math.round((compensoAvvocato + speseGenerali15) * 0.04);
   const iva22Avvocato = Math.round((compensoAvvocato + speseGenerali15 + cpa4Avvocato) * 0.22);
 
+  // In Cassazione NON c'è CTU (giudizio di legittimà, non di merito)
+  const stimaCTU = 0;
+
   const totalePerParte = contributoUnificato + marcaDaBollo + compensoAvvocato + speseGenerali15 + cpa4Avvocato + iva22Avvocato;
 
   return {
@@ -600,9 +615,10 @@ function calcolaCostiCassazione(input: InputConfronto, valoreEffettivo: number):
     speseGenerali15,
     iva22Avvocato,
     cpa4Avvocato,
+    stimaCTU,
     totalePerParte,
     durataStimata: "2-4 anni",
-    note: `CU raddoppiato (art. 13 D.P.R. 115/2002). Parametri forensi Tabella 13 D.M. 55/2014 agg. D.M. 147/2022. No fase istruttoria.${isGP ? " Gratuito patrocinio: costi a carico dell'erario." : ""}`,
+    note: `CU raddoppiato (art. 13 D.P.R. 115/2002). Parametri forensi Tabella 13 D.M. 55/2014 agg. D.M. 147/2022. No fase istruttoria, no CTU (giudizio di legittimità).${isGP ? " Gratuito patrocinio: costi a carico dell'erario." : ""}`,
   };
 }
 
