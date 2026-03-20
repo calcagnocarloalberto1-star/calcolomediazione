@@ -66,6 +66,41 @@ const faqSections: FAQSection[] = [
     ],
   },
   {
+    icon: FileText,
+    title: "Costi Notarili e Spese per Questioni da Trascrivere",
+    badge: "Art. 11 D.Lgs. 28/2010 — Art. 2643 c.c.",
+    questions: [
+      {
+        q: "Quando serve il notaio nella mediazione civile?",
+        a: "L'intervento del notaio è necessario quando l'accordo di mediazione riguarda uno dei contratti o degli atti previsti dall'art. 2643 del codice civile, ossia atti soggetti a trascrizione nei registri immobiliari. Ad esempio: trasferimenti di proprietà immobiliare, costituzione o modifica di servitù, accertamenti di usucapione, divisioni immobiliari. In questi casi, ai sensi dell'art. 11, comma 3, del D.Lgs. 28/2010, la sottoscrizione dell'accordo deve essere autenticata da un pubblico ufficiale a ciò autorizzato (notaio). Senza l'autenticazione notarile, l'accordo non può essere trascritto e non è opponibile ai terzi.",
+      },
+      {
+        q: "Quali sono i costi notarili per la trascrizione dell'accordo di mediazione?",
+        a: "I costi notarili comprendono: 1) Onorario del notaio: varia in base al valore dell'immobile, indicativamente da €1.000 (immobili fino a €10.000) a €2.500-4.000 (immobili di valore elevato), oltre IVA al 22%. Per la prima casa gli onorari sono generalmente più contenuti (circa il 30% in meno). 2) Contributo Cassa Nazionale del Notariato e tassa archivio. 3) Spese per visure ipotecarie e catastali (circa €100 forfettarie). 4) Spese per voltura catastale. Il notaio, oltre ad autenticare le firme, verifica la regolarità urbanistica, catastale e ipotecaria dell'immobile, e provvede alla registrazione, trascrizione e voltura.",
+      },
+      {
+        q: "L'accordo di mediazione immobiliare gode di esenzioni fiscali?",
+        a: "Sì, l'accordo di mediazione gode di un regime fiscale molto agevolato ai sensi dell'art. 17 del D.Lgs. 28/2010: 1) Esenzione totale dall'imposta di bollo e da ogni spesa, tassa o diritto (comma 1). 2) Esenzione dall'imposta di registro fino a €100.000 di valore (comma 2). Per la parte eccedente si applica il 2% per la prima casa o il 9% per gli altri immobili. 3) Esenzione dalle imposte ipotecarie e catastali: l'Agenzia delle Entrate (Risposta n. 235/2020) ha chiarito che il regime di esenzione si applica anche a queste imposte, indipendentemente dal valore del trasferimento. Si tratta di un risparmio molto significativo rispetto a una compravendita ordinaria.",
+      },
+      {
+        q: "Quanto si risparmia con la prima casa nella mediazione immobiliare?",
+        a: "Il risparmio è notevole. In una compravendita ordinaria con prima casa, le imposte sono: imposta di registro 2% sul valore catastale + imposte ipotecaria e catastale fisse (€50 + €50). Con l'accordo di mediazione: fino a €100.000 di valore, tutte le imposte sono azzerate (registro, ipotecaria e catastale). Oltre €100.000, si paga il 2% solo sulla parte eccedente. Esempio pratico: per un immobile con valore catastale €120.000, in compravendita ordinaria si pagherebbero circa €2.400 di registro + €100 di ipotecaria/catastale = €2.500. Con l'accordo di mediazione, si paga il 2% solo su €20.000 (eccedenza oltre €100.000) = €400, con un risparmio di circa €2.100. Per immobili fino a €100.000, il risparmio è totale.",
+      },
+      {
+        q: "Le imposte ipotecarie e catastali sono davvero esenti per l'accordo di mediazione?",
+        a: "La questione ha avuto un'evoluzione giurisprudenziale. L'Agenzia delle Entrate, con la Risposta n. 235 del 31 luglio 2020, ha confermato che l'esenzione di cui all'art. 17 del D.Lgs. 28/2010 si estende anche alle imposte ipotecarie e catastali. Tuttavia, alcune Conservatorie dei Registri Immobiliari hanno talvolta rifiutato la trascrizione in assenza del pagamento. La giurisprudenza tributaria recente ha dato ragione ai contribuenti: l'atto notarile necessario a garantire la trascrizione dell'accordo di mediazione beneficia dell'agevolazione tributaria generalizzata di cui al comma 1 dell'art. 17, trattandosi di un 'necessario e conseguente atto' del procedimento di mediazione.",
+      },
+      {
+        q: "Cos'è la verifica di congruità del valore catastale e a cosa serve?",
+        a: "La verifica di congruità (art. 29 D.M. 150/2023) consente di confrontare il valore dichiarato nella domanda di mediazione o nell'accordo con il valore catastale dell'immobile. Il valore catastale si calcola moltiplicando la rendita catastale per coefficienti specifici: ×115,5 per la prima casa, ×126 per altri fabbricati (cat. A e C escluse A/10 e C/1), ×176,4 per cat. B, ×63 per cat. A/10 e D, ×42,84 per cat. C/1 ed E, ×112,5 per terreni agricoli. Se il valore dichiarato è inferiore al valore catastale, l'Agenzia delle Entrate potrebbe contestare il valore ai fini fiscali. Il nostro calcolatore permette di effettuare questa verifica immediatamente, segnalando il livello di rischio.",
+      },
+      {
+        q: "Quanto costa complessivamente trascrivere un accordo di mediazione immobiliare?",
+        a: "Il costo complessivo dipende dal valore dell'immobile e dalla tipologia (prima casa o meno). Per un immobile prima casa da €150.000: 1) Onorario notaio: circa €1.500-2.000 + IVA (22%) = €1.830-2.440; 2) Imposte di registro: 2% su €50.000 (eccedenza oltre €100.000) = €1.000; 3) Imposte ipotecarie e catastali: esenti (art. 17 D.Lgs. 28/2010); 4) Visure e spese accessorie: circa €100-200. Totale indicativo: circa €3.000-3.700. Per un immobile non prima casa dello stesso valore, l'imposta di registro sarebbe del 9% su €50.000 = €4.500, portando il totale a circa €6.500-7.100. Il risparmio rispetto al contenzioso giudiziario (con CU, CTU, compensi avvocato per più gradi) è comunque molto significativo.",
+      },
+    ],
+  },
+  {
     icon: TrendingUp,
     title: "Credito d'Imposta in Mediazione",
     badge: "Art. 20 D.Lgs. 28/2010 — D.M. 1° agosto 2023",
