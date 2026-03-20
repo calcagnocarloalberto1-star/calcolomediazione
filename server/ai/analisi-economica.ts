@@ -123,11 +123,11 @@ ${notaioSection}
 ${art31Section}
 ${gpSection}
 
-SCENARIO B: PROCESSO CIVILE (mediazione negativa + contenzioso)
+SCENARIO B: PROCESSO CIVILE — PRIMO GRADO (mediazione negativa + contenzioso)
 - Indennità mediazione negativa (solo primo incontro, ridotta)
 - Contributo unificato (D.P.R. 115/2002, art. 13)
 - Marca da bollo EUR 27 + diritti copia EUR 30
-- Compenso avvocato (parametri forensi giudiziali D.M. 55/2014: studio + introduttiva + istruttoria + decisionale)
+- Compenso avvocato (parametri forensi giudiziali D.M. 55/2014 Tabella 2: studio + introduttiva + istruttoria + decisionale)
 - Spese generali 15%, CPA 4%, IVA 22%
 - Stima CTU (consulenza tecnica d'ufficio)
 - Imposta di registro su sentenza: 3% del valore
@@ -135,15 +135,34 @@ SCENARIO B: PROCESSO CIVILE (mediazione negativa + contenzioso)
 ${materiaImmobiliare ? "- Costo notaio se trasferimento immobiliare\n- Imposte ipotecaria e catastale: dovute per intero" : ""}
 - Durata stimata: 2-5 anni primo grado
 
+SCENARIO B-bis: APPELLO — II GRADO (Corte d'Appello)
+Se la parte soccombente impugna la sentenza di primo grado:
+- Contributo unificato MAGGIORATO DEL 50% rispetto al primo grado (art. 13 D.P.R. 115/2002)
+- Marca da bollo EUR 27
+- Compenso avvocato: parametri forensi D.M. 55/2014 agg. D.M. 147/2022 — TABELLA 12 (Appello): fase studio + introduttiva + istruttoria + decisionale
+- Spese generali 15%, CPA 4%, IVA 22%
+- Durata stimata: 2-3 anni
+
+SCENARIO B-ter: CASSAZIONE — III GRADO (Corte di Cassazione)
+Se la sentenza d'appello viene impugnata:
+- Contributo unificato RADDOPPIATO rispetto al primo grado (art. 13 D.P.R. 115/2002)
+- Marca da bollo EUR 27
+- Compenso avvocato: parametri forensi D.M. 55/2014 agg. D.M. 147/2022 — TABELLA 13 (Cassazione): fase studio + introduttiva + decisionale (NON C'E' FASE ISTRUTTORIA in Cassazione)
+- Spese generali 15%, CPA 4%, IVA 22%
+- Durata stimata: 2-4 anni
+- Durata complessiva tre gradi: 6-12 anni
+
 FORMATO OUTPUT - usa tabelle markdown:
 1. Tabella riepilogativa "Mediazione Positiva" con tutte le voci e totale
-2. Tabella riepilogativa "Processo Civile" con tutte le voci e totale
-3. Tabella comparativa finale con differenza e risparmio percentuale
-4. Sezione "Vantaggi Fiscali della Mediazione" con elenco dettagliato art. 17
-5. Sezione "Analisi Temporale" con stima durata e costi opportunità
-${gratuitoPatrocinio ? '6. Sezione "Effetti del Gratuito Patrocinio" — dettaglio di quali voci sono azzerate e quali restano a carico' : ""}
-${materiaImmobiliare ? `7. Sezione "Costi Notarili e Imposte Immobiliari" — dettaglio costi notaio e confronto imposte ${primaCasa ? "prima casa" : "seconda casa"}` : ""}
-${!gratuitoPatrocinio && !materiaImmobiliare ? "6." : gratuitoPatrocinio && materiaImmobiliare ? "8." : "7."} Conclusioni con raccomandazione economica
+2. Tabella riepilogativa "Processo Civile — I Grado" con tutte le voci e totale
+3. Tabella riepilogativa "Appello — II Grado" con CU maggiorato, compenso avvocato Tab. 12, accessori e totale
+4. Tabella riepilogativa "Cassazione — III Grado" con CU raddoppiato, compenso avvocato Tab. 13 (no istruttoria), accessori e totale
+5. Tabella comparativa finale progressiva: Mediazione vs I grado vs I+II grado vs I+II+III grado (cumulativi) con risparmio percentuale
+6. Sezione "Vantaggi Fiscali della Mediazione" con elenco dettagliato art. 17
+7. Sezione "Analisi Temporale" con stima durata per ciascun grado e cumulativa vs mediazione
+${gratuitoPatrocinio ? '8. Sezione "Effetti del Gratuito Patrocinio" — dettaglio di quali voci sono azzerate e quali restano a carico per tutti e tre i gradi' : ""}
+${materiaImmobiliare ? `${gratuitoPatrocinio ? "9" : "8"}. Sezione "Costi Notarili e Imposte Immobiliari" — dettaglio costi notaio e confronto imposte ${primaCasa ? "prima casa" : "seconda casa"}` : ""}
+${!gratuitoPatrocinio && !materiaImmobiliare ? "8." : gratuitoPatrocinio && materiaImmobiliare ? "10." : "9."} Conclusioni con raccomandazione economica — evidenziare il risparmio complessivo considerando tutti e tre i gradi di giudizio
 
 IMPORTANTE:
 - Usa trattini (-) per gli elenchi, MAI emoji
@@ -171,5 +190,5 @@ ${previousAnalysis}
 
 Genera la sezione economica comparativa completa con calcoli precisi.`;
 
-  return callLLM(systemPrompt, userPrompt, 8000);
+  return callLLM(systemPrompt, userPrompt, 12000);
 }

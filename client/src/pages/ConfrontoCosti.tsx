@@ -28,6 +28,8 @@ import {
   Building2,
   Home,
   BarChart3,
+  Landmark,
+  AlertTriangle,
 } from "lucide-react";
 import {
   BarChart,
@@ -298,8 +300,8 @@ export default function ConfrontoCosti() {
         {/* Results */}
         {risultato && (
           <>
-            {/* Summary Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+            {/* Summary Cards - Primo Grado */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
               {/* Mediazione */}
               <Card className="border-2 border-foreground shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] bg-green-50" data-testid="card-totale-mediazione">
                 <CardContent className="pt-6">
@@ -323,29 +325,29 @@ export default function ConfrontoCosti() {
                 </CardContent>
               </Card>
 
-              {/* Causa Civile */}
+              {/* Causa Civile - Primo Grado */}
               <Card className="border-2 border-foreground shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] bg-red-50" data-testid="card-totale-causa">
                 <CardContent className="pt-6">
                   <div className="flex items-center gap-2 mb-2">
                     <Gavel className="w-5 h-5 text-red-700" />
                     <span className="text-sm font-bold text-red-800" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
-                      Causa Civile
+                      Causa Civile (I grado)
                     </span>
                   </div>
                   <div className="text-2xl font-bold text-red-900 font-mono" style={{ fontFamily: "'JetBrains Mono', monospace" }} data-testid="text-totale-causa">
                     {formatEuro(risultato.costiCausaCivile.totalePerParte)}
                   </div>
-                  <p className="text-xs text-red-700 mt-1">per parte (stima primo grado)</p>
+                  <p className="text-xs text-red-700 mt-1">per parte (primo grado)</p>
                 </CardContent>
               </Card>
 
-              {/* Risparmio */}
+              {/* Risparmio Primo Grado */}
               <Card className="border-2 border-foreground shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] bg-primary/10" data-testid="card-risparmio">
                 <CardContent className="pt-6">
                   <div className="flex items-center gap-2 mb-2">
                     <TrendingDown className="w-5 h-5 text-primary" />
                     <span className="text-sm font-bold" style={{ fontFamily: "'Space Grotesk', sans-serif", color: "hsl(var(--primary))" }}>
-                      Risparmio Mediazione
+                      Risparmio (I grado)
                     </span>
                   </div>
                   <div className="text-2xl font-bold font-mono" style={{ fontFamily: "'JetBrains Mono', monospace", color: "hsl(var(--primary))" }} data-testid="text-risparmio">
@@ -360,6 +362,130 @@ export default function ConfrontoCosti() {
               </Card>
             </div>
 
+            {/* Gradi Successivi: Appello + Cassazione + Totale 3 Gradi */}
+            <Card className="border-2 border-foreground shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] mb-8 bg-gradient-to-r from-red-50/50 to-orange-50/50" data-testid="card-gradi-successivi">
+              <CardHeader className="pb-2">
+                <CardTitle className="text-lg flex items-center gap-2" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
+                  <Landmark className="w-5 h-5 text-red-700" />
+                  Costi Gradi Successivi di Giudizio
+                </CardTitle>
+                <p className="text-xs text-muted-foreground">
+                  In caso di impugnazione, i costi si moltiplicano. La mediazione evita tutti e tre i gradi.
+                </p>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                  {/* Appello */}
+                  <div className="p-4 bg-white border-2 border-red-200" data-testid="card-costi-appello">
+                    <div className="flex items-center gap-2 mb-2">
+                      <Gavel className="w-4 h-4 text-red-600" />
+                      <span className="text-sm font-bold text-red-700" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>Corte d'Appello</span>
+                    </div>
+                    <div className="text-xl font-bold text-red-800 font-mono" style={{ fontFamily: "'JetBrains Mono', monospace" }} data-testid="text-costi-appello">
+                      {formatEuro(risultato.costiAppello.totalePerParte)}
+                    </div>
+                    <p className="text-xs text-red-600 mt-1">per parte — durata {risultato.costiAppello.durataStimata}</p>
+                    <div className="mt-2 space-y-1 text-xs text-muted-foreground">
+                      <div className="flex justify-between"><span>CU (maggiorato 50%)</span><span className="font-mono" style={{ fontFamily: "'JetBrains Mono', monospace" }}>{formatEuro(risultato.costiAppello.contributoUnificato)}</span></div>
+                      <div className="flex justify-between"><span>Compenso avv. (Tab. 12)</span><span className="font-mono" style={{ fontFamily: "'JetBrains Mono', monospace" }}>{formatEuro(risultato.costiAppello.compensoAvvocato)}</span></div>
+                      <div className="flex justify-between"><span>Spese + CPA + IVA</span><span className="font-mono" style={{ fontFamily: "'JetBrains Mono', monospace" }}>{formatEuro(risultato.costiAppello.speseGenerali15 + risultato.costiAppello.cpa4Avvocato + risultato.costiAppello.iva22Avvocato)}</span></div>
+                    </div>
+                  </div>
+
+                  {/* Cassazione */}
+                  <div className="p-4 bg-white border-2 border-red-300" data-testid="card-costi-cassazione">
+                    <div className="flex items-center gap-2 mb-2">
+                      <Landmark className="w-4 h-4 text-red-700" />
+                      <span className="text-sm font-bold text-red-800" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>Corte di Cassazione</span>
+                    </div>
+                    <div className="text-xl font-bold text-red-900 font-mono" style={{ fontFamily: "'JetBrains Mono', monospace" }} data-testid="text-costi-cassazione">
+                      {formatEuro(risultato.costiCassazione.totalePerParte)}
+                    </div>
+                    <p className="text-xs text-red-600 mt-1">per parte — durata {risultato.costiCassazione.durataStimata}</p>
+                    <div className="mt-2 space-y-1 text-xs text-muted-foreground">
+                      <div className="flex justify-between"><span>CU (raddoppiato)</span><span className="font-mono" style={{ fontFamily: "'JetBrains Mono', monospace" }}>{formatEuro(risultato.costiCassazione.contributoUnificato)}</span></div>
+                      <div className="flex justify-between"><span>Compenso avv. (Tab. 13)</span><span className="font-mono" style={{ fontFamily: "'JetBrains Mono', monospace" }}>{formatEuro(risultato.costiCassazione.compensoAvvocato)}</span></div>
+                      <div className="flex justify-between"><span>Spese + CPA + IVA</span><span className="font-mono" style={{ fontFamily: "'JetBrains Mono', monospace" }}>{formatEuro(risultato.costiCassazione.speseGenerali15 + risultato.costiCassazione.cpa4Avvocato + risultato.costiCassazione.iva22Avvocato)}</span></div>
+                    </div>
+                    <p className="text-xs text-muted-foreground mt-2 italic">NB: In Cassazione non c'è fase istruttoria</p>
+                  </div>
+
+                  {/* Totale 3 Gradi vs Mediazione */}
+                  <div className="p-4 bg-red-100 border-2 border-red-400" data-testid="card-totale-tre-gradi">
+                    <div className="flex items-center gap-2 mb-2">
+                      <AlertTriangle className="w-4 h-4 text-red-800" />
+                      <span className="text-sm font-bold text-red-900" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>Totale 3 Gradi</span>
+                    </div>
+                    <div className="text-xl font-bold text-red-900 font-mono" style={{ fontFamily: "'JetBrains Mono', monospace" }} data-testid="text-totale-tre-gradi">
+                      {formatEuro(risultato.totaleCausaTreGradi)}
+                    </div>
+                    <p className="text-xs text-red-700 mt-1">per parte — durata complessiva 6-12 anni</p>
+                    <div className="mt-3 pt-3 border-t border-red-300">
+                      <div className="flex items-center gap-1 mb-1">
+                        <TrendingDown className="w-3 h-3 text-green-700" />
+                        <span className="text-xs font-bold text-green-800">Risparmio con mediazione:</span>
+                      </div>
+                      <div className="text-lg font-bold text-green-800 font-mono" style={{ fontFamily: "'JetBrains Mono', monospace" }} data-testid="text-risparmio-tre-gradi">
+                        {formatEuro(risultato.risparmioMediazioneTreGradi)}
+                      </div>
+                      <p className="text-xs text-green-700">
+                        {risultato.percentualeRisparmioTreGradi}% in meno rispetto ai tre gradi di giudizio
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Riepilogo progressivo */}
+                <div className="bg-white border-2 border-foreground p-4">
+                  <div className="text-sm font-bold mb-3" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>Riepilogo progressivo dei costi per parte</div>
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-sm border-collapse">
+                      <thead>
+                        <tr className="border-b-2 border-foreground">
+                          <th className="text-left py-2 px-3 font-bold" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>Grado</th>
+                          <th className="text-right py-2 px-3 font-bold" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>Costo grado</th>
+                          <th className="text-right py-2 px-3 font-bold" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>Cumulativo</th>
+                          <th className="text-right py-2 px-3 font-bold" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>Durata</th>
+                        </tr>
+                      </thead>
+                      <tbody className="font-mono" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
+                        <tr className="border-b border-foreground/10 bg-red-50/50">
+                          <td className="py-2 px-3 text-sm" style={{ fontFamily: "Inter, sans-serif" }}>I grado (Tribunale)</td>
+                          <td className="text-right py-2 px-3">{formatEuro(risultato.costiCausaCivile.totalePerParte)}</td>
+                          <td className="text-right py-2 px-3 font-bold">{formatEuro(risultato.costiCausaCivile.totalePerParte)}</td>
+                          <td className="text-right py-2 px-3 text-xs">{risultato.durataMediaStimata.causaCivile}</td>
+                        </tr>
+                        <tr className="border-b border-foreground/10 bg-red-50/70">
+                          <td className="py-2 px-3 text-sm" style={{ fontFamily: "Inter, sans-serif" }}>II grado (Appello)</td>
+                          <td className="text-right py-2 px-3">{formatEuro(risultato.costiAppello.totalePerParte)}</td>
+                          <td className="text-right py-2 px-3 font-bold">{formatEuro(risultato.costiCausaCivile.totalePerParte + risultato.costiAppello.totalePerParte)}</td>
+                          <td className="text-right py-2 px-3 text-xs">{risultato.durataMediaStimata.appello}</td>
+                        </tr>
+                        <tr className="border-b border-foreground/10 bg-red-100/70">
+                          <td className="py-2 px-3 text-sm" style={{ fontFamily: "Inter, sans-serif" }}>III grado (Cassazione)</td>
+                          <td className="text-right py-2 px-3">{formatEuro(risultato.costiCassazione.totalePerParte)}</td>
+                          <td className="text-right py-2 px-3 font-bold">{formatEuro(risultato.totaleCausaTreGradi)}</td>
+                          <td className="text-right py-2 px-3 text-xs">{risultato.durataMediaStimata.cassazione}</td>
+                        </tr>
+                        <tr className="border-t-2 border-foreground font-bold bg-red-100">
+                          <td className="py-3 px-3" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>TOTALE 3 GRADI</td>
+                          <td className="text-right py-3 px-3"></td>
+                          <td className="text-right py-3 px-3 text-red-900 text-base">{formatEuro(risultato.totaleCausaTreGradi)}</td>
+                          <td className="text-right py-3 px-3 text-xs">6-12 anni</td>
+                        </tr>
+                        <tr className="bg-green-100 border-t-2 border-green-600">
+                          <td className="py-3 px-3" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>MEDIAZIONE</td>
+                          <td className="text-right py-3 px-3"></td>
+                          <td className="text-right py-3 px-3 text-green-900 text-base font-bold">{formatEuro(risultato.costiMediazione.totaleNettoPerParte)}</td>
+                          <td className="text-right py-3 px-3 text-xs">fino a 6 mesi</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
             {/* Visual Bar Chart Comparison */}
             <Card className="border-2 border-foreground shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] mb-8" data-testid="card-grafico-confronto">
               <CardHeader className="pb-2">
@@ -369,37 +495,28 @@ export default function ConfrontoCosti() {
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <ResponsiveContainer width="100%" height={320}>
+                <ResponsiveContainer width="100%" height={350}>
                   <BarChart
                     data={[
                       {
-                        name: "Spese avvio / C.U.",
-                        Mediazione: Math.round(risultato.costiMediazione.indennitaOrganismo),
-                        "Causa Civile": Math.round(risultato.costiCausaCivile.contributoUnificato + risultato.costiCausaCivile.marcaDaBollo + risultato.costiCausaCivile.dirittoCopia),
+                        name: "Mediazione",
+                        "Costi totali": Math.round(risultato.costiMediazione.totaleNettoPerParte),
+                        fill: "#16a34a",
                       },
                       {
-                        name: "Compenso avv.",
-                        Mediazione: Math.round(risultato.costiMediazione.compensoAvvocato + risultato.costiMediazione.speseGenerali15 + risultato.costiMediazione.cpa4Avvocato + risultato.costiMediazione.iva22Avvocato),
-                        "Causa Civile": Math.round(risultato.costiCausaCivile.compensoAvvocato + risultato.costiCausaCivile.speseGenerali15 + risultato.costiCausaCivile.cpa4Avvocato + risultato.costiCausaCivile.iva22Avvocato),
+                        name: "I grado",
+                        "Costi totali": Math.round(risultato.costiCausaCivile.totalePerParte),
+                        fill: "#dc2626",
                       },
                       {
-                        name: "Imposte",
-                        Mediazione: Math.round(
-                          risultato.costiMediazione.imposteImmobiliari
-                            ? risultato.costiMediazione.imposteImmobiliari.impostaRegistro + risultato.costiMediazione.imposteImmobiliari.impostaIpotecaria + risultato.costiMediazione.imposteImmobiliari.impostaCatastale
-                            : risultato.costiMediazione.impostaRegistro
-                        ),
-                        "Causa Civile": Math.round(risultato.costiCausaCivile.impostaRegistroSentenza),
+                        name: "I + II grado",
+                        "Costi totali": Math.round(risultato.costiCausaCivile.totalePerParte + risultato.costiAppello.totalePerParte),
+                        fill: "#b91c1c",
                       },
                       {
-                        name: "CTU / Notaio",
-                        Mediazione: Math.round(risultato.costiMediazione.costoNotaio || 0),
-                        "Causa Civile": Math.round(risultato.costiCausaCivile.stimaCTU),
-                      },
-                      {
-                        name: "TOTALE",
-                        Mediazione: Math.round(risultato.costiMediazione.totaleNettoPerParte),
-                        "Causa Civile": Math.round(risultato.costiCausaCivile.totalePerParte),
+                        name: "I + II + III grado",
+                        "Costi totali": Math.round(risultato.totaleCausaTreGradi),
+                        fill: "#991b1b",
                       },
                     ]}
                     margin={{ top: 10, right: 10, left: 10, bottom: 5 }}
@@ -430,35 +547,16 @@ export default function ConfrontoCosti() {
                       }}
                       labelStyle={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 700 }}
                     />
-                    <Legend
-                      wrapperStyle={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: 13 }}
-                    />
-                    <Bar dataKey="Mediazione" fill="#16a34a" stroke="#2d2926" strokeWidth={2} radius={0}>
-                      {[
-                        { name: "Spese avvio / C.U." },
-                        { name: "Compenso avv." },
-                        { name: "Imposte" },
-                        { name: "CTU / Notaio" },
-                        { name: "TOTALE" },
-                      ].map((entry, index) => (
-                        <Cell key={`med-${index}`} fill={index === 4 ? "#15803d" : "#16a34a"} />
-                      ))}
-                    </Bar>
-                    <Bar dataKey="Causa Civile" fill="#dc2626" stroke="#2d2926" strokeWidth={2} radius={0}>
-                      {[
-                        { name: "Spese avvio / C.U." },
-                        { name: "Compenso avv." },
-                        { name: "Imposte" },
-                        { name: "CTU / Notaio" },
-                        { name: "TOTALE" },
-                      ].map((entry, index) => (
-                        <Cell key={`causa-${index}`} fill={index === 4 ? "#b91c1c" : "#dc2626"} />
-                      ))}
+                    <Bar dataKey="Costi totali" stroke="#2d2926" strokeWidth={2} radius={0}>
+                      <Cell fill="#16a34a" />
+                      <Cell fill="#dc2626" />
+                      <Cell fill="#b91c1c" />
+                      <Cell fill="#991b1b" />
                     </Bar>
                   </BarChart>
                 </ResponsiveContainer>
                 <p className="text-xs text-muted-foreground text-center mt-3">
-                  Il totale mediazione è al netto del credito d'imposta (art. 20 D.Lgs. 28/2010). Compenso avvocato include spese generali, CPA e IVA.
+                  La mediazione risolve in 6 mesi ciò che in causa può richiedere fino a 12 anni su 3 gradi. Il totale mediazione è al netto del credito d'imposta.
                 </p>
               </CardContent>
             </Card>
@@ -503,20 +601,35 @@ export default function ConfrontoCosti() {
                       Durata Media Stimata
                     </span>
                   </div>
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-2 gap-3">
                     <div className="text-center p-3 bg-green-50 border-2 border-green-200">
-                      <div className="text-lg font-bold text-green-800" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
+                      <div className="text-base font-bold text-green-800" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
                         {risultato.durataMediaStimata.mediazione}
                       </div>
                       <div className="text-xs text-green-700">Mediazione</div>
                     </div>
                     <div className="text-center p-3 bg-red-50 border-2 border-red-200">
-                      <div className="text-lg font-bold text-red-800" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
+                      <div className="text-base font-bold text-red-800" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
                         {risultato.durataMediaStimata.causaCivile}
                       </div>
-                      <div className="text-xs text-red-700">Causa Civile</div>
+                      <div className="text-xs text-red-700">I grado (Tribunale)</div>
+                    </div>
+                    <div className="text-center p-3 bg-red-50/70 border-2 border-red-200">
+                      <div className="text-base font-bold text-red-800" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
+                        {risultato.durataMediaStimata.appello}
+                      </div>
+                      <div className="text-xs text-red-700">II grado (Appello)</div>
+                    </div>
+                    <div className="text-center p-3 bg-red-100 border-2 border-red-300">
+                      <div className="text-base font-bold text-red-900" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
+                        {risultato.durataMediaStimata.cassazione}
+                      </div>
+                      <div className="text-xs text-red-800">III grado (Cassazione)</div>
                     </div>
                   </div>
+                  <p className="text-xs text-muted-foreground text-center mt-3">
+                    Durata complessiva dei tre gradi: 6-12 anni. La mediazione si conclude in 6 mesi.
+                  </p>
                 </CardContent>
               </Card>
 
@@ -599,7 +712,13 @@ export default function ConfrontoCosti() {
                       Mediazione
                     </TabsTrigger>
                     <TabsTrigger value="causa" className="text-xs data-[state=active]:bg-card data-[state=active]:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]" data-testid="tab-causa-det">
-                      Causa Civile
+                      I Grado
+                    </TabsTrigger>
+                    <TabsTrigger value="appello" className="text-xs data-[state=active]:bg-card data-[state=active]:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]" data-testid="tab-appello-det">
+                      Appello
+                    </TabsTrigger>
+                    <TabsTrigger value="cassazione" className="text-xs data-[state=active]:bg-card data-[state=active]:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]" data-testid="tab-cassazione-det">
+                      Cassazione
                     </TabsTrigger>
                   </TabsList>
 
@@ -721,7 +840,7 @@ export default function ConfrontoCosti() {
                     </div>
                   </TabsContent>
 
-                  {/* Dettaglio Causa Civile */}
+                  {/* Dettaglio Causa Civile - Primo Grado */}
                   <TabsContent value="causa">
                     <div className="space-y-3">
                       <DetailItem label="Contributo unificato" value={risultato.costiCausaCivile.contributoUnificato} note="D.P.R. 115/2002, art. 13 — Primo grado civile" />
@@ -734,9 +853,49 @@ export default function ConfrontoCosti() {
                       <DetailItem label="Imposta di registro sentenza" value={risultato.costiCausaCivile.impostaRegistroSentenza} note="3% sul valore della condanna (art. 8 lett. b Tariffa DPR 131/1986)" />
                       <DetailItem label="Stima CTU (consulenza tecnica)" value={risultato.costiCausaCivile.stimaCTU} note="Stima indicativa del costo di una consulenza tecnica d'ufficio (variabile per materia)" />
                       <div className="border-t-2 border-foreground pt-3 flex justify-between items-center">
-                        <span className="font-bold text-red-800" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>Totale per parte</span>
+                        <span className="font-bold text-red-800" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>Totale per parte (I grado)</span>
                         <span className="font-bold font-mono text-lg text-red-800" style={{ fontFamily: "'JetBrains Mono', monospace" }}>{formatEuro(risultato.costiCausaCivile.totalePerParte)}</span>
                       </div>
+                    </div>
+                  </TabsContent>
+
+                  {/* Dettaglio Appello */}
+                  <TabsContent value="appello">
+                    <div className="space-y-3">
+                      <div className="bg-amber-50 border border-amber-200 p-3 mb-2">
+                        <p className="text-xs text-amber-800">Corte d'Appello — II grado di giudizio. Durata media: {risultato.costiAppello.durataStimata}.</p>
+                      </div>
+                      <DetailItem label="Contributo unificato (maggiorato 50%)" value={risultato.costiAppello.contributoUnificato} note="Art. 13 D.P.R. 115/2002 — CU del primo grado maggiorato del 50% per l'appello" />
+                      <DetailItem label="Marca da bollo" value={risultato.costiAppello.marcaDaBollo} note="€27 per iscrizione al ruolo" />
+                      <DetailItem label="Compenso avvocato (Tabella 12)" value={risultato.costiAppello.compensoAvvocato} note="D.M. 55/2014 mod. D.M. 147/2022 — Tab. 12: fase studio + introduttiva + istruttoria + decisionale" />
+                      <DetailItem label="Spese generali forfettarie" value={risultato.costiAppello.speseGenerali15} note="15% sul compenso (art. 2 D.M. 55/2014)" />
+                      <DetailItem label="CPA — Cassa Previdenza Avvocati" value={risultato.costiAppello.cpa4Avvocato} note="4% su compenso + spese generali" />
+                      <DetailItem label="IVA" value={risultato.costiAppello.iva22Avvocato} note="22% su compenso + spese generali + CPA" />
+                      <div className="border-t-2 border-foreground pt-3 flex justify-between items-center">
+                        <span className="font-bold text-red-800" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>Totale per parte (Appello)</span>
+                        <span className="font-bold font-mono text-lg text-red-800" style={{ fontFamily: "'JetBrains Mono', monospace" }}>{formatEuro(risultato.costiAppello.totalePerParte)}</span>
+                      </div>
+                      <p className="text-xs text-muted-foreground italic">{risultato.costiAppello.note}</p>
+                    </div>
+                  </TabsContent>
+
+                  {/* Dettaglio Cassazione */}
+                  <TabsContent value="cassazione">
+                    <div className="space-y-3">
+                      <div className="bg-amber-50 border border-amber-200 p-3 mb-2">
+                        <p className="text-xs text-amber-800">Corte di Cassazione — III grado di giudizio. Durata media: {risultato.costiCassazione.durataStimata}. In Cassazione non c'è fase istruttoria.</p>
+                      </div>
+                      <DetailItem label="Contributo unificato (raddoppiato)" value={risultato.costiCassazione.contributoUnificato} note="Art. 13 D.P.R. 115/2002 — CU del primo grado raddoppiato per il ricorso in Cassazione" />
+                      <DetailItem label="Marca da bollo" value={risultato.costiCassazione.marcaDaBollo} note="€27 per iscrizione al ruolo" />
+                      <DetailItem label="Compenso avvocato (Tabella 13)" value={risultato.costiCassazione.compensoAvvocato} note="D.M. 55/2014 mod. D.M. 147/2022 — Tab. 13: fase studio + introduttiva + decisionale (no istruttoria)" />
+                      <DetailItem label="Spese generali forfettarie" value={risultato.costiCassazione.speseGenerali15} note="15% sul compenso (art. 2 D.M. 55/2014)" />
+                      <DetailItem label="CPA — Cassa Previdenza Avvocati" value={risultato.costiCassazione.cpa4Avvocato} note="4% su compenso + spese generali" />
+                      <DetailItem label="IVA" value={risultato.costiCassazione.iva22Avvocato} note="22% su compenso + spese generali + CPA" />
+                      <div className="border-t-2 border-foreground pt-3 flex justify-between items-center">
+                        <span className="font-bold text-red-800" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>Totale per parte (Cassazione)</span>
+                        <span className="font-bold font-mono text-lg text-red-800" style={{ fontFamily: "'JetBrains Mono', monospace" }}>{formatEuro(risultato.costiCassazione.totalePerParte)}</span>
+                      </div>
+                      <p className="text-xs text-muted-foreground italic">{risultato.costiCassazione.note}</p>
                     </div>
                   </TabsContent>
                 </Tabs>
@@ -788,6 +947,7 @@ export default function ConfrontoCosti() {
                     I compensi effettivi dell'avvocato possono variare fino al ±50% rispetto ai valori medi tabellari. 
                     La stima CTU è forfettaria e varia significativamente in base alla materia e complessità della perizia.
                     L'imposta di registro sulla sentenza (3%) si applica solo in caso di condanna al pagamento di somme.
+                    I costi di Appello (Tab. 12) e Cassazione (Tab. 13) sono calcolati con parametri medi D.M. 147/2022. Il CU in appello è maggiorato del 50%, in cassazione raddoppiato (art. 13 D.P.R. 115/2002).
                     Per una valutazione precisa, consultare un professionista.
                   </p>
                 </div>

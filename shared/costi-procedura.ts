@@ -77,6 +77,19 @@ export interface CostiCausaCivile {
   totaleComplessivo: number;
 }
 
+export interface CostiGradoSuccessivo {
+  grado: "appello" | "cassazione";
+  contributoUnificato: number;
+  marcaDaBollo: number;
+  compensoAvvocato: number;
+  speseGenerali15: number;
+  iva22Avvocato: number;
+  cpa4Avvocato: number;
+  totalePerParte: number;
+  durataStimata: string;
+  note: string;
+}
+
 export interface GratuitoPatrocinio {
   ammissibile: boolean;
   limiteReddito: number;
@@ -87,10 +100,15 @@ export interface GratuitoPatrocinio {
 export interface RisultatoConfronto {
   costiMediazione: CostiMediazione;
   costiCausaCivile: CostiCausaCivile;
+  costiAppello: CostiGradoSuccessivo;
+  costiCassazione: CostiGradoSuccessivo;
+  totaleCausaTreGradi: number;
   risparmioMediazione: number;
   percentualeRisparmio: number;
+  risparmioMediazioneTreGradi: number;
+  percentualeRisparmioTreGradi: number;
   gratuitoPatrocinio: GratuitoPatrocinio;
-  durataMediaStimata: { mediazione: string; causaCivile: string };
+  durataMediaStimata: { mediazione: string; causaCivile: string; appello: string; cassazione: string };
   vantaggiFiscali: string[];
 }
 
@@ -127,6 +145,49 @@ const PARAMETRI_FORENSI_STRAGIUDIZIALI = [
   { min: 26000.01, max: 52000, attivazione: 567, negoziazione: 709, conciliazione: 788 },
   { min: 52000.01, max: 260000, attivazione: 992, negoziazione: 1061, conciliazione: 1276 },
   { min: 260000.01, max: 520000, attivazione: 1134, negoziazione: 1454, conciliazione: 1701 },
+];
+
+// Contributo Unificato - Appello (D.P.R. 115/2002 — maggiorato del 50%)
+const CONTRIBUTO_UNIFICATO_APPELLO = [
+  { min: 0, max: 1100, importo: 64.50 },
+  { min: 1100.01, max: 5200, importo: 147 },
+  { min: 5200.01, max: 26000, importo: 355.50 },
+  { min: 26000.01, max: 52000, importo: 777 },
+  { min: 52000.01, max: 260000, importo: 1138.50 },
+  { min: 260000.01, max: 520000, importo: 1821 },
+  { min: 520000.01, max: Infinity, importo: 2529 },
+];
+
+// Contributo Unificato - Cassazione (D.P.R. 115/2002 — raddoppiato)
+const CONTRIBUTO_UNIFICATO_CASSAZIONE = [
+  { min: 0, max: 1100, importo: 86 },
+  { min: 1100.01, max: 5200, importo: 196 },
+  { min: 5200.01, max: 26000, importo: 474 },
+  { min: 26000.01, max: 52000, importo: 1036 },
+  { min: 52000.01, max: 260000, importo: 1518 },
+  { min: 260000.01, max: 520000, importo: 2428 },
+  { min: 520000.01, max: Infinity, importo: 3372 },
+];
+
+// Parametri Forensi Corte d'Appello — Tabella 12 D.M. 55/2014 agg. D.M. 147/2022
+const PARAMETRI_FORENSI_APPELLO = [
+  { min: 0, max: 1100, studio: 142, introduttiva: 142, istruttoria: 179, decisionale: 210 },
+  { min: 1100.01, max: 5200, studio: 536, introduttiva: 536, istruttoria: 992, decisionale: 851 },
+  { min: 5200.01, max: 26000, studio: 1134, introduttiva: 921, istruttoria: 1843, decisionale: 1911 },
+  { min: 26000.01, max: 52000, studio: 2058, introduttiva: 1418, istruttoria: 3045, decisionale: 3470 },
+  { min: 52000.01, max: 260000, studio: 2977, introduttiva: 1911, istruttoria: 4326, decisionale: 5103 },
+  { min: 260000.01, max: 520000, studio: 4389, introduttiva: 2552, istruttoria: 5880, decisionale: 7298 },
+];
+
+// Parametri Forensi Cassazione — Tabella 13 D.M. 55/2014 agg. D.M. 147/2022
+// NB: In Cassazione non c'è fase istruttoria
+const PARAMETRI_FORENSI_CASSAZIONE = [
+  { min: 0, max: 1100, studio: 252, introduttiva: 284, decisionale: 142 },
+  { min: 1100.01, max: 5200, studio: 709, introduttiva: 777, decisionale: 389 },
+  { min: 5200.01, max: 26000, studio: 1276, introduttiva: 1134, decisionale: 672 },
+  { min: 26000.01, max: 52000, studio: 2336, introduttiva: 1969, decisionale: 1208 },
+  { min: 52000.01, max: 260000, studio: 3402, introduttiva: 2478, decisionale: 1775 },
+  { min: 260000.01, max: 520000, studio: 4961, introduttiva: 3260, decisionale: 2552 },
 ];
 
 // Spese primo incontro — D.M. 150/2023, Art. 28 commi 4-5
@@ -477,6 +538,75 @@ function calcolaCostiCausaCivile(input: InputConfronto, valoreEffettivo: number)
 }
 
 // ========================
+// CALCOLO COSTI APPELLO
+// ========================
+
+function calcolaCostiAppello(input: InputConfronto, valoreEffettivo: number): CostiGradoSuccessivo {
+  const isGP = input.gratuitoPatrocinio === true;
+  
+  const scagCU = findScaglione(CONTRIBUTO_UNIFICATO_APPELLO, valoreEffettivo);
+  const contributoUnificato = isGP ? 0 : scagCU.importo;
+  const marcaDaBollo = isGP ? 0 : 27;
+
+  const paramApp = findScaglione(PARAMETRI_FORENSI_APPELLO, valoreEffettivo);
+  const compensoAvvocato = isGP ? 0 : (paramApp.studio + paramApp.introduttiva + paramApp.istruttoria + paramApp.decisionale);
+  
+  const speseGenerali15 = Math.round(compensoAvvocato * 0.15);
+  const cpa4Avvocato = Math.round((compensoAvvocato + speseGenerali15) * 0.04);
+  const iva22Avvocato = Math.round((compensoAvvocato + speseGenerali15 + cpa4Avvocato) * 0.22);
+
+  const totalePerParte = contributoUnificato + marcaDaBollo + compensoAvvocato + speseGenerali15 + cpa4Avvocato + iva22Avvocato;
+
+  return {
+    grado: "appello",
+    contributoUnificato,
+    marcaDaBollo,
+    compensoAvvocato,
+    speseGenerali15,
+    iva22Avvocato,
+    cpa4Avvocato,
+    totalePerParte,
+    durataStimata: "2-3 anni",
+    note: `CU maggiorato del 50% (art. 13 D.P.R. 115/2002). Parametri forensi Tabella 12 D.M. 55/2014 agg. D.M. 147/2022.${isGP ? " Gratuito patrocinio: costi a carico dell'erario." : ""}`,
+  };
+}
+
+// ========================
+// CALCOLO COSTI CASSAZIONE
+// ========================
+
+function calcolaCostiCassazione(input: InputConfronto, valoreEffettivo: number): CostiGradoSuccessivo {
+  const isGP = input.gratuitoPatrocinio === true;
+  
+  const scagCU = findScaglione(CONTRIBUTO_UNIFICATO_CASSAZIONE, valoreEffettivo);
+  const contributoUnificato = isGP ? 0 : scagCU.importo;
+  const marcaDaBollo = isGP ? 0 : 27;
+
+  // In Cassazione non c'è fase istruttoria
+  const paramCass = findScaglione(PARAMETRI_FORENSI_CASSAZIONE, valoreEffettivo);
+  const compensoAvvocato = isGP ? 0 : (paramCass.studio + paramCass.introduttiva + paramCass.decisionale);
+  
+  const speseGenerali15 = Math.round(compensoAvvocato * 0.15);
+  const cpa4Avvocato = Math.round((compensoAvvocato + speseGenerali15) * 0.04);
+  const iva22Avvocato = Math.round((compensoAvvocato + speseGenerali15 + cpa4Avvocato) * 0.22);
+
+  const totalePerParte = contributoUnificato + marcaDaBollo + compensoAvvocato + speseGenerali15 + cpa4Avvocato + iva22Avvocato;
+
+  return {
+    grado: "cassazione",
+    contributoUnificato,
+    marcaDaBollo,
+    compensoAvvocato,
+    speseGenerali15,
+    iva22Avvocato,
+    cpa4Avvocato,
+    totalePerParte,
+    durataStimata: "2-4 anni",
+    note: `CU raddoppiato (art. 13 D.P.R. 115/2002). Parametri forensi Tabella 13 D.M. 55/2014 agg. D.M. 147/2022. No fase istruttoria.${isGP ? " Gratuito patrocinio: costi a carico dell'erario." : ""}`,
+  };
+}
+
+// ========================
 // CALCOLO GRATUITO PATROCINIO
 // ========================
 
@@ -515,11 +645,23 @@ export function calcolaConfronto(input: InputConfronto): RisultatoConfronto {
 
   const costiMediazione = calcolaCostiMediazione(input, valoreEffettivo);
   const costiCausaCivile = calcolaCostiCausaCivile(input, valoreEffettivo);
+  const costiAppello = calcolaCostiAppello(input, valoreEffettivo);
+  const costiCassazione = calcolaCostiCassazione(input, valoreEffettivo);
   const gratuitoPatrocinio = calcolaGratuitoPatrocinio(input.redditoAnnuo);
 
+  // Risparmio primo grado
   const risparmioMediazione = costiCausaCivile.totalePerParte - costiMediazione.totaleNettoPerParte;
   const percentualeRisparmio = costiCausaCivile.totalePerParte > 0
     ? Math.round((risparmioMediazione / costiCausaCivile.totalePerParte) * 100)
+    : 0;
+
+  // Totale costi causa su tre gradi di giudizio
+  const totaleCausaTreGradi = costiCausaCivile.totalePerParte + costiAppello.totalePerParte + costiCassazione.totalePerParte;
+  
+  // Risparmio mediazione rispetto a tre gradi
+  const risparmioMediazioneTreGradi = totaleCausaTreGradi - costiMediazione.totaleNettoPerParte;
+  const percentualeRisparmioTreGradi = totaleCausaTreGradi > 0
+    ? Math.round((risparmioMediazioneTreGradi / totaleCausaTreGradi) * 100)
     : 0;
 
   // Vantaggi fiscali mediazione
@@ -537,12 +679,19 @@ export function calcolaConfronto(input: InputConfronto): RisultatoConfronto {
   return {
     costiMediazione,
     costiCausaCivile,
+    costiAppello,
+    costiCassazione,
+    totaleCausaTreGradi,
     risparmioMediazione,
     percentualeRisparmio,
+    risparmioMediazioneTreGradi,
+    percentualeRisparmioTreGradi,
     gratuitoPatrocinio,
     durataMediaStimata: {
       mediazione: "fino a 6 mesi (prorogabili di 3 in 3)",
       causaCivile: "2-5 anni (primo grado)",
+      appello: "2-3 anni",
+      cassazione: "2-4 anni",
     },
     vantaggiFiscali,
   };
