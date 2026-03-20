@@ -182,15 +182,29 @@ const GENOVA_INDETERMINABILI = {
 };
 
 // Costi notarili — onorario medio indicativo (libero post D.L. 1/2012)
-const COSTI_NOTARILI = [
-  { min: 0, max: 10000, onorario: 1000 },
-  { min: 10000.01, max: 25000, onorario: 1200 },
-  { min: 25000.01, max: 50000, onorario: 1400 },
-  { min: 50000.01, max: 250000, onorario: 1700 },
-  { min: 250000.01, max: 500000, onorario: 1900 },
-  { min: 500000.01, max: 2500000, onorario: 2500 },
-  { min: 2500000.01, max: 5000000, onorario: 3000 },
-  { min: 5000000.01, max: Infinity, onorario: 4000 },
+// SECONDA CASA / ALTRI IMMOBILI — onorari ordinari
+const COSTI_NOTARILI_SECONDA_CASA = [
+  { min: 0, max: 10000, onorario: 1300 },
+  { min: 10000.01, max: 25000, onorario: 1550 },
+  { min: 25000.01, max: 50000, onorario: 1800 },
+  { min: 50000.01, max: 250000, onorario: 2200 },
+  { min: 250000.01, max: 500000, onorario: 2500 },
+  { min: 500000.01, max: 2500000, onorario: 3200 },
+  { min: 2500000.01, max: 5000000, onorario: 3900 },
+  { min: 5000000.01, max: Infinity, onorario: 5000 },
+];
+
+// PRIMA CASA — onorari ridotti (circa 30% in meno rispetto a seconda casa)
+// Fonte: stime medie da NotaioFacile, Immobiliare.it, tabelle CNN indicative
+const COSTI_NOTARILI_PRIMA_CASA = [
+  { min: 0, max: 10000, onorario: 900 },
+  { min: 10000.01, max: 25000, onorario: 1100 },
+  { min: 25000.01, max: 50000, onorario: 1250 },
+  { min: 50000.01, max: 250000, onorario: 1500 },
+  { min: 250000.01, max: 500000, onorario: 1750 },
+  { min: 500000.01, max: 2500000, onorario: 2200 },
+  { min: 2500000.01, max: 5000000, onorario: 2700 },
+  { min: 5000000.01, max: Infinity, onorario: 3500 },
 ];
 
 // ========================
@@ -241,8 +255,8 @@ function calcolaImposteImmobiliari(
   const totaleImposte = impostaRegistro + impostaIpotecaria + impostaCatastale;
   
   let note = primaCasa
-    ? `Aliquota agevolata ${aliquotaLabel} (prima casa, art. 1 nota II-bis Tariffa Parte I, D.P.R. 131/1986). Imposte ipotecaria e catastale: €50 fisse ciascuna.`
-    : `Aliquota ordinaria ${aliquotaLabel} (seconda casa/altro immobile). Imposte ipotecaria e catastale: €50 fisse ciascuna.`;
+    ? `Agevolazione prima casa: aliquota registro ${aliquotaLabel} (art. 1 nota II-bis Tariffa Parte I, D.P.R. 131/1986). Imposte ipotecaria e catastale: €50 fisse ciascuna. Onorari notarili ridotti (~30%).`
+    : `Aliquota ordinaria ${aliquotaLabel} (seconda casa/altro immobile). Imposte ipotecaria e catastale: €50 fisse ciascuna. Onorari notarili ordinari.`;
   
   if (inMediazione) {
     note += " Esenzione imposta di registro fino a €100.000 (art. 17, co. 3, D.Lgs. 28/2010).";
@@ -366,9 +380,12 @@ function calcolaCostiMediazione(input: InputConfronto, valoreEffettivo: number):
   }
 
   // Costo notaio (solo se materia immobiliare)
+  // Prima casa: onorari ridotti (~30% in meno) + imposta registro agevolata 2%
   let costoNotaio = 0;
   if (input.materiaImmobiliare) {
-    const scagNotaio = findScaglione(COSTI_NOTARILI, valoreEffettivo);
+    const primaCasaFlag = input.primaCasa ?? false;
+    const tabellaNotaio = primaCasaFlag ? COSTI_NOTARILI_PRIMA_CASA : COSTI_NOTARILI_SECONDA_CASA;
+    const scagNotaio = findScaglione(tabellaNotaio, valoreEffettivo);
     costoNotaio = scagNotaio.onorario;
   }
 

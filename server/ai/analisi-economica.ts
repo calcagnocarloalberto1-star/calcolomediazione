@@ -17,16 +17,20 @@ export async function analisiEconomica(
   if (materiaImmobiliare) {
     const tipoImmobile = primaCasa ? "PRIMA CASA" : "SECONDA CASA / ALTRO IMMOBILE";
     const aliquotaRegistro = primaCasa ? "2%" : "9%";
+    const stimaNotaio = primaCasa
+      ? "Onorari notarili RIDOTTI per agevolazione prima casa (circa 30% in meno rispetto a seconda casa). Stima: EUR 900 - 1.750 a seconda del valore"
+      : "Onorari notarili ordinari (tariffe piene). Stima: EUR 1.300 - 2.500 a seconda del valore";
     notaioSection = `
 MATERIA IMMOBILIARE - ${tipoImmobile}:
 - L'accordo ha ad oggetto un trasferimento immobiliare
-- Imposta di registro: ${aliquotaRegistro} sul valore (minimo EUR 1.000)
+- Imposta di registro: ${aliquotaRegistro} sul valore catastale (minimo EUR 1.000)
 - In mediazione: esenzione registro fino a EUR 100.000 (art. 17, co. 3, D.Lgs. 28/2010) — si paga solo sull'eccedenza
 - Imposta ipotecaria: EUR 50 (fissa)
 - Imposta catastale: EUR 50 (fissa)
 - E' NECESSARIO IL NOTAIO per l'autenticazione dell'accordo con effetti reali (art. 11 D.Lgs. 28/2010)
-- Includere il costo del notaio (stimare in base alle tabelle CNN)
-- In causa civile: registro 3% sulla sentenza, imposte ipotecaria/catastale piene`;
+- ${stimaNotaio}
+${primaCasa ? "- VANTAGGIO PRIMA CASA: risparmio significativo sia sulle imposte di registro (2% vs 9%) sia sugli onorari notarili (~30% in meno). Evidenziare questo risparmio nella comparazione." : ""}
+- In causa civile: registro 3% sulla sentenza, imposte ipotecaria/catastale piene, costi notarili ordinari`;
   }
 
   // Art. 31 co. 3 — Maggiorazione indennità
@@ -113,7 +117,7 @@ SCENARIO A: MEDIAZIONE POSITIVA (accordo raggiunto)
 - Spese generali 15%, CPA 4%, IVA 22%
 ${esenzioneNote}
 - Credito d'imposta fino a EUR 600 sull'indennità + fino a EUR 600 sul compenso avvocato (se obbligatoria/demandata)
-${materiaImmobiliare ? "- Costo notaio OBBLIGATORIO (autenticazione accordo con effetti reali)" : "- Costo notaio: non necessario (materia non immobiliare)"}
+${materiaImmobiliare ? (primaCasa ? "- Costo notaio OBBLIGATORIO (autenticazione accordo con effetti reali) — ONORARI RIDOTTI per agevolazione prima casa" : "- Costo notaio OBBLIGATORIO (autenticazione accordo con effetti reali) — onorari ordinari") : "- Costo notaio: non necessario (materia non immobiliare)"}
 - Durata stimata: 1-3 mesi
 ${notaioSection}
 ${art31Section}
@@ -150,7 +154,7 @@ IMPORTANTE:
 - Considera che il tipo di analisi è: ${tipoAnalisi}
 - Il valore della lite è: EUR ${valore.toLocaleString("it-IT")}
 ${gratuitoPatrocinio ? "- ATTENZIONE: il gratuito patrocinio è ATTIVO — azzera indennità, compenso avvocato e accessori per la parte. Calcola di conseguenza." : ""}
-${materiaImmobiliare ? `- ATTENZIONE: materia immobiliare — includi SEMPRE il costo del notaio e le imposte di trasferimento (${primaCasa ? "prima casa — registro 2%" : "seconda casa — registro 9%"})` : ""}
+${materiaImmobiliare ? `- ATTENZIONE: materia immobiliare — includi SEMPRE il costo del notaio e le imposte di trasferimento (${primaCasa ? "PRIMA CASA — registro 2% + onorari notarili ridotti ~30%" : "seconda casa — registro 9% + onorari notarili ordinari"})` : ""}
 ${mediatoreEsperto || proceduraComplessa ? "- ATTENZIONE: maggiorazione art. 31 co. 3 ATTIVA — applica +20% sull'indennità degli incontri successivi nella tabella Mediazione Positiva. Evidenzia la voce come riga separata nella tabella." : ""}`;
 
   const userPrompt = `Caso: ${descrizione}

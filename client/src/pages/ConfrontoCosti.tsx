@@ -630,7 +630,7 @@ export default function ConfrontoCosti() {
                             <CostRow label="Imposta di registro" med={risultato.costiMediazione.impostaRegistro} causa={risultato.costiCausaCivile.impostaRegistroSentenza} />
                           )}
                           {risultato.costiMediazione.costoNotaio > 0 && (
-                            <CostRow label="Costi notarili" med={risultato.costiMediazione.costoNotaio} causa={0} />
+                            <CostRow label={risultato.costiMediazione.imposteImmobiliari?.isPrimaCasa ? "Costi notarili (ridotti prima casa)" : "Costi notarili"} med={risultato.costiMediazione.costoNotaio} causa={0} />
                           )}
                           <CostRow label="Stima CTU" med={0} causa={risultato.costiCausaCivile.stimaCTU} />
                           <tr className="border-t-2 border-foreground font-bold">
@@ -696,7 +696,15 @@ export default function ConfrontoCosti() {
                         </>
                       )}
                       {risultato.costiMediazione.costoNotaio > 0 && (
-                        <DetailItem label="Costo notaio" value={risultato.costiMediazione.costoNotaio} note="Onorario notarile per autenticazione accordo con effetti reali (art. 11 D.Lgs. 28/2010)" />
+                        <DetailItem
+                          label={risultato.costiMediazione.imposteImmobiliari?.isPrimaCasa ? "Costo notaio (ridotto prima casa)" : "Costo notaio"}
+                          value={risultato.costiMediazione.costoNotaio}
+                          note={risultato.costiMediazione.imposteImmobiliari?.isPrimaCasa
+                            ? "Onorario ridotto ~30% per agevolazione prima casa (art. 11 D.Lgs. 28/2010)"
+                            : "Onorario notarile per autenticazione accordo con effetti reali (art. 11 D.Lgs. 28/2010)"
+                          }
+                          highlight={risultato.costiMediazione.imposteImmobiliari?.isPrimaCasa}
+                        />
                       )}
                       <div className="border-t-2 border-foreground pt-3 flex justify-between items-center">
                         <span className="font-bold" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>Totale per parte</span>
