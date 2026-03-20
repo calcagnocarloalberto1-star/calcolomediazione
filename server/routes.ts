@@ -383,6 +383,34 @@ Rispondi alle domande dell'utente sul caso, fornendo approfondimenti, chiariment
     res.send("google-site-verification: googleb2392e1f3564a1be.html");
   });
 
+  // OG Image (SVG served as image for social sharing)
+  app.get("/og-image.svg", (_req, res) => {
+    const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <rect width="1200" height="630" fill="#f5f0eb"/>
+  <rect width="1200" height="8" fill="#c55a2b"/>
+  <rect x="60" y="50" width="1080" height="530" fill="none" stroke="#2d2926" stroke-width="4"/>
+  <text x="100" y="150" font-family="sans-serif" font-weight="bold" font-size="60" fill="#2d2926">CalcoloMediazione</text>
+  <text x="100" y="215" font-family="sans-serif" font-weight="bold" font-size="34" fill="#c55a2b">Mediazione e Negoziazione con AI</text>
+  <rect x="100" y="240" width="200" height="4" fill="#2d2926"/>
+  <text font-family="sans-serif" font-size="24" fill="#2d2926">
+    <tspan x="100" y="300">&#x2666; Analisi AI del caso</tspan>
+    <tspan x="100" y="340">&#x2666; Confronto costi su 3 gradi</tspan>
+    <tspan x="100" y="380">&#x2666; Calcolatore indennit\u00e0</tspan>
+    <tspan x="620" y="300">&#x2666; Generatore procura</tspan>
+    <tspan x="620" y="340">&#x2666; Database giurisprudenza</tspan>
+    <tspan x="620" y="380">&#x2666; Credito d'imposta</tspan>
+  </text>
+  <rect x="100" y="420" width="1000" height="3" fill="#c55a2b"/>
+  <text x="100" y="470" font-family="sans-serif" font-size="21" fill="#6b6560">D.M. 150/2023  \u2022  Primo Grado, Appello, Cassazione  \u2022  CTU  \u2022  Esenzione Prima Casa</text>
+  <text x="100" y="530" font-family="sans-serif" font-weight="bold" font-size="26" fill="#2d2926">calcolomediazione.it</text>
+  <rect x="880" y="500" width="220" height="48" rx="0" fill="#c55a2b"/>
+  <text x="905" y="532" font-family="sans-serif" font-weight="bold" font-size="24" fill="#ffffff">100% Gratuito</text>
+</svg>`;
+    res.setHeader("Content-Type", "image/svg+xml");
+    res.setHeader("Cache-Control", "public, max-age=86400");
+    res.send(svg);
+  });
+
   // Robots.txt
   app.get("/robots.txt", (req, res) => {
     const siteUrl = getSiteUrl(req);

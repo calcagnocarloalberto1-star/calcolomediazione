@@ -18,6 +18,9 @@ import {
   Upload,
   FileCheck,
   Download,
+  Swords,
+  AlertTriangle,
+  Clock,
 } from "lucide-react";
 
 const features = [
@@ -38,7 +41,7 @@ const features = [
   {
     icon: BarChart3,
     title: "Confronto Costi",
-    description: "Confronto completo mediazione vs causa civile: contributo unificato, compenso avvocato (D.M. 55/2014), imposte, CTU e gratuito patrocinio.",
+    description: "Mediazione vs processo su tre gradi di giudizio: primo grado, appello e cassazione. CU, compensi avvocato, CTU, esenzione prima casa.",
     href: "/confronto-costi",
     active: true,
   },
@@ -61,6 +64,13 @@ const features = [
     title: "Credito d'Imposta",
     description: "Calcola il credito d'imposta per mediazione civile (art. 20, D.Lgs. 28/2010). Scadenza domanda: 31 marzo 2026.",
     href: "/credito-imposta",
+    active: true,
+  },
+  {
+    icon: Swords,
+    title: "Strategie Negoziazione",
+    description: "Guida alle tecniche di negoziazione: MAAN/BATNA, negoziazione integrativa, ancoraggio, ZOPA e comunicazione efficace.",
+    href: "/strategie-negoziazione",
     active: true,
   },
 ];
@@ -86,6 +96,33 @@ const steps = [
   },
 ];
 
+function DeadlineBanner() {
+  // Show banner only until March 31, 2026
+  const deadline = new Date('2026-03-31T23:59:59');
+  const now = new Date();
+  if (now > deadline) return null;
+
+  const daysLeft = Math.ceil((deadline.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
+
+  return (
+    <Link href="/credito-imposta">
+      <div className="bg-amber-50 dark:bg-amber-950/40 border-b-2 border-amber-400 dark:border-amber-600 px-4 py-3 cursor-pointer hover:bg-amber-100 dark:hover:bg-amber-950/60 transition-colors" data-testid="banner-scadenza">
+        <div className="max-w-5xl mx-auto flex items-center justify-center gap-3 text-sm sm:text-base">
+          <AlertTriangle className="w-5 h-5 text-amber-600 dark:text-amber-400 flex-shrink-0" />
+          <span className="text-amber-900 dark:text-amber-200 font-medium text-center">
+            <strong>Credito d'imposta mediazione:</strong> scadenza presentazione domanda{" "}
+            <span className="font-bold">31 marzo 2026</span>
+            <span className="hidden sm:inline"> — mancano {daysLeft} giorni</span>
+          </span>
+          <Clock className="w-4 h-4 text-amber-600 dark:text-amber-400 flex-shrink-0 sm:hidden" />
+          <span className="text-amber-700 dark:text-amber-300 font-bold text-xs sm:hidden">{daysLeft}gg</span>
+          <ArrowRight className="w-4 h-4 text-amber-600 dark:text-amber-400 flex-shrink-0 hidden sm:block" />
+        </div>
+      </div>
+    </Link>
+  );
+}
+
 export default function Home() {
   const scrollToFeatures = () => {
     document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' });
@@ -93,6 +130,9 @@ export default function Home() {
 
   return (
     <div className="min-h-screen">
+      {/* Deadline Banner */}
+      <DeadlineBanner />
+
       {/* Hero Section */}
       <section className="py-16 sm:py-24 px-4" data-testid="section-hero">
         <div className="max-w-5xl mx-auto text-center">
@@ -114,8 +154,8 @@ export default function Home() {
           </h1>
 
           <p className="text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto mb-10 leading-relaxed">
-            Piattaforma completa per il calcolo delle indennità di mediazione ai sensi del{" "}
-            <strong className="text-foreground">D.M. 150/2023</strong>. Analisi AI del caso, calcolatore indennità e generatore di documenti.
+            Piattaforma completa per la mediazione civile ai sensi del{" "}
+            <strong className="text-foreground">D.M. 150/2023</strong>. Analisi AI del caso, confronto economico su tre gradi di giudizio, calcolatore indennità e generatore documenti.
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12">
