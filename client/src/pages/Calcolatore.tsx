@@ -13,7 +13,8 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Calculator, Info, Building2, Globe, CheckCircle, Scale, UserCheck, Puzzle } from "lucide-react";
+import { Calculator, Info, Building2, Globe, CheckCircle, Scale, UserCheck, Puzzle, Landmark, AlertTriangle, ShieldCheck, ShieldAlert, ChevronDown, ChevronUp } from "lucide-react";
+import { Switch } from "@/components/ui/switch";
 import {
   calcolaIndennita,
   getScaglioni,
@@ -25,6 +26,12 @@ import {
   type TipoValore,
   type CalcoloRisultato,
 } from "@shared/calcolo-indennita";
+import {
+  verificaCongruita,
+  COEFFICIENTI_CATASTALI,
+  type CategoriaCatastale,
+  type RisultatoVerificaCatastale,
+} from "@shared/valore-catastale";
 
 export default function Calcolatore() {
   const [modalitaTariffaria, setModalitaTariffaria] = useState<ModalitaTariffaria>("nazionale");
@@ -35,6 +42,11 @@ export default function Calcolatore() {
   const [risultato, setRisultato] = useState<CalcoloRisultato | null>(null);
   const [mediatoreEsperto, setMediatoreEsperto] = useState(false);
   const [proceduraComplessa, setProceduraComplessa] = useState(false);
+  // Verifica congruità catastale
+  const [showVerificaCatastale, setShowVerificaCatastale] = useState(false);
+  const [renditaCatastale, setRenditaCatastale] = useState<string>("");
+  const [categoriaCatastale, setCategoriaCatastale] = useState<CategoriaCatastale>("prima_casa");
+  const [verificaResult, setVerificaResult] = useState<RisultatoVerificaCatastale | null>(null);
 
   const scaglioni = getScaglioni(modalitaTariffaria);
 
@@ -264,6 +276,158 @@ export default function Calcolatore() {
                 </Button>
               </CardContent>
             </Card>
+
+            {/* Verifica Congruità Catastale — Art. 29 D.M. 150/2023 */}
+            {tipoValore === "determinato" && (
+              <Card className="border-2 border-foreground shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] mt-6" data-testid="card-verifica-catastale">
+                <CardHeader className="pb-2">
+                  <button
+                    onClick={() => setShowVerificaCatastale(!showVerificaCatastale)}
+                    className="flex items-center justify-between w-full"
+                    data-testid="button-toggle-catastale"
+                  >
+                    <div className="flex items-center gap-2">
+                      <Landmark className="w-5 h-5 text-primary" />
+                      <CardTitle className="text-base" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
+                        Verifica Congruità Catastale
+                      </CardTitle>
+                    </div>
+                    {showVerificaCatastale ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
+                  </button>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Art. 29 D.M. 150/2023 — Per materia da trascrivere (immobili)
+                  </p>
+                </CardHeader>
+                {showVerificaCatastale && (
+                  <CardContent className="space-y-4 pt-2">
+                    <p className="text-xs text-muted-foreground leading-relaxed">
+                      Verifica se il valore della domanda/accordo è congruo rispetto al valore catastale dell'immobile. Un valore inferiore al catastale può generare accertamenti da parte dell'Agenzia delle Entrate.
+                    </p>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="renditaCatastale" className="text-sm font-semibold">
+                        Rendita Catastale (€) — non rivalutata
+                      </Label>
+                      <Input
+                        id="renditaCatastale"
+                        type="number"
+                        value={renditaCatastale}
+                        onChange={(e) => { setRenditaCatastale(e.target.value); setVerificaResult(null); }}
+                        placeholder="Es. 925.00 (dalla visura catastale)"
+                        className="border-2 border-foreground font-mono"
+                        style={{ fontFamily: "'JetBrains Mono', monospace" }}
+                        data-testid="input-rendita-catastale"
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="categoriaCatastale" className="text-sm font-semibold">
+                        Tipologia Immobile
+                      </Label>
+                      <Select value={categoriaCatastale} onValueChange={(v) => { setCategoriaCatastale(v as CategoriaCatastale); setVerificaResult(null); }}>
+                        <SelectTrigger className="border-2 border-foreground" data-testid="select-categoria-catastale">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent className="border-2 border-foreground">
+                          {Object.entries(COEFFICIENTI_CATASTALI).map(([key, val]) => (
+                            <SelectItem key={key} value={key}>
+                              {val.label} (×{val.moltiplicatore})
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    <Button
+                      onClick={() => {
+                        const rendita = parseFloat(renditaCatastale) || 0;
+                        const valore = parseFloat(valoreLite) || 0;
+                        if (rendita > 0 && valore > 0) {
+                          setVerificaResult(verificaCongruita({
+                            renditaCatastale: rendita,
+                            categoria: categoriaCatastale,
+                            valoreDomanda: valore,
+                          }));
+                        }
+                      }}
+                      variant="outline"
+                      className="w-full py-5 font-bold border-2 border-foreground shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] transition-all duration-150"
+                      disabled={!renditaCatastale || !valoreLite}
+                      data-testid="button-verifica-catastale"
+                    >
+                      <Landmark className="w-4 h-4 mr-2" />
+                      Verifica Congruità
+                    </Button>
+
+                    {verificaResult && (
+                      <div className={`p-4 border-2 space-y-3 ${
+                        verificaResult.congruo
+                          ? "border-green-500 bg-green-50 dark:bg-green-950/30"
+                          : verificaResult.rischio === "alto"
+                            ? "border-red-500 bg-red-50 dark:bg-red-950/30"
+                            : verificaResult.rischio === "medio"
+                              ? "border-amber-500 bg-amber-50 dark:bg-amber-950/30"
+                              : "border-yellow-500 bg-yellow-50 dark:bg-yellow-950/30"
+                      }`} data-testid="result-verifica-catastale">
+                        <div className="flex items-center gap-2">
+                          {verificaResult.congruo ? (
+                            <ShieldCheck className="w-5 h-5 text-green-600" />
+                          ) : (
+                            <ShieldAlert className={`w-5 h-5 ${
+                              verificaResult.rischio === "alto" ? "text-red-600" : "text-amber-600"
+                            }`} />
+                          )}
+                          <span className="font-bold text-sm" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
+                            {verificaResult.congruo ? "Valore Congruo" : `Rischio ${verificaResult.rischio === "alto" ? "Alto" : verificaResult.rischio === "medio" ? "Medio" : "Basso"}`}
+                          </span>
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-2 text-xs">
+                          <div>
+                            <span className="text-muted-foreground">Rendita rivalutata:</span>
+                            <div className="font-mono font-semibold" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
+                              {formatEuro(verificaResult.renditaRivalutata)}
+                            </div>
+                          </div>
+                          <div>
+                            <span className="text-muted-foreground">Moltiplicatore:</span>
+                            <div className="font-mono font-semibold" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
+                              ×{verificaResult.moltiplicatore}
+                            </div>
+                          </div>
+                          <div>
+                            <span className="text-muted-foreground">Valore catastale:</span>
+                            <div className="font-mono font-bold text-base" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
+                              {formatEuro(verificaResult.valoreCatastale)}
+                            </div>
+                          </div>
+                          <div>
+                            <span className="text-muted-foreground">Valore domanda:</span>
+                            <div className="font-mono font-bold text-base" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
+                              {formatEuro(verificaResult.valoreDomanda)}
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="text-xs leading-relaxed">
+                          <span className="font-semibold">Scostamento:</span>{" "}
+                          <span className={`font-mono font-bold ${
+                            verificaResult.congruo ? "text-green-700 dark:text-green-400" : "text-red-700 dark:text-red-400"
+                          }`} style={{ fontFamily: "'JetBrains Mono', monospace" }}>
+                            {verificaResult.percentualeScostamento > 0 ? "+" : ""}{verificaResult.percentualeScostamento.toFixed(1)}%
+                          </span>
+                          {" "}({verificaResult.differenza >= 0 ? "+" : ""}{formatEuro(verificaResult.differenza)})
+                        </div>
+
+                        <p className="text-xs text-muted-foreground leading-relaxed">
+                          {verificaResult.messaggio}
+                        </p>
+                      </div>
+                    )}
+                  </CardContent>
+                )}
+              </Card>
+            )}
           </div>
 
           {/* Results */}

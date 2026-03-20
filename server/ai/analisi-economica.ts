@@ -6,10 +6,10 @@ export async function analisiEconomica(
   valoreLite: number | null,
   tipoAnalisi: string,
   previousAnalysis: string,
-  opzioniEconomiche: { materiaImmobiliare: boolean; primaCasa: boolean; gratuitoPatrocinio: boolean; mediatoreEsperto: boolean; proceduraComplessa: boolean; modalitaTariffaria: string } = { materiaImmobiliare: false, primaCasa: false, gratuitoPatrocinio: false, mediatoreEsperto: false, proceduraComplessa: false, modalitaTariffaria: "nazionale" }
+  opzioniEconomiche: { materiaImmobiliare: boolean; primaCasa: boolean; renditaCatastale: number | null; categoriaCatastale: string | null; gratuitoPatrocinio: boolean; mediatoreEsperto: boolean; proceduraComplessa: boolean; modalitaTariffaria: string } = { materiaImmobiliare: false, primaCasa: false, renditaCatastale: null, categoriaCatastale: null, gratuitoPatrocinio: false, mediatoreEsperto: false, proceduraComplessa: false, modalitaTariffaria: "nazionale" }
 ): Promise<string> {
   const valore = valoreLite || 25000;
-  const { materiaImmobiliare, primaCasa, gratuitoPatrocinio, mediatoreEsperto, proceduraComplessa, modalitaTariffaria } = opzioniEconomiche;
+  const { materiaImmobiliare, primaCasa, renditaCatastale, categoriaCatastale, gratuitoPatrocinio, mediatoreEsperto, proceduraComplessa, modalitaTariffaria } = opzioniEconomiche;
   const isGenova = modalitaTariffaria === "coa_genova";
 
   // Build dynamic sections based on flags
@@ -31,6 +31,34 @@ MATERIA IMMOBILIARE - ${tipoImmobile}:
 - ${stimaNotaio}
 ${primaCasa ? "- VANTAGGIO PRIMA CASA: risparmio significativo sia sulle imposte di registro (2% vs 9%) sia sugli onorari notarili (~30% in meno). Evidenziare questo risparmio nella comparazione." : ""}
 - In causa civile: registro 3% sulla sentenza, imposte ipotecaria/catastale piene, costi notarili ordinari`;
+
+    // Add catastale verification if rendita was provided
+    if (renditaCatastale && renditaCatastale > 0) {
+      const moltiplicatori: Record<string, { label: string; mult: number }> = {
+        prima_casa: { label: "Prima casa", mult: 115.5 },
+        altri_fabbricati_ac: { label: "Altre abitazioni", mult: 126 },
+        cat_b: { label: "Cat. B", mult: 176.4 },
+        cat_a10_d: { label: "Uffici/D", mult: 63 },
+        cat_c1_e: { label: "Negozi/E", mult: 42.84 },
+        terreno_agricolo: { label: "Terreno agricolo", mult: 112.5 },
+      };
+      const cat = moltiplicatori[categoriaCatastale || "prima_casa"] || moltiplicatori.prima_casa;
+      const valoreCatastale = Math.round(renditaCatastale * cat.mult * 100) / 100;
+      const congruo = valore >= valoreCatastale;
+      const scostamento = valoreCatastale > 0 ? Math.round(((valore - valoreCatastale) / valoreCatastale) * 100) : 0;
+
+      notaioSection += `
+
+VERIFICA CONGRUITA' CATASTALE (ART. 29 D.M. 150/2023):
+- Rendita catastale: EUR ${renditaCatastale.toFixed(2)}
+- Rendita rivalutata (+5%): EUR ${(renditaCatastale * 1.05).toFixed(2)}
+- Categoria: ${cat.label} (moltiplicatore ${cat.mult})
+- VALORE CATASTALE CALCOLATO: EUR ${valoreCatastale.toLocaleString("it-IT", { minimumFractionDigits: 2 })}
+- Valore domanda/accordo: EUR ${valore.toLocaleString("it-IT", { minimumFractionDigits: 2 })}
+- Scostamento: ${scostamento}%
+- ESITO: ${congruo ? "CONGRUO — il valore della domanda è pari o superiore al valore catastale" : "NON CONGRUO — il valore è inferiore al catastale, rischio accertamento Agenzia delle Entrate (artt. 51-52 DPR 131/1986)"}
+DEVI INCLUDERE questa verifica nell'analisi economica, con un paragrafo dedicato alla congruità del valore.`;
+    }
   }
 
   // Art. 31 co. 3 — Maggiorazione indennità

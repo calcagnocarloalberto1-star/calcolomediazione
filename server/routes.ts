@@ -108,7 +108,7 @@ export async function registerRoutes(
   // Create new analysis and run pipeline
   app.post("/api/analisi", async (req, res) => {
     try {
-      const { titolo, descrizione, tipoAnalisi, modalitaTariffaria, valoreLite, tipoValore, parti, teorieSelezionate, documentiText, materiaImmobiliare, primaCasa, gratuitoPatrocinio, mediatoreEsperto, proceduraComplessa } = req.body;
+      const { titolo, descrizione, tipoAnalisi, modalitaTariffaria, valoreLite, tipoValore, parti, teorieSelezionate, documentiText, materiaImmobiliare, primaCasa, renditaCatastale, categoriaCatastale, gratuitoPatrocinio, mediatoreEsperto, proceduraComplessa } = req.body;
 
       if (!titolo || !descrizione) {
         return res.status(400).json({ error: "Titolo e descrizione sono obbligatori" });
@@ -140,6 +140,8 @@ export async function registerRoutes(
       runPipeline(analisi.id, descrizione, parti || [], tipoAnalisi || "mediazione", valoreLite, teorieSelezionate || ["ancoraggio", "avversione_perdita", "framing", "overconfidence", "sunk_cost", "availability", "teoria_giochi", "decision_analysis", "mcda", "teoria_prospetto"], documentiText || "", {
         materiaImmobiliare: materiaImmobiliare || false,
         primaCasa: primaCasa || false,
+        renditaCatastale: renditaCatastale || null,
+        categoriaCatastale: categoriaCatastale || null,
         gratuitoPatrocinio: gratuitoPatrocinio || false,
         mediatoreEsperto: mediatoreEsperto || false,
         proceduraComplessa: proceduraComplessa || false,
@@ -439,7 +441,7 @@ async function runPipeline(
   valoreLite: number | null,
   teorieSelezionate: string[],
   documentiText: string,
-  opzioniEconomiche: { materiaImmobiliare: boolean; primaCasa: boolean; gratuitoPatrocinio: boolean; mediatoreEsperto: boolean; proceduraComplessa: boolean; modalitaTariffaria: string } = { materiaImmobiliare: false, primaCasa: false, gratuitoPatrocinio: false, mediatoreEsperto: false, proceduraComplessa: false, modalitaTariffaria: "nazionale" }
+  opzioniEconomiche: { materiaImmobiliare: boolean; primaCasa: boolean; renditaCatastale: number | null; categoriaCatastale: string | null; gratuitoPatrocinio: boolean; mediatoreEsperto: boolean; proceduraComplessa: boolean; modalitaTariffaria: string } = { materiaImmobiliare: false, primaCasa: false, renditaCatastale: null, categoriaCatastale: null, gratuitoPatrocinio: false, mediatoreEsperto: false, proceduraComplessa: false, modalitaTariffaria: "nazionale" }
 ) {
   try {
     // Step 1: NER Extraction

@@ -45,6 +45,7 @@ import {
 import MarkdownRenderer from "@/components/MarkdownRenderer";
 import { apiRequest } from "@/lib/queryClient";
 import type { AnalisiCaso } from "@shared/schema";
+import { COEFFICIENTI_CATASTALI, type CategoriaCatastale } from "@shared/valore-catastale";
 
 const PIPELINE_STEPS = [
   "Estrazione Entità (NER)",
@@ -105,6 +106,8 @@ export default function AnalisiCasoAI() {
   );
   const [materiaImmobiliare, setMateriaImmobiliare] = useState(false);
   const [primaCasa, setPrimaCasa] = useState(true);
+  const [renditaCatastaleAI, setRenditaCatastaleAI] = useState<string>("");
+  const [categoriaCatastaleAI, setCategoriaCatastaleAI] = useState("prima_casa");
   const [gratuitoPatrocinio, setGratuitoPatrocinio] = useState(false);
   const [mediatoreEsperto, setMediatoreEsperto] = useState(false);
   const [proceduraComplessa, setProceduraComplessa] = useState(false);
@@ -267,6 +270,8 @@ export default function AnalisiCasoAI() {
         documentiText: documentiCombinati,
         materiaImmobiliare,
         primaCasa: materiaImmobiliare ? primaCasa : false,
+        renditaCatastale: materiaImmobiliare && renditaCatastaleAI ? parseFloat(renditaCatastaleAI) : null,
+        categoriaCatastale: materiaImmobiliare ? categoriaCatastaleAI : null,
         gratuitoPatrocinio,
         mediatoreEsperto,
         proceduraComplessa,
@@ -991,10 +996,56 @@ export default function AnalisiCasoAI() {
                   <div className="flex items-center gap-3">
                     <Switch
                       checked={primaCasa}
-                      onCheckedChange={setPrimaCasa}
+                      onCheckedChange={(val) => {
+                        setPrimaCasa(val);
+                        setCategoriaCatastaleAI(val ? "prima_casa" : "altri_fabbricati_ac");
+                      }}
                       data-testid="switch-analisi-prima-casa"
                     />
                     <span className="text-sm">{primaCasa ? "Prima casa (registro 2%)" : "Seconda casa (registro 9%)"}</span>
+                  </div>
+                )}
+
+                {/* Verifica Congruità Catastale (only if immobiliare) */}
+                {materiaImmobiliare && (
+                  <div className="p-3 border-2 border-foreground/20 bg-muted/20 space-y-3">
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs font-semibold" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
+                        Verifica Congruità Catastale (art. 29 D.M. 150/2023)
+                      </span>
+                    </div>
+                    <p className="text-xs text-muted-foreground">
+                      Opzionale: inserisci la rendita catastale per verificare se il valore della domanda è congruo per l'Agenzia delle Entrate.
+                    </p>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      <div className="space-y-1">
+                        <Label className="text-xs">Rendita catastale (€)</Label>
+                        <Input
+                          type="number"
+                          value={renditaCatastaleAI}
+                          onChange={(e) => setRenditaCatastaleAI(e.target.value)}
+                          placeholder="Es. 925.00"
+                          className="border-2 border-foreground/50 font-mono text-sm h-9"
+                          style={{ fontFamily: "'JetBrains Mono', monospace" }}
+                          data-testid="input-rendita-catastale-ai"
+                        />
+                      </div>
+                      <div className="space-y-1">
+                        <Label className="text-xs">Tipologia immobile</Label>
+                        <Select value={categoriaCatastaleAI} onValueChange={setCategoriaCatastaleAI}>
+                          <SelectTrigger className="border-2 border-foreground/50 text-sm h-9" data-testid="select-categoria-ai">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent className="border-2 border-foreground">
+                            {Object.entries(COEFFICIENTI_CATASTALI).map(([key, val]) => (
+                              <SelectItem key={key} value={key}>
+                                {val.label} (×{val.moltiplicatore})
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </div>
                   </div>
                 )}
 
