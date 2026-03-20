@@ -764,6 +764,22 @@ export default function Calcolatore() {
             </CardContent>
           </Card>
         </div>
+
+        {/* Disclaimer metodologico e legale */}
+        <div className="mt-8 text-xs text-muted-foreground bg-muted/50 p-4 border border-foreground/10" data-testid="text-disclaimer-calcolatore">
+          <div className="flex items-start gap-2">
+            <Scale className="w-4 h-4 flex-shrink-0 mt-0.5" />
+            <div>
+              <p className="font-semibold mb-1">Criteri di calcolo e avvertenza legale</p>
+              <p className="mb-2">
+                <strong>Compensi avvocato:</strong> i compensi legali indicati nei calcolatori sono determinati sulla base dei <strong>valori medi</strong> previsti dal D.M. 55/2014 (aggiornato dal D.M. 147/2022), sommando le fasi applicabili (studio, introduttiva, istruttoria, decisionale per il giudizio; attivazione, negoziazione, conciliazione per la mediazione). Il D.M. 55/2014 prevede per ciascuna fase un valore minimo, un valore medio e un valore massimo: il compenso effettivo può variare significativamente (indicativamente dal -50% al +100% rispetto ai valori medi) in base alla complessità della causa, al numero delle parti, all'urgenza, al pregio dell'opera e ai risultati conseguiti, secondo i criteri dell'art. 4 D.M. 55/2014.
+              </p>
+              <p>
+                <strong>Avvertenza:</strong> tutti i calcoli forniti da questa piattaforma hanno finalità esclusivamente informativa e orientativa. Non costituiscono in alcun modo una consulenza legale, un preventivo vincolante né un parere professionale. Per una valutazione precisa e personalizzata dei costi, si raccomanda di consultare un avvocato o un professionista abilitato.
+              </p>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );

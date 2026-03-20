@@ -1272,6 +1272,22 @@ export default function AnalisiCasoAI() {
                 </>
               )}
             </Button>
+
+            {/* Disclaimer metodologico e legale */}
+            <div className="mt-6 text-xs text-muted-foreground bg-muted/50 p-4 border border-foreground/10" data-testid="text-disclaimer-ai">
+              <div className="flex items-start gap-2">
+                <Scale className="w-4 h-4 flex-shrink-0 mt-0.5" />
+                <div>
+                  <p className="font-semibold mb-1">Criteri di calcolo e avvertenza legale</p>
+                  <p className="mb-2">
+                    <strong>Compensi avvocato:</strong> le stime dei compensi legali nell'analisi economica sono basate sui <strong>valori medi</strong> previsti dal D.M. 55/2014 (aggiornato D.M. 147/2022). Il compenso effettivo può variare significativamente (indicativamente dal -50% al +100% rispetto ai valori medi) in base alla complessità della causa, al numero delle parti, all'urgenza, al pregio dell'opera e ai risultati conseguiti (art. 4 D.M. 55/2014).
+                  </p>
+                  <p>
+                    <strong>Avvertenza:</strong> l'analisi generata dall'intelligenza artificiale e tutti i calcoli forniti hanno finalità esclusivamente informativa e orientativa. Non costituiscono in alcun modo una consulenza legale, un preventivo vincolante né un parere professionale. L'IA può commettere errori. Per una valutazione precisa e personalizzata, si raccomanda di consultare un avvocato o un professionista abilitato.
+                  </p>
+                </div>
+              </div>
+            </div>
           </CardContent>
         </Card>
       </div>

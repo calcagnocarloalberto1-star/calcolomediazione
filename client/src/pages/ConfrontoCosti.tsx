@@ -945,15 +945,16 @@ export default function ConfrontoCosti() {
               <div className="flex items-start gap-2">
                 <Info className="w-4 h-4 flex-shrink-0 mt-0.5" />
                 <div>
-                  <p className="font-semibold mb-1">Nota importante</p>
+                  <p className="font-semibold mb-1">Criteri di calcolo e avvertenza legale</p>
+                  <p className="mb-2">
+                    <strong>Compensi avvocato:</strong> i compensi legali sono calcolati sulla base dei <strong>valori medi</strong> previsti dal D.M. 55/2014 (aggiornato D.M. 147/2022), sommando le fasi applicabili per ciascun grado di giudizio. Il D.M. 55/2014 prevede per ciascuna fase un valore minimo, medio e massimo: il compenso effettivo può variare significativamente (indicativamente dal -50% al +100% rispetto ai valori medi) in base alla complessità della causa, al numero delle parti, all'urgenza, al pregio dell'opera e ai risultati conseguiti (art. 4 D.M. 55/2014). Per la mediazione si applicano i parametri stragiudiziali (Tab. 25-bis), per il primo grado la Tab. 2, per l'appello la Tab. 12 e per la cassazione la Tab. 13.
+                    {modalitaTariffaria === "coa_genova" && " Le tariffe COA Genova sono quelle adottate dall'Ordine degli Avvocati di Genova e possono differire dalle tariffe nazionali."}
+                  </p>
+                  <p className="mb-2">
+                    <strong>Altre voci:</strong> la stima CTU è forfettaria e varia significativamente in base alla materia e complessità della perizia. L'imposta di registro sulla sentenza (3%) si applica solo in caso di condanna al pagamento di somme. Il CU in appello è maggiorato del 50%, in cassazione raddoppiato (art. 13 D.P.R. 115/2002).
+                  </p>
                   <p>
-                    I calcoli sono basati sui parametri medi previsti dalla normativa vigente (D.M. 55/2014 aggiornato D.M. 147/2022, D.M. 150/2023, D.P.R. 115/2002) e hanno valore puramente indicativo. 
-                    {modalitaTariffaria === "coa_genova" && " Le tariffe COA Genova sono quelle adottate dall'Ordine degli Avvocati di Genova e possono differire dalle tariffe nazionali. "}
-                    I compensi effettivi dell'avvocato possono variare fino al ±50% rispetto ai valori medi tabellari. 
-                    La stima CTU è forfettaria e varia significativamente in base alla materia e complessità della perizia.
-                    L'imposta di registro sulla sentenza (3%) si applica solo in caso di condanna al pagamento di somme.
-                    I costi di Appello (Tab. 12) e Cassazione (Tab. 13) sono calcolati con parametri medi D.M. 147/2022. Il CU in appello è maggiorato del 50%, in cassazione raddoppiato (art. 13 D.P.R. 115/2002).
-                    Per una valutazione precisa, consultare un professionista.
+                    <strong>Avvertenza:</strong> tutti i calcoli forniti da questa piattaforma hanno finalità esclusivamente informativa e orientativa. Non costituiscono in alcun modo una consulenza legale, un preventivo vincolante né un parere professionale. Per una valutazione precisa e personalizzata dei costi, si raccomanda di consultare un avvocato o un professionista abilitato.
                   </p>
                 </div>
               </div>
