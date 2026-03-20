@@ -343,9 +343,9 @@ Rispondi alle domande dell'utente sul caso, fornendo approfondimenti, chiariment
   }
 
   const PAGES = [
-    { path: "/", title: "CalcoloMediazione - Calcolatore Indennità Mediazione Civile", desc: "Piattaforma professionale per il calcolo delle indennità di mediazione D.M. 150/2023. Analisi AI del caso, confronto costi primo grado, appello e cassazione, stima CTU, esenzione prima casa, generatore procura.", priority: "1.0", changefreq: "weekly" },
-    { path: "/calcolatore", title: "Calcolatore Indennità Mediazione D.M. 150/2023", desc: "Calcola le indennità di mediazione civile e commerciale secondo le tariffe del D.M. 150/2023. Doppia tariffa, esenzioni, compensi avvocato, costi notarili con esenzione prima casa.", priority: "0.9", changefreq: "monthly" },
-    { path: "/analisi-caso-ai", title: "Analisi AI del Caso di Mediazione con Confronto Economico", desc: "Analisi completa del caso di mediazione con intelligenza artificiale: analisi giuridica, MAAN/BATNA, bias cognitivi, bozza accordo, confronto economico primo grado, appello e cassazione con stima CTU.", priority: "0.9", changefreq: "monthly" },
+    { path: "/", title: "CalcoloMediazione - Calcolatore Indennità Mediazione Civile", desc: "Piattaforma professionale per il calcolo delle indennità di mediazione D.M. 150/2023. Analisi AI del caso, confronto costi primo grado, appello e cassazione, stima CTU, esenzione prima casa, verifica congruità valore catastale, generatore procura.", priority: "1.0", changefreq: "weekly" },
+    { path: "/calcolatore", title: "Calcolatore Indennità Mediazione D.M. 150/2023 con Verifica Congruità Catastale", desc: "Calcola le indennità di mediazione civile e commerciale secondo le tariffe del D.M. 150/2023. Doppia tariffa, esenzioni, compensi avvocato, costi notarili con esenzione prima casa, verifica congruità valore catastale (art. 29 D.M. 150/2023).", priority: "0.9", changefreq: "monthly" },
+    { path: "/analisi-caso-ai", title: "Analisi AI del Caso di Mediazione con Confronto Economico", desc: "Analisi completa del caso di mediazione con intelligenza artificiale: analisi giuridica, MAAN/BATNA, bias cognitivi, bozza accordo, confronto economico primo grado, appello e cassazione con stima CTU, verifica congruità valore catastale.", priority: "0.9", changefreq: "monthly" },
     { path: "/confronto-costi", title: "Confronto Costi Mediazione vs Processo: Primo Grado, Appello, Cassazione", desc: "Confronta i costi della mediazione con quelli del processo su tre gradi di giudizio. Contributo unificato, compensi avvocato, CTU in appello, parametri forensi D.M. 55/2014 Tabelle 2, 12 e 13.", priority: "0.8", changefreq: "monthly" },
     { path: "/faq", title: "FAQ Mediazione Civile - Domande Frequenti", desc: "Domande frequenti sulla mediazione civile e commerciale: indennità, costi, credito d'imposta, gratuito patrocinio, esenzione prima casa e analisi AI.", priority: "0.7", changefreq: "monthly" },
     { path: "/guida-dm-150", title: "Guida Completa D.M. 150/2023 - Tariffe Mediazione", desc: "Guida dettagliata al Decreto Ministeriale 150/2023 sulle tariffe di mediazione civile e commerciale. Tabelle, calcoli ed esempi pratici.", priority: "0.7", changefreq: "monthly" },
@@ -399,11 +399,11 @@ Rispondi alle domande dell'utente sul caso, fornendo approfondimenti, chiariment
     <tspan x="100" y="340">&#x2666; Confronto costi su 3 gradi</tspan>
     <tspan x="100" y="380">&#x2666; Calcolatore indennit\u00e0</tspan>
     <tspan x="620" y="300">&#x2666; Generatore procura</tspan>
-    <tspan x="620" y="340">&#x2666; Database giurisprudenza</tspan>
+    <tspan x="620" y="340">&#x2666; Verifica congruità catastale</tspan>
     <tspan x="620" y="380">&#x2666; Credito d'imposta</tspan>
   </text>
   <rect x="100" y="420" width="1000" height="3" fill="#c55a2b"/>
-  <text x="100" y="470" font-family="sans-serif" font-size="21" fill="#6b6560">D.M. 150/2023  \u2022  Primo Grado, Appello, Cassazione  \u2022  CTU  \u2022  Esenzione Prima Casa</text>
+  <text x="100" y="470" font-family="sans-serif" font-size="21" fill="#6b6560">D.M. 150/2023  \u2022  Primo Grado, Appello, Cassazione  \u2022  CTU  \u2022  Congruità Catastale</text>
   <text x="100" y="530" font-family="sans-serif" font-weight="bold" font-size="26" fill="#2d2926">calcolomediazione.it</text>
   <rect x="880" y="500" width="220" height="48" rx="0" fill="#c55a2b"/>
   <text x="905" y="532" font-family="sans-serif" font-weight="bold" font-size="24" fill="#ffffff">100% Gratuito</text>
