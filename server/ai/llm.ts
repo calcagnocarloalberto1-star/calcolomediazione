@@ -26,14 +26,43 @@ function getAnthropicClient(): Anthropic | null {
 }
 
 // Global formatting constraint appended to every system prompt
-const FORMAT_CONSTRAINT = `\n\nIMPORTANTE — Regole di formattazione obbligatorie:
-- NON usare emoji, emoticon, simboli Unicode decorativi (come frecce speciali, check mark, stelle, pallini colorati, icone). Usa solo testo ASCII standard.
-- Per le tabelle, usa il formato Markdown standard con | e --- (allineamento a sinistra). Ogni riga della tabella deve avere lo stesso numero di colonne dell'intestazione.
-- Per i punti elenco usa trattini (-) semplici, non pallini o altri simboli.
-- Per enfatizzare usa **grassetto** e NON emoji o simboli speciali.
-- Scrivi in italiano professionale e chiaro.`;
+const FORMAT_CONSTRAINT = `\n\nIMPORTANTE — Regole di formattazione OBBLIGATORIE (violazioni non accettate):
+- NON usare MAI emoji, emoticon, simboli Unicode decorativi (frecce speciali, check mark, stelle, pallini colorati, icone, simboli come \u2713 \u2717 \u2022 \u25cf \u2605 \u2192 \u27a4). Usa SOLO caratteri ASCII standard.
+- Per le tabelle Markdown: SEMPRE usare | e --- con allineamento a sinistra. OGNI riga DEVE avere ESATTAMENTE lo stesso numero di colonne dell'intestazione. NON lasciare celle vuote, scrivi "-" se non c'e' un valore.
+- Per i punti elenco usa SOLO trattini (-), mai pallini, asterischi o altri simboli.
+- Per enfatizzare usa **grassetto**, mai emoji o simboli.
+- NON troncare MAI l'analisi. Completa SEMPRE ogni sezione fino alla fine.
+- Scrivi in italiano professionale e chiaro.
+- Per i simboli di valuta usa la parola "euro" o "EUR", non il simbolo.`;
 
-export async function callLLM(systemPrompt: string, userPrompt: string, maxTokens: number = 8192): Promise<string> {
+// Post-process AI output to fix common formatting issues
+function cleanAIOutput(text: string): string {
+  let result = text;
+  // Remove common unicode decorative symbols that break rendering
+  result = result.replace(/[\u2713\u2714\u2715\u2716\u2717\u2718\u2022\u25cf\u25cb\u25a0\u25a1\u2605\u2606\u2192\u2190\u2191\u2193\u27a4\u25b6\u25c0\u2b50\u26a0\u2139\u274c\u2705\u2611\u2612\u2610\u25ba\u25c4\u2666\u2665\u2660\u2663\u2764\u270f\u270e\u2702\u2709\u260e\u231a\u231b\u23f0\u23f3\u2615\u26bd\u26be\u2728\u2733\u2734\u2747\u2756]/g, '');
+  // Remove emoji ranges
+  result = result.replace(/[\u{1F300}-\u{1F9FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}]/gu, '');
+  // Fix table formatting: ensure separator row has correct column count
+  const lines = result.split('\n');
+  for (let i = 0; i < lines.length - 1; i++) {
+    if (lines[i].includes('|') && lines[i + 1] && /^\s*\|[\s:-]+\|/.test(lines[i + 1])) {
+      const headerCols = (lines[i].match(/\|/g) || []).length;
+      const sepCols = (lines[i + 1].match(/\|/g) || []).length;
+      if (sepCols < headerCols) {
+        // Fix separator row to match header column count
+        const diff = headerCols - sepCols;
+        lines[i + 1] = lines[i + 1].replace(/\|\s*$/, ' --- |'.repeat(diff) + ' |');
+      }
+    }
+  }
+  result = lines.join('\n');
+  // Replace € symbol with EUR for consistency (some fonts don't render it)
+  // Actually keep € as it renders fine in browsers, just clean up encoding issues
+  result = result.replace(/\\u20ac/g, '\u20ac');
+  return result.trim();
+}
+
+export async function callLLM(systemPrompt: string, userPrompt: string, maxTokens: number = 16384): Promise<string> {
   // Priority 1: Google Gemini (direct REST API to control thinkingConfig)
   const geminiKey = process.env.GEMINI_API_KEY;
   if (geminiKey) {
@@ -58,7 +87,7 @@ export async function callLLM(systemPrompt: string, userPrompt: string, maxToken
         const textParts = parts
           .filter((p: any) => !p.thought && p.text)
           .map((p: any) => p.text);
-        if (textParts.length > 0) return textParts.join("\n");
+        if (textParts.length > 0) return cleanAIOutput(textParts.join("\n"));
       }
       if (data.error) {
         console.error("Errore Gemini API:", data.error.message);
