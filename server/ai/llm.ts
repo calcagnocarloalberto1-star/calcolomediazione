@@ -33,18 +33,36 @@ const FORMAT_CONSTRAINT = `\n\nIMPORTANTE — Regole di formattazione obbligator
 - Per enfatizzare usa **grassetto** e NON emoji o simboli speciali.
 - Scrivi in italiano professionale e chiaro.`;
 
-export async function callLLM(systemPrompt: string, userPrompt: string, maxTokens: number = 4096): Promise<string> {
-  // Priority 1: Google Gemini
-  const gemini = getGeminiClient();
-  if (gemini) {
+export async function callLLM(systemPrompt: string, userPrompt: string, maxTokens: number = 8192): Promise<string> {
+  // Priority 1: Google Gemini (direct REST API to control thinkingConfig)
+  const geminiKey = process.env.GEMINI_API_KEY;
+  if (geminiKey) {
     try {
-      const model = gemini.getGenerativeModel({ 
-        model: "gemini-2.5-flash",
-        systemInstruction: systemPrompt + FORMAT_CONSTRAINT,
+      const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${geminiKey}`;
+      const body = {
+        systemInstruction: { parts: [{ text: systemPrompt + FORMAT_CONSTRAINT }] },
+        contents: [{ parts: [{ text: userPrompt }] }],
+        generationConfig: {
+          maxOutputTokens: maxTokens,
+          thinkingConfig: { thinkingBudget: 0 },
+        },
+      };
+      const resp = await fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
       });
-      const result = await model.generateContent(userPrompt);
-      const text = result.response.text();
-      if (text) return text;
+      const data = await resp.json() as any;
+      if (data.candidates && data.candidates.length > 0) {
+        const parts = data.candidates[0].content?.parts || [];
+        const textParts = parts
+          .filter((p: any) => !p.thought && p.text)
+          .map((p: any) => p.text);
+        if (textParts.length > 0) return textParts.join("\n");
+      }
+      if (data.error) {
+        console.error("Errore Gemini API:", data.error.message);
+      }
     } catch (error) {
       console.error("Errore chiamata Gemini:", error);
       // Fall through to Anthropic or placeholder
