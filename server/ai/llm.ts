@@ -62,7 +62,7 @@ function cleanAIOutput(text: string): string {
   return result.trim();
 }
 
-export async function callLLM(systemPrompt: string, userPrompt: string, maxTokens: number = 16384): Promise<string> {
+export async function callLLM(systemPrompt: string, userPrompt: string, maxTokens: number = 4096): Promise<string> {
   // Priority 1: Google Gemini (direct REST API to control thinkingConfig)
   const geminiKey = process.env.GEMINI_API_KEY;
   if (geminiKey) {

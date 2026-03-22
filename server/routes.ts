@@ -423,7 +423,7 @@ Sitemap: ${siteUrl}/sitemap.xml
 
 # Disallow admin and API
 Disallow: /api/
-Disallow: /#/admin
+Disallow: /admin
 `;
     res.setHeader("Content-Type", "text/plain");
     res.send(txt);

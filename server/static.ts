@@ -61,7 +61,7 @@ export function serveStatic(app: Express) {
       // Add canonical URL and OG tags
       html = html.replace(
         '</head>',
-        `  <link rel="canonical" href="${siteUrl}${reqPath}" />\n    <meta property="og:title" content="${seoPage.title}" />\n    <meta property="og:description" content="${seoPage.description}" />\n    <meta property="og:url" content="${siteUrl}${reqPath}" />\n    <meta property="og:type" content="website" />\n    <meta property="og:site_name" content="CalcoloMediazione" />\n    <meta property="og:image" content="${siteUrl}/og-image.svg" />\n    <script>if(!window.location.hash || window.location.hash === '#/') window.location.hash = '#${reqPath}';</script>\n  </head>`
+        `  <link rel="canonical" href="${siteUrl}${reqPath}" />\n    <meta property="og:title" content="${seoPage.title}" />\n    <meta property="og:description" content="${seoPage.description}" />\n    <meta property="og:url" content="${siteUrl}${reqPath}" />\n    <meta property="og:type" content="website" />\n    <meta property="og:site_name" content="CalcoloMediazione" />\n    <meta property="og:image" content="${siteUrl}/og-image.svg" />\n  </head>`
       );
     } else if (reqPath === "/") {
       // Home page - canonical already in index.html, just ensure siteUrl is correct
