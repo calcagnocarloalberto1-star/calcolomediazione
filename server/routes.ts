@@ -433,7 +433,7 @@ Disallow: /admin
 }
 
 // Run the 8-step AI pipeline
- async function runPipeline(
+async function runPipeline(
   id: number,
   descrizione: string,
   parti: Array<{ nome: string; ruolo: string }>,
@@ -443,7 +443,7 @@ Disallow: /admin
   documentiText: string,
   opzioniEconomiche: { materiaImmobiliare: boolean; primaCasa: boolean; renditaCatastale: number | null; categoriaCatastale: string | null; gratuitoPatrocinio: boolean; mediatoreEsperto: boolean; proceduraComplessa: boolean; modalitaTariffaria: string } = { materiaImmobiliare: false, primaCasa: false, renditaCatastale: null, categoriaCatastale: null, gratuitoPatrocinio: false, mediatoreEsperto: false, proceduraComplessa: false, modalitaTariffaria: "nazionale" }
 ) {
-  const truncate = (text: string, max = 6000) =>
+  const truncate = (text: string, max = 3000) =>
     text.length > max ? text.slice(0, max) + '\n\n[...troncato per brevità...]' : text;
 
   const safeStep = async <T>(
@@ -470,25 +470,25 @@ Disallow: /admin
 
     // Step 2: Analisi Giuridica
     const giuridicaResult = await safeStep(
-      () => analisiGiuridica(descrizione, parti, nerResult, tipoAnalisi),
+      () => analisiGiuridica(descrizione, parti, truncate(nerResult, 3000), tipoAnalisi),
       '[Analisi giuridica non disponibile]',
       'Giuridica'
     );
     await storage.updateAnalisi(id, { analisiGiuridica: giuridicaResult });
 
-    // Step 3: Guida Strategica
+    // Step 3: Guida Strategica — solo NER troncato come contesto
     const strategicaResult = await safeStep(
-      () => guidaStrategica(descrizione, parti, `${truncate(nerResult)}\n\n${truncate(giuridicaResult)}`),
+      () => guidaStrategica(descrizione, parti, truncate(nerResult, 3000)),
       '[Guida strategica non disponibile]',
       'Strategica'
     );
     await storage.updateAnalisi(id, { guidaStrategica: strategicaResult });
 
-    // Step 4: MAAN/BATNA — FIX: truncate context
+    // Step 4: MAAN/BATNA — solo giuridica troncata come contesto
     const maanResult = await safeStep(
       () => analisiMaanBatna(
         descrizione, parti, valoreLite,
-        `${truncate(giuridicaResult)}\n\n${truncate(strategicaResult)}`
+        truncate(giuridicaResult, 3000)
       ),
       '[Analisi MAAN/BATNA non disponibile]',
       'MAAN/BATNA'
@@ -499,7 +499,7 @@ Disallow: /admin
     const compatibilitaResult = await safeStep(
       () => compatibilitaInteressi(
         descrizione, parti,
-        `${truncate(giuridicaResult)}\n\n${truncate(maanResult)}`
+        `${truncate(giuridicaResult, 2000)}\n\n${truncate(maanResult, 2000)}`
       ),
       '[Compatibilità interessi non disponibile]',
       'Compatibilità'
@@ -510,7 +510,7 @@ Disallow: /admin
     const biasResult = await safeStep(
       () => controlloBiasCognitivi(
         descrizione, parti, teorieSelezionate,
-        `${truncate(giuridicaResult)}\n\n${truncate(strategicaResult)}`
+        truncate(giuridicaResult, 3000)
       ),
       '[Controllo bias non disponibile]',
       'Bias'
@@ -521,7 +521,7 @@ Disallow: /admin
     const bozzaResult = await safeStep(
       () => bozzaAccordo(
         descrizione, parti, valoreLite,
-        `${truncate(giuridicaResult)}\n\n${truncate(compatibilitaResult)}`
+        `${truncate(giuridicaResult, 2000)}\n\n${truncate(compatibilitaResult, 2000)}`
       ),
       '[Bozza accordo non disponibile]',
       'Accordo'
@@ -532,7 +532,7 @@ Disallow: /admin
     const economicaResult = await safeStep(
       () => analisiEconomica(
         descrizione, parti, valoreLite, tipoAnalisi,
-        `${truncate(giuridicaResult)}\n\n${truncate(maanResult)}`,
+        truncate(giuridicaResult, 2000),
         opzioniEconomiche
       ),
       '[Analisi economica non disponibile]',
