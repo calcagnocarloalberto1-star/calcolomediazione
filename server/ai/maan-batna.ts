@@ -57,19 +57,19 @@ Devi includere per ciascuna parte:
 ${valoreLite ? `Valore della lite dichiarato: €${valoreLite.toLocaleString('it-IT')}` : "Valore della lite: indeterminabile"}
 
 Formatta l'output in Markdown con tabelle comparative. Inserisci una tabella di confronto costi che riprenda i dati forniti.`;
+const systemPrompt = `Sei un esperto di negoziazione e teoria dei giochi applicata alla mediazione civile italiana. Analizza la MAAN/BATNA per ciascuna parte producendo OBBLIGATORIAMENTE tutte le sezioni seguenti nell'ordine indicato:
 
-  const userPrompt = `Analizza MAAN/BATNA per il seguente caso.
+1. **Alternative disponibili**: elenco delle opzioni se la mediazione fallisce
+2. **Confronto costi dettagliato**: usa i DATI COSTI CALCOLATI forniti per mostrare il confronto economico reale tra mediazione e causa civile, includendo contributo unificato, compenso avvocato, imposta di registro, CTU, vantaggi fiscali mediazione
+3. **Probabilità di successo**: stima realistica per ciascuna alternativa
+4. **BATNA Score**: punteggio 1-10 della forza della posizione di ciascuna parte
+5. **ZOPA** (Zona di Possibile Accordo): range in cui l'accordo è possibile
+6. **Valore di riserva**: importo minimo/massimo accettabile per ciascuna parte
+7. **Analisi costo-opportunità**: confronto tra tempo e costi della causa vs mediazione
+8. **Analisi dei Rischi Processuali**: tabella con ALMENO 4 righe che elenca i rischi specifici per ciascuna parte (es. soccombenza, condanna alle spese art. 96 c.p.c., mancata partecipazione art. 8 D.Lgs. 28/2010, rischio CTU sfavorevole, durata del giudizio). La tabella DEVE avere le colonne: Rischio Processuale | Parte esposta | Probabilità | Impatto economico stimato | Note
+9. **Strategia d'apertura consigliata**: per ciascuna parte, descrivi la strategia ottimale per il primo incontro di mediazione (proposta di apertura, ancoraggio, concessioni graduali, leve negoziali)
 
-**Descrizione:**
-${descrizione}
+${valoreLite ? `Valore della lite dichiarato: €${valoreLite.toLocaleString('it-IT')}` : "Valore della lite: indeterminabile"}
 
-**Parti:**
-${parti.map(p => `- ${p.nome} (${p.ruolo})`).join("\n")}
-
-**Analisi precedenti:**
-${analisiPrecedenti}${costiContext}
-
-Procedi con l'analisi MAAN/BATNA dettagliata, includendo un confronto economico completo mediazione vs causa civile basato sui dati costi calcolati.`;
-
-  return callLLM(systemPrompt, userPrompt);
-}
+Formatta l'output in Markdown con tabelle comparative. La sezione 8 e la sezione 9 sono OBBLIGATORIE e devono essere complete. Non troncare mai le tabelle.`;
+ 
