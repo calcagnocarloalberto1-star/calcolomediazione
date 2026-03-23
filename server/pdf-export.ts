@@ -78,7 +78,6 @@ function sanitizeText(text: string): string {
     .replace(/[\u{E0020}-\u{E007F}]/gu, "")   // tags
     .replace(/[\u{20E3}]/gu, "")               // combining enclosing keycap
     // Final cleanup: remove any remaining non-Latin1 characters
-    // Keep basic Latin, Latin-1 Supplement, and common accented chars
     .replace(/[^\x00-\xFF]/g, "")
     .replace(/\s{2,}/g, " ")
     .trim();
@@ -96,11 +95,11 @@ function parseMarkdownTable(text: string): ParsedTable | null {
 
   // Header row
   const headerLine = lines[0].trim();
-  if (!headerLine.includes("|")) return null;
+  if (!headerLine.startsWith("|") || !headerLine.endsWith("|")) return null;
 
-  // Separator row (must have dashes)
+  // Separator row (must have dashes and ONLY pipes/dashes/colons/spaces)
   const sepLine = lines[1].trim();
-  if (!sepLine.match(/^[\s|:-]+$/)) return null;
+  if (!sepLine.match(/^\|[\s|:\-]+\|$/)) return null;
 
   const parseRow = (line: string): string[] => {
     return line
@@ -115,7 +114,7 @@ function parseMarkdownTable(text: string): ParsedTable | null {
 
   for (let i = 2; i < lines.length; i++) {
     const line = lines[i].trim();
-    if (!line || !line.includes("|")) break;
+    if (!line || !line.startsWith("|") || !line.endsWith("|")) break;
     rows.push(parseRow(line));
   }
 
@@ -139,8 +138,14 @@ function splitContentIntoSegments(text: string): ContentSegment[] {
   while (i < lines.length) {
     const line = lines[i];
 
-    // Detect start of table: line with | and next line is separator
-    if (line.includes("|") && i + 1 < lines.length && lines[i + 1].match(/^[\s|:-]+$/)) {
+    // FIX: stricter table detection — line must start AND end with | and next line must be a separator
+    const isTableStart =
+      line.trim().startsWith("|") &&
+      line.trim().endsWith("|") &&
+      i + 1 < lines.length &&
+      lines[i + 1].trim().match(/^\|[\s|:\-]+\|$/);
+
+    if (isTableStart) {
       // Flush text buffer
       if (textBuffer.length > 0) {
         segments.push({ type: "text", content: textBuffer.join("\n") });
@@ -150,7 +155,7 @@ function splitContentIntoSegments(text: string): ContentSegment[] {
       // Collect table lines
       const tableLines: string[] = [line, lines[i + 1]];
       i += 2;
-      while (i < lines.length && lines[i].trim().includes("|")) {
+      while (i < lines.length && lines[i].trim().startsWith("|") && lines[i].trim().endsWith("|")) {
         tableLines.push(lines[i]);
         i++;
       }
@@ -159,6 +164,7 @@ function splitContentIntoSegments(text: string): ContentSegment[] {
       if (table) {
         segments.push({ type: "table", content: tableLines.join("\n"), table });
       } else {
+        // Not a valid table — treat as text
         textBuffer.push(...tableLines);
       }
     } else {
@@ -174,21 +180,42 @@ function splitContentIntoSegments(text: string): ContentSegment[] {
   return segments;
 }
 
-// Strip markdown formatting for plain text rendering
+// FIX: Strip markdown formatting — using [\s\S]+? to match across multiple lines
 function stripMarkdownFormatting(text: string): string {
   return text
-    .replace(/^#{1,6}\s+/gm, "")           // headers
-    .replace(/\*\*(.+?)\*\*/g, "$1")        // bold
-    .replace(/\*(.+?)\*/g, "$1")            // italic
-    .replace(/__(.+?)__/g, "$1")            // bold alt
-    .replace(/_(.+?)_/g, "$1")              // italic alt
-    .replace(/`(.+?)`/g, "$1")              // inline code
-    .replace(/~~(.+?)~~/g, "$1")            // strikethrough
-    .replace(/^\s*[-*+]\s+/gm, "- ")        // unordered lists → dash
-    .replace(/\[(.+?)\]\(.+?\)/g, "$1")     // links → text only
-    .replace(/^>\s+/gm, "  ")               // blockquotes
-    .replace(/^---+$/gm, "")                // horizontal rules
-    .replace(/\n{3,}/g, "\n\n");            // collapse multiple newlines
+    // Headers (must be done before bold/italic to avoid ## being left behind)
+    .replace(/^#{1,6}\s+/gm, "")
+    // Bold+italic combined (must come before bold and italic separately)
+    .replace(/\*\*\*([\s\S]+?)\*\*\*/g, "$1")
+    .replace(/_{3}([\s\S]+?)_{3}/g, "$1")
+    // Bold — FIX: was .+? (no multiline), now [\s\S]+? to match across lines
+    .replace(/\*\*([\s\S]+?)\*\*/g, "$1")
+    .replace(/__([\s\S]+?)__/g, "$1")
+    // Italic — FIX: same fix
+    .replace(/\*([\s\S]+?)\*/g, "$1")
+    .replace(/_([\s\S]+?)_/g, "$1")
+    // Inline code
+    .replace(/`([^`]+)`/g, "$1")
+    // Code blocks
+    .replace(/```[\s\S]*?```/g, "")
+    // Strikethrough
+    .replace(/~~([\s\S]+?)?~~/g, "$1")
+    // Unordered lists → dash
+    .replace(/^\s*[-*+]\s+/gm, "- ")
+    // Links → text only
+    .replace(/\[([^\]]+)\]\([^)]+\)/g, "$1")
+    // Images → alt text
+    .replace(/!\[([^\]]*)\]\([^)]+\)/g, "$1")
+    // Blockquotes
+    .replace(/^>\s+/gm, "  ")
+    // Horizontal rules
+    .replace(/^[-*_]{3,}\s*$/gm, "")
+    // FIX: remove any leftover markdown symbols that weren't caught above
+    .replace(/\*{1,3}/g, "")
+    .replace(/_{1,3}/g, "")
+    .replace(/^#+\s*/gm, "")
+    // Collapse multiple newlines
+    .replace(/\n{3,}/g, "\n\n");
 }
 
 // Extract markdown headers (##, ###, ####) with their content
@@ -249,23 +276,18 @@ function drawLogoIcon(doc: jsPDF, x: number, y: number, size: number, color: [nu
   const panW = s * 0.16;
   const panY = cy - s * 0.1;
   const leftX = cx - beamW;
-  // Left chain
   doc.setLineWidth(s * 0.02);
   doc.line(leftX, cy - s * 0.3, leftX, panY - s * 0.04);
-  // Left cup
   doc.setLineWidth(s * 0.03);
   doc.line(leftX - panW, panY, leftX + panW, panY);
-  // Arc (simplified with lines)
   doc.line(leftX - panW, panY, leftX - panW * 0.6, panY + s * 0.1);
   doc.line(leftX + panW, panY, leftX + panW * 0.6, panY + s * 0.1);
   doc.line(leftX - panW * 0.6, panY + s * 0.1, leftX + panW * 0.6, panY + s * 0.1);
 
   // Right pan
   const rightX = cx + beamW;
-  // Right chain
   doc.setLineWidth(s * 0.02);
   doc.line(rightX, cy - s * 0.3, rightX, panY - s * 0.04);
-  // Right cup
   doc.setLineWidth(s * 0.03);
   doc.line(rightX - panW, panY, rightX + panW, panY);
   doc.line(rightX - panW, panY, rightX - panW * 0.6, panY + s * 0.1);
@@ -288,12 +310,12 @@ export function generateAnalisiPdf(analisi: AnalisiCaso): Buffer {
   let y = 0;
 
   // Colors — CalcoloMediazione design system
-  const primaryColor: [number, number, number] = [197, 90, 43];   // burnt orange #c55a2b
-  const darkColor: [number, number, number] = [45, 41, 38];       // deep charcoal #2d2926
+  const primaryColor: [number, number, number] = [197, 90, 43];
+  const darkColor: [number, number, number] = [45, 41, 38];
   const grayColor: [number, number, number] = [120, 115, 110];
   const lightGray: [number, number, number] = [160, 155, 150];
-  const warmBg: [number, number, number] = [245, 240, 235];       // warm gray #f5f0eb
-  const tableHeaderBg: [number, number, number] = [197, 90, 43];  // orange headers
+  const warmBg: [number, number, number] = [245, 240, 235];
+  const tableHeaderBg: [number, number, number] = [197, 90, 43];
   const tableHeaderText: [number, number, number] = [255, 255, 255];
   const tableAltBg: [number, number, number] = [250, 247, 243];
   const white: [number, number, number] = [255, 255, 255];
@@ -377,7 +399,6 @@ export function generateAnalisiPdf(analisi: AnalisiCaso): Buffer {
       didDrawPage: () => {},
     });
 
-    // Update y position after table
     y = (doc as any).lastAutoTable?.finalY ?? y + 10;
     y += 5;
   }
@@ -391,7 +412,7 @@ export function generateAnalisiPdf(analisi: AnalisiCaso): Buffer {
       if (segment.type === "table" && segment.table) {
         renderTable(segment.table);
       } else {
-        // Render text content
+        // FIX: strip markdown BEFORE splitting into paragraphs
         const cleaned = stripMarkdownFormatting(segment.content);
         const paragraphs = cleaned.split(/\n\n+/);
 
@@ -408,7 +429,6 @@ export function generateAnalisiPdf(analisi: AnalisiCaso): Buffer {
             const isNumbered = /^\d+\.\s/.test(l);
 
             if (isBullet || isNumbered) {
-              // Bullet/numbered list item
               const indent = marginLeft + 5;
               const width = contentWidth - 5;
               const clean = sanitizeText(l);
@@ -422,7 +442,6 @@ export function generateAnalisiPdf(analisi: AnalisiCaso): Buffer {
                 y += 4.5;
               }
             } else {
-              // Regular paragraph text
               const clean = sanitizeText(l);
               doc.setFontSize(9);
               doc.setTextColor(...darkColor);
@@ -435,7 +454,7 @@ export function generateAnalisiPdf(analisi: AnalisiCaso): Buffer {
               }
             }
           }
-          y += 2; // paragraph spacing
+          y += 2;
         }
       }
     }
@@ -445,20 +464,16 @@ export function generateAnalisiPdf(analisi: AnalisiCaso): Buffer {
   //  PAGE 1: COVER PAGE
   // ========================================================================
 
-  // Full-width orange header bar
   doc.setFillColor(...primaryColor);
   doc.rect(0, 0, pageWidth, 48, "F");
 
-  // Logo icon in header
   drawLogoIcon(doc, marginLeft, 8, 28, white);
 
-  // Site name next to logo
   doc.setFontSize(18);
   doc.setTextColor(...white);
   doc.setFont("helvetica", "bold");
   doc.text("CalcoloMediazione", marginLeft + 32, 22);
 
-  // Subtitle
   doc.setFontSize(9);
   doc.setFont("helvetica", "normal");
   doc.text("Piattaforma professionale per la mediazione civile", marginLeft + 32, 30);
@@ -490,13 +505,12 @@ export function generateAnalisiPdf(analisi: AnalisiCaso): Buffer {
   }
   y += 6;
 
-  // Thin orange separator
   doc.setDrawColor(...primaryColor);
   doc.setLineWidth(1.5);
   doc.line(marginLeft, y, marginLeft + 40, y);
   y += 10;
 
-  // Info box — structured metadata
+  // Info box
   const infoBoxY = y;
   const infoBoxH = 50;
   doc.setFillColor(...warmBg);
@@ -504,12 +518,10 @@ export function generateAnalisiPdf(analisi: AnalisiCaso): Buffer {
   doc.setLineWidth(0.3);
   doc.roundedRect(marginLeft, infoBoxY, contentWidth, infoBoxH, 2, 2, "FD");
 
-  // Left column labels + values
   const col1X = marginLeft + 6;
   const col2X = pageWidth / 2 + 5;
   let infoY = infoBoxY + 9;
 
-  // Label style helper
   const drawInfoLabel = (label: string, value: string, x: number, iy: number) => {
     doc.setFontSize(7);
     doc.setTextColor(...lightGray);
@@ -531,7 +543,6 @@ export function generateAnalisiPdf(analisi: AnalisiCaso): Buffer {
     drawInfoLabel("Valore della Lite", "Indeterminato", col1X, infoY);
   }
 
-  // Parti
   const parti = analisi.parti as Array<{ nome: string; ruolo: string }> | null;
   if (parti && parti.length > 0) {
     const partiStr = parti.map(p => `${sanitizeText(p.nome)} (${p.ruolo})`).join(", ");
@@ -540,11 +551,11 @@ export function generateAnalisiPdf(analisi: AnalisiCaso): Buffer {
 
   infoY += 16;
   drawInfoLabel("Stato", analisi.stato === "completata" ? "Analisi Completata" : analisi.stato, col1X, infoY);
-  drawInfoLabel("Generato da", "CalcoloMediazione AI (Gemini)", col2X, infoY);
+  drawInfoLabel("Generato da", "CalcoloMediazione AI", col2X, infoY);
 
   y = infoBoxY + infoBoxH + 12;
 
-  // Description preview (if present)
+  // FIX: Description — no more artificial 600-char limit, show full description
   if (analisi.descrizione) {
     doc.setFontSize(8);
     doc.setTextColor(...grayColor);
@@ -554,12 +565,15 @@ export function generateAnalisiPdf(analisi: AnalisiCaso): Buffer {
     doc.setFont("helvetica", "normal");
     doc.setFontSize(8.5);
     doc.setTextColor(...darkColor);
-    const descClean = sanitizeText(analisi.descrizione);
-    // Show max ~600 chars on the cover
-    const descTrunc = descClean.length > 600 ? descClean.substring(0, 597) + "..." : descClean;
-    const descLines = doc.splitTextToSize(descTrunc, contentWidth);
+    // FIX: strip markdown from description too
+    const descClean = sanitizeText(stripMarkdownFormatting(analisi.descrizione));
+    const descLines = doc.splitTextToSize(descClean, contentWidth);
     for (const dl of descLines) {
-      if (y > maxY - 30) break;
+      if (y > maxY - 30) {
+        // If description is very long, continue on next page
+        doc.addPage();
+        y = 20;
+      }
       doc.text(dl, marginLeft, y);
       y += 4.2;
     }
@@ -599,7 +613,6 @@ export function generateAnalisiPdf(analisi: AnalisiCaso): Buffer {
     const tx = i < 4 ? tocCol1 : tocCol2;
     const ty = tocY + (i < 4 ? i : i - 4) * 7;
     doc.text(tocItems[i], tx, ty);
-    // Dot separator
     const dotXStart = tx + doc.getTextWidth(tocItems[i]) + 2;
     const dotXEnd = (i < 4 ? tocCol2 - 12 : marginLeft + contentWidth - 8);
     if (dotXEnd > dotXStart + 5) {
@@ -641,17 +654,14 @@ export function generateAnalisiPdf(analisi: AnalisiCaso): Buffer {
   for (const section of analysisSections) {
     if (!section.content) continue;
 
-    // Start each major section on a new page
     doc.addPage();
     y = 15;
 
-    // Section header band
     doc.setFillColor(...primaryColor);
     doc.rect(0, 0, pageWidth, 5, "F");
 
     y = 18;
 
-    // Section icon badge
     doc.setFillColor(...primaryColor);
     doc.roundedRect(marginLeft, y - 3, 14, 8, 1, 1, "F");
     doc.setFontSize(6.5);
@@ -659,29 +669,27 @@ export function generateAnalisiPdf(analisi: AnalisiCaso): Buffer {
     doc.setFont("helvetica", "bold");
     doc.text(section.icon, marginLeft + 7, y + 2.5, { align: "center" });
 
-    // Section title
     doc.setFontSize(14);
     doc.setTextColor(...darkColor);
     doc.setFont("helvetica", "bold");
     doc.text(sanitizeText(section.title), marginLeft + 18, y + 2.5);
     y += 12;
 
-    // Thin line under title
     doc.setDrawColor(...primaryColor);
     doc.setLineWidth(0.6);
     doc.line(marginLeft, y, marginLeft + contentWidth, y);
     y += 8;
 
-    // Parse sub-sections from the content
+    // FIX: strip markdown from entire section content before parsing sub-sections
+    // This ensures any raw markdown that doesn't have proper headers is also cleaned
     const subSections = extractStructuredSections(section.content);
 
     for (const sub of subSections) {
       if (sub.heading) {
         checkNewPage(14);
 
-        const headClean = sanitizeText(sub.heading);
+        const headClean = sanitizeText(stripMarkdownFormatting(sub.heading));
         if (sub.level <= 2) {
-          // Major sub-heading with background
           doc.setFillColor(...sectionBg);
           doc.roundedRect(marginLeft, y - 3, contentWidth, 8, 1, 1, "F");
           doc.setFontSize(10);
@@ -690,7 +698,6 @@ export function generateAnalisiPdf(analisi: AnalisiCaso): Buffer {
           doc.text(headClean, marginLeft + 4, y + 2);
           y += 9;
         } else {
-          // Minor sub-heading
           doc.setFontSize(9.5);
           doc.setTextColor(...darkColor);
           doc.setFont("helvetica", "bold");
@@ -712,13 +719,11 @@ export function generateAnalisiPdf(analisi: AnalisiCaso): Buffer {
   checkNewPage(50);
   y += 6;
 
-  // Closing separator
   doc.setDrawColor(...primaryColor);
   doc.setLineWidth(1);
   doc.line(marginLeft, y, pageWidth - marginRight, y);
   y += 10;
 
-  // Disclaimer box
   doc.setFillColor(...warmBg);
   doc.setDrawColor(220, 215, 210);
   doc.setLineWidth(0.3);
@@ -753,36 +758,28 @@ export function generateAnalisiPdf(analisi: AnalisiCaso): Buffer {
     doc.setPage(i);
 
     if (i > 1) {
-      // Page header (not on cover)
       doc.setFontSize(7);
       doc.setTextColor(...lightGray);
       doc.setFont("helvetica", "normal");
       doc.text("CalcoloMediazione", marginLeft, 10);
       doc.text("Relazione Analisi AI", pageWidth - marginRight, 10, { align: "right" });
-
-      // Top orange line (already drawn by section headers on section pages, 
-      // but add for pages that start mid-section)
     }
 
-    // Footer line
     doc.setDrawColor(220, 215, 210);
     doc.setLineWidth(0.3);
     doc.line(marginLeft, pageHeight - 16, pageWidth - marginRight, pageHeight - 16);
 
-    // Footer text
     doc.setFontSize(7);
     doc.setTextColor(...lightGray);
     doc.setFont("helvetica", "normal");
 
     if (i === 1) {
-      // Cover footer - just page number
       doc.text(
         `Pagina ${i} di ${totalPages}`,
         pageWidth / 2, pageHeight - 10,
         { align: "center" }
       );
     } else {
-      // Content page footer
       doc.text("calcolomediazione.it", marginLeft, pageHeight - 10);
       doc.text(
         `Pagina ${i} di ${totalPages}`,
