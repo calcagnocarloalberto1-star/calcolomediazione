@@ -20,7 +20,7 @@ function ensureAutoTable() {
 }
 
 // Hard limit: no single text chunk passed to jsPDF should exceed this
-const MAX_TEXT_CHUNK = 600;
+const MAX_TEXT_CHUNK = 3000;
 
 // Pre-clean: strip HTML tags and normalize before any processing
 function preClean(text: string): string {
@@ -31,7 +31,7 @@ function preClean(text: string): string {
     .replace(/&amp;/g, "&")
     .replace(/&lt;/g, "<")
     .replace(/&gt;/g, ">")
-    .replace(/&quot;/g, '"\');
+    .replace(/&quot;/g, '"');
 }
 
 // Comprehensive sanitization: replace all characters jsPDF can't render (Helvetica = Latin-1 only)
