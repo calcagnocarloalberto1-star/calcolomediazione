@@ -89,6 +89,11 @@ interface ParsedTable {
   rows: string[][];
 }
 
+// Max length for a single table cell — anything longer is a malformed AI table
+const MAX_CELL_LENGTH = 300;
+// Max length for a single table line — guards against lines filled with dashes
+const MAX_TABLE_LINE_LENGTH = 800;
+
 function parseMarkdownTable(text: string): ParsedTable | null {
   const lines = text.trim().split("\n");
   if (lines.length < 3) return null;
@@ -96,6 +101,8 @@ function parseMarkdownTable(text: string): ParsedTable | null {
   // Header row
   const headerLine = lines[0].trim();
   if (!headerLine.startsWith("|") || !headerLine.endsWith("|")) return null;
+  // Reject lines that are absurdly long (AI-generated broken tables)
+  if (headerLine.length > MAX_TABLE_LINE_LENGTH) return null;
 
   // Separator row (must have dashes and ONLY pipes/dashes/colons/spaces)
   const sepLine = lines[1].trim();
@@ -106,7 +113,13 @@ function parseMarkdownTable(text: string): ParsedTable | null {
       .replace(/^\|/, "")
       .replace(/\|$/, "")
       .split("|")
-      .map(cell => cell.trim());
+      .map(cell => {
+        const trimmed = cell.trim();
+        // Truncate oversized cells gracefully
+        return trimmed.length > MAX_CELL_LENGTH
+          ? trimmed.substring(0, MAX_CELL_LENGTH - 3) + "..."
+          : trimmed;
+      });
   };
 
   const headers = parseRow(headerLine);
@@ -115,6 +128,13 @@ function parseMarkdownTable(text: string): ParsedTable | null {
   for (let i = 2; i < lines.length; i++) {
     const line = lines[i].trim();
     if (!line || !line.startsWith("|") || !line.endsWith("|")) break;
+    // Skip lines that are just dashes (malformed separator rows mid-table)
+    if (/^\|[-\s|]+\|$/.test(line) && !line.replace(/[\|\-\s:]/g, "").length) continue;
+    // Reject absurdly long lines
+    if (line.length > MAX_TABLE_LINE_LENGTH) {
+      // Don't render this as a table at all — signal failure
+      return null;
+    }
     rows.push(parseRow(line));
   }
 
@@ -216,6 +236,15 @@ function stripMarkdownFormatting(text: string): string {
     .replace(/^#+\s*/gm, "")
     // Collapse multiple newlines
     .replace(/\n{3,}/g, "\n\n");
+}
+
+// Returns true if a line is "junk" — a malformed AI table artifact
+// (lines made almost entirely of dashes/pipes = broken table separators or cell overflow)
+function isJunkLine(line: string): boolean {
+  const trimmed = line.trim();
+  if (!trimmed || trimmed.length < 10) return false;
+  const junkChars = (trimmed.match(/[-|]/g) || []).length;
+  return junkChars / trimmed.length > 0.8;
 }
 
 // Extract markdown headers (##, ###, ####) with their content
@@ -424,6 +453,8 @@ export function generateAnalisiPdf(analisi: AnalisiCaso): Buffer {
           for (const line of lines) {
             const l = line.trim();
             if (!l) continue;
+            // Skip junk lines (broken table artifacts — lines of dashes/pipes)
+            if (isJunkLine(l)) continue;
 
             const isBullet = l.startsWith("- ") || l.startsWith("* ");
             const isNumbered = /^\d+\.\s/.test(l);
