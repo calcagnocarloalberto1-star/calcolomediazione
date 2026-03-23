@@ -19,9 +19,28 @@ function ensureAutoTable() {
   }
 }
 
+// Hard limit: no single text chunk passed to jsPDF should exceed this
+const MAX_TEXT_CHUNK = 600;
+
+// Pre-clean: strip HTML tags and normalize before any processing
+function preClean(text: string): string {
+  return text
+    .replace(/<br\s*\/?>/gi, " ")       // <br> → space
+    .replace(/<[^>]+>/g, "")             // strip any other HTML tags
+    .replace(/&nbsp;/g, " ")
+    .replace(/&amp;/g, "&")
+    .replace(/&lt;/g, "<")
+    .replace(/&gt;/g, ">")
+    .replace(/&quot;/g, '"\');
+}
+
 // Comprehensive sanitization: replace all characters jsPDF can't render (Helvetica = Latin-1 only)
 function sanitizeText(text: string): string {
-  return text
+  // Safety truncation — prevents jsPDF from hanging on huge strings
+  const safeInput = text.length > MAX_TEXT_CHUNK
+    ? text.substring(0, MAX_TEXT_CHUNK - 3) + "..."
+    : text;
+  return safeInput
     // Common Unicode arrows → ASCII
     .replace(/[\u2192\u2794\u27A1\u21D2\u279C\u2B95]/g, "->")
     .replace(/[\u2190\u2B05]/g, "<-")
@@ -442,7 +461,7 @@ export function generateAnalisiPdf(analisi: AnalisiCaso): Buffer {
         renderTable(segment.table);
       } else {
         // FIX: strip markdown BEFORE splitting into paragraphs
-        const cleaned = stripMarkdownFormatting(segment.content);
+        const cleaned = stripMarkdownFormatting(preClean(segment.content));
         const paragraphs = cleaned.split(/\n\n+/);
 
         for (const para of paragraphs) {
@@ -597,7 +616,7 @@ export function generateAnalisiPdf(analisi: AnalisiCaso): Buffer {
     doc.setFontSize(8.5);
     doc.setTextColor(...darkColor);
     // FIX: strip markdown from description too
-    const descClean = sanitizeText(stripMarkdownFormatting(analisi.descrizione));
+    const descClean = sanitizeText(stripMarkdownFormatting(preClean(analisi.descrizione)));
     const descLines = doc.splitTextToSize(descClean, contentWidth);
     for (const dl of descLines) {
       if (y > maxY - 30) {
@@ -713,7 +732,7 @@ export function generateAnalisiPdf(analisi: AnalisiCaso): Buffer {
 
     // FIX: strip markdown from entire section content before parsing sub-sections
     // This ensures any raw markdown that doesn't have proper headers is also cleaned
-    const subSections = extractStructuredSections(section.content);
+    const subSections = extractStructuredSections(preClean(section.content));
 
     for (const sub of subSections) {
       if (sub.heading) {
