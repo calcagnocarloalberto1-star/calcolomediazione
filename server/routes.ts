@@ -434,6 +434,7 @@ Disallow: /admin
 
 // Run the 8-step AI pipeline
 async function runPipeline(
+ async function runPipeline(
   id: number,
   descrizione: string,
   parti: Array<{ nome: string; ruolo: string }>,
@@ -443,50 +444,106 @@ async function runPipeline(
   documentiText: string,
   opzioniEconomiche: { materiaImmobiliare: boolean; primaCasa: boolean; renditaCatastale: number | null; categoriaCatastale: string | null; gratuitoPatrocinio: boolean; mediatoreEsperto: boolean; proceduraComplessa: boolean; modalitaTariffaria: string } = { materiaImmobiliare: false, primaCasa: false, renditaCatastale: null, categoriaCatastale: null, gratuitoPatrocinio: false, mediatoreEsperto: false, proceduraComplessa: false, modalitaTariffaria: "nazionale" }
 ) {
+  const truncate = (text: string, max = 6000) =>
+    text.length > max ? text.slice(0, max) + '\n\n[...troncato per brevità...]' : text;
+
+  const safeStep = async <T>(
+    stepFn: () => Promise<T>,
+    fallback: T,
+    stepName: string
+  ): Promise<T> => {
+    try {
+      return await stepFn();
+    } catch (err) {
+      console.error(`Errore step ${stepName}:`, err);
+      return fallback;
+    }
+  };
+
   try {
-    // Step 1: NER Extraction
-    const nerResult = await estrazioneEntita(descrizione, parti, documentiText);
+    // Step 1: NER
+    const nerResult = await safeStep(
+      () => estrazioneEntita(descrizione, parti, documentiText),
+      '[Estrazione entità non disponibile]',
+      'NER'
+    );
     await storage.updateAnalisi(id, { prospettoEconomico: nerResult });
 
     // Step 2: Analisi Giuridica
-    const giuridicaResult = await analisiGiuridica(descrizione, parti, nerResult, tipoAnalisi);
+    const giuridicaResult = await safeStep(
+      () => analisiGiuridica(descrizione, parti, nerResult, tipoAnalisi),
+      '[Analisi giuridica non disponibile]',
+      'Giuridica'
+    );
     await storage.updateAnalisi(id, { analisiGiuridica: giuridicaResult });
 
     // Step 3: Guida Strategica
-    const strategicaResult = await guidaStrategica(descrizione, parti, `${nerResult}\n\n${giuridicaResult}`);
+    const strategicaResult = await safeStep(
+      () => guidaStrategica(descrizione, parti, `${truncate(nerResult)}\n\n${truncate(giuridicaResult)}`),
+      '[Guida strategica non disponibile]',
+      'Strategica'
+    );
     await storage.updateAnalisi(id, { guidaStrategica: strategicaResult });
 
-    // Step 4: MAAN/BATNA
-    const maanResult = await analisiMaanBatna(descrizione, parti, valoreLite, `${giuridicaResult}\n\n${strategicaResult}`);
+    // Step 4: MAAN/BATNA — FIX: truncate context
+    const maanResult = await safeStep(
+      () => analisiMaanBatna(
+        descrizione, parti, valoreLite,
+        `${truncate(giuridicaResult)}\n\n${truncate(strategicaResult)}`
+      ),
+      '[Analisi MAAN/BATNA non disponibile]',
+      'MAAN/BATNA'
+    );
     await storage.updateAnalisi(id, { analisiMaanBatna: maanResult });
 
-    // Prepare truncated contexts for later steps to prevent token overflow
-    const giuridicaSummary = giuridicaResult.length > 8000 ? giuridicaResult.slice(0, 8000) + '\n\n[...continua...]' : giuridicaResult;
-    const maanSummary = maanResult.length > 8000 ? maanResult.slice(0, 8000) + '\n\n[...continua...]' : maanResult;
-    const strategicaSummary = strategicaResult.length > 8000 ? strategicaResult.slice(0, 8000) + '\n\n[...continua...]' : strategicaResult;
-
     // Step 5: Compatibilità Interessi
-    const compatibilitaResult = await compatibilitaInteressi(descrizione, parti, `${giuridicaSummary}\n\n${maanSummary}`);
+    const compatibilitaResult = await safeStep(
+      () => compatibilitaInteressi(
+        descrizione, parti,
+        `${truncate(giuridicaResult)}\n\n${truncate(maanResult)}`
+      ),
+      '[Compatibilità interessi non disponibile]',
+      'Compatibilità'
+    );
     await storage.updateAnalisi(id, { compatibilitaInteressi: compatibilitaResult });
 
-    // Step 6: Controllo Bias Cognitivi
-    const biasResult = await controlloBiasCognitivi(descrizione, parti, teorieSelezionate, `${giuridicaSummary}\n\n${strategicaSummary}`);
+    // Step 6: Bias Cognitivi
+    const biasResult = await safeStep(
+      () => controlloBiasCognitivi(
+        descrizione, parti, teorieSelezionate,
+        `${truncate(giuridicaResult)}\n\n${truncate(strategicaResult)}`
+      ),
+      '[Controllo bias non disponibile]',
+      'Bias'
+    );
     await storage.updateAnalisi(id, { controlloBiasCognitivi: biasResult });
 
     // Step 7: Bozza Accordo
-    const bozzaResult = await bozzaAccordo(descrizione, parti, valoreLite, `${giuridicaSummary}\n\n${compatibilitaResult}`);
+    const bozzaResult = await safeStep(
+      () => bozzaAccordo(
+        descrizione, parti, valoreLite,
+        `${truncate(giuridicaResult)}\n\n${truncate(compatibilitaResult)}`
+      ),
+      '[Bozza accordo non disponibile]',
+      'Accordo'
+    );
     await storage.updateAnalisi(id, { bozzaAccordo: bozzaResult });
 
-    // Step 8: Analisi Economica Comparativa
-    // Truncate context to prevent token overflow - keep first 6000 chars of each
-    const truncGiuridica = giuridicaResult.length > 6000 ? giuridicaResult.slice(0, 6000) + '\n\n[...analisi giuridica troncata per brevità...]' : giuridicaResult;
-    const truncMaan = maanResult.length > 6000 ? maanResult.slice(0, 6000) + '\n\n[...analisi MAAN troncata per brevità...]' : maanResult;
-    const economicaResult = await analisiEconomica(descrizione, parti, valoreLite, tipoAnalisi, `${truncGiuridica}\n\n${truncMaan}`, opzioniEconomiche);
+    // Step 8: Analisi Economica
+    const economicaResult = await safeStep(
+      () => analisiEconomica(
+        descrizione, parti, valoreLite, tipoAnalisi,
+        `${truncate(giuridicaResult)}\n\n${truncate(maanResult)}`,
+        opzioniEconomiche
+      ),
+      '[Analisi economica non disponibile]',
+      'Economica'
+    );
     await storage.updateAnalisi(id, { analisiEconomica: economicaResult, stato: "completata" });
     stats.track('analisi_complete');
 
   } catch (error) {
-    console.error("Errore pipeline AI:", error);
+    console.error("Errore fatale pipeline AI:", error);
     stats.track('analisi_error');
     await storage.updateAnalisi(id, { stato: "errore" });
   }
