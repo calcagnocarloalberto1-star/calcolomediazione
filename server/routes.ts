@@ -433,7 +433,6 @@ Disallow: /admin
 }
 
 // Run the 8-step AI pipeline
-async function runPipeline(
  async function runPipeline(
   id: number,
   descrizione: string,
