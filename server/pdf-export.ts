@@ -149,11 +149,7 @@ function parseMarkdownTable(text: string): ParsedTable | null {
     if (!line || !line.startsWith("|") || !line.endsWith("|")) break;
     // Skip lines that are just dashes (malformed separator rows mid-table)
     if (/^\|[-\s|]+\|$/.test(line) && !line.replace(/[\|\-\s:]/g, "").length) continue;
-    // Reject absurdly long lines
-    if (line.length > MAX_TABLE_LINE_LENGTH) {
-      // Don't render this as a table at all — signal failure
-      return null;
-    }
+    // For very long lines: still parse but cells will be truncated by parseRow
     rows.push(parseRow(line));
   }
 
@@ -257,13 +253,18 @@ function stripMarkdownFormatting(text: string): string {
     .replace(/\n{3,}/g, "\n\n");
 }
 
-// Returns true if a line is "junk" — a malformed AI table artifact
-// (lines made almost entirely of dashes/pipes = broken table separators or cell overflow)
+// Returns true if a line is "junk" — ONLY pure separator lines (all dashes/pipes)
+// We do NOT filter table data rows (lines with | that contain real text)
 function isJunkLine(line: string): boolean {
   const trimmed = line.trim();
   if (!trimmed || trimmed.length < 10) return false;
-  const junkChars = (trimmed.match(/[-|]/g) || []).length;
-  return junkChars / trimmed.length > 0.8;
+  // Only flag lines that contain ONLY dashes, pipes, spaces, colons (separator rows)
+  // A line with actual text content (letters/numbers) is NOT junk
+  const hasRealContent = /[a-zA-Z0-9À-ÿ]/.test(trimmed);
+  if (hasRealContent) return false;
+  // Pure dash/pipe lines (separator rows that fell through)
+  const junkChars = (trimmed.match(/[-|\s:]/g) || []).length;
+  return junkChars / trimmed.length > 0.9;
 }
 
 // Extract markdown headers (##, ###, ####) with their content
@@ -410,9 +411,36 @@ export function generateAnalisiPdf(analisi: AnalisiCaso): Buffer {
   function renderTable(table: ParsedTable) {
     checkNewPage(25);
 
-    const cleanCell = (c: string) => sanitizeText(stripMarkdownFormatting(c));
+    const cleanCell = (c: string) => {
+      const cleaned = sanitizeText(stripMarkdownFormatting(preClean(c)));
+      // Hard limit per cell for autoTable stability
+      return cleaned.length > 250 ? cleaned.substring(0, 247) + "..." : cleaned;
+    };
     const sanitizedHeaders = table.headers.map(cleanCell);
     const sanitizedRows = table.rows.map(row => row.map(cleanCell));
+
+    // Safety check: if this looks like a broken table (1-2 cols with huge content), render as text instead
+    const allCells = [sanitizedHeaders, ...sanitizedRows].flat();
+    const avgCellLen = allCells.reduce((s, c) => s + c.length, 0) / Math.max(allCells.length, 1);
+    if (sanitizedHeaders.length <= 1 || avgCellLen > 150) {
+      // Render as plain text paragraphs instead
+      for (const row of [sanitizedHeaders, ...sanitizedRows]) {
+        const lineText = row.filter(c => c.trim()).join(" | ");
+        if (!lineText.trim()) continue;
+        const clean = sanitizeText(lineText);
+        doc.setFontSize(9);
+        doc.setTextColor(...darkColor);
+        doc.setFont("helvetica", "normal");
+        const wrapped = doc.splitTextToSize(clean, contentWidth);
+        for (const wl of wrapped) {
+          checkNewPage(5);
+          doc.text(wl, marginLeft, y);
+          y += 4.5;
+        }
+      }
+      y += 4;
+      return;
+    }
 
     (doc as any).autoTable({
       startY: y,
