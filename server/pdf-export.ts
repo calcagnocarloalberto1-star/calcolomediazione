@@ -215,16 +215,16 @@ export function generateAnalisiPdf(analisi: AnalisiCaso): Buffer {
   const marginBottom = 25, maxY = pageHeight - marginBottom;
   let y = 0;
 
-  const primaryColor: [number, number, number] = [197, 90, 43];
-  const darkColor: [number, number, number] = [45, 41, 38];
-  const grayColor: [number, number, number] = [120, 115, 110];
-  const lightGray: [number, number, number] = [160, 155, 150];
-  const warmBg: [number, number, number] = [245, 240, 235];
-  const tableHeaderBg: [number, number, number] = [197, 90, 43];
+  const primaryColor: [number, number, number] = [38, 150, 140];   // teal
+  const darkColor: [number, number, number] = [40, 40, 40];
+  const grayColor: [number, number, number] = [110, 110, 110];
+  const lightGray: [number, number, number] = [160, 160, 160];
+  const warmBg: [number, number, number] = [248, 250, 252];
+  const tableHeaderBg: [number, number, number] = [38, 150, 140];
   const tableHeaderText: [number, number, number] = [255, 255, 255];
-  const tableAltBg: [number, number, number] = [250, 247, 243];
+  const tableAltBg: [number, number, number] = [245, 250, 249];
   const white: [number, number, number] = [255, 255, 255];
-  const sectionBg: [number, number, number] = [248, 244, 240];
+  const sectionBg: [number, number, number] = [245, 250, 249];
 
   const now = new Date();
   const dateStr = now.toLocaleDateString("it-IT", { day: "2-digit", month: "long", year: "numeric" });
@@ -289,97 +289,89 @@ export function generateAnalisiPdf(analisi: AnalisiCaso): Buffer {
     }
   }
 
-  // === COVER PAGE ===
-  doc.setFillColor(...primaryColor);
-  doc.rect(0, 0, pageWidth, 48, "F");
-  drawLogoIcon(doc, marginLeft, 8, 28, white);
-  doc.setFontSize(18); doc.setTextColor(...white); doc.setFont("helvetica", "bold");
-  doc.text("CalcoloMediazione", marginLeft + 32, 22);
-  doc.setFontSize(9); doc.setFont("helvetica", "normal");
-  doc.text("Piattaforma professionale per la mediazione civile", marginLeft + 32, 30);
-  doc.text("calcolomediazione.it", marginLeft + 32, 37);
+  // === COVER PAGE — stile pulito/minimal ===
+  const cx = pageWidth / 2;
+  y = 35;
 
-  y = 62;
-  doc.setFillColor(...warmBg); doc.setDrawColor(...primaryColor); doc.setLineWidth(0.5);
-  const badgeText = "RELAZIONE ANALISI AI";
-  doc.setFontSize(9); doc.setFont("helvetica", "bold");
-  const badgeW = doc.getTextWidth(badgeText) + 10;
-  doc.roundedRect(marginLeft, y, badgeW, 8, 1, 1, "FD");
-  doc.setTextColor(...primaryColor); doc.text(badgeText, marginLeft + 5, y + 5.5);
-  y += 16;
+  // Titolo "CalcoloMediazione" centrato in teal
+  doc.setFontSize(28); doc.setTextColor(...primaryColor); doc.setFont("helvetica", "bold");
+  doc.text("CalcoloMediazione", cx, y, { align: "center" });
+  y += 10;
 
-  doc.setFontSize(22); doc.setTextColor(...darkColor); doc.setFont("helvetica", "bold");
-  for (const line of doc.splitTextToSize(sanitizeText(analisi.titolo), contentWidth)) {
-    doc.text(line, marginLeft, y); y += 10;
-  }
-  y += 6;
-  doc.setDrawColor(...primaryColor); doc.setLineWidth(1.5);
-  doc.line(marginLeft, y, marginLeft + 40, y); y += 10;
+  // Sottotitolo
+  doc.setFontSize(12); doc.setTextColor(...grayColor); doc.setFont("helvetica", "normal");
+  doc.text("Analisi AI del Caso", cx, y, { align: "center" });
+  y += 8;
 
-  // Info box
-  const boxY = y;
-  doc.setFillColor(...warmBg); doc.setDrawColor(220, 215, 210); doc.setLineWidth(0.3);
-  doc.roundedRect(marginLeft, boxY, contentWidth, 50, 2, 2, "FD");
-  const c1 = marginLeft + 6, c2 = pageWidth / 2 + 5;
-  let iy = boxY + 9;
-  const drawLabel = (label: string, val: string, x: number, ay: number) => {
-    doc.setFontSize(7); doc.setTextColor(...lightGray); doc.setFont("helvetica", "bold");
-    doc.text(label.toUpperCase(), x, ay);
-    doc.setFontSize(9.5); doc.setTextColor(...darkColor); doc.setFont("helvetica", "normal");
-    doc.text(sanitizeText(val), x, ay + 5);
-  };
-  drawLabel("Data", dateStr, c1, iy);
-  drawLabel("Tipo Procedura", analisi.tipoAnalisi === "mediazione" ? "Mediazione Civile" : "Negoziazione Assistita", c2, iy);
-  iy += 16;
-  drawLabel("Valore della Lite", analisi.valoreLite ? `EUR ${Number(analisi.valoreLite).toLocaleString("it-IT", { minimumFractionDigits: 2 })}` : "Indeterminato", c1, iy);
+  // Linea teal centrata
+  doc.setDrawColor(...primaryColor); doc.setLineWidth(1.2);
+  const lineW = 50;
+  doc.line(cx - lineW / 2, y, cx + lineW / 2, y);
+  y += 14;
+
+  // Titolo del caso centrato
+  doc.setFontSize(16); doc.setTextColor(...darkColor); doc.setFont("helvetica", "bold");
+  const titleLines = doc.splitTextToSize(sanitizeText(analisi.titolo), contentWidth - 20);
+  for (const tl of titleLines) { doc.text(tl, cx, y, { align: "center" }); y += 8; }
+  y += 4;
+
+  // Parti centrate con "vs"
   const parti = analisi.parti as Array<{ nome: string; ruolo: string }> | null;
   if (parti && parti.length > 0) {
-    const ps = parti.map(p => `${sanitizeText(p.nome)} (${p.ruolo})`).join(", ");
-    drawLabel("Parti", ps.length > 60 ? ps.substring(0, 57) + "..." : ps, c2, iy);
+    const istanti = parti.filter(p => p.ruolo === "istante" || p.ruolo === "Istante");
+    const convenuti = parti.filter(p => p.ruolo !== "istante" && p.ruolo !== "Istante");
+    doc.setFontSize(10); doc.setFont("helvetica", "normal"); doc.setTextColor(...darkColor);
+    if (istanti.length > 0) {
+      const iStr = istanti.map(p => sanitizeText(p.nome)).join(" e ") + " (istanti)";
+      doc.text(iStr, cx, y, { align: "center" }); y += 6;
+    }
+    doc.setFontSize(9); doc.setTextColor(...grayColor);
+    doc.text("vs", cx, y, { align: "center" }); y += 6;
+    if (convenuti.length > 0) {
+      doc.setFontSize(10); doc.setTextColor(...darkColor);
+      const cStr = convenuti.map(p => sanitizeText(p.nome)).join(", ") + " (chiamati)";
+      const cLines = doc.splitTextToSize(cStr, contentWidth - 20);
+      for (const cl of cLines) { doc.text(cl, cx, y, { align: "center" }); y += 6; }
+    }
   }
-  iy += 16;
-  drawLabel("Stato", analisi.stato === "completata" ? "Analisi Completata" : analisi.stato, c1, iy);
-  drawLabel("Generato da", "CalcoloMediazione AI", c2, iy);
-  y = boxY + 50 + 12;
+  y += 10;
 
-  // Description
-  if (analisi.descrizione) {
+  // Metadati come label: valore
+  const metaLabelX = pageWidth / 2 - 40;
+  const metaValueX = pageWidth / 2 - 5;
+  const drawMeta = (label: string, value: string) => {
     doc.setFontSize(8); doc.setTextColor(...grayColor); doc.setFont("helvetica", "bold");
-    doc.text("DESCRIZIONE DEL CASO", marginLeft, y); y += 5;
-    doc.setFont("helvetica", "normal"); doc.setFontSize(8.5); doc.setTextColor(...darkColor);
-    const descLines = doc.splitTextToSize(sanitizeText(stripMarkdown(preClean(analisi.descrizione))), contentWidth);
+    doc.text(label + ":", metaLabelX, y, { align: "right" });
+    doc.setFont("helvetica", "normal"); doc.setTextColor(...darkColor);
+    doc.text(sanitizeText(value), metaValueX, y);
+    y += 6;
+  };
+  drawMeta("Data analisi", dateStr);
+  drawMeta("Valore controversia", analisi.valoreLite ? `EUR ${Number(analisi.valoreLite).toLocaleString("it-IT", { minimumFractionDigits: 2 })}` : "Indeterminato");
+  drawMeta("Materia", (analisi.tipoAnalisi === "mediazione" ? "Contratti assicurativi - Mediazione obbligatoria" : "Negoziazione Assistita"));
+  if (analisi.stato) drawMeta("Stato", analisi.stato === "completata" ? "Analisi Completata" : analisi.stato);
+  y += 8;
+
+  // Box descrizione con bordo
+  if (analisi.descrizione) {
+    const descText = sanitizeText(stripMarkdown(preClean(analisi.descrizione)));
+    const descLines = doc.splitTextToSize(descText, contentWidth - 12);
+    const boxH = Math.min(descLines.length * 4.5 + 10, maxY - y - 10);
+    doc.setDrawColor(200, 200, 200); doc.setLineWidth(0.4);
+    doc.setFillColor(252, 252, 252);
+    doc.roundedRect(marginLeft, y, contentWidth, boxH, 2, 2, "FD");
+    doc.setFontSize(8.5); doc.setFont("helvetica", "normal"); doc.setTextColor(...darkColor);
+    let dy = y + 6;
     for (const dl of descLines) {
-      if (y > maxY - 30) { doc.addPage(); y = 20; }
-      doc.text(dl, marginLeft, y); y += 4.2;
+      if (dy + 4.5 > y + boxH - 4) break;
+      doc.text(dl, marginLeft + 6, dy); dy += 4.5;
     }
+    y += boxH + 6;
   }
 
-  // TOC
-  y = Math.max(y + 10, pageHeight - 95);
-  doc.setFillColor(...sectionBg); doc.setDrawColor(230, 225, 220); doc.setLineWidth(0.2);
-  doc.roundedRect(marginLeft, y, contentWidth, 78, 2, 2, "FD");
-  doc.setFontSize(9); doc.setTextColor(...primaryColor); doc.setFont("helvetica", "bold");
-  doc.text("INDICE DELLA RELAZIONE", marginLeft + 6, y + 8);
-  const tocItems = ["1. Estrazione Entita (NER)", "2. Analisi Giuridica", "3. Guida Strategica", "4. Analisi MAAN/BATNA", "5. Compatibilita Interessi", "6. Controllo Bias Cognitivi", "7. Bozza Accordo", "8. Analisi Economica Comparativa"];
-  doc.setFontSize(8.5); doc.setFont("helvetica", "normal"); doc.setTextColor(...darkColor);
-  let tocY = y + 15;
-  const tc1 = marginLeft + 8, tc2 = marginLeft + contentWidth / 2 + 4;
-  for (let i = 0; i < tocItems.length; i++) {
-    const tx = i < 4 ? tc1 : tc2;
-    const ty = tocY + (i < 4 ? i : i - 4) * 7;
-    doc.text(tocItems[i], tx, ty);
-    const dx = tx + doc.getTextWidth(tocItems[i]) + 2;
-    const de = i < 4 ? tc2 - 12 : marginLeft + contentWidth - 8;
-    if (de > dx + 5) {
-      doc.setTextColor(...lightGray);
-      let dots = "";
-      while (doc.getTextWidth(dots + " .") < de - dx) dots += " .";
-      doc.text(dots, dx, ty);
-      doc.setTextColor(...darkColor);
-    }
-  }
+  // Footer prima pagina
   doc.setFontSize(7); doc.setTextColor(...lightGray); doc.setFont("helvetica", "normal");
-  doc.text("Questo documento ha valore informativo e non sostituisce la consulenza legale professionale.", pageWidth / 2, pageHeight - 15, { align: "center" });
+  doc.text("Questo documento ha valore informativo e non sostituisce la consulenza legale professionale.", cx, pageHeight - 15, { align: "center" });
 
   // === CONTENT PAGES ===
   const sections = [
