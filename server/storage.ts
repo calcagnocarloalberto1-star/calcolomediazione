@@ -1,94 +1,210 @@
 import { type AnalisiCaso, type InsertAnalisiCaso, type Calcolo, type InsertCalcolo } from "@shared/schema";
+import pkg from "pg";
+const { Pool } = pkg;
 
 export interface IStorage {
-  // Analisi
   createAnalisi(data: InsertAnalisiCaso): Promise<AnalisiCaso>;
   getAnalisi(id: number): Promise<AnalisiCaso | undefined>;
   getAllAnalisi(): Promise<AnalisiCaso[]>;
   updateAnalisi(id: number, data: Partial<AnalisiCaso>): Promise<AnalisiCaso | undefined>;
   deleteAnalisi(id: number): Promise<boolean>;
-  // Calcoli
   createCalcolo(data: InsertCalcolo): Promise<Calcolo>;
   getAllCalcoli(): Promise<Calcolo[]>;
 }
 
-export class MemStorage implements IStorage {
-  private analisi: Map<number, AnalisiCaso>;
-  private calcoli: Map<number, Calcolo>;
-  private nextAnalisiId: number;
-  private nextCalcoloId: number;
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  ssl: process.env.DATABASE_URL?.includes("render.com")
+    ? { rejectUnauthorized: false }
+    : false,
+});
 
-  constructor() {
-    this.analisi = new Map();
-    this.calcoli = new Map();
-    this.nextAnalisiId = 1;
-    this.nextCalcoloId = 1;
-  }
+async function initDb() {
+  await pool.query(`
+    CREATE TABLE IF NOT EXISTS analisi_casi (
+      id SERIAL PRIMARY KEY,
+      titolo TEXT NOT NULL,
+      descrizione TEXT,
+      tipo_analisi TEXT DEFAULT 'mediazione',
+      valore_lite NUMERIC,
+      tipo_valore TEXT DEFAULT 'determinato',
+      parti JSONB DEFAULT '[]',
+      stato TEXT DEFAULT 'in_corso',
+      prospetto_economico TEXT,
+      analisi_giuridica TEXT,
+      guida_strategica TEXT,
+      analisi_maan_batna TEXT,
+      compatibilita_interessi TEXT,
+      controllo_bias_cognitivi TEXT,
+      bozza_accordo TEXT,
+      analisi_economica TEXT,
+      chat_history JSONB DEFAULT '[]',
+      created_at TIMESTAMPTZ DEFAULT NOW()
+    );
 
+    CREATE TABLE IF NOT EXISTS calcoli (
+      id SERIAL PRIMARY KEY,
+      valore_lite NUMERIC,
+      tipo_mediazione TEXT,
+      esito TEXT,
+      tipo_valore TEXT DEFAULT 'determinato',
+      risultato JSONB,
+      created_at TIMESTAMPTZ DEFAULT NOW()
+    );
+  `);
+}
+
+initDb().catch(console.error);
+
+function rowToAnalisi(row: any): AnalisiCaso {
+  return {
+    id: row.id,
+    titolo: row.titolo,
+    descrizione: row.descrizione,
+    tipoAnalisi: row.tipo_analisi,
+    valoreLite: row.valore_lite,
+    tipoValore: row.tipo_valore,
+    parti: row.parti,
+    stato: row.stato,
+    prospettoEconomico: row.prospetto_economico,
+    analisiGiuridica: row.analisi_giuridica,
+    guidaStrategica: row.guida_strategica,
+    analisiMaanBatna: row.analisi_maan_batna,
+    compatibilitaInteressi: row.compatibilita_interessi,
+    controlloBiasCognitivi: row.controllo_bias_cognitivi,
+    bozzaAccordo: row.bozza_accordo,
+    analisiEconomica: row.analisi_economica,
+    chatHistory: row.chat_history,
+    createdAt: row.created_at,
+  };
+}
+
+export class DatabaseStorage implements IStorage {
   async createAnalisi(data: InsertAnalisiCaso): Promise<AnalisiCaso> {
-    const id = this.nextAnalisiId++;
-    const analisi: AnalisiCaso = {
-      id,
-      titolo: data.titolo,
-      descrizione: data.descrizione ?? null,
-      tipoAnalisi: data.tipoAnalisi ?? "mediazione",
-      valoreLite: data.valoreLite ?? null,
-      tipoValore: data.tipoValore ?? "determinato",
-      parti: data.parti ?? [],
-      stato: data.stato ?? "in_corso",
-      analisiGiuridica: data.analisiGiuridica ?? null,
-      guidaStrategica: data.guidaStrategica ?? null,
-      analisiMaanBatna: data.analisiMaanBatna ?? null,
-      compatibilitaInteressi: data.compatibilitaInteressi ?? null,
-      controlloBiasCognitivi: data.controlloBiasCognitivi ?? null,
-      bozzaAccordo: data.bozzaAccordo ?? null,
-      analisiEconomica: data.analisiEconomica ?? null,
-      prospettoEconomico: data.prospettoEconomico ?? null,
-      chatHistory: data.chatHistory ?? [],
-      createdAt: new Date(),
-    };
-    this.analisi.set(id, analisi);
-    return analisi;
+    const res = await pool.query(
+      `INSERT INTO analisi_casi
+        (titolo, descrizione, tipo_analisi, valore_lite, tipo_valore, parti, stato,
+         prospetto_economico, analisi_giuridica, guida_strategica, analisi_maan_batna,
+         compatibilita_interessi, controllo_bias_cognitivi, bozza_accordo, analisi_economica, chat_history)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16)
+       RETURNING *`,
+      [
+        data.titolo,
+        data.descrizione ?? null,
+        data.tipoAnalisi ?? "mediazione",
+        data.valoreLite ?? null,
+        data.tipoValore ?? "determinato",
+        JSON.stringify(data.parti ?? []),
+        data.stato ?? "in_corso",
+        data.prospettoEconomico ?? null,
+        data.analisiGiuridica ?? null,
+        data.guidaStrategica ?? null,
+        data.analisiMaanBatna ?? null,
+        data.compatibilitaInteressi ?? null,
+        data.controlloBiasCognitivi ?? null,
+        data.bozzaAccordo ?? null,
+        data.analisiEconomica ?? null,
+        JSON.stringify(data.chatHistory ?? []),
+      ]
+    );
+    return rowToAnalisi(res.rows[0]);
   }
 
   async getAnalisi(id: number): Promise<AnalisiCaso | undefined> {
-    return this.analisi.get(id);
+    const res = await pool.query(`SELECT * FROM analisi_casi WHERE id = $1`, [id]);
+    return res.rows[0] ? rowToAnalisi(res.rows[0]) : undefined;
   }
 
   async getAllAnalisi(): Promise<AnalisiCaso[]> {
-    return Array.from(this.analisi.values()).sort((a, b) => b.id - a.id);
+    const res = await pool.query(`SELECT * FROM analisi_casi ORDER BY id DESC`);
+    return res.rows.map(rowToAnalisi);
   }
 
   async updateAnalisi(id: number, data: Partial<AnalisiCaso>): Promise<AnalisiCaso | undefined> {
-    const existing = this.analisi.get(id);
-    if (!existing) return undefined;
-    const updated = { ...existing, ...data };
-    this.analisi.set(id, updated);
-    return updated;
+    const fieldMap: Record<string, string> = {
+      titolo: "titolo",
+      descrizione: "descrizione",
+      tipoAnalisi: "tipo_analisi",
+      valoreLite: "valore_lite",
+      tipoValore: "tipo_valore",
+      parti: "parti",
+      stato: "stato",
+      prospettoEconomico: "prospetto_economico",
+      analisiGiuridica: "analisi_giuridica",
+      guidaStrategica: "guida_strategica",
+      analisiMaanBatna: "analisi_maan_batna",
+      compatibilitaInteressi: "compatibilita_interessi",
+      controlloBiasCognitivi: "controllo_bias_cognitivi",
+      bozzaAccordo: "bozza_accordo",
+      analisiEconomica: "analisi_economica",
+      chatHistory: "chat_history",
+    };
+
+    const jsonFields = new Set(["parti", "chatHistory"]);
+    const setClauses: string[] = [];
+    const values: any[] = [];
+    let idx = 1;
+
+    for (const [key, col] of Object.entries(fieldMap)) {
+      if (key in data) {
+        setClauses.push(`${col} = $${idx}`);
+        const val = (data as any)[key];
+        values.push(jsonFields.has(key) ? JSON.stringify(val) : val);
+        idx++;
+      }
+    }
+
+    if (setClauses.length === 0) return this.getAnalisi(id);
+
+    values.push(id);
+    const res = await pool.query(
+      `UPDATE analisi_casi SET ${setClauses.join(", ")} WHERE id = $${idx} RETURNING *`,
+      values
+    );
+    return res.rows[0] ? rowToAnalisi(res.rows[0]) : undefined;
   }
 
   async deleteAnalisi(id: number): Promise<boolean> {
-    return this.analisi.delete(id);
+    const res = await pool.query(`DELETE FROM analisi_casi WHERE id = $1`, [id]);
+    return (res.rowCount ?? 0) > 0;
   }
 
   async createCalcolo(data: InsertCalcolo): Promise<Calcolo> {
-    const id = this.nextCalcoloId++;
-    const calcolo: Calcolo = {
-      id,
-      valoreLite: data.valoreLite,
-      tipoMediazione: data.tipoMediazione,
-      esito: data.esito,
-      tipoValore: data.tipoValore ?? "determinato",
-      risultato: data.risultato ?? null,
-      createdAt: new Date(),
+    const res = await pool.query(
+      `INSERT INTO calcoli (valore_lite, tipo_mediazione, esito, tipo_valore, risultato)
+       VALUES ($1,$2,$3,$4,$5) RETURNING *`,
+      [
+        data.valoreLite,
+        data.tipoMediazione,
+        data.esito,
+        data.tipoValore ?? "determinato",
+        JSON.stringify(data.risultato ?? null),
+      ]
+    );
+    const r = res.rows[0];
+    return {
+      id: r.id,
+      valoreLite: r.valore_lite,
+      tipoMediazione: r.tipo_mediazione,
+      esito: r.esito,
+      tipoValore: r.tipo_valore,
+      risultato: r.risultato,
+      createdAt: r.created_at,
     };
-    this.calcoli.set(id, calcolo);
-    return calcolo;
   }
 
   async getAllCalcoli(): Promise<Calcolo[]> {
-    return Array.from(this.calcoli.values()).sort((a, b) => b.id - a.id);
+    const res = await pool.query(`SELECT * FROM calcoli ORDER BY id DESC`);
+    return res.rows.map((r: any) => ({
+      id: r.id,
+      valoreLite: r.valore_lite,
+      tipoMediazione: r.tipo_mediazione,
+      esito: r.esito,
+      tipoValore: r.tipo_valore,
+      risultato: r.risultato,
+      createdAt: r.created_at,
+    }));
   }
 }
 
-export const storage = new MemStorage();
+export const storage = new DatabaseStorage();
