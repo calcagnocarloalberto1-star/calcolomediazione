@@ -319,27 +319,43 @@ export default function AnalisiCasoAI() {
   // Anonymization state for study purposes
   const [isAnonymized, setIsAnonymized] = useState(false);
 
-  const handleExportPdf = async () => {
-    if (!analisi) return;
-    setExportingPdf(true);
-    try {
-      const API_BASE = "__PORT_5000__".startsWith("__") ? "" : "__PORT_5000__";
-      const anonParam = isAnonymized ? '?anonimizza=1' : '';
-      const res = await fetch(`${API_BASE}/api/analisi/${analisi.id}/pdf${anonParam}`);
-      if (!res.ok) throw new Error(`PDF export failed: ${res.status}`);
-      const blob = await res.blob();
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      const prefix = isAnonymized ? 'anonimo-' : '';
-      a.download = `${prefix}analisi-${analisi.titolo.replace(/[^a-zA-Z0-9]/g, '-').toLowerCase()}.pdf`;
-      a.click();
-      URL.revokeObjectURL(url);
-    } catch (error) {
-      console.error('Errore export PDF:', error);
-    }
-    setExportingPdf(false);
-  };
+ const handleExportPdf = async () => {
+  if (!analisi) return;
+  setExportingPdf(true);
+
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 25000);
+
+  try {
+    const API_BASE = "__PORT_5000__".startsWith("__") ? "" : "__PORT_5000__";
+    const anonParam = isAnonymized ? '?anonimizza=1' : '';
+    const res = await fetch(`${API_BASE}/api/analisi/${analisi.id}/pdf${anonParam}`, {
+      signal: controller.signal,
+    });
+    clearTimeout(timeoutId);
+
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
+    const blob = await res.blob();
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    const prefix = isAnonymized ? 'anonimo-' : '';
+    a.download = `${prefix}analisi-${analisi.titolo.replace(/[^a-zA-Z0-9]/g, '-').toLowerCase()}.pdf`;
+    a.click();
+    URL.revokeObjectURL(url);
+  } catch (error: unknown) {
+    clearTimeout(timeoutId);
+    const isTimeout = error instanceof Error && error.name === 'AbortError';
+    const msg = isTimeout
+      ? 'Timeout: la generazione PDF ha superato i 25 secondi.\nProva a esportare come TXT oppure controlla i log del server.'
+      : `Errore generazione PDF: ${error instanceof Error ? error.message : 'sconosciuto'}.\nProva ad esportare come TXT.`;
+    alert(msg);
+    console.error('Errore export PDF:', error);
+  }
+
+  setExportingPdf(false);
+};
 
   // Clean emoji and special unicode from text for export
  const cleanExportText = (text: string): string => {
