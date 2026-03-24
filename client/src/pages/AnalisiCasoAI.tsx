@@ -342,32 +342,32 @@ export default function AnalisiCasoAI() {
   };
 
   // Clean emoji and special unicode from text for export
-  const cleanExportText = (text: string): string => {
-    return text
-      .replace(/[\u{1F600}-\u{1F64F}]/gu, '')
-      .replace(/[\u{1F300}-\u{1F5FF}]/gu, '')
-      .replace(/[\u{1F680}-\u{1F6FF}]/gu, '')
-      .replace(/[\u{1F900}-\u{1F9FF}]/gu, '')
-      .replace(/[\u{1FA00}-\u{1FAFF}]/gu, '')
-      .replace(/[\u{1F1E0}-\u{1F1FF}]/gu, '')
-      .replace(/[\u{2600}-\u{26FF}]/gu, '')
-      .replace(/[\u{2700}-\u{27BF}]/gu, '')
-      .replace(/[\u{FE00}-\u{FE0F}]/gu, '')
-      .replace(/[\u{200D}]/gu, '')
-      .replace(/[\u{20E3}]/gu, '')
-      .replace(/[\u{E0020}-\u{E007F}]/gu, '')
-      .replace(/[\u2713\u2714\u2705\u2611]/g, '[OK]')
-      .replace(/[\u2717\u2718\u274C]/g, '[NO]')
-      .replace(/[\u2022\u25CF\u25CB\u25A0]/g, '-')
-      .replace(/[\u2192\u2794\u27A1\u279C]/g, '->')
-      .replace(/[\u2605\u2B50]/g, '*')
-      .replace(/[\u2013\u2014]/g, '-')
-      .replace(/[\u2018\u2019]/g, "'")
-      .replace(/[\u201C\u201D]/g, '"')
-      .replace(/[\u2026]/g, '...')
-      .replace(/\s{2,}/g, ' ')
-      .trim();
-  };
+ const cleanExportText = (text: string): string => {
+  return text
+    .replace(/[\u{1F600}-\u{1F64F}]/gu, '')
+    .replace(/[\u{1F300}-\u{1F5FF}]/gu, '')
+    .replace(/[\u{1F680}-\u{1F6FF}]/gu, '')
+    .replace(/[\u{1F900}-\u{1F9FF}]/gu, '')
+    .replace(/[\u{1FA00}-\u{1FAFF}]/gu, '')
+    .replace(/[\u{1F1E0}-\u{1F1FF}]/gu, '')
+    .replace(/[\u{2600}-\u{26FF}]/gu, '')
+    .replace(/[\u{2700}-\u{27BF}]/gu, '')
+    .replace(/[\u{FE00}-\u{FE0F}]/gu, '')
+    .replace(/[\u{200D}]/gu, '')
+    .replace(/[\u{20E3}]/gu, '')
+    .replace(/[\u{E0020}-\u{E007F}]/gu, '')
+    .replace(/[\u2713\u2714\u2705\u2611]/g, '[OK]')
+    .replace(/[\u2717\u2718\u274C]/g, '[NO]')
+    .replace(/[\u2022\u25CF\u25CB\u25A0]/g, '-')
+    .replace(/[\u2192\u2794\u27A1\u279C]/g, '->')
+    .replace(/[\u2605\u2B50]/g, '*')
+    .replace(/[\u2013\u2014]/g, '-')
+    .replace(/[\u2018\u2019]/g, "'")
+    .replace(/[\u201C\u201D]/g, '"')
+    .replace(/[\u2026]/g, '...')
+    .replace(/[^\S\n]{2,}/g, ' ')   // ← SOLO spazi/tab, NON newline
+    .trim();
+};
 
   // Convert markdown table to aligned plain text table
   const formatTableForText = (text: string): string => {
