@@ -386,52 +386,81 @@ export default function AnalisiCasoAI() {
 };
 
   // Convert markdown table to aligned plain text table
-  const formatTableForText = (text: string): string => {
-    const lines = text.split('\n');
-    const result: string[] = [];
-    let i = 0;
+const formatTableForText = (text: string): string => {
+  const lines = text.split('\n');
+  const result: string[] = [];
+  let i = 0;
 
-    while (i < lines.length) {
-      const line = lines[i];
-      // Detect markdown table start
-      if (line.includes('|') && i + 1 < lines.length && /^[\s|:-]+$/.test(lines[i + 1])) {
-        // Parse the full table
-        const tableRows: string[][] = [];
-        const headerCells = line.replace(/^\|/, '').replace(/\|$/, '').split('|').map(c => c.trim());
-        tableRows.push(headerCells);
-        i += 2; // skip separator
-        while (i < lines.length && lines[i].trim().includes('|')) {
-          const cells = lines[i].replace(/^\|/, '').replace(/\|$/, '').split('|').map(c => c.trim());
-          tableRows.push(cells);
-          i++;
-        }
-        // Calculate column widths
+  const isTableRow = (line: string) => {
+    const t = line.trim();
+    return t.startsWith('|') && t.endsWith('|') && t.split('|').length > 2;
+  };
+
+  const isSeparator = (line: string) =>
+    /^[\s|:=-]+$/.test(line) && line.includes('-') && line.includes('|');
+
+  const stripMd = (cell: string) =>
+    cell.replace(/\*\*/g, '').replace(/\*/g, '').replace(/_/g, '').trim();
+
+  while (i < lines.length) {
+    const line = lines[i];
+
+    if (isTableRow(line)) {
+      const tableRows: string[][] = [];
+      let j = i;
+
+      while (j < lines.length) {
+        const l = lines[j];
+        if (isSeparator(l)) { j++; continue; }
+        if (l.trim() === '') { j++; break; }
+        if (!isTableRow(l)) break;
+        const cells = l
+          .replace(/^\|/, '')
+          .replace(/\|$/, '')
+          .split('|')
+          .map(c => c.trim());
+        tableRows.push(cells);
+        j++;
+      }
+
+      if (tableRows.length > 0) {
         const colCount = Math.max(...tableRows.map(r => r.length));
         const colWidths: number[] = Array(colCount).fill(0);
         for (const row of tableRows) {
           for (let c = 0; c < colCount; c++) {
-            const cellLen = (row[c] || '').length;
-            if (cellLen > colWidths[c]) colWidths[c] = cellLen;
+            const len = stripMd(row[c] || '').length;
+            if (len > colWidths[c]) colWidths[c] = len;
           }
         }
-        // Render aligned table
-        const renderRow = (row: string[]) => {
-          return row.map((cell, c) => (cell || '').padEnd(colWidths[c] || 0)).join('  |  ');
-        };
-        const separator = colWidths.map(w => '-'.repeat(w)).join('--+--');
+
+        const renderRow = (row: string[]) =>
+          row
+            .map((cell, c) => stripMd(cell || '').padEnd(colWidths[c] || 0))
+            .join('  |  ');
+
+        const separator = colWidths
+          .map(w => '-'.repeat(Math.max(w, 1)))
+          .join('--+--');
+
         result.push(renderRow(tableRows[0]));
         result.push(separator);
         for (let r = 1; r < tableRows.length; r++) {
           result.push(renderRow(tableRows[r]));
         }
         result.push('');
+        i = j;
       } else {
         result.push(line);
         i++;
       }
+    } else {
+      result.push(line);
+      i++;
     }
-    return result.join('\n');
-  };
+  }
+
+  return result.join('\n');
+};
 
   const handleExportText = () => {
     if (!analisi) return;
