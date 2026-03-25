@@ -24,34 +24,68 @@ export async function analisiMaanBatna(
 |------|-----------|-------------|
 | Spese organismo/C.U. | ${formatEuro(confronto.costiMediazione.indennitaOrganismo)} | ${formatEuro(confronto.costiCausaCivile.contributoUnificato + confronto.costiCausaCivile.marcaDaBollo)} |
 | Compenso avvocato | ${formatEuro(confronto.costiMediazione.compensoAvvocato)} | ${formatEuro(confronto.costiCausaCivile.compensoAvvocato)} |
-| Spese generali + CPA + IVA | ${formatEuro(confronto.costiMediazione.speseGenerali15 + confronto.costiMediazione.cpa4Avvocato + confronto.costiMediazione.iva22Avvocato)} | ${formatEuro(confronto.costiCausaCivile.speseGenerali15 + confronto.costiCausaCivile.cpa4Avvocato + confronto.costiCausaCivile.iva22Avvocato)} |
-| Imposta di registro | ${formatEuro(confronto.costiMediazione.impostaRegistro)} | ${formatEuro(confronto.costiCausaCivile.impostaRegistroSentenza)} |
+| Spese + CPA + IVA | ${formatEuro(confronto.costiMediazione.speseGenerali15 + confronto.costiMediazione.cpa4Avvocato + confronto.costiMediazione.iva22Avvocato)} | ${formatEuro(confronto.costiCausaCivile.speseGenerali15 + confronto.costiCausaCivile.cpa4Avvocato + confronto.costiCausaCivile.iva22Avvocato)} |
+| Imposta registro | ${formatEuro(confronto.costiMediazione.impostaRegistro)} | ${formatEuro(confronto.costiCausaCivile.impostaRegistroSentenza)} |
 | Stima CTU | - | ${formatEuro(confronto.costiCausaCivile.stimaCTU)} |
 | **TOTALE per parte** | **${formatEuro(confronto.costiMediazione.totaleNettoPerParte)}** | **${formatEuro(confronto.costiCausaCivile.totalePerParte)}** |
-| Risparmio mediazione | **${formatEuro(confronto.risparmioMediazione)}** (${confronto.percentualeRisparmio}%) | - |
-| Durata stimata | ${confronto.durataMediaStimata.mediazione} | ${confronto.durataMediaStimata.causaCivile} |
-
-Vantaggi fiscali mediazione: esenzione imposta di registro fino a €100.000, credito d'imposta fino a €600, esenzione bollo e imposte ipotecaria/catastale.`;
+| Risparmio mediazione | **${formatEuro(confronto.risparmioMediazione)} (${confronto.percentualeRisparmio}%)** | - |
+| Durata stimata | ${confronto.durataMediaStimata.mediazione} | ${confronto.durataMediaStimata.causaCivile} |`;
     } catch (e) {
       // Se il calcolo fallisce, procediamo senza dati costi
     }
   }
 
-  const systemPrompt = `Sei un esperto di negoziazione e teoria dei giochi applicata alla mediazione civile italiana. Analizza la MAAN/BATNA per ciascuna parte producendo OBBLIGATORIAMENTE tutte le sezioni seguenti nell'ordine indicato:
+  const systemPrompt = `Sei un esperto di negoziazione e mediazione civile italiana. Analizza la MAAN/BATNA per ciascuna parte.
 
-1. **Alternative disponibili**: elenco delle opzioni se la mediazione fallisce
-2. **Confronto costi dettagliato**: usa i DATI COSTI CALCOLATI forniti per mostrare il confronto economico reale tra mediazione e causa civile, includendo contributo unificato, compenso avvocato, imposta di registro, CTU, vantaggi fiscali mediazione
-3. **Probabilità di successo**: stima realistica per ciascuna alternativa
-4. **BATNA Score**: punteggio 1-10 della forza della posizione di ciascuna parte
-5. **ZOPA** (Zona di Possibile Accordo): range in cui l'accordo è possibile
-6. **Valore di riserva**: importo minimo/massimo accettabile per ciascuna parte
-7. **Analisi costo-opportunità**: confronto tra tempo e costi della causa vs mediazione
-8. **Analisi dei Rischi Processuali**: tabella con ALMENO 4 righe che elenca i rischi specifici per ciascuna parte (es. soccombenza, condanna alle spese art. 96 c.p.c., mancata partecipazione art. 8 D.Lgs. 28/2010, rischio CTU sfavorevole, durata del giudizio). La tabella DEVE avere le colonne: Rischio Processuale | Parte esposta | Probabilità | Impatto economico stimato | Note
-9. **Strategia d'apertura consigliata**: per ciascuna parte, descrivi la strategia ottimale per il primo incontro di mediazione (proposta di apertura, ancoraggio, concessioni graduali, leve negoziali)
+REGOLE FONDAMENTALI PER LE TABELLE MARKDOWN:
+- Ogni cella deve contenere testo breve su UNA SOLA RIGA (max 50 caratteri)
+- Non usare mai newline o testo lungo dentro una cella
+- La riga separatrice e' sempre del tipo |---|---|---|
+- Se un'informazione e' assente scrivi "-"
 
-${valoreLite ? `Valore della lite dichiarato: €${valoreLite.toLocaleString('it-IT')}` : "Valore della lite: indeterminabile"}
+Produci OBBLIGATORIAMENTE queste 9 sezioni nell'ordine indicato:
 
-Formatta l'output in Markdown con tabelle comparative. La sezione 8 e la sezione 9 sono OBBLIGATORIE e devono essere complete. Non troncare mai le tabelle.`;
+## 1. Alternative disponibili
+Per ciascuna parte, elenco puntato delle opzioni se la mediazione fallisce.
+
+## 2. Confronto costi
+Usa i DATI COSTI CALCOLATI forniti. Tabella con colonne:
+| Voce | Mediazione | Causa Civile |
+|---|---|---|
+
+## 3. Probabilita' di successo
+Tabella con colonne:
+| Alternativa | Parte | Probabilita' | Note |
+|---|---|---|---|
+
+## 4. BATNA Score
+Tabella con colonne:
+| Parte | Punteggio | Motivazione breve |
+|---|---|---|
+
+## 5. ZOPA
+Indica il range numerico di possibile accordo in una riga.
+
+## 6. Valore di riserva
+Tabella con colonne:
+| Parte | Valore minimo | Valore massimo |
+|---|---|---|
+
+## 7. Analisi costo-opportunita'
+Testo breve (3-4 righe) sul confronto tempo/costi mediazione vs causa.
+
+## 8. Rischi processuali
+Tabella con ESATTAMENTE queste 4 colonne, celle brevi max 40 caratteri:
+| Rischio | Parte esposta | Probabilita' | Impatto |
+|---|---|---|---|
+Inserisci almeno 4 righe con rischi specifici del caso.
+
+## 9. Strategia d'apertura
+Tabella con colonne:
+| Parte | Proposta apertura | Leva negoziale |
+|---|---|---|
+
+${valoreLite ? `Valore della lite: EUR ${valoreLite.toLocaleString('it-IT')}` : "Valore della lite: indeterminabile"}`;
 
   const userPrompt = `Analizza MAAN/BATNA per il seguente caso.
 
@@ -64,7 +98,7 @@ ${parti.map(p => `- ${p.nome} (${p.ruolo})`).join("\n")}
 **Analisi precedenti:**
 ${analisiPrecedenti}${costiContext}
 
-Procedi con l'analisi MAAN/BATNA dettagliata, includendo un confronto economico completo mediazione vs causa civile basato sui dati costi calcolati.`;
+Produci tutte e 9 le sezioni richieste. Celle delle tabelle brevi, max 50 caratteri.`;
 
   return callLLM(systemPrompt, userPrompt);
 }
