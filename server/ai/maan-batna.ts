@@ -100,5 +100,5 @@ ${analisiPrecedenti}${costiContext}
 
 Produci tutte e 9 le sezioni richieste. Celle delle tabelle brevi, max 50 caratteri.`;
 
-  return callLLM(systemPrompt, userPrompt);
+  return callLLM(systemPrompt, userPrompt, 12000);
 }
