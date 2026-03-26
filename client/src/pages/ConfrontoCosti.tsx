@@ -30,6 +30,7 @@ import {
   BarChart3,
   Landmark,
   AlertTriangle,
+  Briefcase,
 } from "lucide-react";
 import {
   BarChart,
@@ -104,7 +105,7 @@ export default function ConfrontoCosti() {
             </h1>
           </div>
           <p className="text-muted-foreground max-w-2xl">
-            Confronto completo dei costi tra mediazione civile e causa ordinaria: contributo unificato, compenso avvocato (D.M. 55/2014), imposte, costi notarili e gratuito patrocinio.
+            Confronto completo dei costi tra mediazione civile, arbitrato CAM e causa ordinaria: contributo unificato, compenso avvocato (D.M. 55/2014), imposte, costi notarili e gratuito patrocinio.
           </p>
         </div>
 
@@ -301,7 +302,7 @@ export default function ConfrontoCosti() {
         {risultato && (
           <>
             {/* Summary Cards - Primo Grado */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
               {/* Mediazione */}
               <Card className="border-2 border-foreground shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] bg-green-50" data-testid="card-totale-mediazione">
                 <CardContent className="pt-6">
@@ -338,6 +339,22 @@ export default function ConfrontoCosti() {
                     {formatEuro(risultato.costiCausaCivile.totalePerParte)}
                   </div>
                   <p className="text-xs text-red-700 mt-1">per parte (primo grado)</p>
+                </CardContent>
+              </Card>
+
+              {/* Arbitrato CAM */}
+              <Card className="border-2 border-foreground shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] bg-amber-50" data-testid="card-totale-arbitrato">
+                <CardContent className="pt-6">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Briefcase className="w-5 h-5 text-amber-700" />
+                    <span className="text-sm font-bold text-amber-800" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
+                      Arbitrato CAM
+                    </span>
+                  </div>
+                  <div className="text-2xl font-bold text-amber-900 font-mono" style={{ fontFamily: "'JetBrains Mono', monospace" }} data-testid="text-totale-arbitrato">
+                    {formatEuro(risultato.costiArbitrato.totalePerParte)}
+                  </div>
+                  <p className="text-xs text-amber-700 mt-1">per parte (arbitro unico)</p>
                 </CardContent>
               </Card>
 
@@ -480,7 +497,13 @@ export default function ConfrontoCosti() {
                           <td className="py-3 px-3" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>MEDIAZIONE</td>
                           <td className="text-right py-3 px-3"></td>
                           <td className="text-right py-3 px-3 text-green-900 text-base font-bold">{formatEuro(risultato.costiMediazione.totaleNettoPerParte)}</td>
-                          <td className="text-right py-3 px-3 text-xs">fino a 6 mesi</td>
+                          <td className="text-right py-3 px-3 text-xs">{risultato.durataMediaStimata.mediazione}</td>
+                        </tr>
+                        <tr className="bg-amber-100 border-t-2 border-amber-600">
+                          <td className="py-3 px-3" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>ARBITRATO CAM</td>
+                          <td className="text-right py-3 px-3"></td>
+                          <td className="text-right py-3 px-3 text-amber-900 text-base font-bold">{formatEuro(risultato.costiArbitrato.totalePerParte)}</td>
+                          <td className="text-right py-3 px-3 text-xs">{risultato.durataMediaStimata.arbitratoCAM}</td>
                         </tr>
                       </tbody>
                     </table>
@@ -505,6 +528,11 @@ export default function ConfrontoCosti() {
                         name: "Mediazione",
                         "Costi totali": Math.round(risultato.costiMediazione.totaleNettoPerParte),
                         fill: "#16a34a",
+                      },
+                      {
+                        name: "Arbitrato CAM",
+                        "Costi totali": Math.round(risultato.costiArbitrato.totalePerParte),
+                        fill: "#d97706",
                       },
                       {
                         name: "I grado",
@@ -552,6 +580,7 @@ export default function ConfrontoCosti() {
                     />
                     <Bar dataKey="Costi totali" stroke="#2d2926" strokeWidth={2} radius={0}>
                       <Cell fill="#16a34a" />
+                      <Cell fill="#d97706" />
                       <Cell fill="#dc2626" />
                       <Cell fill="#b91c1c" />
                       <Cell fill="#991b1b" />
@@ -559,7 +588,7 @@ export default function ConfrontoCosti() {
                   </BarChart>
                 </ResponsiveContainer>
                 <p className="text-xs text-muted-foreground text-center mt-3">
-                  La mediazione risolve in 6 mesi ciò che in causa può richiedere fino a 12 anni su 3 gradi. Il totale mediazione è al netto del credito d'imposta.
+                  La mediazione risolve in 1-6 mesi ciò che in causa può richiedere fino a 12 anni su 3 gradi. L'arbitrato CAM si conclude in 6-12 mesi. Il totale mediazione è al netto del credito d'imposta.
                 </p>
               </CardContent>
             </Card>
@@ -604,12 +633,18 @@ export default function ConfrontoCosti() {
                       Durata Media Stimata
                     </span>
                   </div>
-                  <div className="grid grid-cols-2 gap-3">
+                  <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
                     <div className="text-center p-3 bg-green-50 border-2 border-green-200">
                       <div className="text-base font-bold text-green-800" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
                         {risultato.durataMediaStimata.mediazione}
                       </div>
                       <div className="text-xs text-green-700">Mediazione</div>
+                    </div>
+                    <div className="text-center p-3 bg-amber-50 border-2 border-amber-200">
+                      <div className="text-base font-bold text-amber-800" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
+                        {risultato.durataMediaStimata.arbitratoCAM}
+                      </div>
+                      <div className="text-xs text-amber-700">Arbitrato CAM</div>
                     </div>
                     <div className="text-center p-3 bg-red-50 border-2 border-red-200">
                       <div className="text-base font-bold text-red-800" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
@@ -631,7 +666,7 @@ export default function ConfrontoCosti() {
                     </div>
                   </div>
                   <p className="text-xs text-muted-foreground text-center mt-3">
-                    Durata complessiva dei tre gradi: 6-12 anni. La mediazione si conclude in 6 mesi.
+                    Durata complessiva dei tre gradi: 6-12 anni. La mediazione si conclude in 1-6 mesi. L'arbitrato CAM in 6-12 mesi.
                   </p>
                 </CardContent>
               </Card>
@@ -720,6 +755,9 @@ export default function ConfrontoCosti() {
                     <TabsTrigger value="appello" className="text-xs data-[state=active]:bg-card data-[state=active]:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]" data-testid="tab-appello-det">
                       Appello
                     </TabsTrigger>
+                    <TabsTrigger value="arbitrato" className="text-xs data-[state=active]:bg-card data-[state=active]:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]" data-testid="tab-arbitrato-det">
+                      Arbitrato CAM
+                    </TabsTrigger>
                     <TabsTrigger value="cassazione" className="text-xs data-[state=active]:bg-card data-[state=active]:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]" data-testid="tab-cassazione-det">
                       Cassazione
                     </TabsTrigger>
@@ -733,41 +771,47 @@ export default function ConfrontoCosti() {
                           <tr className="border-b-2 border-foreground">
                             <th className="text-left py-2 px-3 font-bold" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>Voce</th>
                             <th className="text-right py-2 px-3 font-bold text-green-800 bg-green-50" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>Mediazione</th>
+                            <th className="text-right py-2 px-3 font-bold text-amber-800 bg-amber-50" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>Arbitrato CAM</th>
                             <th className="text-right py-2 px-3 font-bold text-red-800 bg-red-50" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>Causa Civile</th>
                           </tr>
                         </thead>
                         <tbody className="font-mono" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
-                          <CostRow label="Spese avvio/C.U." med={risultato.costiMediazione.indennitaOrganismo} causa={risultato.costiCausaCivile.contributoUnificato + risultato.costiCausaCivile.marcaDaBollo + risultato.costiCausaCivile.dirittoCopia} />
-                          <CostRow label="Compenso avvocato" med={risultato.costiMediazione.compensoAvvocato} causa={risultato.costiCausaCivile.compensoAvvocato} />
-                          <CostRow label="Spese generali 15%" med={risultato.costiMediazione.speseGenerali15} causa={risultato.costiCausaCivile.speseGenerali15} />
-                          <CostRow label="CPA 4%" med={risultato.costiMediazione.cpa4Avvocato} causa={risultato.costiCausaCivile.cpa4Avvocato} />
-                          <CostRow label="IVA 22%" med={risultato.costiMediazione.iva22Avvocato} causa={risultato.costiCausaCivile.iva22Avvocato} />
+                          <CostRow label="Spese avvio/C.U." med={risultato.costiMediazione.indennitaOrganismo} arb={risultato.costiArbitrato.onorariCAM} causa={risultato.costiCausaCivile.contributoUnificato + risultato.costiCausaCivile.marcaDaBollo + risultato.costiCausaCivile.dirittoCopia} />
+                          <CostRow label="Onorari arbitro (+ IVA)" med={0} arb={risultato.costiArbitrato.onorariArbitro + risultato.costiArbitrato.ivaArbitro} causa={0} />
+                          <CostRow label="Compenso avvocato" med={risultato.costiMediazione.compensoAvvocato} arb={risultato.costiArbitrato.compensoAvvocato} causa={risultato.costiCausaCivile.compensoAvvocato} />
+                          <CostRow label="Spese generali 15%" med={risultato.costiMediazione.speseGenerali15} arb={risultato.costiArbitrato.speseGenerali15} causa={risultato.costiCausaCivile.speseGenerali15} />
+                          <CostRow label="CPA 4%" med={risultato.costiMediazione.cpa4Avvocato} arb={risultato.costiArbitrato.cpa4Avvocato} causa={risultato.costiCausaCivile.cpa4Avvocato} />
+                          <CostRow label="IVA 22% avvocato" med={risultato.costiMediazione.iva22Avvocato} arb={risultato.costiArbitrato.iva22Avvocato} causa={risultato.costiCausaCivile.iva22Avvocato} />
+                          <CostRow label="Bollo" med={0} arb={risultato.costiArbitrato.bollo} causa={risultato.costiCausaCivile.marcaDaBollo} />
                           {risultato.costiMediazione.imposteImmobiliari ? (
                             <>
-                              <CostRow label={`Imposta di registro (${risultato.costiMediazione.imposteImmobiliari.aliquotaRegistro})`} med={risultato.costiMediazione.imposteImmobiliari.impostaRegistro} causa={risultato.costiCausaCivile.impostaRegistroSentenza} />
-                              <CostRow label="Imposta ipotecaria" med={risultato.costiMediazione.imposteImmobiliari.impostaIpotecaria} causa={0} />
-                              <CostRow label="Imposta catastale" med={risultato.costiMediazione.imposteImmobiliari.impostaCatastale} causa={0} />
+                              <CostRow label={`Imposta di registro (${risultato.costiMediazione.imposteImmobiliari.aliquotaRegistro})`} med={risultato.costiMediazione.imposteImmobiliari.impostaRegistro} arb={risultato.costiArbitrato.impostaRegistroLodo} causa={risultato.costiCausaCivile.impostaRegistroSentenza} />
+                              <CostRow label="Imposta ipotecaria" med={risultato.costiMediazione.imposteImmobiliari.impostaIpotecaria} arb={0} causa={0} />
+                              <CostRow label="Imposta catastale" med={risultato.costiMediazione.imposteImmobiliari.impostaCatastale} arb={0} causa={0} />
                             </>
                           ) : (
-                            <CostRow label="Imposta di registro" med={risultato.costiMediazione.impostaRegistro} causa={risultato.costiCausaCivile.impostaRegistroSentenza} />
+                            <CostRow label="Imposta di registro" med={risultato.costiMediazione.impostaRegistro} arb={risultato.costiArbitrato.impostaRegistroLodo} causa={risultato.costiCausaCivile.impostaRegistroSentenza} />
                           )}
                           {risultato.costiMediazione.costoNotaio > 0 && (
-                            <CostRow label={risultato.costiMediazione.imposteImmobiliari?.isPrimaCasa ? "Costi notarili (ridotti prima casa)" : "Costi notarili"} med={risultato.costiMediazione.costoNotaio} causa={0} />
+                            <CostRow label={risultato.costiMediazione.imposteImmobiliari?.isPrimaCasa ? "Costi notarili (ridotti prima casa)" : "Costi notarili"} med={risultato.costiMediazione.costoNotaio} arb={0} causa={0} />
                           )}
-                          <CostRow label="Stima CTU" med={0} causa={risultato.costiCausaCivile.stimaCTU} />
+                          <CostRow label="Stima CTU" med={0} arb={risultato.costiArbitrato.stimaCTU} causa={risultato.costiCausaCivile.stimaCTU} />
                           <tr className="border-t-2 border-foreground font-bold">
                             <td className="py-3 px-3">Totale per parte</td>
                             <td className="text-right py-3 px-3 bg-green-50 text-green-900">{formatEuro(risultato.costiMediazione.totalePerParte)}</td>
+                            <td className="text-right py-3 px-3 bg-amber-50 text-amber-900">{formatEuro(risultato.costiArbitrato.totalePerParte)}</td>
                             <td className="text-right py-3 px-3 bg-red-50 text-red-900">{formatEuro(risultato.costiCausaCivile.totalePerParte)}</td>
                           </tr>
                           <tr className="text-green-700 bg-green-50/50">
                             <td className="py-2 px-3 text-xs">Credito d'imposta</td>
                             <td className="text-right py-2 px-3 text-xs">-{formatEuro(risultato.costiMediazione.creditoImposta)}</td>
                             <td className="text-right py-2 px-3 text-xs">—</td>
+                            <td className="text-right py-2 px-3 text-xs">—</td>
                           </tr>
                           <tr className="border-t-2 border-foreground font-bold text-base">
                             <td className="py-3 px-3" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>TOTALE NETTO</td>
                             <td className="text-right py-3 px-3 bg-green-100 text-green-900">{formatEuro(risultato.costiMediazione.totaleNettoPerParte)}</td>
+                            <td className="text-right py-3 px-3 bg-amber-100 text-amber-900">{formatEuro(risultato.costiArbitrato.totalePerParte)}</td>
                             <td className="text-right py-3 px-3 bg-red-100 text-red-900">{formatEuro(risultato.costiCausaCivile.totalePerParte)}</td>
                           </tr>
                         </tbody>
@@ -883,6 +927,30 @@ export default function ConfrontoCosti() {
                     </div>
                   </TabsContent>
 
+                  {/* Dettaglio Arbitrato CAM */}
+                  <TabsContent value="arbitrato">
+                    <div className="space-y-3">
+                      <div className="bg-amber-50 border border-amber-200 p-3 mb-2">
+                        <p className="text-xs text-amber-800">Arbitrato CAM (Camera Arbitrale di Milano) — Arbitro unico, tariffe in vigore dal 1 marzo 2023. Durata stimata: {risultato.durataMediaStimata.arbitratoCAM}.</p>
+                      </div>
+                      <DetailItem label="Onorari CAM (diritti amministrativi)" value={risultato.costiArbitrato.onorariCAM} note="Diritti amministrativi Camera Arbitrale — per parte (totale diviso 2). Esenti IVA." />
+                      <DetailItem label="Onorari arbitro unico" value={risultato.costiArbitrato.onorariArbitro} note="Media tra minimo e massimo tariffario — per parte (totale diviso 2)" />
+                      <DetailItem label="IVA 22% onorari arbitro" value={risultato.costiArbitrato.ivaArbitro} note="IVA 22% sugli onorari dell'arbitro" />
+                      <DetailItem label="Compenso avvocato (parametri giudiziali)" value={risultato.costiArbitrato.compensoAvvocato} note="D.M. 55/2014 mod. D.M. 147/2022 — Tabella 2: fase studio + introduttiva + istruttoria + decisionale" />
+                      <DetailItem label="Spese generali forfettarie" value={risultato.costiArbitrato.speseGenerali15} note="15% sul compenso (art. 2 D.M. 55/2014)" />
+                      <DetailItem label="CPA — Cassa Previdenza Avvocati" value={risultato.costiArbitrato.cpa4Avvocato} note="4% su compenso + spese generali" />
+                      <DetailItem label="IVA avvocato" value={risultato.costiArbitrato.iva22Avvocato} note="22% su compenso + spese generali + CPA" />
+                      <DetailItem label="Bollo" value={risultato.costiArbitrato.bollo} note="Stima forfettaria €150 (circa 10 fogli × €16 — DPR 642/1972). Non si applica il contributo unificato." />
+                      <DetailItem label="Stima CTU (consulenza tecnica)" value={risultato.costiArbitrato.stimaCTU} note="Stima indicativa del costo di una consulenza tecnica d'ufficio (variabile per materia)" />
+                      <DetailItem label="Imposta di registro sul lodo" value={risultato.costiArbitrato.impostaRegistroLodo} note="3% sul valore della controversia (art. 8 lett. b Tariffa DPR 131/1986) — il lodo ha efficacia di sentenza" />
+                      <div className="border-t-2 border-foreground pt-3 flex justify-between items-center">
+                        <span className="font-bold text-amber-800" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>Totale per parte (Arbitrato CAM)</span>
+                        <span className="font-bold font-mono text-lg text-amber-800" style={{ fontFamily: "'JetBrains Mono', monospace" }}>{formatEuro(risultato.costiArbitrato.totalePerParte)}</span>
+                      </div>
+                      <p className="text-xs text-muted-foreground italic">Tariffe CAM (Camera Arbitrale di Milano) in vigore dal 1 marzo 2023. Arbitro unico, valori medi. I costi sono al netto di IVA sugli onorari CAM. Durata stimata: 6-12 mesi.</p>
+                    </div>
+                  </TabsContent>
+
                   {/* Dettaglio Cassazione */}
                   <TabsContent value="cassazione">
                     <div className="space-y-3">
@@ -953,6 +1021,9 @@ export default function ConfrontoCosti() {
                   <p className="mb-2">
                     <strong>Altre voci:</strong> la stima CTU è forfettaria e varia significativamente in base alla materia e complessità della perizia. L'imposta di registro sulla sentenza (3%) si applica solo in caso di condanna al pagamento di somme. Il CU in appello è maggiorato del 50%, in cassazione raddoppiato (art. 13 D.P.R. 115/2002).
                   </p>
+                  <p className="mb-2">
+                    <strong>Arbitrato CAM:</strong> tariffe della Camera Arbitrale di Milano in vigore dal 1 marzo 2023. Simulazione con arbitro unico e valori medi tra minimo e massimo tariffario. Gli onorari CAM sono esenti da IVA; sugli onorari dell'arbitro si applica IVA 22%. Non si applica il contributo unificato. Il lodo arbitrale ha efficacia di sentenza (art. 824-bis c.p.c.). Durata stimata: 6-12 mesi.
+                  </p>
                   <p>
                     <strong>Avvertenza:</strong> tutti i calcoli forniti da questa piattaforma hanno finalità esclusivamente informativa e orientativa. Non costituiscono in alcun modo una consulenza legale, un preventivo vincolante né un parere professionale. Per una valutazione precisa e personalizzata dei costi, si raccomanda di consultare un avvocato o un professionista abilitato.
                   </p>
@@ -982,11 +1053,12 @@ export default function ConfrontoCosti() {
 // SUB-COMPONENTS
 // ========================
 
-function CostRow({ label, med, causa }: { label: string; med: number; causa: number }) {
+function CostRow({ label, med, arb, causa }: { label: string; med: number; arb: number; causa: number }) {
   return (
     <tr className="border-b border-foreground/10">
       <td className="py-2 px-3 text-sm" style={{ fontFamily: "Inter, sans-serif" }}>{label}</td>
       <td className="text-right py-2 px-3 bg-green-50/50">{med > 0 ? formatEuro(med) : "—"}</td>
+      <td className="text-right py-2 px-3 bg-amber-50/50">{arb > 0 ? formatEuro(arb) : "—"}</td>
       <td className="text-right py-2 px-3 bg-red-50/50">{causa > 0 ? formatEuro(causa) : "—"}</td>
     </tr>
   );

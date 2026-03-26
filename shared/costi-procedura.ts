@@ -98,18 +98,34 @@ export interface GratuitoPatrocinio {
   note: string;
 }
 
+export interface CostiArbitrato {
+  onorariCAM: number;
+  onorariArbitro: number;
+  ivaArbitro: number;
+  compensoAvvocato: number;
+  speseGenerali15: number;
+  cpa4Avvocato: number;
+  iva22Avvocato: number;
+  bollo: number;
+  stimaCTU: number;
+  impostaRegistroLodo: number;
+  totalePerParte: number;
+  totaleComplessivo: number;
+}
+
 export interface RisultatoConfronto {
   costiMediazione: CostiMediazione;
   costiCausaCivile: CostiCausaCivile;
   costiAppello: CostiGradoSuccessivo;
   costiCassazione: CostiGradoSuccessivo;
+  costiArbitrato: CostiArbitrato;
   totaleCausaTreGradi: number;
   risparmioMediazione: number;
   percentualeRisparmio: number;
   risparmioMediazioneTreGradi: number;
   percentualeRisparmioTreGradi: number;
   gratuitoPatrocinio: GratuitoPatrocinio;
-  durataMediaStimata: { mediazione: string; causaCivile: string; appello: string; cassazione: string };
+  durataMediaStimata: { mediazione: string; causaCivile: string; appello: string; cassazione: string; arbitratoCAM: string };
   vantaggiFiscali: string[];
 }
 
@@ -242,6 +258,17 @@ const GENOVA_INDETERMINABILI = {
   indeterminabile_medio: 520,
   indeterminabile_alto: 780,
 };
+
+// Tariffe Arbitrato CAM (Camera Arbitrale di Milano) — in vigore dal 1 marzo 2023
+// Arbitrato ordinario, arbitro unico (valori medi min/max)
+const TARIFFE_ARBITRATO_CAM = [
+  { min: 0, max: 50000, onorariCAM: 1000, arbitroUnicoMin: 1500, arbitroUnicoMax: 2500 },
+  { min: 50001, max: 100000, onorariCAM: 1700, arbitroUnicoMin: 2500, arbitroUnicoMax: 4500 },
+  { min: 100001, max: 250000, onorariCAM: 3500, arbitroUnicoMin: 4500, arbitroUnicoMax: 10000 },
+  { min: 250001, max: 500000, onorariCAM: 7000, arbitroUnicoMin: 10000, arbitroUnicoMax: 18000 },
+  { min: 500001, max: 1000000, onorariCAM: 12000, arbitroUnicoMin: 18000, arbitroUnicoMax: 25000 },
+  { min: 1000001, max: 2500000, onorariCAM: 18000, arbitroUnicoMin: 25000, arbitroUnicoMax: 40000 },
+];
 
 // Costi notarili — onorario medio indicativo (libero post D.L. 1/2012)
 // SECONDA CASA / ALTRI IMMOBILI — onorari ordinari
@@ -623,6 +650,72 @@ function calcolaCostiCassazione(input: InputConfronto, valoreEffettivo: number):
 }
 
 // ========================
+// CALCOLO COSTI ARBITRATO CAM
+// ========================
+
+function calcolaCostiArbitrato(input: InputConfronto, valoreEffettivo: number): CostiArbitrato {
+  const isGP = input.gratuitoPatrocinio === true;
+
+  // Lookup scaglione CAM
+  const scagCAM = findScaglione(TARIFFE_ARBITRATO_CAM, valoreEffettivo);
+
+  // Onorari CAM (per party = total / 2) — esenti IVA
+  const onorariCAM = Math.round(scagCAM.onorariCAM / 2);
+
+  // Onorari arbitro unico: media min/max, diviso 2 per parte
+  const arbitroUnicoAvg = (scagCAM.arbitroUnicoMin + scagCAM.arbitroUnicoMax) / 2;
+  const onorariArbitroBase = Math.round(arbitroUnicoAvg / 2);
+  // IVA 22% sugli onorari dell'arbitro
+  const ivaArbitro = Math.round(onorariArbitroBase * 0.22);
+  const onorariArbitro = onorariArbitroBase;
+
+  // Compenso avvocato — stessi parametri forensi giudiziali (studio + introduttiva + istruttoria + decisionale)
+  const paramGiud = findScaglione(PARAMETRI_FORENSI_GIUDIZIALI, valoreEffettivo);
+  const compensoAvvocato = isGP ? 0 : (paramGiud.studio + paramGiud.introduttiva + paramGiud.istruttoria + paramGiud.decisionale);
+
+  // Spese generali 15% + CPA 4% + IVA 22% sull'avvocato (same as causa civile)
+  const speseGenerali15 = Math.round(compensoAvvocato * 0.15);
+  const cpa4Avvocato = Math.round((compensoAvvocato + speseGenerali15) * 0.04);
+  const iva22Avvocato = Math.round((compensoAvvocato + speseGenerali15 + cpa4Avvocato) * 0.22);
+
+  // Bollo: stima 150 EUR fissi (circa 10 fogli a 16 EUR/foglio)
+  const bollo = 150;
+
+  // NO contributo unificato in arbitrato
+
+  // CTU: stessa stima del primo grado
+  let stimaCTU = 0;
+  if (valoreEffettivo <= 10000) stimaCTU = 500;
+  else if (valoreEffettivo <= 50000) stimaCTU = 1500;
+  else if (valoreEffettivo <= 250000) stimaCTU = 3000;
+  else if (valoreEffettivo <= 520000) stimaCTU = 5000;
+  else stimaCTU = 8000;
+  if (isGP) stimaCTU = 0;
+
+  // Imposta di registro sul lodo: 3% del valore (come sentenza)
+  const impostaRegistroLodo = Math.round(valoreEffettivo * 0.03);
+
+  const totalePerParte = onorariCAM + onorariArbitro + ivaArbitro + compensoAvvocato +
+    speseGenerali15 + cpa4Avvocato + iva22Avvocato + bollo + stimaCTU + impostaRegistroLodo;
+  const totaleComplessivo = totalePerParte * 2;
+
+  return {
+    onorariCAM,
+    onorariArbitro,
+    ivaArbitro,
+    compensoAvvocato,
+    speseGenerali15,
+    cpa4Avvocato,
+    iva22Avvocato,
+    bollo,
+    stimaCTU,
+    impostaRegistroLodo,
+    totalePerParte,
+    totaleComplessivo,
+  };
+}
+
+// ========================
 // CALCOLO GRATUITO PATROCINIO
 // ========================
 
@@ -663,6 +756,7 @@ export function calcolaConfronto(input: InputConfronto): RisultatoConfronto {
   const costiCausaCivile = calcolaCostiCausaCivile(input, valoreEffettivo);
   const costiAppello = calcolaCostiAppello(input, valoreEffettivo);
   const costiCassazione = calcolaCostiCassazione(input, valoreEffettivo);
+  const costiArbitrato = calcolaCostiArbitrato(input, valoreEffettivo);
   const gratuitoPatrocinio = calcolaGratuitoPatrocinio(input.redditoAnnuo);
 
   // Risparmio primo grado
@@ -697,6 +791,7 @@ export function calcolaConfronto(input: InputConfronto): RisultatoConfronto {
     costiCausaCivile,
     costiAppello,
     costiCassazione,
+    costiArbitrato,
     totaleCausaTreGradi,
     risparmioMediazione,
     percentualeRisparmio,
@@ -704,10 +799,11 @@ export function calcolaConfronto(input: InputConfronto): RisultatoConfronto {
     percentualeRisparmioTreGradi,
     gratuitoPatrocinio,
     durataMediaStimata: {
-      mediazione: "fino a 6 mesi (prorogabili di 3 in 3)",
-      causaCivile: "2-5 anni (primo grado)",
-      appello: "2-3 anni",
-      cassazione: "2-4 anni",
+      mediazione: "1-6 mesi",
+      causaCivile: "2-4 anni",
+      appello: "+1-3 anni",
+      cassazione: "+1-3 anni",
+      arbitratoCAM: "6-12 mesi",
     },
     vantaggiFiscali,
   };
