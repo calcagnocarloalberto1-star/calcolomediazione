@@ -42,7 +42,9 @@ export function serveStatic(app: Express) {
     const indexPath = path.resolve(distPath, "index.html");
     let html = fs.readFileSync(indexPath, "utf-8");
     const siteUrl = getSiteUrl(req);
-    html = html.replace('</head>', `  <link rel="canonical" href="${siteUrl}/" />\n  </head>`);
+    const homeTitle = SEO_PAGES["/"]?.title || "CalcoloMediazione";
+    const homeDesc = SEO_PAGES["/"]?.description || "";
+    html = html.replace('</head>', `  <link rel="canonical" href="${siteUrl}/" />\n    <meta property="og:title" content="${homeTitle}" />\n    <meta property="og:description" content="${homeDesc}" />\n    <meta property="og:url" content="${siteUrl}/" />\n    <meta property="og:type" content="website" />\n    <meta property="og:site_name" content="CalcoloMediazione" />\n    <meta property="og:image" content="${siteUrl}/og-image.svg" />\n  </head>`);
     const seoHtml = SEO_CONTENT["/"];
     if (seoHtml) {
       html = html.replace('<div id="root"></div>', `<div id="root">${seoHtml}</div>`);
@@ -78,11 +80,11 @@ export function serveStatic(app: Express) {
         '</head>',
         `  <link rel="canonical" href="${siteUrl}${reqPath}" />\n    <meta property="og:title" content="${seoPage.title}" />\n    <meta property="og:description" content="${seoPage.description}" />\n    <meta property="og:url" content="${siteUrl}${reqPath}" />\n    <meta property="og:type" content="website" />\n    <meta property="og:site_name" content="CalcoloMediazione" />\n    <meta property="og:image" content="${siteUrl}/og-image.svg" />\n  </head>`
       );
-    } else if (reqPath === "/") {
-      // Home page - canonical already in index.html, just ensure siteUrl is correct
+    } else {
+      // Unknown pages — just add canonical to current path
       html = html.replace(
         '</head>',
-        `  <link rel="canonical" href="${siteUrl}/" />\n  </head>`
+        `  <link rel="canonical" href="${siteUrl}${reqPath}" />\n  </head>`
       );
     }
 
