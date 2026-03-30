@@ -57,9 +57,27 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
         <Toaster />
+        {/*
+          FIX ACCESSIBILITÀ:
+          - Aggiunto aria-label="Navigazione principale" a <Header> (va applicato dentro Header.tsx)
+          - <main> ora ha id="main-content" per il link "salta al contenuto"
+          - Aggiunto aria-label="Contenuto principale" su <main>
+          - Aggiunto "skip to content" link invisibile per navigazione da tastiera (WCAG 2.4.1)
+        */}
+        <a
+          href="#main-content"
+          className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-50 focus:px-4 focus:py-2 focus:bg-primary focus:text-primary-foreground focus:rounded"
+        >
+          Vai al contenuto principale
+        </a>
+
         <div className="min-h-screen flex flex-col bg-background">
           <Header />
-          <main className="flex-1">
+          <main
+            id="main-content"
+            className="flex-1"
+            aria-label="Contenuto principale"
+          >
             <AppRouter />
           </main>
           <Footer />
