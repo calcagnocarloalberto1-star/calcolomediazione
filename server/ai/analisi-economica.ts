@@ -1,4 +1,80 @@
 import { callLLM } from "./llm.js";
+import { calcolaIndennita, formatEuro } from "../../shared/calcolo-indennita.js";
+
+// ─── CONTRIBUTO UNIFICATO — D.P.R. 115/2002, art. 13 ─────────────────────
+function calcolaContributoUnificato(valore: number): number {
+  if (valore <= 1100)    return 43;
+  if (valore <= 5200)    return 98;
+  if (valore <= 26000)   return 237;
+  if (valore <= 52000)   return 518;
+  if (valore <= 260000)  return 759;
+  if (valore <= 520000)  return 1214;
+  return 1686;
+}
+
+// ─── COMPENSO AVVOCATO — D.M. 55/2014 valori medi ────────────────────────
+// Tabella 2 (primo grado), Tabella 12 (appello), Tabella 13 (cassazione)
+function calcolaCompensoPrimoGrado(valore: number): number {
+  // Fasi: studio + introduttiva + istruttoria + decisionale (valori medi)
+  if (valore <= 1100)    return 800;
+  if (valore <= 5200)    return 1800;
+  if (valore <= 26000)   return 3800;
+  if (valore <= 52000)   return 6500;
+  if (valore <= 260000)  return 11000;
+  if (valore <= 520000)  return 16500;
+  return 25000;
+}
+
+function calcolaCompensoAppello(valore: number): number {
+  // Tabella 12 — fasi: studio + introduttiva + istruttoria + decisionale
+  if (valore <= 1100)    return 700;
+  if (valore <= 5200)    return 1500;
+  if (valore <= 26000)   return 3200;
+  if (valore <= 52000)   return 5500;
+  if (valore <= 260000)  return 9500;
+  if (valore <= 520000)  return 14000;
+  return 21000;
+}
+
+function calcolaCompensoCassazione(valore: number): number {
+  // Tabella 13 — fasi: studio + introduttiva + decisionale (NO istruttoria)
+  if (valore <= 1100)    return 600;
+  if (valore <= 5200)    return 1300;
+  if (valore <= 26000)   return 2800;
+  if (valore <= 52000)   return 4800;
+  if (valore <= 260000)  return 8500;
+  if (valore <= 520000)  return 12500;
+  return 19000;
+}
+
+function calcolaCompensoMediazione(valore: number): number {
+  // D.M. 147/2022 — fasi: attivazione + negoziazione + conciliazione (valori medi)
+  if (valore <= 1100)    return 450;
+  if (valore <= 5200)    return 900;
+  if (valore <= 26000)   return 1800;
+  if (valore <= 52000)   return 3200;
+  if (valore <= 260000)  return 5500;
+  if (valore <= 520000)  return 8500;
+  return 13000;
+}
+
+// ─── ACCESSORI (spese generali 15% + CPA 4% + IVA 22%) ───────────────────
+function calcolaAccessori(compensoBase: number): number {
+  const speseGenerali = compensoBase * 0.15;
+  const imponibile = compensoBase + speseGenerali;
+  const cpa = imponibile * 0.04;
+  const iva = (imponibile + cpa) * 0.22;
+  return Math.round(speseGenerali + cpa + iva);
+}
+
+// ─── STIMA CTU ────────────────────────────────────────────────────────────
+function stimaCTU(valore: number): number {
+  if (valore <= 26000)   return 1500;
+  if (valore <= 52000)   return 2500;
+  if (valore <= 260000)  return 4000;
+  if (valore <= 520000)  return 6000;
+  return 9000;
+}
 
 export async function analisiEconomica(
   descrizione: string,
@@ -6,219 +82,234 @@ export async function analisiEconomica(
   valoreLite: number | null,
   tipoAnalisi: string,
   previousAnalysis: string,
-  opzioniEconomiche: { materiaImmobiliare: boolean; primaCasa: boolean; renditaCatastale: number | null; categoriaCatastale: string | null; gratuitoPatrocinio: boolean; mediatoreEsperto: boolean; proceduraComplessa: boolean; modalitaTariffaria: string } = { materiaImmobiliare: false, primaCasa: false, renditaCatastale: null, categoriaCatastale: null, gratuitoPatrocinio: false, mediatoreEsperto: false, proceduraComplessa: false, modalitaTariffaria: "nazionale" }
+  opzioniEconomiche: {
+    materiaImmobiliare: boolean;
+    primaCasa: boolean;
+    renditaCatastale: number | null;
+    categoriaCatastale: string | null;
+    gratuitoPatrocinio: boolean;
+    mediatoreEsperto: boolean;
+    proceduraComplessa: boolean;
+    modalitaTariffaria: string;
+  } = {
+    materiaImmobiliare: false, primaCasa: false, renditaCatastale: null,
+    categoriaCatastale: null, gratuitoPatrocinio: false, mediatoreEsperto: false,
+    proceduraComplessa: false, modalitaTariffaria: "nazionale",
+  }
 ): Promise<string> {
   const valore = valoreLite || 25000;
-  const { materiaImmobiliare, primaCasa, renditaCatastale, categoriaCatastale, gratuitoPatrocinio, mediatoreEsperto, proceduraComplessa, modalitaTariffaria } = opzioniEconomiche;
+  const {
+    materiaImmobiliare, primaCasa, renditaCatastale, categoriaCatastale,
+    gratuitoPatrocinio, mediatoreEsperto, proceduraComplessa, modalitaTariffaria,
+  } = opzioniEconomiche;
   const isGenova = modalitaTariffaria === "coa_genova";
 
-  // Build dynamic sections based on flags
-  let notaioSection = "";
-  if (materiaImmobiliare) {
-    const tipoImmobile = primaCasa ? "PRIMA CASA" : "SECONDA CASA / ALTRO IMMOBILE";
-    const aliquotaRegistro = primaCasa ? "2%" : "9%";
-    const stimaNotaio = primaCasa
-      ? "Onorari notarili RIDOTTI per agevolazione prima casa (circa 30% in meno rispetto a seconda casa). Stima: EUR 900 - 1.750 a seconda del valore"
-      : "Onorari notarili ordinari (tariffe piene). Stima: EUR 1.300 - 2.500 a seconda del valore";
-    notaioSection = `
-MATERIA IMMOBILIARE - ${tipoImmobile}:
-- L'accordo ha ad oggetto un trasferimento immobiliare
-- Imposta di registro: ${aliquotaRegistro} sul valore catastale (minimo EUR 1.000)
-- In mediazione: esenzione registro fino a EUR 100.000 (art. 17, co. 3, D.Lgs. 28/2010) — si paga solo sull'eccedenza
-- Imposta ipotecaria: EUR 50 (fissa)
-- Imposta catastale: EUR 50 (fissa)
-- E' NECESSARIO IL NOTAIO per l'autenticazione dell'accordo con effetti reali (art. 11 D.Lgs. 28/2010)
-- ${stimaNotaio}
-${primaCasa ? "- VANTAGGIO PRIMA CASA: risparmio significativo sia sulle imposte di registro (2% vs 9%) sia sugli onorari notarili (~30% in meno). Evidenziare questo risparmio nella comparazione." : ""}
-- In causa civile: registro 3% sulla sentenza, imposte ipotecaria/catastale piene, costi notarili ordinari`;
+  // ─── CALCOLO DETERMINISTICO MEDIAZIONE ──────────────────────────────────
+  // Scenario A1: mediazione positiva al primo incontro
+  const resultAccordoPrimo = calcolaIndennita({
+    valoreLite: valore,
+    tipoMediazione: "obbligatoria",
+    esito: "accordo_primo",
+    tipoValore: "determinato",
+    modalitaTariffaria: isGenova ? "coa_genova" : "nazionale",
+    mediatoreEsperto: false,
+    proceduraComplessa: false,
+  });
 
-    // Add catastale verification if rendita was provided
-    if (renditaCatastale && renditaCatastale > 0) {
-      const moltiplicatori: Record<string, { label: string; mult: number }> = {
-        prima_casa: { label: "Prima casa", mult: 115.5 },
-        altri_fabbricati_ac: { label: "Altre abitazioni", mult: 126 },
-        cat_b: { label: "Cat. B", mult: 176.4 },
-        cat_a10_d: { label: "Uffici/D", mult: 63 },
-        cat_c1_e: { label: "Negozi/E", mult: 42.84 },
-        terreno_agricolo: { label: "Terreno agricolo", mult: 112.5 },
-      };
-      const cat = moltiplicatori[categoriaCatastale || "prima_casa"] || moltiplicatori.prima_casa;
-      const valoreCatastale = Math.round(renditaCatastale * cat.mult * 100) / 100;
-      const congruo = valore >= valoreCatastale;
-      const scostamento = valoreCatastale > 0 ? Math.round(((valore - valoreCatastale) / valoreCatastale) * 100) : 0;
+  // Scenario A2: mediazione positiva agli incontri successivi
+  const resultAccordoSuccessivi = calcolaIndennita({
+    valoreLite: valore,
+    tipoMediazione: "obbligatoria",
+    esito: "accordo_successivi",
+    tipoValore: "determinato",
+    modalitaTariffaria: isGenova ? "coa_genova" : "nazionale",
+    mediatoreEsperto,
+    proceduraComplessa,
+  });
 
-      notaioSection += `
+  // Scenario negativo (solo primo incontro)
+  const resultNegativo = calcolaIndennita({
+    valoreLite: valore,
+    tipoMediazione: "obbligatoria",
+    esito: "nessuno_primo",
+    tipoValore: "determinato",
+    modalitaTariffaria: isGenova ? "coa_genova" : "nazionale",
+  });
 
-VERIFICA CONGRUITA' CATASTALE (ART. 29 D.M. 150/2023):
-- Rendita catastale: EUR ${renditaCatastale.toFixed(2)}
-- Rendita rivalutata (+5%): EUR ${(renditaCatastale * 1.05).toFixed(2)}
-- Categoria: ${cat.label} (moltiplicatore ${cat.mult})
-- VALORE CATASTALE CALCOLATO: EUR ${valoreCatastale.toLocaleString("it-IT", { minimumFractionDigits: 2 })}
-- Valore domanda/accordo: EUR ${valore.toLocaleString("it-IT", { minimumFractionDigits: 2 })}
-- Scostamento: ${scostamento}%
-- ESITO: ${congruo ? "CONGRUO — il valore della domanda è pari o superiore al valore catastale" : "NON CONGRUO — il valore è inferiore al catastale, rischio accertamento Agenzia delle Entrate (artt. 51-52 DPR 131/1986)"}
-DEVI INCLUDERE questa verifica nell'analisi economica, con un paragrafo dedicato alla congruità del valore.`;
-    }
+  // Compenso avvocato mediazione
+  const compensoAvvMed = calcolaCompensoMediazione(valore);
+  const accessoriAvvMed = calcolaAccessori(compensoAvvMed);
+
+  // Esenzione art. 17 (accordo)
+  const esenzioneRegistro = Math.min(valore, 100000) * 0.03;
+
+  // Credito d'imposta
+  const creditoIndennita = Math.min(resultAccordoSuccessivi.totalePerParte * 0.50, 600);
+  const creditoAvvocato = Math.min(compensoAvvMed * 0.50, 600);
+  const creditoTotale = creditoIndennita + creditoAvvocato;
+
+  // ─── CALCOLO DETERMINISTICO PROCESSO ────────────────────────────────────
+  const cu1 = calcolaContributoUnificato(valore);
+  const cu2 = Math.round(cu1 * 1.5);   // appello: +50%
+  const cu3 = cu1 * 2;                  // cassazione: raddoppio
+
+  const avv1 = calcolaCompensoPrimoGrado(valore);
+  const acc1 = calcolaAccessori(avv1);
+  const avv2 = calcolaCompensoAppello(valore);
+  const acc2 = calcolaAccessori(avv2);
+  const avv3 = calcolaCompensoCassazione(valore);
+  const acc3 = calcolaAccessori(avv3);
+
+  const ctu1 = stimaCTU(valore);
+  const ctu2 = ctu1; // prudenziale: stessa stima in appello
+  const registro1 = Math.round(valore * 0.03); // registro su sentenza
+
+  const altreCosts1 = 27 + 30; // marca bollo + diritti copia
+  const altreCosts2 = 27;
+  const altreCosts3 = 27;
+
+  // Totali per grado
+  const tot1 = cu1 + avv1 + acc1 + ctu1 + registro1 + altreCosts1
+             + resultNegativo.totalePerParte; // mediazione negativa prima
+  const tot2 = cu2 + avv2 + acc2 + ctu2 + altreCosts2;
+  const tot3 = cu3 + avv3 + acc3 + altreCosts3;
+
+  // Cumulativi
+  const cumul1 = tot1;
+  const cumul2 = tot1 + tot2;
+  const cumul3 = tot1 + tot2 + tot3;
+
+  // Mediazione positiva (scenario peggiore = accordo successivi)
+  const totMed = resultAccordoSuccessivi.totalePerParte
+               + compensoAvvMed + accessoriAvvMed;
+  const totMedNetto = gratuitoPatrocinio ? 0 : totMed;
+
+  const risparmio1 = cumul1 - totMedNetto;
+  const risparmio2 = cumul2 - totMedNetto;
+  const risparmio3 = cumul3 - totMedNetto;
+  const risparmioPerc1 = cumul1 > 0 ? Math.round((risparmio1 / cumul1) * 100) : 0;
+  const risparmioPerc2 = cumul2 > 0 ? Math.round((risparmio2 / cumul2) * 100) : 0;
+  const risparmioPerc3 = cumul3 > 0 ? Math.round((risparmio3 / cumul3) * 100) : 0;
+
+  // ─── VERIFICA CATASTALE ───────────────────────────────────────────────
+  let catastaleSection = "";
+  if (materiaImmobiliare && renditaCatastale && renditaCatastale > 0) {
+    const moltiplicatori: Record<string, { label: string; mult: number }> = {
+      prima_casa:        { label: "Prima casa",         mult: 115.5 },
+      altri_fabbricati_ac: { label: "Altre abitazioni", mult: 126 },
+      cat_b:             { label: "Cat. B",             mult: 176.4 },
+      cat_a10_d:         { label: "Uffici/D",           mult: 63 },
+      cat_c1_e:          { label: "Negozi/E",           mult: 42.84 },
+      terreno_agricolo:  { label: "Terreno agricolo",   mult: 112.5 },
+    };
+    const cat = moltiplicatori[categoriaCatastale || "prima_casa"] || moltiplicatori.prima_casa;
+    const renditaRivalutata = renditaCatastale * 1.05;
+    const valoreCatastale = Math.round(renditaRivalutata * cat.mult * 100) / 100;
+    const congruo = valore >= valoreCatastale;
+    const scostamento = valoreCatastale > 0 ? Math.round(((valore - valoreCatastale) / valoreCatastale) * 100) : 0;
+    catastaleSection = `
+VERIFICA CONGRUITA' CATASTALE (art. 29 D.M. 150/2023):
+- Rendita catastale dichiarata: ${formatEuro(renditaCatastale)}
+- Rendita rivalutata (+5%): ${formatEuro(renditaRivalutata)}
+- Categoria: ${cat.label} — moltiplicatore ×${cat.mult}
+- Valore catastale calcolato: ${formatEuro(valoreCatastale)}
+- Valore della domanda: ${formatEuro(valore)}
+- Scostamento: ${scostamento > 0 ? "+" : ""}${scostamento}%
+- Esito: ${congruo ? "CONGRUO" : "NON CONGRUO — rischio accertamento Agenzia delle Entrate (artt. 51-52 D.P.R. 131/1986)"}`;
   }
 
-  // Art. 31 co. 3 — Maggiorazione indennità
-  let art31Section = "";
-  if (mediatoreEsperto || proceduraComplessa) {
-    const criteri: string[] = [];
-    if (mediatoreEsperto) criteri.push("mediatore di esperienza e competenza designato su concorde indicazione delle parti (lett. a)");
-    if (proceduraComplessa) criteri.push("complessità delle questioni, impegno richiesto al mediatore, numero degli incontri (lett. b)");
-    art31Section = `
-MAGGIORAZIONE ART. 31, CO. 3, D.M. 150/2023:
-In caso di conciliazione in incontri successivi al primo, le spese possono essere maggiorate fino al 20% in presenza di almeno uno dei seguenti criteri:
-- ${criteri.join("\n- ")}
-Criteri selezionati: ${criteri.length}
-DEVI APPLICARE una maggiorazione del +20% sull'indennità di mediazione (incontri successivi) nello Scenario A.
-Questa maggiorazione si calcola SULL'INDENNITA' degli incontri successivi al primo, NON sulle spese di avvio.
-La maggiorazione si applica UNA SOLA VOLTA anche se entrambi i criteri sono presenti (max +20%).`;
-  }
-
-  let gpSection = "";
-  if (gratuitoPatrocinio) {
-    gpSection = `
-GRATUITO PATROCINIO ATTIVO (D.P.R. 115/2002, artt. 74-141):
-La parte beneficia del patrocinio a spese dello Stato. Questo significa:
-- IN MEDIAZIONE: indennità organismo = EUR 0 (a carico erario), compenso avvocato = EUR 0 (a carico erario), spese generali/CPA/IVA = EUR 0
-  Restano a carico: imposte di registro (se dovute sull'eccedenza EUR 100.000), costi notarili (se materia immobiliare)
-- IN CAUSA CIVILE: contributo unificato = prenotato a debito (EUR 0 per la parte), compenso avvocato = EUR 0 (a carico erario), CTU = prenotata a debito
-  Resta a carico: imposta di registro sulla sentenza (3%)
-- Credito d'imposta: NON applicabile (i costi sono già a carico dell'erario)
-DEVI CALCOLARE I TOTALI TENENDO CONTO DI QUESTI AZZERAMENTI.`;
-  }
-
-  const esenzioneNote = `
-ESENZIONE ART. 17 D.LGS. 28/2010 — SEMPRE PER ACCORDO POSITIVO:
-- L'imposta di registro è ESENTE fino a EUR 100.000
-- Per valori superiori a EUR 100.000 si paga SOLO sull'eccedenza (valore - 100.000)
-- Esenzione imposta di bollo su tutti gli atti del procedimento
-- Questa esenzione si applica SEMPRE in caso di accordo positivo in mediazione`;
-
-  // Build tariff reference section
-  let tariffSection = "";
-  if (isGenova) {
-    tariffSection = `
-TARIFFARIO APPLICATO: COA GENOVA (Ordine degli Avvocati di Genova)
-ATTENZIONE: NON usare le tariffe nazionali D.M. 150/2023. Usa ESCLUSIVAMENTE gli scaglioni COA Genova:
-- Fino a EUR 1.000: spese avvio EUR 40, indennità EUR 110
-- EUR 1.001-5.000: spese avvio EUR 80, indennità EUR 220
-- EUR 5.001-10.000: spese avvio EUR 100, indennità EUR 260
-- EUR 10.001-25.000: spese avvio EUR 120, indennità EUR 360
-- EUR 25.001-50.000: spese avvio EUR 180, indennità EUR 520
-- EUR 50.001-100.000: spese avvio EUR 220, indennità EUR 780
-- EUR 100.001-250.000: spese avvio EUR 260, indennità EUR 1.560
-- EUR 250.001-500.000: spese avvio EUR 300, indennità EUR 2.600
-- Oltre EUR 500.000: spese avvio EUR 340, indennità EUR 3.900
-Per mediazione obbligatoria/demandata: riduzione del 20% sull'indennità.
-L'indennità Genova è un importo unico (non c'è distinzione primo incontro / successivi come nel D.M. 150/2023).`;
-  } else {
-    tariffSection = `
-TARIFFARIO APPLICATO: NAZIONALE (D.M. 150/2023 — Tabella A)
-Scaglioni tariffe nazionali:
-- Fino a EUR 1.000: spese avvio EUR 40, indennità EUR 80
-- EUR 1.001-5.000: spese avvio EUR 75, indennità EUR 160
-- EUR 5.001-10.000: spese avvio EUR 75, indennità EUR 290
-- EUR 10.001-25.000: spese avvio EUR 75, indennità EUR 440
-- EUR 25.001-50.000: spese avvio EUR 75, indennità EUR 720
-- EUR 50.001-150.000: spese avvio EUR 110, indennità EUR 1.200
-- EUR 150.001-250.000: spese avvio EUR 110, indennità EUR 1.500
-- EUR 250.001-500.000: spese avvio EUR 110, indennità EUR 2.500
-- EUR 500.001-1.500.000: spese avvio EUR 110, indennità EUR 3.900
-- EUR 1.500.001-2.500.000: spese avvio EUR 110, indennità EUR 4.600
-- EUR 2.500.001-5.000.000: spese avvio EUR 110, indennità EUR 6.500
-- Oltre EUR 5.000.000: spese avvio EUR 110, indennità EUR 10.000
-Per mediazione obbligatoria/demandata: riduzione di 1/5 sull'indennità.
-Struttura: spese avvio (art. 28 co. 4) + primo incontro (art. 28 co. 5: EUR 60/120/170) + incontri successivi (Tabella A).
-Maggiorazione +25% per accordo, +10% per più parti, detrazione art. 34 co. 2.`;
-  }
-
-  const systemPrompt = `Sei un esperto di costi legali e fiscalità della mediazione civile e commerciale italiana.
-Devi produrre una SEZIONE ECONOMICA COMPARATIVA dettagliata che confronti due scenari:
-${tariffSection}
-
-SCENARIO A: MEDIAZIONE POSITIVA (accordo raggiunto)
-- Indennità organismo di mediazione ${isGenova ? "(tariffe COA Genova)" : "(D.M. 150/2023)"} per valore EUR ${valore.toLocaleString("it-IT")}
-- Compenso avvocato (parametri forensi stragiudiziali D.M. 55/2014 agg. D.M. 147/2022)
-- Spese generali 15%, CPA 4%, IVA 22%
-${esenzioneNote}
-- Credito d'imposta fino a EUR 600 sull'indennità + fino a EUR 600 sul compenso avvocato (se obbligatoria/demandata)
-${materiaImmobiliare ? (primaCasa ? "- Costo notaio OBBLIGATORIO (autenticazione accordo con effetti reali) — ONORARI RIDOTTI per agevolazione prima casa" : "- Costo notaio OBBLIGATORIO (autenticazione accordo con effetti reali) — onorari ordinari") : "- Costo notaio: non necessario (materia non immobiliare)"}
-- Durata stimata: 1-3 mesi
-${notaioSection}
-${art31Section}
-${gpSection}
-
-SCENARIO B: PROCESSO CIVILE — PRIMO GRADO (mediazione negativa + contenzioso)
-- Indennità mediazione negativa (solo primo incontro, ridotta)
-- Contributo unificato (D.P.R. 115/2002, art. 13)
-- Marca da bollo EUR 27 + diritti copia EUR 30
-- Compenso avvocato (parametri forensi giudiziali D.M. 55/2014 Tabella 2: studio + introduttiva + istruttoria + decisionale)
-- Spese generali 15%, CPA 4%, IVA 22%
-- Stima CTU (consulenza tecnica d'ufficio)
-- Imposta di registro su sentenza: 3% del valore
-- Nessuna esenzione art. 17
-${materiaImmobiliare ? "- Costo notaio se trasferimento immobiliare\n- Imposte ipotecaria e catastale: dovute per intero" : ""}
-- Durata stimata: 2-5 anni primo grado
-
-SCENARIO B-bis: APPELLO — II GRADO (Corte d'Appello)
-Se la parte soccombente impugna la sentenza di primo grado:
-- Contributo unificato MAGGIORATO DEL 50% rispetto al primo grado (art. 13 D.P.R. 115/2002)
-- Marca da bollo EUR 27
-- Compenso avvocato: parametri forensi D.M. 55/2014 agg. D.M. 147/2022 — TABELLA 12 (Appello): fase studio + introduttiva + istruttoria + decisionale
-- Spese generali 15%, CPA 4%, IVA 22%
-- Stima CTU: eventuale rinnovo o nuova CTU in appello (art. 356 c.p.c.) — stimare gli stessi importi del primo grado come ipotesi prudenziale
-- Durata stimata: 2-3 anni
-
-SCENARIO B-ter: CASSAZIONE — III GRADO (Corte di Cassazione)
-Se la sentenza d'appello viene impugnata:
-- Contributo unificato RADDOPPIATO rispetto al primo grado (art. 13 D.P.R. 115/2002)
-- Marca da bollo EUR 27
-- Compenso avvocato: parametri forensi D.M. 55/2014 agg. D.M. 147/2022 — TABELLA 13 (Cassazione): fase studio + introduttiva + decisionale (NON C'E' FASE ISTRUTTORIA in Cassazione)
-- Spese generali 15%, CPA 4%, IVA 22%
-- CTU: NON prevista (la Cassazione è giudizio di legittimità, non di merito)
-- Durata stimata: 2-4 anni
-- Durata complessiva tre gradi: 6-12 anni
-
-FORMATO OUTPUT - usa tabelle markdown:
-1. Tabella riepilogativa "Mediazione Positiva" con tutte le voci e totale
-2. Tabella riepilogativa "Processo Civile — I Grado" con tutte le voci e totale
-3. Tabella riepilogativa "Appello — II Grado" con CU maggiorato, compenso avvocato Tab. 12, accessori e totale
-4. Tabella riepilogativa "Cassazione — III Grado" con CU raddoppiato, compenso avvocato Tab. 13 (no istruttoria), accessori e totale
-5. Tabella comparativa finale progressiva: Mediazione vs I grado vs I+II grado vs I+II+III grado (cumulativi) con risparmio percentuale
-6. Sezione "Vantaggi Fiscali della Mediazione" con elenco dettagliato art. 17
-7. Sezione "Analisi Temporale" con stima durata per ciascun grado e cumulativa vs mediazione
-${gratuitoPatrocinio ? '8. Sezione "Effetti del Gratuito Patrocinio" — dettaglio di quali voci sono azzerate e quali restano a carico per tutti e tre i gradi' : ""}
-${materiaImmobiliare ? `${gratuitoPatrocinio ? "9" : "8"}. Sezione "Costi Notarili e Imposte Immobiliari" — dettaglio costi notaio e confronto imposte ${primaCasa ? "prima casa" : "seconda casa"}` : ""}
-${!gratuitoPatrocinio && !materiaImmobiliare ? "8." : gratuitoPatrocinio && materiaImmobiliare ? "10." : "9."} Conclusioni con raccomandazione economica — evidenziare il risparmio complessivo considerando tutti e tre i gradi di giudizio
-
-IMPORTANTE:
-- Usa trattini (-) per gli elenchi, MAI emoji
-- Usa tabelle markdown standard con |
-- Tutti gli importi in EUR con separatore migliaia
-- Sii preciso nei calcoli, usa gli scaglioni normativi corretti del tariffario indicato sopra
-- TARIFFARIO SELEZIONATO: ${isGenova ? "COA GENOVA" : "NAZIONALE D.M. 150/2023"} — usa SOLO questi scaglioni per l'indennità
-- Considera che il tipo di analisi è: ${tipoAnalisi}
-- Il valore della lite è: EUR ${valore.toLocaleString("it-IT")}
-${gratuitoPatrocinio ? "- ATTENZIONE: il gratuito patrocinio è ATTIVO — azzera indennità, compenso avvocato e accessori per la parte. Calcola di conseguenza." : ""}
-${materiaImmobiliare ? `- ATTENZIONE: materia immobiliare — includi SEMPRE il costo del notaio e le imposte di trasferimento (${primaCasa ? "PRIMA CASA — registro 2% + onorari notarili ridotti ~30%" : "seconda casa — registro 9% + onorari notarili ordinari"})` : ""}
-${mediatoreEsperto || proceduraComplessa ? "- ATTENZIONE: maggiorazione art. 31 co. 3 ATTIVA — applica +20% sull'indennità degli incontri successivi nella tabella Mediazione Positiva. Evidenzia la voce come riga separata nella tabella." : ""}`;
+  // ─── PROMPT ALL'AI CON NUMERI GIA' CALCOLATI ─────────────────────────
+  const systemPrompt = `Sei un esperto di costi legali e fiscalità della mediazione civile italiana.
+Hai a disposizione i CALCOLI GIA' EFFETTUATI dal sistema. Il tuo compito è SOLO presentarli in modo professionale, commentarli e trarre conclusioni. NON ricalcolare nulla — usa esclusivamente i numeri forniti.`;
 
   const userPrompt = `Caso: ${descrizione}
 Parti: ${parti.map(p => `${p.nome} (${p.ruolo})`).join(", ")}
-Valore della lite: EUR ${valore.toLocaleString("it-IT")}
-Tipo: ${tipoAnalisi === "mediazione" ? "Mediazione civile e commerciale" : "Negoziazione assistita"}
-Tariffario: ${isGenova ? "COA Genova (tariffe locali)" : "Nazionale (D.M. 150/2023)"}
-${materiaImmobiliare ? `Materia: IMMOBILIARE — ${primaCasa ? "Prima casa" : "Seconda casa / altro immobile"}` : "Materia: NON immobiliare"}
-${gratuitoPatrocinio ? "Gratuito patrocinio: ATTIVO" : "Gratuito patrocinio: NON attivo"}
-${mediatoreEsperto || proceduraComplessa ? `Maggiorazione art. 31 co. 3: ATTIVA (${[mediatoreEsperto && "mediatore esperto", proceduraComplessa && "procedura complessa"].filter(Boolean).join(" + ")}) — +20% sull'indennità` : "Maggiorazione art. 31 co. 3: NON attiva"}
+Valore della lite: ${formatEuro(valore)}
+Tipo: ${tipoAnalisi === "mediazione" ? "Mediazione civile" : "Negoziazione assistita"}
+Tariffario: ${isGenova ? "COA Genova" : "Nazionale D.M. 150/2023"}
+${gratuitoPatrocinio ? "Gratuito patrocinio: ATTIVO (costi mediazione a carico erario)" : ""}
+${materiaImmobiliare ? `Materia immobiliare: SI — ${primaCasa ? "prima casa (registro 2%)" : "seconda casa (registro 9%)"}` : ""}
+${mediatoreEsperto || proceduraComplessa ? `Maggiorazione art. 31 co. 3: ATTIVA (+20%)` : ""}
+
+═══════════════════════════════════════════════
+DATI CALCOLATI DAL SISTEMA — USA SOLO QUESTI
+═══════════════════════════════════════════════
+
+SCENARIO A — MEDIAZIONE POSITIVA (accordo successivi al primo incontro):
+- Spese avvio organismo: ${formatEuro(resultAccordoSuccessivi.speseAvvio)}
+- Indennità primo incontro: ${formatEuro(resultAccordoSuccessivi.spesePrimoIncontro)}
+- Indennità incontri successivi (netta): ${formatEuro(resultAccordoSuccessivi.ulterioriSpese)}
+${resultAccordoSuccessivi.maggiorazioneArt31 > 0 ? `- Maggiorazione art. 31 co. 3 (+20%): ${formatEuro(resultAccordoSuccessivi.maggiorazioneArt31)}` : ""}
+- TOTALE INDENNITA' organismo (per parte): ${formatEuro(resultAccordoSuccessivi.totalePerParte)}
+- IVA 22%: ${formatEuro(resultAccordoSuccessivi.iva)}
+- Totale indennità con IVA: ${formatEuro(resultAccordoSuccessivi.totaleConIva)}
+- Compenso avvocato mediazione (D.M. 147/2022, valori medi): ${formatEuro(compensoAvvMed)}
+- Accessori avvocato (spese gen. 15% + CPA 4% + IVA 22%): ${formatEuro(accessoriAvvMed)}
+- TOTALE MEDIAZIONE per parte: ${formatEuro(totMed)}
+${gratuitoPatrocinio ? "- Con gratuito patrocinio: EUR 0,00 (a carico erario)" : ""}
+- Esenzione imposta di registro (art. 17 D.Lgs. 28/2010): ${formatEuro(esenzioneRegistro)} (su ${formatEuro(Math.min(valore, 100000))})
+- Credito d'imposta indennità (50%, max EUR 600): ${formatEuro(creditoIndennita)}
+- Credito d'imposta avvocato (50%, max EUR 600): ${formatEuro(creditoAvvocato)}
+- CREDITO D'IMPOSTA TOTALE: ${formatEuro(creditoTotale)}
+${catastaleSection}
+
+SCENARIO A-bis — MEDIAZIONE POSITIVA (accordo al primo incontro):
+- Totale indennità organismo per parte: ${formatEuro(resultAccordoPrimo.totalePerParte)}
+- Totale con IVA: ${formatEuro(resultAccordoPrimo.totaleConIva)}
+
+SCENARIO B — PROCESSO CIVILE I GRADO:
+- Mediazione negativa (primo incontro): ${formatEuro(resultNegativo.totalePerParte)}
+- Contributo unificato: ${formatEuro(cu1)}
+- Marca da bollo + diritti copia: ${formatEuro(altreCosts1)}
+- Compenso avvocato I grado (D.M. 55/2014 Tab. 2, valori medi): ${formatEuro(avv1)}
+- Accessori avvocato: ${formatEuro(acc1)}
+- Stima CTU: ${formatEuro(ctu1)}
+- Imposta di registro su sentenza (3%): ${formatEuro(registro1)}
+- TOTALE I GRADO per parte: ${formatEuro(tot1)}
+- Durata stimata: 2-5 anni
+
+SCENARIO B-bis — APPELLO II GRADO:
+- Contributo unificato maggiorato +50%: ${formatEuro(cu2)}
+- Marca da bollo: ${formatEuro(altreCosts2)}
+- Compenso avvocato appello (D.M. 55/2014 Tab. 12, valori medi): ${formatEuro(avv2)}
+- Accessori avvocato: ${formatEuro(acc2)}
+- Stima CTU appello (art. 356 c.p.c., ipotesi prudenziale): ${formatEuro(ctu2)}
+- TOTALE II GRADO per parte: ${formatEuro(tot2)}
+- Durata stimata: 2-3 anni
+
+SCENARIO B-ter — CASSAZIONE III GRADO:
+- Contributo unificato raddoppiato: ${formatEuro(cu3)}
+- Marca da bollo: ${formatEuro(altreCosts3)}
+- Compenso avvocato Cassazione (D.M. 55/2014 Tab. 13, NO istruttoria): ${formatEuro(avv3)}
+- Accessori avvocato: ${formatEuro(acc3)}
+- CTU: non prevista (giudizio di legittimità)
+- TOTALE III GRADO per parte: ${formatEuro(tot3)}
+- Durata stimata: 2-4 anni
+
+RIEPILOGO CUMULATIVO:
+- Mediazione positiva: ${formatEuro(totMedNetto)}
+- Solo I grado: ${formatEuro(cumul1)} — risparmio con mediazione: ${formatEuro(risparmio1)} (${risparmioPerc1}%)
+- I + II grado: ${formatEuro(cumul2)} — risparmio con mediazione: ${formatEuro(risparmio2)} (${risparmioPerc2}%)
+- I + II + III grado: ${formatEuro(cumul3)} — risparmio con mediazione: ${formatEuro(risparmio3)} (${risparmioPerc3}%)
+- Durata cumulativa tre gradi: 6-12 anni vs 1-3 mesi mediazione
 
 Contesto dall'analisi precedente:
 ${previousAnalysis}
 
-Genera la sezione economica comparativa completa con calcoli precisi.`;
+═══════════════════════════════════════════════
+Presenta questi dati in formato markdown con:
+1. Tabella "Mediazione Positiva" con tutte le voci
+2. Tabella "Processo I Grado" con tutte le voci
+3. Tabella "Appello II Grado" con tutte le voci
+4. Tabella "Cassazione III Grado" con tutte le voci
+5. Tabella comparativa finale cumulativa con risparmio percentuale
+6. Sezione "Vantaggi Fiscali della Mediazione" (art. 17, credito imposta)
+7. Sezione "Analisi Temporale"
+${catastaleSection ? "8. Sezione 'Verifica Congruità Catastale' con i dati forniti" : ""}
+${gratuitoPatrocinio ? "- Sezione 'Effetti Gratuito Patrocinio'" : ""}
+- Conclusioni con raccomandazione economica
+
+USA ESCLUSIVAMENTE i numeri forniti sopra. Non ricalcolare nulla. Usa trattini (-) per gli elenchi, tabelle markdown standard.`;
 
   return callLLM(systemPrompt, userPrompt, 12000);
 }
