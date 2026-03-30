@@ -118,10 +118,8 @@ function parseMarkdownTable(text: string): ParsedTable | null {
   if (headerLine.length > 1000) return null;
   const sepLine = lines[1].trim();
   if (!sepLine.match(/^\|[\s|:\-]+\|$/)) return null;
-
   const parseRow = (line: string): string[] =>
     line.replace(/^\|/, "").replace(/\|$/, "").split("|").map(c => c.trim());
-
   const headers = parseRow(headerLine);
   const rows: string[][] = [];
   for (let i = 2; i < lines.length; i++) {
@@ -177,34 +175,6 @@ function extractSections(text: string): Array<{ level: number; heading: string; 
   return sections;
 }
 
-function drawLogoIcon(doc: jsPDF, x: number, y: number, size: number, color: [number, number, number]) {
-  doc.setDrawColor(...color);
-  doc.setFillColor(...color);
-  const cx = x + size / 2, cy = y + size / 2, s = size;
-  const baseW = s * 0.4, baseH = s * 0.1;
-  doc.setLineWidth(0.3);
-  doc.triangle(cx - baseW / 2, cy + s * 0.38, cx + baseW / 2, cy + s * 0.38, cx, cy + s * 0.38 - baseH, "F");
-  doc.setLineWidth(s * 0.04);
-  doc.line(cx, cy - s * 0.3, cx, cy + s * 0.28);
-  const beamW = s * 0.4;
-  doc.line(cx - beamW, cy - s * 0.3, cx + beamW, cy - s * 0.3);
-  const panW = s * 0.16, panY = cy - s * 0.1, leftX = cx - beamW, rightX = cx + beamW;
-  doc.setLineWidth(s * 0.02);
-  doc.line(leftX, cy - s * 0.3, leftX, panY - s * 0.04);
-  doc.setLineWidth(s * 0.03);
-  doc.line(leftX - panW, panY, leftX + panW, panY);
-  doc.line(leftX - panW, panY, leftX - panW * 0.6, panY + s * 0.1);
-  doc.line(leftX + panW, panY, leftX + panW * 0.6, panY + s * 0.1);
-  doc.line(leftX - panW * 0.6, panY + s * 0.1, leftX + panW * 0.6, panY + s * 0.1);
-  doc.setLineWidth(s * 0.02);
-  doc.line(rightX, cy - s * 0.3, rightX, panY - s * 0.04);
-  doc.setLineWidth(s * 0.03);
-  doc.line(rightX - panW, panY, rightX + panW, panY);
-  doc.line(rightX - panW, panY, rightX - panW * 0.6, panY + s * 0.1);
-  doc.line(rightX + panW, panY, rightX + panW * 0.6, panY + s * 0.1);
-  doc.line(rightX - panW * 0.6, panY + s * 0.1, rightX + panW * 0.6, panY + s * 0.1);
-}
-
 export function generateAnalisiPdf(analisi: AnalisiCaso): Buffer {
   ensureAutoTable();
   const doc = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
@@ -215,7 +185,8 @@ export function generateAnalisiPdf(analisi: AnalisiCaso): Buffer {
   const marginBottom = 25, maxY = pageHeight - marginBottom;
   let y = 0;
 
-  const primaryColor: [number, number, number] = [38, 150, 140];   // teal
+  // ─── COLORI ───────────────────────────────────────────────────────────────
+  const primaryColor: [number, number, number] = [38, 150, 140];
   const darkColor: [number, number, number] = [40, 40, 40];
   const grayColor: [number, number, number] = [110, 110, 110];
   const lightGray: [number, number, number] = [160, 160, 160];
@@ -225,10 +196,18 @@ export function generateAnalisiPdf(analisi: AnalisiCaso): Buffer {
   const tableAltBg: [number, number, number] = [245, 250, 249];
   const white: [number, number, number] = [255, 255, 255];
   const sectionBg: [number, number, number] = [245, 250, 249];
+  const bulletColor: [number, number, number] = [38, 150, 140];
+
+  // ─── TIPOGRAFIA ───────────────────────────────────────────────────────────
+  const LINE_HEIGHT   = 5.2;   // era 4.5 — più respiro tra righe
+  const PARA_SPACING  = 5;     // era 2 — spazio tra paragrafi
+  const BULLET_INDENT = 8;     // rientro testo dopo bullet
+  const BULLET_DOT_X  = marginLeft + 2.5; // posizione pallino bullet
 
   const now = new Date();
   const dateStr = now.toLocaleDateString("it-IT", { day: "2-digit", month: "long", year: "numeric" });
 
+  // ─── UTILITY ──────────────────────────────────────────────────────────────
   function checkNewPage(space = 15) {
     if (y + space > maxY) { doc.addPage(); y = 20; }
   }
@@ -245,77 +224,143 @@ export function generateAnalisiPdf(analisi: AnalisiCaso): Buffer {
         if (!txt.trim()) continue;
         doc.setFontSize(9); doc.setTextColor(...darkColor); doc.setFont("helvetica", "normal");
         for (const wl of doc.splitTextToSize(sanitizeText(txt), contentWidth)) {
-          checkNewPage(5); doc.text(wl, marginLeft, y); y += 4.5;
+          checkNewPage(6); doc.text(wl, marginLeft, y); y += LINE_HEIGHT;
         }
       }
-      y += 4; return;
+      y += PARA_SPACING; return;
     }
     (doc as any).autoTable({
       startY: y, head: [heads], body,
       margin: { left: marginLeft, right: marginRight }, tableWidth: contentWidth,
-      styles: { fontSize: 8, cellPadding: 3, lineColor: [220, 215, 210], lineWidth: 0.25, textColor: darkColor, font: "helvetica", overflow: "linebreak" },
-      headStyles: { fillColor: tableHeaderBg, textColor: tableHeaderText, fontStyle: "bold", fontSize: 8, lineWidth: 0, cellPadding: 3.5 },
+      styles: {
+        fontSize: 8.5,
+        cellPadding: { top: 4, right: 4, bottom: 4, left: 4 },
+        lineColor: [220, 215, 210], lineWidth: 0.25,
+        textColor: darkColor, font: "helvetica", overflow: "linebreak",
+      },
+      headStyles: {
+        fillColor: tableHeaderBg, textColor: tableHeaderText,
+        fontStyle: "bold", fontSize: 8.5, lineWidth: 0,
+        cellPadding: { top: 5, right: 4, bottom: 5, left: 4 },
+      },
       alternateRowStyles: { fillColor: tableAltBg },
       bodyStyles: { lineColor: [230, 225, 220], lineWidth: 0.15 },
       didDrawPage: () => {},
     });
     y = (doc as any).lastAutoTable?.finalY ?? y + 10;
-    y += 5;
+    y += 8; // spazio dopo tabella
   }
 
+  // ─── RENDER BODY — FIX PRINCIPALE FORMATTAZIONE ───────────────────────────
   function renderBody(body: string) {
     if (!body.trim()) return;
+
     for (const seg of splitSegments(preClean(body))) {
-      if (seg.type === "table" && seg.table) { renderTable(seg.table); continue; }
+      if (seg.type === "table" && seg.table) {
+        renderTable(seg.table);
+        continue;
+      }
+
       const cleaned = stripMarkdown(seg.content);
-      for (const para of cleaned.split(/\n\n+/)) {
+
+      // Suddividi in paragrafi separati da riga vuota
+      const paragraphs = cleaned.split(/\n\n+/);
+
+      for (const para of paragraphs) {
         const trimmed = para.trim();
         if (!trimmed) continue;
-        for (const line of trimmed.split("\n")) {
+
+        const lines = trimmed.split("\n");
+
+        // Raggruppa righe consecutive in blocchi (testo normale vs bullet)
+        // per applicare spacing corretto
+        for (const line of lines) {
           const l = line.trim();
-          if (!l) continue;
+          if (!l) { y += 2; continue; }
           if (/^\|[-\s|:]+\|$/.test(l)) continue;
+
           const isBullet = l.startsWith("- ") || l.startsWith("* ");
-          const isNum = /^\d+\.\s/.test(l);
-          const indent = (isBullet || isNum) ? marginLeft + 5 : marginLeft;
-          const width = (isBullet || isNum) ? contentWidth - 5 : contentWidth;
-          doc.setFontSize(9); doc.setTextColor(...darkColor); doc.setFont("helvetica", "normal");
-          for (const wl of doc.splitTextToSize(sanitizeText(l), width)) {
-            checkNewPage(5); doc.text(wl, indent, y); y += 4.5;
+          const isNumList = /^\d+\.\s/.test(l);
+
+          if (isBullet || isNumList) {
+            // Testo dopo il marcatore bullet
+            const bulletText = isBullet
+              ? l.replace(/^[-*]\s+/, "")
+              : l.replace(/^\d+\.\s+/, "");
+
+            const wrappedLines = doc.splitTextToSize(
+              sanitizeText(bulletText),
+              contentWidth - BULLET_INDENT - 2
+            );
+
+            checkNewPage(LINE_HEIGHT * wrappedLines.length + 3);
+
+            // Prima riga: disegna pallino teal + testo
+            doc.setFillColor(...bulletColor);
+            doc.circle(BULLET_DOT_X, y - 1.2, 0.9, "F");
+
+            doc.setFontSize(9.5);
+            doc.setTextColor(...darkColor);
+            doc.setFont("helvetica", "normal");
+            doc.text(wrappedLines[0], marginLeft + BULLET_INDENT, y);
+            y += LINE_HEIGHT;
+
+            // Righe successive dello stesso bullet (a capo)
+            for (let wi = 1; wi < wrappedLines.length; wi++) {
+              checkNewPage(LINE_HEIGHT);
+              doc.text(wrappedLines[wi], marginLeft + BULLET_INDENT, y);
+              y += LINE_HEIGHT;
+            }
+
+            y += 1.5; // piccolo respiro tra bullet
+
+          } else {
+            // Testo normale
+            const wrappedLines = doc.splitTextToSize(
+              sanitizeText(l),
+              contentWidth
+            );
+
+            doc.setFontSize(9.5);
+            doc.setTextColor(...darkColor);
+            doc.setFont("helvetica", "normal");
+
+            for (const wl of wrappedLines) {
+              checkNewPage(LINE_HEIGHT);
+              doc.text(wl, marginLeft, y);
+              y += LINE_HEIGHT;
+            }
           }
         }
-        y += 2;
+
+        // Spazio tra paragrafi
+        y += PARA_SPACING;
       }
     }
   }
 
-  // === COVER PAGE — stile pulito/minimal ===
+  // ─── COVER PAGE ───────────────────────────────────────────────────────────
   const cx = pageWidth / 2;
   y = 35;
 
-  // Titolo "CalcoloMediazione" centrato in teal
   doc.setFontSize(28); doc.setTextColor(...primaryColor); doc.setFont("helvetica", "bold");
   doc.text("CalcoloMediazione", cx, y, { align: "center" });
   y += 10;
 
-  // Sottotitolo
   doc.setFontSize(12); doc.setTextColor(...grayColor); doc.setFont("helvetica", "normal");
   doc.text("Analisi AI del Caso", cx, y, { align: "center" });
   y += 8;
 
-  // Linea teal centrata
   doc.setDrawColor(...primaryColor); doc.setLineWidth(1.2);
   const lineW = 50;
   doc.line(cx - lineW / 2, y, cx + lineW / 2, y);
-  y += 14;
+  y += 16;
 
-  // Titolo del caso centrato
   doc.setFontSize(16); doc.setTextColor(...darkColor); doc.setFont("helvetica", "bold");
   const titleLines = doc.splitTextToSize(sanitizeText(analisi.titolo), contentWidth - 20);
-  for (const tl of titleLines) { doc.text(tl, cx, y, { align: "center" }); y += 8; }
-  y += 4;
+  for (const tl of titleLines) { doc.text(tl, cx, y, { align: "center" }); y += 9; }
+  y += 6;
 
-  // Parti centrate con "vs"
   const parti = analisi.parti as Array<{ nome: string; ruolo: string }> | null;
   if (parti && parti.length > 0) {
     const istanti = parti.filter(p => p.ruolo === "istante" || p.ruolo === "Istante");
@@ -323,120 +368,142 @@ export function generateAnalisiPdf(analisi: AnalisiCaso): Buffer {
     doc.setFontSize(10); doc.setFont("helvetica", "normal"); doc.setTextColor(...darkColor);
     if (istanti.length > 0) {
       const iStr = istanti.map(p => sanitizeText(p.nome)).join(" e ") + " (istanti)";
-      doc.text(iStr, cx, y, { align: "center" }); y += 6;
+      doc.text(iStr, cx, y, { align: "center" }); y += 7;
     }
     doc.setFontSize(9); doc.setTextColor(...grayColor);
-    doc.text("vs", cx, y, { align: "center" }); y += 6;
+    doc.text("vs", cx, y, { align: "center" }); y += 7;
     if (convenuti.length > 0) {
       doc.setFontSize(10); doc.setTextColor(...darkColor);
       const cStr = convenuti.map(p => sanitizeText(p.nome)).join(", ") + " (chiamati)";
       const cLines = doc.splitTextToSize(cStr, contentWidth - 20);
-      for (const cl of cLines) { doc.text(cl, cx, y, { align: "center" }); y += 6; }
+      for (const cl of cLines) { doc.text(cl, cx, y, { align: "center" }); y += 7; }
     }
   }
-  y += 10;
+  y += 12;
 
-  // Metadati come label: valore
   const metaLabelX = pageWidth / 2 - 40;
   const metaValueX = pageWidth / 2 - 5;
   const drawMeta = (label: string, value: string) => {
-    doc.setFontSize(8); doc.setTextColor(...grayColor); doc.setFont("helvetica", "bold");
+    doc.setFontSize(8.5); doc.setTextColor(...grayColor); doc.setFont("helvetica", "bold");
     doc.text(label + ":", metaLabelX, y, { align: "right" });
     doc.setFont("helvetica", "normal"); doc.setTextColor(...darkColor);
     doc.text(sanitizeText(value), metaValueX, y);
-    y += 6;
+    y += 7;
   };
   drawMeta("Data analisi", dateStr);
-  drawMeta("Valore controversia", analisi.valoreLite ? `EUR ${Number(analisi.valoreLite).toLocaleString("it-IT", { minimumFractionDigits: 2 })}` : "Indeterminato");
-  drawMeta("Materia", (analisi.tipoAnalisi === "mediazione" ? "Contratti assicurativi - Mediazione obbligatoria" : "Negoziazione Assistita"));
+  drawMeta("Valore controversia", analisi.valoreLite
+    ? `EUR ${Number(analisi.valoreLite).toLocaleString("it-IT", { minimumFractionDigits: 2 })}`
+    : "Indeterminato");
+  drawMeta("Materia", (analisi.tipoAnalisi === "mediazione"
+    ? "Contratti assicurativi - Mediazione obbligatoria"
+    : "Negoziazione Assistita"));
   if (analisi.stato) drawMeta("Stato", analisi.stato === "completata" ? "Analisi Completata" : analisi.stato);
-  y += 8;
+  y += 10;
 
-  // Box descrizione con bordo
+  // Box descrizione — FIX: padding interno aumentato, line height corretto
   if (analisi.descrizione) {
     const descText = sanitizeText(stripMarkdown(preClean(analisi.descrizione)));
-    const descLines = doc.splitTextToSize(descText, contentWidth - 12);
-    const boxH = Math.min(descLines.length * 4.5 + 10, maxY - y - 10);
+    const descLines = doc.splitTextToSize(descText, contentWidth - 16);
+    const boxPaddingV = 8;
+    const boxH = Math.min(descLines.length * LINE_HEIGHT + boxPaddingV * 2, maxY - y - 10);
     doc.setDrawColor(200, 200, 200); doc.setLineWidth(0.4);
     doc.setFillColor(252, 252, 252);
     doc.roundedRect(marginLeft, y, contentWidth, boxH, 2, 2, "FD");
-    doc.setFontSize(8.5); doc.setFont("helvetica", "normal"); doc.setTextColor(...darkColor);
-    let dy = y + 6;
+    doc.setFontSize(9.5); doc.setFont("helvetica", "normal"); doc.setTextColor(...darkColor);
+    let dy = y + boxPaddingV + LINE_HEIGHT * 0.2;
     for (const dl of descLines) {
-      if (dy + 4.5 > y + boxH - 4) break;
-      doc.text(dl, marginLeft + 6, dy); dy += 4.5;
+      if (dy + LINE_HEIGHT > y + boxH - 4) break;
+      doc.text(dl, marginLeft + 8, dy);
+      dy += LINE_HEIGHT;
     }
-    y += boxH + 6;
+    y += boxH + 8;
   }
 
-  // Footer prima pagina
   doc.setFontSize(7); doc.setTextColor(...lightGray); doc.setFont("helvetica", "normal");
-  doc.text("Questo documento ha valore informativo e non sostituisce la consulenza legale professionale.", cx, pageHeight - 15, { align: "center" });
+  doc.text(
+    "Questo documento ha valore informativo e non sostituisce la consulenza legale professionale.",
+    cx, pageHeight - 15, { align: "center" }
+  );
 
-  // === CONTENT PAGES ===
+  // ─── SEZIONI CONTENUTO ────────────────────────────────────────────────────
   const sections = [
     { title: "1. Estrazione Entita (NER)", content: analisi.prospettoEconomico, icon: "NER" },
-    { title: "2. Analisi Giuridica", content: analisi.analisiGiuridica, icon: "GIU" },
-    { title: "3. Guida Strategica", content: analisi.guidaStrategica, icon: "STR" },
-    { title: "4. Analisi MAAN/BATNA", content: analisi.analisiMaanBatna, icon: "MAA" },
+    { title: "2. Analisi Giuridica",       content: analisi.analisiGiuridica,    icon: "GIU" },
+    { title: "3. Guida Strategica",        content: analisi.guidaStrategica,     icon: "STR" },
+    { title: "4. Analisi MAAN/BATNA",      content: analisi.analisiMaanBatna,    icon: "MAA" },
     { title: "5. Compatibilita Interessi", content: analisi.compatibilitaInteressi, icon: "INT" },
-    { title: "6. Controllo Bias Cognitivi", content: analisi.controlloBiasCognitivi, icon: "BIA" },
-    { title: "7. Bozza Accordo", content: analisi.bozzaAccordo, icon: "ACC" },
+    { title: "6. Controllo Bias Cognitivi",content: analisi.controlloBiasCognitivi, icon: "BIA" },
+    { title: "7. Bozza Accordo",           content: analisi.bozzaAccordo,        icon: "ACC" },
     { title: "8. Analisi Economica Comparativa", content: analisi.analisiEconomica, icon: "ECO" },
   ];
 
   for (const sec of sections) {
     if (!sec.content) continue;
     doc.addPage(); y = 15;
+
+    // Barra colore in cima
     doc.setFillColor(...primaryColor); doc.rect(0, 0, pageWidth, 5, "F");
     y = 18;
+
+    // Badge sezione
     doc.setFillColor(...primaryColor); doc.roundedRect(marginLeft, y - 3, 14, 8, 1, 1, "F");
     doc.setFontSize(6.5); doc.setTextColor(...white); doc.setFont("helvetica", "bold");
     doc.text(sec.icon, marginLeft + 7, y + 2.5, { align: "center" });
+
+    // Titolo sezione
     doc.setFontSize(14); doc.setTextColor(...darkColor); doc.setFont("helvetica", "bold");
     doc.text(sanitizeText(sec.title), marginLeft + 18, y + 2.5);
-    y += 12;
+    y += 13;
+
+    // Linea separatore
     doc.setDrawColor(...primaryColor); doc.setLineWidth(0.6);
-    doc.line(marginLeft, y, marginLeft + contentWidth, y); y += 8;
+    doc.line(marginLeft, y, marginLeft + contentWidth, y);
+    y += 10;
 
     for (const sub of extractSections(preClean(sec.content))) {
       if (sub.heading) {
-        checkNewPage(14);
+        checkNewPage(16);
         const h = sanitizeText(stripMarkdown(sub.heading));
         if (sub.level <= 2) {
-          doc.setFillColor(...sectionBg); doc.roundedRect(marginLeft, y - 3, contentWidth, 8, 1, 1, "F");
-          doc.setFontSize(10); doc.setTextColor(...primaryColor); doc.setFont("helvetica", "bold");
-          doc.text(h, marginLeft + 4, y + 2); y += 9;
+          doc.setFillColor(...sectionBg);
+          doc.roundedRect(marginLeft, y - 3.5, contentWidth, 9, 1, 1, "F");
+          doc.setFontSize(10.5); doc.setTextColor(...primaryColor); doc.setFont("helvetica", "bold");
+          doc.text(h, marginLeft + 5, y + 2.2);
+          y += 11;
         } else {
-          doc.setFontSize(9.5); doc.setTextColor(...darkColor); doc.setFont("helvetica", "bold");
-          doc.text(h, marginLeft + 2, y); y += 6;
+          doc.setFontSize(10); doc.setTextColor(...darkColor); doc.setFont("helvetica", "bold");
+          doc.text(h, marginLeft + 2, y);
+          y += 7;
         }
       }
       if (sub.body) renderBody(sub.body);
-      y += 2;
+      y += 3; // respiro tra sottosezioni
     }
   }
 
-  // === DISCLAIMER ===
-  checkNewPage(50); y += 6;
+  // ─── DISCLAIMER ──────────────────────────────────────────────────────────
+  checkNewPage(55); y += 8;
   doc.setDrawColor(...primaryColor); doc.setLineWidth(1);
   doc.line(marginLeft, y, pageWidth - marginRight, y); y += 10;
   doc.setFillColor(...warmBg); doc.setDrawColor(220, 215, 210); doc.setLineWidth(0.3);
-  doc.roundedRect(marginLeft, y, contentWidth, 30, 2, 2, "FD");
-  doc.setFontSize(7.5); doc.setTextColor(...primaryColor); doc.setFont("helvetica", "bold");
-  doc.text("AVVERTENZE", marginLeft + 5, y + 7);
-  doc.setFontSize(7); doc.setTextColor(...grayColor); doc.setFont("helvetica", "normal");
-  let dY = y + 12;
-  for (const dl of doc.splitTextToSize("Questo documento e stato generato automaticamente dalla piattaforma CalcoloMediazione con l'ausilio di intelligenza artificiale.", contentWidth - 10)) {
-    doc.text(dl, marginLeft + 5, dY); dY += 3.5;
-  }
-  for (const dl of doc.splitTextToSize("Le informazioni contenute hanno valore puramente informativo e orientativo. Non sostituiscono in alcun modo la consulenza legale professionale di un avvocato abilitato.", contentWidth - 10)) {
-    doc.text(dl, marginLeft + 5, dY); dY += 3.5;
-  }
+  doc.roundedRect(marginLeft, y, contentWidth, 32, 2, 2, "FD");
+  doc.setFontSize(8); doc.setTextColor(...primaryColor); doc.setFont("helvetica", "bold");
+  doc.text("AVVERTENZE", marginLeft + 5, y + 8);
+  doc.setFontSize(7.5); doc.setTextColor(...grayColor); doc.setFont("helvetica", "normal");
+  let dY = y + 14;
+  for (const dl of doc.splitTextToSize(
+    "Questo documento e stato generato automaticamente dalla piattaforma CalcoloMediazione con l'ausilio di intelligenza artificiale.",
+    contentWidth - 10
+  )) { doc.text(dl, marginLeft + 5, dY); dY += 4; }
+  dY += 1;
+  for (const dl of doc.splitTextToSize(
+    "Le informazioni contenute hanno valore puramente informativo e orientativo. Non sostituiscono in alcun modo la consulenza legale professionale di un avvocato abilitato.",
+    contentWidth - 10
+  )) { doc.text(dl, marginLeft + 5, dY); dY += 4; }
   doc.setTextColor(...lightGray);
-  doc.text(`Generato il ${dateStr} | calcolomediazione.it`, marginLeft + 5, dY + 1);
+  doc.text(`Generato il ${dateStr} | calcolomediazione.it`, marginLeft + 5, dY + 2);
 
-  // === HEADERS & FOOTERS ===
+  // ─── HEADER & FOOTER PAGINE ───────────────────────────────────────────────
   const total = doc.getNumberOfPages();
   for (let i = 1; i <= total; i++) {
     doc.setPage(i);
