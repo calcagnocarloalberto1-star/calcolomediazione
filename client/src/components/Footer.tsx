@@ -94,7 +94,7 @@ export default function Footer() {
             href="https://www.youtube.com/@CarloAlbertoCalcagnoGenova"
             label="YouTube"
             bgColor="#FF0000"
-            icon={<svg viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4"><path d="M23.498 6.186a3.016 3.016 0 00-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 00.502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 002.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 002.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>}
+            icon={<svg viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4"><path d="M23.498 6.186a3.016 3.016 0 00-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 00.502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 002.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 002.122-2.136C24 15.93 24 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>}
           />
           <SocialLink
             href="https://x.com"
@@ -105,7 +105,7 @@ export default function Footer() {
         </div>
 
         {/* Bottom bar */}
-        <div className="border-t border-background/20 pt-6">
+        <div className="border-t border-background/30 pt-6">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
             <div className="flex items-center gap-2">
               <Scale className="w-4 h-4" style={{ color: 'var(--primary)' }} />
@@ -113,24 +113,26 @@ export default function Footer() {
                 CalcoloMediazione &copy; 2026
               </span>
             </div>
-            <p className="text-xs opacity-60 text-center sm:text-right max-w-lg">
+            {/* FIX: rimosso opacity-60 → colore esplicito con contrasto sufficiente */}
+            <p className="text-xs text-background/90 text-center sm:text-right max-w-lg">
               Strumento professionale gratuito per il calcolo delle indennità di mediazione civile e commerciale — Conforme D.M. 150/2023
             </p>
           </div>
 
-          {/* Disclaimers */}
+          {/* Disclaimers — FIX: opacity-50 → text-background/80 */}
           <div className="mt-4 space-y-2">
-            <p className="text-xs opacity-50 text-center">
+            <p className="text-xs text-background/80 text-center">
               Calcolatore valido esclusivamente per organismi di mediazione che applicano le tariffe del D.M. 150/2023. I compensi degli avvocati sono calcolati sui valori medi previsti dal D.M. 55/2014 (Parametri Forensi). Per calcoli personalizzati consultare il proprio legale.
             </p>
           </div>
 
+          {/* FIX: opacity-40 → text-background/70, abbastanza leggibile ma discreto */}
           <div className="mt-4 text-center">
             <a
               href="https://www.perplexity.ai/computer"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-xs opacity-40 hover:opacity-60 transition-opacity duration-150"
+              className="text-xs text-background/70 hover:text-background transition-colors duration-150"
             >
               Created with Perplexity Computer
             </a>
@@ -144,7 +146,8 @@ export default function Footer() {
 function FooterLink({ href, children }: { href: string; children: React.ReactNode }) {
   return (
     <Link href={href}>
-      <span className="text-sm opacity-80 hover:opacity-100 cursor-pointer transition-opacity duration-150">
+      {/* FIX: opacity-80 → text-background/90 per contrasto sufficiente su sfondo scuro */}
+      <span className="text-sm text-background/90 hover:text-background cursor-pointer transition-colors duration-150">
         {children}
       </span>
     </Link>
@@ -157,10 +160,10 @@ function FooterExternalLink({ href, children }: { href: string; children: React.
       href={href}
       target="_blank"
       rel="noopener noreferrer"
-      className="text-sm opacity-80 hover:opacity-100 transition-opacity duration-150 inline-flex items-center gap-1"
+      className="text-sm text-background/90 hover:text-background transition-colors duration-150 inline-flex items-center gap-1"
     >
       {children}
-      <ExternalLink className="w-3 h-3 opacity-50" />
+      <ExternalLink className="w-3 h-3" aria-hidden="true" />
     </a>
   );
 }
@@ -176,8 +179,9 @@ function SocialLink({ href, label, bgColor, icon }: { href: string; label: strin
       style={{ backgroundColor: bgColor }}
       data-testid={`social-${label.toLowerCase()}`}
     >
-      <span className="text-white">{icon}</span>
-      <span className="absolute -bottom-6 left-1/2 -translate-x-1/2 text-[10px] text-background/60 opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap font-semibold" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
+      <span className="text-white" aria-hidden="true">{icon}</span>
+      {/* FIX: testo tooltip social ora con contrasto sufficiente */}
+      <span className="absolute -bottom-6 left-1/2 -translate-x-1/2 text-[10px] text-background/80 opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap font-semibold" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
         {label}
       </span>
     </a>
