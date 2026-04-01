@@ -21,6 +21,7 @@ const pool = new Pool({
 });
 
 async function initDb() {
+  // 1. Crea le tabelle se non esistono
   await pool.query(`
     CREATE TABLE IF NOT EXISTS analisi_casi (
       id SERIAL PRIMARY KEY,
@@ -40,7 +41,6 @@ async function initDb() {
       bozza_accordo TEXT,
       analisi_economica TEXT,
       chat_history JSONB DEFAULT '[]',
-      access_token TEXT,
       created_at TIMESTAMPTZ DEFAULT NOW()
     );
 
@@ -55,20 +55,27 @@ async function initDb() {
     );
   `);
 
-  // Migrazione: aggiunge access_token alle analisi esistenti che ne sono prive
-  await pool.query(`
-    ALTER TABLE analisi_casi ADD COLUMN IF NOT EXISTS access_token TEXT;
-    UPDATE analisi_casi
-      SET access_token = encode(gen_random_bytes(32), 'hex')
-      WHERE access_token IS NULL;
-  `).catch(() => {
-    // gen_random_bytes potrebbe non essere disponibile — fallback
-    pool.query(`
+  // 2. Migrazione: aggiunge access_token se non esiste (query separata)
+  try {
+    await pool.query(`
+      ALTER TABLE analisi_casi ADD COLUMN IF NOT EXISTS access_token TEXT;
+    `);
+    console.log("✓ Colonna access_token verificata");
+  } catch (err) {
+    console.error("Errore ALTER TABLE access_token:", err);
+  }
+
+  // 3. Genera token per le analisi esistenti che ne sono prive (query separata)
+  try {
+    await pool.query(`
       UPDATE analisi_casi
-        SET access_token = md5(random()::text || id::text)
-        WHERE access_token IS NULL;
-    `).catch(console.error);
-  });
+      SET access_token = md5(random()::text || id::text || now()::text)
+      WHERE access_token IS NULL;
+    `);
+    console.log("✓ Token generati per analisi esistenti");
+  } catch (err) {
+    console.error("Errore UPDATE access_token:", err);
+  }
 }
 
 initDb().catch(console.error);
@@ -98,7 +105,6 @@ function rowToAnalisi(row: any): AnalisiCaso {
 
 export class DatabaseStorage implements IStorage {
   async createAnalisi(data: InsertAnalisiCaso): Promise<AnalisiCaso & { accessToken: string }> {
-    // Genera token univoco a 32 byte esadecimali
     const accessToken = crypto.randomBytes(32).toString("hex");
 
     const res = await pool.query(
@@ -132,22 +138,19 @@ export class DatabaseStorage implements IStorage {
     return { ...rowToAnalisi(res.rows[0]), accessToken };
   }
 
-  // getAnalisi: se accessToken è fornito lo verifica, altrimenti blocca l'accesso
   async getAnalisi(id: number, accessToken?: string): Promise<AnalisiCaso | undefined> {
     if (accessToken) {
-      // Accesso utente: verifica il token
       const res = await pool.query(
         `SELECT * FROM analisi_casi WHERE id = $1 AND access_token = $2`,
         [id, accessToken]
       );
       return res.rows[0] ? rowToAnalisi(res.rows[0]) : undefined;
     }
-    // Accesso interno (pipeline, admin): nessun token richiesto
+    // Accesso interno (pipeline AI): nessun token richiesto
     const res = await pool.query(`SELECT * FROM analisi_casi WHERE id = $1`, [id]);
     return res.rows[0] ? rowToAnalisi(res.rows[0]) : undefined;
   }
 
-  // getAllAnalisi: solo per admin — non esporre via API pubblica
   async getAllAnalisi(): Promise<AnalisiCaso[]> {
     const res = await pool.query(`SELECT * FROM analisi_casi ORDER BY id DESC`);
     return res.rows.map(rowToAnalisi);
