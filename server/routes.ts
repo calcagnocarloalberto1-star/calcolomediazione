@@ -438,7 +438,7 @@ export async function registerRoutes(
           modalitaTariffaria: modalitaTariffaria || "nazionale",
         }
       );
-      res.json(analisi);
+    res.json({ ...analisi, accessToken: (analisi as any).accessToken });
     } catch (error) {
       console.error("Errore creazione analisi:", error);
       res.status(500).json({ error: "Errore interno del server" });
