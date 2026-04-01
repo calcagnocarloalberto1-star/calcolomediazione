@@ -438,42 +438,55 @@ export async function registerRoutes(
           modalitaTariffaria: modalitaTariffaria || "nazionale",
         }
       );
-    res.json({ ...analisi, accessToken: (analisi as any).accessToken });
+      res.json({ ...analisi, accessToken: (analisi as any).accessToken });
     } catch (error) {
       console.error("Errore creazione analisi:", error);
       res.status(500).json({ error: "Errore interno del server" });
     }
   });
 
+  // GET /api/analisi — solo admin
   app.get("/api/analisi", async (req, res) => {
-  const auth = req.headers.authorization;
-  if (!auth || !auth.startsWith("Bearer ")) {
-    return res.status(401).json({ error: "Non autorizzato" });
-  }
-  const token = auth.slice(7);
-  try {
-    const decoded = Buffer.from(token, "base64").toString();
-    if (!decoded.startsWith("admin:")) {
+    const auth = req.headers.authorization;
+    if (!auth || !auth.startsWith("Bearer ")) {
+      return res.status(401).json({ error: "Non autorizzato" });
+    }
+    const token = auth.slice(7);
+    try {
+      const decoded = Buffer.from(token, "base64").toString();
+      if (!decoded.startsWith("admin:")) {
+        return res.status(401).json({ error: "Token non valido" });
+      }
+    } catch {
       return res.status(401).json({ error: "Token non valido" });
     }
-  } catch {
-    return res.status(401).json({ error: "Token non valido" });
-  }
-  const analisi = await storage.getAllAnalisi();
-  res.json(analisi);
-});
-
-  app.get("/api/analisi/:id", async (req, res) => {
-    const id = parseInt(req.params.id);
-    const analisi = await storage.getAnalisi(id);
-    if (!analisi) return res.status(404).json({ error: "Analisi non trovata" });
+    const analisi = await storage.getAllAnalisi();
     res.json(analisi);
   });
 
+  // GET /api/analisi/:id — richiede X-Access-Token
+  app.get("/api/analisi/:id", async (req, res) => {
+    const id = parseInt(req.params.id);
+    const accessToken = req.headers["x-access-token"] as string | undefined;
+    if (!accessToken) {
+      return res.status(401).json({ error: "Token di accesso mancante" });
+    }
+    const analisi = await storage.getAnalisi(id, accessToken);
+    if (!analisi) {
+      return res.status(404).json({ error: "Analisi non trovata o accesso non autorizzato" });
+    }
+    res.json(analisi);
+  });
+
+  // GET /api/analisi/:id/pdf — richiede X-Access-Token
   app.get("/api/analisi/:id/pdf", async (req, res) => {
     try {
       const id = parseInt(req.params.id);
-      const analisi = await storage.getAnalisi(id);
+      const accessToken = req.headers["x-access-token"] as string | undefined;
+      if (!accessToken) {
+        return res.status(401).json({ error: "Token di accesso mancante" });
+      }
+      const analisi = await storage.getAnalisi(id, accessToken);
       if (!analisi) return res.status(404).json({ error: "Analisi non trovata" });
       if (analisi.stato !== "completata") return res.status(400).json({ error: "Analisi non ancora completata" });
 
@@ -545,8 +558,12 @@ export async function registerRoutes(
     try {
       const id = parseInt(req.params.id);
       const { message } = req.body;
-      const analisi = await storage.getAnalisi(id);
-      if (!analisi) return res.status(404).json({ error: "Analisi non trovata" });
+      const accessToken = req.headers["x-access-token"] as string | undefined;
+      if (!accessToken) {
+        return res.status(401).json({ error: "Token di accesso mancante" });
+      }
+      const analisi = await storage.getAnalisi(id, accessToken);
+      if (!analisi) return res.status(404).json({ error: "Analisi non trovata o accesso non autorizzato" });
 
       const chatHistory = analisi.chatHistory || [];
       const context = [
