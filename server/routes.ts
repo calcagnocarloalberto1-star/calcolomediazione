@@ -445,10 +445,23 @@ export async function registerRoutes(
     }
   });
 
-  app.get("/api/analisi", async (_req, res) => {
-    const analisi = await storage.getAllAnalisi();
-    res.json(analisi);
-  });
+  app.get("/api/analisi", async (req, res) => {
+  const auth = req.headers.authorization;
+  if (!auth || !auth.startsWith("Bearer ")) {
+    return res.status(401).json({ error: "Non autorizzato" });
+  }
+  const token = auth.slice(7);
+  try {
+    const decoded = Buffer.from(token, "base64").toString();
+    if (!decoded.startsWith("admin:")) {
+      return res.status(401).json({ error: "Token non valido" });
+    }
+  } catch {
+    return res.status(401).json({ error: "Token non valido" });
+  }
+  const analisi = await storage.getAllAnalisi();
+  res.json(analisi);
+});
 
   app.get("/api/analisi/:id", async (req, res) => {
     const id = parseInt(req.params.id);
