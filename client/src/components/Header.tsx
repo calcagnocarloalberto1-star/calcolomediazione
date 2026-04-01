@@ -119,6 +119,11 @@ export default function Header() {
             <Link href="/faq">
               <span className="px-3 py-2 text-sm font-medium hover:bg-muted transition-colors duration-150">Risorse</span>
             </Link>
+            <Link href="/admin">
+              <span className="px-3 py-2 text-xs font-medium text-muted-foreground hover:bg-muted transition-colors duration-150 border border-foreground/20 ml-1">
+                Admin
+              </span>
+            </Link>
           </nav>
 
           {/* Mobile menu */}
@@ -200,6 +205,11 @@ export default function Header() {
                         </Link>
                         <Link href="/faq" onClick={() => setMobileOpen(false)}>
                           <div className="px-4 py-3 text-sm font-medium hover:bg-muted cursor-pointer">Risorse</div>
+                        </Link>
+                        <Link href="/admin" onClick={() => setMobileOpen(false)}>
+                          <div className="px-4 py-3 text-xs font-medium text-muted-foreground hover:bg-muted cursor-pointer border-t border-muted">
+                            Admin
+                          </div>
                         </Link>
                       </div>
                     </div>
