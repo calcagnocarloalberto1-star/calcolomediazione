@@ -1,10 +1,11 @@
 import { type AnalisiCaso, type InsertAnalisiCaso, type Calcolo, type InsertCalcolo } from "@shared/schema";
 import pkg from "pg";
+import crypto from "crypto";
 const { Pool } = pkg;
 
 export interface IStorage {
-  createAnalisi(data: InsertAnalisiCaso): Promise<AnalisiCaso>;
-  getAnalisi(id: number): Promise<AnalisiCaso | undefined>;
+  createAnalisi(data: InsertAnalisiCaso): Promise<AnalisiCaso & { accessToken: string }>;
+  getAnalisi(id: number, accessToken?: string): Promise<AnalisiCaso | undefined>;
   getAllAnalisi(): Promise<AnalisiCaso[]>;
   updateAnalisi(id: number, data: Partial<AnalisiCaso>): Promise<AnalisiCaso | undefined>;
   deleteAnalisi(id: number): Promise<boolean>;
@@ -39,6 +40,7 @@ async function initDb() {
       bozza_accordo TEXT,
       analisi_economica TEXT,
       chat_history JSONB DEFAULT '[]',
+      access_token TEXT,
       created_at TIMESTAMPTZ DEFAULT NOW()
     );
 
@@ -52,6 +54,21 @@ async function initDb() {
       created_at TIMESTAMPTZ DEFAULT NOW()
     );
   `);
+
+  // Migrazione: aggiunge access_token alle analisi esistenti che ne sono prive
+  await pool.query(`
+    ALTER TABLE analisi_casi ADD COLUMN IF NOT EXISTS access_token TEXT;
+    UPDATE analisi_casi
+      SET access_token = encode(gen_random_bytes(32), 'hex')
+      WHERE access_token IS NULL;
+  `).catch(() => {
+    // gen_random_bytes potrebbe non essere disponibile — fallback
+    pool.query(`
+      UPDATE analisi_casi
+        SET access_token = md5(random()::text || id::text)
+        WHERE access_token IS NULL;
+    `).catch(console.error);
+  });
 }
 
 initDb().catch(console.error);
@@ -80,13 +97,17 @@ function rowToAnalisi(row: any): AnalisiCaso {
 }
 
 export class DatabaseStorage implements IStorage {
-  async createAnalisi(data: InsertAnalisiCaso): Promise<AnalisiCaso> {
+  async createAnalisi(data: InsertAnalisiCaso): Promise<AnalisiCaso & { accessToken: string }> {
+    // Genera token univoco a 32 byte esadecimali
+    const accessToken = crypto.randomBytes(32).toString("hex");
+
     const res = await pool.query(
       `INSERT INTO analisi_casi
         (titolo, descrizione, tipo_analisi, valore_lite, tipo_valore, parti, stato,
          prospetto_economico, analisi_giuridica, guida_strategica, analisi_maan_batna,
-         compatibilita_interessi, controllo_bias_cognitivi, bozza_accordo, analisi_economica, chat_history)
-       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16)
+         compatibilita_interessi, controllo_bias_cognitivi, bozza_accordo, analisi_economica,
+         chat_history, access_token)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17)
        RETURNING *`,
       [
         data.titolo,
@@ -105,16 +126,28 @@ export class DatabaseStorage implements IStorage {
         data.bozzaAccordo ?? null,
         data.analisiEconomica ?? null,
         JSON.stringify(data.chatHistory ?? []),
+        accessToken,
       ]
     );
-    return rowToAnalisi(res.rows[0]);
+    return { ...rowToAnalisi(res.rows[0]), accessToken };
   }
 
-  async getAnalisi(id: number): Promise<AnalisiCaso | undefined> {
+  // getAnalisi: se accessToken è fornito lo verifica, altrimenti blocca l'accesso
+  async getAnalisi(id: number, accessToken?: string): Promise<AnalisiCaso | undefined> {
+    if (accessToken) {
+      // Accesso utente: verifica il token
+      const res = await pool.query(
+        `SELECT * FROM analisi_casi WHERE id = $1 AND access_token = $2`,
+        [id, accessToken]
+      );
+      return res.rows[0] ? rowToAnalisi(res.rows[0]) : undefined;
+    }
+    // Accesso interno (pipeline, admin): nessun token richiesto
     const res = await pool.query(`SELECT * FROM analisi_casi WHERE id = $1`, [id]);
     return res.rows[0] ? rowToAnalisi(res.rows[0]) : undefined;
   }
 
+  // getAllAnalisi: solo per admin — non esporre via API pubblica
   async getAllAnalisi(): Promise<AnalisiCaso[]> {
     const res = await pool.query(`SELECT * FROM analisi_casi ORDER BY id DESC`);
     return res.rows.map(rowToAnalisi);
