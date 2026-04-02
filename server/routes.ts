@@ -304,6 +304,17 @@ export async function registerRoutes(
   app: Express
 ): Promise<Server> {
 
+  // ─── REDIRECT WWW → NON-WWW (301 permanente) ──────────────────────────────
+  // Risolve "Pagina alternativa con tag canonical" in Google Search Console
+  app.use((req, res, next) => {
+    const host = req.headers.host || "";
+    if (host.startsWith("www.")) {
+      const newUrl = `https://${host.replace(/^www\./, "")}${req.originalUrl}`;
+      return res.redirect(301, newUrl);
+    }
+    next();
+  });
+
   // ─── BOT MIDDLEWARE — deve stare PRIMA di tutto il resto ─────────────────
   app.use((req, res, next) => {
     const ua = req.headers["user-agent"] || "";
@@ -648,13 +659,13 @@ export async function registerRoutes(
   <text font-family="sans-serif" font-size="24" fill="#2d2926">
     <tspan x="100" y="300">&#x2666; Analisi AI del caso</tspan>
     <tspan x="100" y="340">&#x2666; Confronto costi su 3 gradi</tspan>
-    <tspan x="100" y="380">&#x2666; Calcolatore indennit\u00e0</tspan>
+    <tspan x="100" y="380">&#x2666; Calcolatore indennita</tspan>
     <tspan x="620" y="300">&#x2666; Generatore procura</tspan>
-    <tspan x="620" y="340">&#x2666; Verifica congruità catastale</tspan>
+    <tspan x="620" y="340">&#x2666; Verifica congruita catastale</tspan>
     <tspan x="620" y="380">&#x2666; Credito d'imposta</tspan>
   </text>
   <rect x="100" y="420" width="1000" height="3" fill="#c55a2b"/>
-  <text x="100" y="470" font-family="sans-serif" font-size="21" fill="#6b6560">D.M. 150/2023  \u2022  Primo Grado, Appello, Cassazione  \u2022  CTU  \u2022  Congruità Catastale</text>
+  <text x="100" y="470" font-family="sans-serif" font-size="21" fill="#6b6560">D.M. 150/2023 - Primo Grado, Appello, Cassazione - CTU - Congruita Catastale</text>
   <text x="100" y="530" font-family="sans-serif" font-weight="bold" font-size="26" fill="#2d2926">calcolomediazione.it</text>
   <rect x="880" y="500" width="220" height="48" rx="0" fill="#c55a2b"/>
   <text x="905" y="532" font-family="sans-serif" font-weight="bold" font-size="24" fill="#ffffff">100% Gratuito</text>
@@ -703,7 +714,7 @@ async function runPipeline(
   }
 ) {
   const truncate = (text: string, max = 3000) =>
-    text.length > max ? text.slice(0, max) + '\n\n[...troncato per brevità...]' : text;
+    text.length > max ? text.slice(0, max) + '\n\n[...troncato per brevita...]' : text;
 
   const safeStep = async <T>(stepFn: () => Promise<T>, fallback: T, stepName: string): Promise<T> => {
     try { return await stepFn(); }
@@ -713,7 +724,7 @@ async function runPipeline(
   try {
     const nerResult = await safeStep(
       () => estrazioneEntita(descrizione, parti, documentiText),
-      '[Estrazione entità non disponibile]', 'NER'
+      '[Estrazione entita non disponibile]', 'NER'
     );
     await storage.updateAnalisi(id, { prospettoEconomico: nerResult });
 
@@ -737,7 +748,7 @@ async function runPipeline(
 
     const compatibilitaResult = await safeStep(
       () => compatibilitaInteressi(descrizione, parti, `${truncate(giuridicaResult, 2000)}\n\n${truncate(maanResult, 2000)}`),
-      '[Compatibilità interessi non disponibile]', 'Compatibilità'
+      '[Compatibilita interessi non disponibile]', 'Compatibilita'
     );
     await storage.updateAnalisi(id, { compatibilitaInteressi: compatibilitaResult });
 
