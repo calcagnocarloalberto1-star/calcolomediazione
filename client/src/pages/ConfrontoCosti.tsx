@@ -341,6 +341,89 @@ export default function ConfrontoCosti() {
               </CardContent>
             </Card>
 
+            {/* Soli costi arbitrali — senza avvocato e CTU */}
+            {(() => {
+              const camPuro = risultato.costiArbitrato.onorariCAM + risultato.costiArbitrato.onorariArbitro + risultato.costiArbitrato.ivaArbitro + risultato.costiArbitrato.bollo + risultato.costiArbitrato.impostaRegistroLodo;
+              const medPuro = risultatoMedyapro.costiArbitrato.onorariCAM + risultatoMedyapro.costiArbitrato.onorariArbitro + risultatoMedyapro.costiArbitrato.ivaArbitro + risultatoMedyapro.costiArbitrato.bollo + risultatoMedyapro.costiArbitrato.impostaRegistroLodo;
+              const diff = medPuro - camPuro;
+              return (
+                <Card className="border-2 border-foreground shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] mb-6 bg-gradient-to-r from-amber-50/40 to-orange-50/40">
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-base flex items-center gap-2" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
+                      <Briefcase className="w-4 h-4 text-amber-700" />
+                      Soli costi arbitrali puri (esclusi avvocato e CTU)
+                    </CardTitle>
+                    <p className="text-xs text-muted-foreground">Spese amministrative + onorari arbitro/collegio + IVA + bollo + imposta di registro sul lodo. Utile per confrontare le tariffe delle due istituzioni al netto dei costi legali.</p>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
+                      <div className="p-4 bg-amber-50 border-2 border-amber-400 text-center">
+                        <div className="text-xs font-bold text-amber-800 mb-2" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>CAM</div>
+                        <div className="text-2xl font-bold text-amber-900 font-mono" style={{ fontFamily: "'JetBrains Mono', monospace" }}>{formatEuro(camPuro)}</div>
+                        <p className="text-xs text-amber-700 mt-1">per parte</p>
+                      </div>
+                      <div className="p-4 bg-orange-50 border-2 border-orange-400 text-center">
+                        <div className="text-xs font-bold text-orange-800 mb-2" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>{medyaproLabel}</div>
+                        <div className="text-2xl font-bold text-orange-900 font-mono" style={{ fontFamily: "'JetBrains Mono', monospace" }}>{formatEuro(medPuro)}</div>
+                        <p className="text-xs text-orange-700 mt-1">per parte</p>
+                      </div>
+                      <div className={`p-4 border-2 text-center ${diff > 0 ? "bg-red-50 border-red-400" : diff < 0 ? "bg-green-50 border-green-400" : "bg-muted/30 border-foreground/20"}`}>
+                        <div className="text-xs font-bold mb-2" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>Differenza</div>
+                        <div className={`text-2xl font-bold font-mono ${diff > 0 ? "text-red-700" : diff < 0 ? "text-green-700" : "text-muted-foreground"}`} style={{ fontFamily: "'JetBrains Mono', monospace" }}>
+                          {diff === 0 ? "—" : `${diff > 0 ? "+" : ""}${formatEuro(diff)}`}
+                        </div>
+                        <p className="text-xs text-muted-foreground mt-1">{diff > 0 ? "Medyapro più costoso" : diff < 0 ? "Medyapro più economico" : "Costo uguale"}</p>
+                      </div>
+                    </div>
+                    <div className="overflow-x-auto">
+                      <table className="w-full text-sm border-collapse">
+                        <thead>
+                          <tr className="border-b-2 border-foreground">
+                            <th className="text-left py-2 px-3 font-bold text-xs" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>Voce</th>
+                            <th className="text-right py-2 px-3 font-bold text-xs text-amber-800 bg-amber-50">CAM</th>
+                            <th className="text-right py-2 px-3 font-bold text-xs text-orange-800 bg-orange-50">{medyaproLabel}</th>
+                            <th className="text-right py-2 px-3 font-bold text-xs text-foreground/60 bg-muted/30">Differenza</th>
+                          </tr>
+                        </thead>
+                        <tbody className="font-mono text-xs" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
+                          {[
+                            { label: "Spese amministrative (per parte)", cam: risultato.costiArbitrato.onorariCAM, med: risultatoMedyapro.costiArbitrato.onorariCAM },
+                            { label: "Onorari arbitro/collegio (netto IVA, per parte)", cam: risultato.costiArbitrato.onorariArbitro, med: risultatoMedyapro.costiArbitrato.onorariArbitro },
+                            { label: "IVA 22% onorari arbitro", cam: risultato.costiArbitrato.ivaArbitro, med: risultatoMedyapro.costiArbitrato.ivaArbitro },
+                            { label: "Bollo", cam: risultato.costiArbitrato.bollo, med: risultatoMedyapro.costiArbitrato.bollo },
+                            { label: "Imposta di registro sul lodo (3%)", cam: risultato.costiArbitrato.impostaRegistroLodo, med: risultatoMedyapro.costiArbitrato.impostaRegistroLodo },
+                          ].map(({ label, cam, med }) => {
+                            const d = med - cam;
+                            return (
+                              <tr key={label} className="border-b border-foreground/10">
+                                <td className="py-2 px-3" style={{ fontFamily: "Inter, sans-serif" }}>{label}</td>
+                                <td className="text-right py-2 px-3 bg-amber-50/50">{cam > 0 ? formatEuro(cam) : "—"}</td>
+                                <td className="text-right py-2 px-3 bg-orange-50/50">{med > 0 ? formatEuro(med) : "—"}</td>
+                                <td className={`text-right py-2 px-3 bg-muted/20 ${d > 0 ? "text-red-600" : d < 0 ? "text-green-600" : "text-muted-foreground"}`}>
+                                  {d === 0 ? "—" : `${d > 0 ? "+" : ""}${formatEuro(d)}`}
+                                </td>
+                              </tr>
+                            );
+                          })}
+                          <tr className="border-t-2 border-foreground font-bold">
+                            <td className="py-3 px-3" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>TOTALE costi arbitrali puri</td>
+                            <td className="text-right py-3 px-3 bg-amber-100 text-amber-900">{formatEuro(camPuro)}</td>
+                            <td className="text-right py-3 px-3 bg-orange-100 text-orange-900">{formatEuro(medPuro)}</td>
+                            <td className={`text-right py-3 px-3 bg-muted/30 font-bold ${diff > 0 ? "text-red-600" : diff < 0 ? "text-green-600" : "text-muted-foreground"}`}>
+                              {diff === 0 ? "—" : `${diff > 0 ? "+" : ""}${formatEuro(diff)}`}
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                    <p className="text-xs text-muted-foreground mt-3 italic">
+                      Il compenso avvocato è identico per entrambe le istituzioni (parametri D.M. 55/2014 Tab. 2). La CTU è determinata su tabelle giudiziali per entrambe. La differenza dipende quindi esclusivamente dalle tariffe istituzionali (spese amm. + onorari arbitro).
+                    </p>
+                  </CardContent>
+                </Card>
+              );
+            })()}
+
             {/* Gradi successivi */}
             <Card className="border-2 border-foreground shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] mb-8 bg-gradient-to-r from-red-50/50 to-orange-50/50">
               <CardHeader className="pb-2">
