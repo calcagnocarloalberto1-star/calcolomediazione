@@ -1,11 +1,15 @@
 /**
  * Modulo di calcolo costi procedurali completi
- * Confronto Mediazione vs Causa Civile
- * 
+ * Confronto Mediazione vs Causa Civile vs Arbitrato
+ *
  * Supporta due modalità tariffarie per la mediazione:
  * 1. Nazionale — D.M. 150/2023
  * 2. COA Genova — Tariffe locali Ordine Avvocati Genova
- * 
+ *
+ * Arbitrato supportato:
+ * 1. CAM — Camera Arbitrale di Milano (tariffe dal 1 marzo 2023)
+ * 2. Medyapro — Camera Arbitrale Medyapro Srl
+ *
  * Fonti normative:
  * - Contributo Unificato: D.P.R. 115/2002, art. 13 (aggiornato 2024)
  * - Parametri Forensi: D.M. 55/2014 aggiornato D.M. 147/2022
@@ -13,7 +17,6 @@
  * - Imposta di registro: D.P.R. 131/1986, art. 8 Tariffa Parte I
  * - Esenzioni mediazione: D.Lgs. 28/2010, art. 17
  * - Gratuito Patrocinio: D.P.R. 115/2002, art. 76 — limite 2025: €13.659,64
- * - Costi notarili: Tabelle CNN per accordi immobiliari
  */
 
 import { formatEuro, type ModalitaTariffaria } from "./calcolo-indennita.js";
@@ -21,6 +24,13 @@ import { formatEuro, type ModalitaTariffaria } from "./calcolo-indennita.js";
 // ========================
 // TIPI
 // ========================
+
+export type TipoArbitrato =
+  | "cam"
+  | "medyapro_ordinario_unico"
+  | "medyapro_ordinario_collegio"
+  | "medyapro_rapido_unico"
+  | "medyapro_rapido_collegio";
 
 export interface InputConfronto {
   valoreLite: number;
@@ -34,6 +44,7 @@ export interface InputConfronto {
   gratuitoPatrocinio?: boolean;
   mediatoreEsperto?: boolean;
   proceduraComplessa?: boolean;
+  tipoArbitrato?: TipoArbitrato;
 }
 
 export interface ImposteImmobiliari {
@@ -99,8 +110,8 @@ export interface GratuitoPatrocinio {
 }
 
 export interface CostiArbitrato {
-  onorariCAM: number;
-  onorariArbitro: number;
+  onorariCAM: number;          // onorari istituzione (CAM o Medyapro spese amm.)
+  onorariArbitro: number;      // onorari arbitro/collegio (netto IVA)
   ivaArbitro: number;
   compensoAvvocato: number;
   speseGenerali15: number;
@@ -111,6 +122,11 @@ export interface CostiArbitrato {
   impostaRegistroLodo: number;
   totalePerParte: number;
   totaleComplessivo: number;
+  // Metadati per etichette UI
+  nomeIstituzione: string;
+  tipoArbitro: string;
+  durataStimata: string;
+  noteCalcolo: string;
 }
 
 export interface RisultatoConfronto {
@@ -130,10 +146,9 @@ export interface RisultatoConfronto {
 }
 
 // ========================
-// TABELLE NORMATIVE
+// TABELLE NORMATIVE — PROCESSO
 // ========================
 
-// Contributo Unificato - Primo Grado Civile (D.P.R. 115/2002 art. 13)
 const CONTRIBUTO_UNIFICATO = [
   { min: 0, max: 1100, importo: 43 },
   { min: 1100.01, max: 5200, importo: 98 },
@@ -144,7 +159,6 @@ const CONTRIBUTO_UNIFICATO = [
   { min: 520000.01, max: Infinity, importo: 1686 },
 ];
 
-// Parametri Forensi Giudiziali D.M. 55/2014 aggiornato D.M. 147/2022
 const PARAMETRI_FORENSI_GIUDIZIALI = [
   { min: 0, max: 1100, studio: 131, introduttiva: 131, istruttoria: 200, decisionale: 200 },
   { min: 1100.01, max: 5200, studio: 425, introduttiva: 425, istruttoria: 851, decisionale: 851 },
@@ -154,7 +168,6 @@ const PARAMETRI_FORENSI_GIUDIZIALI = [
   { min: 260000.01, max: 520000, studio: 3544, introduttiva: 2338, istruttoria: 10411, decisionale: 6164 },
 ];
 
-// Parametri Forensi Stragiudiziali (Tabella 25-bis)
 const PARAMETRI_FORENSI_STRAGIUDIZIALI = [
   { min: 0, max: 1100, attivazione: 68, negoziazione: 68, conciliazione: 68 },
   { min: 1100.01, max: 5200, attivazione: 236, negoziazione: 252, conciliazione: 352 },
@@ -164,7 +177,6 @@ const PARAMETRI_FORENSI_STRAGIUDIZIALI = [
   { min: 260000.01, max: 520000, attivazione: 1134, negoziazione: 1454, conciliazione: 1701 },
 ];
 
-// Contributo Unificato - Appello (D.P.R. 115/2002 — maggiorato del 50%)
 const CONTRIBUTO_UNIFICATO_APPELLO = [
   { min: 0, max: 1100, importo: 64.50 },
   { min: 1100.01, max: 5200, importo: 147 },
@@ -175,7 +187,6 @@ const CONTRIBUTO_UNIFICATO_APPELLO = [
   { min: 520000.01, max: Infinity, importo: 2529 },
 ];
 
-// Contributo Unificato - Cassazione (D.P.R. 115/2002 — raddoppiato)
 const CONTRIBUTO_UNIFICATO_CASSAZIONE = [
   { min: 0, max: 1100, importo: 86 },
   { min: 1100.01, max: 5200, importo: 196 },
@@ -186,7 +197,6 @@ const CONTRIBUTO_UNIFICATO_CASSAZIONE = [
   { min: 520000.01, max: Infinity, importo: 3372 },
 ];
 
-// Parametri Forensi Corte d'Appello — Tabella 12 D.M. 55/2014 agg. D.M. 147/2022
 const PARAMETRI_FORENSI_APPELLO = [
   { min: 0, max: 1100, studio: 142, introduttiva: 142, istruttoria: 179, decisionale: 210 },
   { min: 1100.01, max: 5200, studio: 536, introduttiva: 536, istruttoria: 992, decisionale: 851 },
@@ -196,8 +206,6 @@ const PARAMETRI_FORENSI_APPELLO = [
   { min: 260000.01, max: 520000, studio: 4389, introduttiva: 2552, istruttoria: 5880, decisionale: 7298 },
 ];
 
-// Parametri Forensi Cassazione — Tabella 13 D.M. 55/2014 agg. D.M. 147/2022
-// NB: In Cassazione non c'è fase istruttoria
 const PARAMETRI_FORENSI_CASSAZIONE = [
   { min: 0, max: 1100, studio: 252, introduttiva: 284, decisionale: 142 },
   { min: 1100.01, max: 5200, studio: 709, introduttiva: 777, decisionale: 389 },
@@ -207,9 +215,10 @@ const PARAMETRI_FORENSI_CASSAZIONE = [
   { min: 260000.01, max: 520000, studio: 4961, introduttiva: 3260, decisionale: 2552 },
 ];
 
-// Spese primo incontro — D.M. 150/2023, Art. 28 commi 4-5
-// Art. 28, co. 4: Spese avvio = €40 (fino €1k), €75 (€1k-50k), €110 (>€50k e indeterminabili)
-// Art. 28, co. 5: Spese mediazione primo incontro = €60 (fino €1k), €120 (€1k-50k), €170 (>€50k)
+// ========================
+// TABELLE NORMATIVE — MEDIAZIONE
+// ========================
+
 function getSpeseAvvioNazionaliConfronto(valoreLite: number): number {
   if (valoreLite <= 1000) return 40;
   if (valoreLite <= 50000) return 75;
@@ -222,7 +231,6 @@ function getSpeseMediazionePrimoIncontroConfronto(valoreLite: number): number {
   return 170;
 }
 
-// Tabella A — D.M. 150/2023 (spese mediazione incontri successivi, importi minimi)
 const TABELLA_A_MEDIAZIONE_NAZIONALE = [
   { min: 0, max: 1000, minimoTabA: 80 },
   { min: 1000.01, max: 5000, minimoTabA: 160 },
@@ -238,7 +246,6 @@ const TABELLA_A_MEDIAZIONE_NAZIONALE = [
   { min: 5000000.01, max: Infinity, minimoTabA: 10000 },
 ];
 
-// Indennità Mediazione COA Genova (tariffe piene, riduzione 20% per obbligatoria)
 const INDENNITA_MEDIAZIONE_GENOVA = [
   { min: 0, max: 1000, speseAvvio: 40, indennita: 110 },
   { min: 1000.01, max: 5000, speseAvvio: 80, indennita: 220 },
@@ -251,7 +258,6 @@ const INDENNITA_MEDIAZIONE_GENOVA = [
   { min: 500000.01, max: Infinity, speseAvvio: 340, indennita: 3900 },
 ];
 
-// Genova indeterminabili
 const GENOVA_INDETERMINABILI = {
   speseAvvio: 88,
   indeterminabile_basso: 260,
@@ -259,8 +265,10 @@ const GENOVA_INDETERMINABILI = {
   indeterminabile_alto: 780,
 };
 
-// Tariffe Arbitrato CAM (Camera Arbitrale di Milano) — in vigore dal 1 marzo 2023
-// Arbitrato ordinario, arbitro unico (valori medi min/max)
+// ========================
+// TABELLE ARBITRATO CAM
+// ========================
+
 const TARIFFE_ARBITRATO_CAM = [
   { min: 0, max: 50000, onorariCAM: 1000, arbitroUnicoMin: 1500, arbitroUnicoMax: 2500 },
   { min: 50001, max: 100000, onorariCAM: 1700, arbitroUnicoMin: 2500, arbitroUnicoMax: 4500 },
@@ -270,8 +278,64 @@ const TARIFFE_ARBITRATO_CAM = [
   { min: 1000001, max: 2500000, onorariCAM: 18000, arbitroUnicoMin: 25000, arbitroUnicoMax: 40000 },
 ];
 
-// Costi notarili — onorario medio indicativo (libero post D.L. 1/2012)
-// SECONDA CASA / ALTRI IMMOBILI — onorari ordinari
+// ========================
+// TABELLE ARBITRATO MEDYAPRO
+// Fonte: Tariffe Camera Arbitrale Medyapro Srl
+// ========================
+
+// Spese amministrative per parte (ciascuna parte versa al deposito)
+const SPESE_AMM_MEDYAPRO_ORDINARIO = [
+  { min: 0,         max: 5000,     spese: 200 },
+  { min: 5000.01,   max: 15000,    spese: 300 },
+  { min: 15000.01,  max: 30000,    spese: 400 },
+  { min: 30000.01,  max: 250000,   spese: 800 },
+  { min: 250000.01, max: 500000,   spese: 1400 },
+  { min: 500000.01, max: 1000000,  spese: 2400 },
+  { min: 1000000.01,max: Infinity, spese: 3600 },
+];
+
+const SPESE_AMM_MEDYAPRO_RAPIDO = [
+  { min: 0,         max: 5000,     spese: 150 },
+  { min: 5000.01,   max: 15000,    spese: 250 },
+  { min: 15000.01,  max: 30000,    spese: 350 },
+  { min: 30000.01,  max: 250000,   spese: 600 },
+  { min: 250000.01, max: 500000,   spese: 1000 },
+  { min: 500000.01, max: 1000000,  spese: 1800 },
+  { min: 1000000.01,max: Infinity, spese: 2600 },
+];
+
+// Compensi arbitro unico Medyapro (min/max totale — dividere per 2 per parte)
+const COMPENSI_ARBITRO_UNICO_MEDYAPRO = [
+  { min: 0,          max: 30000,    compMin: 1000,  compMax: 2000 },
+  { min: 30000.01,   max: 50000,    compMin: 1000,  compMax: 2500 },
+  { min: 50000.01,   max: 100000,   compMin: 2000,  compMax: 4500 },
+  { min: 100000.01,  max: 250000,   compMin: 3500,  compMax: 7500 },
+  { min: 250000.01,  max: 500000,   compMin: 6500,  compMax: 15000 },
+  { min: 500000.01,  max: 1000000,  compMin: 8000,  compMax: 20000 },
+  { min: 1000000.01, max: 2500000,  compMin: 15000, compMax: 35000 },
+  { min: 2500000.01, max: 5000000,  compMin: 25000, compMax: 60000 },
+  { min: 5000000.01, max: 10000000, compMin: 35000, compMax: 75000 },
+  { min: 10000000.01,max: Infinity, compMin: 35000, compMax: 75000, percentualeEccedenza: 0.005 },
+];
+
+// Compensi collegio arbitrale Medyapro (min/max totale — dividere per 2 per parte)
+const COMPENSI_COLLEGIO_MEDYAPRO = [
+  { min: 0,          max: 30000,    compMin: 3000,   compMax: 6000 },
+  { min: 30000.01,   max: 50000,    compMin: 3000,   compMax: 7000 },
+  { min: 50000.01,   max: 100000,   compMin: 6000,   compMax: 11000 },
+  { min: 100000.01,  max: 250000,   compMin: 10000,  compMax: 19000 },
+  { min: 250000.01,  max: 500000,   compMin: 15000,  compMax: 38000 },
+  { min: 500000.01,  max: 1000000,  compMin: 22000,  compMax: 58000 },
+  { min: 1000000.01, max: 2500000,  compMin: 34000,  compMax: 87000 },
+  { min: 2500000.01, max: 5000000,  compMin: 56000,  compMax: 150000 },
+  { min: 5000000.01, max: 10000000, compMin: 100000, compMax: 212000 },
+  { min: 10000000.01,max: Infinity, compMin: 100000, compMax: 212000, percentualeEccedenza: 0.0125 },
+];
+
+// ========================
+// COSTI NOTARILI
+// ========================
+
 const COSTI_NOTARILI_SECONDA_CASA = [
   { min: 0, max: 10000, onorario: 1300 },
   { min: 10000.01, max: 25000, onorario: 1550 },
@@ -283,8 +347,6 @@ const COSTI_NOTARILI_SECONDA_CASA = [
   { min: 5000000.01, max: Infinity, onorario: 5000 },
 ];
 
-// PRIMA CASA — onorari ridotti (circa 30% in meno rispetto a seconda casa)
-// Fonte: stime medie da NotaioFacile, Immobiliare.it, tabelle CNN indicative
 const COSTI_NOTARILI_PRIMA_CASA = [
   { min: 0, max: 10000, onorario: 900 },
   { min: 10000.01, max: 25000, onorario: 1100 },
@@ -297,27 +359,9 @@ const COSTI_NOTARILI_PRIMA_CASA = [
 ];
 
 // ========================
-// IMPOSTE TRASFERIMENTO IMMOBILIARE
-// Fonti: D.P.R. 131/1986, D.Lgs. 347/1990, Art. 1 nota II-bis Tariffa Parte I
+// IMPOSTE IMMOBILIARI
 // ========================
 
-/**
- * Calcola le imposte sui trasferimenti immobiliari
- * 
- * PRIMA CASA (persona fisica, requisiti art. 1 nota II-bis Tariffa):
- * - Imposta di registro: 2% (minimo €1.000)
- * - Imposta ipotecaria: €50 (fissa)
- * - Imposta catastale: €50 (fissa)
- * 
- * SECONDA CASA / ALTRI IMMOBILI:
- * - Imposta di registro: 9% (minimo €1.000)
- * - Imposta ipotecaria: €50 (fissa)
- * - Imposta catastale: €50 (fissa)
- * 
- * In mediazione con accordo (art. 17 D.Lgs. 28/2010):
- * - Esenzione imposta di registro fino a €100.000
- * - Imposta di bollo esente
- */
 function calcolaImposteImmobiliari(
   valoreImmobile: number,
   primaCasa: boolean,
@@ -325,44 +369,27 @@ function calcolaImposteImmobiliari(
 ): ImposteImmobiliari {
   const aliquota = primaCasa ? 0.02 : 0.09;
   const aliquotaLabel = primaCasa ? "2%" : "9%";
-  
   let impostaRegistro = Math.round(valoreImmobile * aliquota);
-  // Minimo €1.000 per imposta di registro
   if (impostaRegistro < 1000) impostaRegistro = 1000;
-  
-  // In mediazione: esenzione registro fino a €100.000 (art. 17 D.Lgs. 28/2010)
   if (inMediazione) {
     const valoreImponibile = Math.max(0, valoreImmobile - 100000);
     impostaRegistro = Math.round(valoreImponibile * aliquota);
     if (valoreImmobile <= 100000) impostaRegistro = 0;
   }
-  
-  // Imposte ipotecaria e catastale: €50 fisse ciascuna (acquisto da privato)
   const impostaIpotecaria = 50;
   const impostaCatastale = 50;
-  
   const totaleImposte = impostaRegistro + impostaIpotecaria + impostaCatastale;
-  
   let note = primaCasa
-    ? `Agevolazione prima casa: aliquota registro ${aliquotaLabel} (art. 1 nota II-bis Tariffa Parte I, D.P.R. 131/1986). Imposte ipotecaria e catastale: €50 fisse ciascuna. Onorari notarili ridotti (~30%).`
-    : `Aliquota ordinaria ${aliquotaLabel} (seconda casa/altro immobile). Imposte ipotecaria e catastale: €50 fisse ciascuna. Onorari notarili ordinari.`;
-  
-  if (inMediazione) {
-    note += " Esenzione imposta di registro fino a €100.000 (art. 17, co. 3, D.Lgs. 28/2010).";
-  }
-  
-  return {
-    impostaRegistro,
-    impostaIpotecaria,
-    impostaCatastale,
-    totaleImposte,
-    aliquotaRegistro: aliquotaLabel,
-    isPrimaCasa: primaCasa,
-    note,
-  };
+    ? `Agevolazione prima casa: registro ${aliquotaLabel} (art. 1 nota II-bis Tariffa Parte I). Ipotecaria e catastale €50 fisse ciascuna.`
+    : `Aliquota ordinaria ${aliquotaLabel} (seconda casa). Ipotecaria e catastale €50 fisse ciascuna.`;
+  if (inMediazione) note += " Esenzione registro fino a €100.000 (art. 17 D.Lgs. 28/2010).";
+  return { impostaRegistro, impostaIpotecaria, impostaCatastale, totaleImposte, aliquotaRegistro: aliquotaLabel, isPrimaCasa: primaCasa, note };
 }
 
-// Valori per controversie indeterminabili
+// ========================
+// LOOKUP HELPERS
+// ========================
+
 const VALORI_INDETERMINABILI: Record<string, number> = {
   indeterminabile_basso: 25000,
   indeterminabile_medio: 50000,
@@ -370,10 +397,6 @@ const VALORI_INDETERMINABILI: Record<string, number> = {
 };
 
 const LIMITE_GRATUITO_PATROCINIO = 13659.64;
-
-// ========================
-// FUNZIONI DI LOOKUP
-// ========================
 
 function findScaglione<T extends { min: number; max: number }>(tabella: T[], valore: number): T {
   return tabella.find(s => valore >= s.min && valore <= s.max) || tabella[tabella.length - 1];
@@ -383,19 +406,26 @@ function isObbligatoria(tipo: string): boolean {
   return tipo === "obbligatoria" || tipo === "demandata";
 }
 
+function stimaCTUPerValore(valore: number): number {
+  if (valore <= 10000) return 500;
+  if (valore <= 50000) return 1500;
+  if (valore <= 250000) return 3000;
+  if (valore <= 520000) return 5000;
+  return 8000;
+}
+
 // ========================
-// CALCOLO COSTI MEDIAZIONE
+// CALCOLO MEDIAZIONE
 // ========================
 
 function calcolaCostiMediazione(input: InputConfronto, valoreEffettivo: number): CostiMediazione {
   const modalita = input.modalitaTariffaria || "nazionale";
   const isGP = input.gratuitoPatrocinio === true;
-  
+
   let speseAvvio: number;
-  let indennita: number; // spese di mediazione (Tabella A minimi per incontri successivi)
+  let indennita: number;
 
   if (modalita === "coa_genova") {
-    // Tariffe COA Genova
     if (input.tipoValore !== "determinato") {
       speseAvvio = GENOVA_INDETERMINABILI.speseAvvio;
       indennita = GENOVA_INDETERMINABILI[input.tipoValore as keyof typeof GENOVA_INDETERMINABILI] as number || 260;
@@ -404,339 +434,226 @@ function calcolaCostiMediazione(input: InputConfronto, valoreEffettivo: number):
       speseAvvio = scag.speseAvvio;
       indennita = scag.indennita;
     }
-    // Riduzione 20% per obbligatoria/demandata
     if (isObbligatoria(input.tipoMediazione)) {
       indennita = indennita * 0.8;
       speseAvvio = speseAvvio * 0.8;
     }
   } else {
-    // Tariffe Nazionali D.M. 150/2023
-    // Il Confronto Costi assume accordo raggiunto in mediazione → usa:
-    // - Spese avvio: art. 28, co. 4 (€40/€75/€110)
-    // - Spese mediazione: Tabella A minimi (art. 30) per incontri successivi
     speseAvvio = getSpeseAvvioNazionaliConfronto(valoreEffettivo);
     const scagTabA = findScaglione(TABELLA_A_MEDIAZIONE_NAZIONALE, valoreEffettivo);
     indennita = scagTabA.minimoTabA;
-    // Riduzione 1/5 per obbligatoria/demandata (art. 28, co. 8 + art. 30, co. 4)
     if (isObbligatoria(input.tipoMediazione)) {
       indennita = indennita * 0.8;
       speseAvvio = Math.round(speseAvvio * 0.8);
     }
   }
 
-  // Maggiorazione art. 31, co. 3: +20% sull'indennità se mediatore esperto o procedura complessa
-  let maggiorazioneArt31 = 0;
   if (input.mediatoreEsperto || input.proceduraComplessa) {
-    maggiorazioneArt31 = Math.round(indennita * 0.2);
-    indennita = indennita + maggiorazioneArt31;
+    indennita = indennita + Math.round(indennita * 0.2);
   }
 
-  // Gratuito patrocinio: indennità a carico dell'erario → 0 per la parte
   let indennitaOrganismo = speseAvvio + indennita;
-  if (isGP) {
-    indennitaOrganismo = 0;
-  }
+  if (isGP) indennitaOrganismo = 0;
 
-  // Compenso avvocato — parametri forensi stragiudiziali
   const paramStrag = findScaglione(PARAMETRI_FORENSI_STRAGIUDIZIALI, valoreEffettivo);
   const compensoBase = paramStrag.attivazione * 1.3 + paramStrag.negoziazione * 1.3 + paramStrag.conciliazione;
-  // Gratuito patrocinio: avvocato a carico dell'erario → 0 per la parte
   const compensoAvvocato = isGP ? 0 : Math.round(compensoBase);
-  
-  // Spese generali forfettarie 15%
   const speseGenerali15 = Math.round(compensoAvvocato * 0.15);
-  
-  // CPA 4%
   const cpa4Avvocato = Math.round((compensoAvvocato + speseGenerali15) * 0.04);
-  
-  // IVA 22%
   const iva22Avvocato = Math.round((compensoAvvocato + speseGenerali15 + cpa4Avvocato) * 0.22);
 
-  // Imposte di registro / trasferimento immobiliare
   let impostaRegistro = 0;
   let imposteImmobiliari: ImposteImmobiliari | null = null;
-
   if (input.materiaImmobiliare) {
-    // Materia immobiliare: calcola imposte dettagliate (registro + ipotecaria + catastale)
     const primaCasa = input.primaCasa ?? false;
     imposteImmobiliari = calcolaImposteImmobiliari(valoreEffettivo, primaCasa, true);
     impostaRegistro = imposteImmobiliari.totaleImposte;
   } else {
-    // Non immobiliare: imposta di registro generica — esente fino a €100.000 (art. 17 D.Lgs. 28/2010)
-    if (valoreEffettivo > 100000) {
-      impostaRegistro = Math.round((valoreEffettivo - 100000) * 0.03);
-    }
+    if (valoreEffettivo > 100000) impostaRegistro = Math.round((valoreEffettivo - 100000) * 0.03);
   }
 
-  // Costo notaio (solo se materia immobiliare)
-  // Prima casa: onorari ridotti (~30% in meno) + imposta registro agevolata 2%
   let costoNotaio = 0;
   if (input.materiaImmobiliare) {
     const primaCasaFlag = input.primaCasa ?? false;
     const tabellaNotaio = primaCasaFlag ? COSTI_NOTARILI_PRIMA_CASA : COSTI_NOTARILI_SECONDA_CASA;
-    const scagNotaio = findScaglione(tabellaNotaio, valoreEffettivo);
-    costoNotaio = scagNotaio.onorario;
+    costoNotaio = findScaglione(tabellaNotaio, valoreEffettivo).onorario;
   }
 
   const totalePerParte = indennitaOrganismo + compensoAvvocato + speseGenerali15 + cpa4Avvocato + iva22Avvocato + impostaRegistro + costoNotaio;
   const totaleComplessivo = totalePerParte * 2;
-  
-  // Credito d'imposta (art. 20 D.Lgs. 28/2010):
-  // - Fino a €600 per indennità organismo (accordo) o €300 (mancato accordo)
-  // - Fino a €600 per compenso avvocato (solo obbligatoria/demandata)
-  // - Tetto €600 per procedura (lett. a + b)
-  // Il Confronto Costi assume accordo → max €600
+
   let creditoImpostaIndennita = isGP ? 0 : Math.min(600, indennitaOrganismo);
   let creditoImpostaAvvocato = 0;
   if (!isGP && isObbligatoria(input.tipoMediazione)) {
     creditoImpostaAvvocato = Math.min(600, compensoAvvocato);
   }
-  // Tetto €600 per procedura
   const creditoImposta = Math.min(600, creditoImpostaIndennita + creditoImpostaAvvocato);
   const totaleNettoPerParte = totalePerParte - creditoImposta;
 
   return {
-    indennitaOrganismo,
-    speseAvvio,
-    compensoAvvocato,
-    speseGenerali15,
-    iva22Avvocato,
-    cpa4Avvocato,
-    impostaRegistro,
-    imposteImmobiliari,
-    costoNotaio,
-    totalePerParte,
-    totaleComplessivo,
-    creditoImposta,
-    totaleNettoPerParte,
-    modalitaTariffaria: modalita,
+    indennitaOrganismo, speseAvvio, compensoAvvocato, speseGenerali15, iva22Avvocato,
+    cpa4Avvocato, impostaRegistro, imposteImmobiliari, costoNotaio, totalePerParte,
+    totaleComplessivo, creditoImposta, totaleNettoPerParte, modalitaTariffaria: modalita,
   };
 }
 
 // ========================
-// CALCOLO COSTI CAUSA CIVILE
+// CALCOLO CAUSA CIVILE
 // ========================
 
 function calcolaCostiCausaCivile(input: InputConfronto, valoreEffettivo: number): CostiCausaCivile {
   const isGP = input.gratuitoPatrocinio === true;
-  
-  const scagCU = findScaglione(CONTRIBUTO_UNIFICATO, valoreEffettivo);
-  // Gratuito patrocinio: contributo unificato prenotato a debito (a carico erario)
-  const contributoUnificato = isGP ? 0 : scagCU.importo;
+  const contributoUnificato = isGP ? 0 : findScaglione(CONTRIBUTO_UNIFICATO, valoreEffettivo).importo;
   const marcaDaBollo = isGP ? 0 : 27;
   const dirittoCopia = isGP ? 0 : 30;
-
   const paramGiud = findScaglione(PARAMETRI_FORENSI_GIUDIZIALI, valoreEffettivo);
-  // Gratuito patrocinio: compenso avvocato a carico erario
   const compensoAvvocato = isGP ? 0 : (paramGiud.studio + paramGiud.introduttiva + paramGiud.istruttoria + paramGiud.decisionale);
-  
   const speseGenerali15 = Math.round(compensoAvvocato * 0.15);
   const cpa4Avvocato = Math.round((compensoAvvocato + speseGenerali15) * 0.04);
   const iva22Avvocato = Math.round((compensoAvvocato + speseGenerali15 + cpa4Avvocato) * 0.22);
-
   const impostaRegistroSentenza = Math.round(valoreEffettivo * 0.03);
-
-  let stimaCTU = 0;
-  if (valoreEffettivo <= 10000) stimaCTU = 500;
-  else if (valoreEffettivo <= 50000) stimaCTU = 1500;
-  else if (valoreEffettivo <= 250000) stimaCTU = 3000;
-  else if (valoreEffettivo <= 520000) stimaCTU = 5000;
-  else stimaCTU = 8000;
-  // Gratuito patrocinio: CTU prenotata a debito
-  if (isGP) stimaCTU = 0;
-
-  const totalePerParte = contributoUnificato + marcaDaBollo + dirittoCopia + 
-    compensoAvvocato + speseGenerali15 + cpa4Avvocato + iva22Avvocato + 
-    impostaRegistroSentenza + stimaCTU;
-  const totaleComplessivo = totalePerParte * 2;
-
-  return {
-    contributoUnificato,
-    marcaDaBollo,
-    dirittoCopia,
-    compensoAvvocato,
-    speseGenerali15,
-    iva22Avvocato,
-    cpa4Avvocato,
-    impostaRegistroSentenza,
-    stimaCTU,
-    totalePerParte,
-    totaleComplessivo,
-  };
+  const stimaCTU = isGP ? 0 : stimaCTUPerValore(valoreEffettivo);
+  const totalePerParte = contributoUnificato + marcaDaBollo + dirittoCopia + compensoAvvocato + speseGenerali15 + cpa4Avvocato + iva22Avvocato + impostaRegistroSentenza + stimaCTU;
+  return { contributoUnificato, marcaDaBollo, dirittoCopia, compensoAvvocato, speseGenerali15, iva22Avvocato, cpa4Avvocato, impostaRegistroSentenza, stimaCTU, totalePerParte, totaleComplessivo: totalePerParte * 2 };
 }
 
 // ========================
-// CALCOLO COSTI APPELLO
+// CALCOLO APPELLO
 // ========================
 
 function calcolaCostiAppello(input: InputConfronto, valoreEffettivo: number): CostiGradoSuccessivo {
   const isGP = input.gratuitoPatrocinio === true;
-  
-  const scagCU = findScaglione(CONTRIBUTO_UNIFICATO_APPELLO, valoreEffettivo);
-  const contributoUnificato = isGP ? 0 : scagCU.importo;
+  const contributoUnificato = isGP ? 0 : findScaglione(CONTRIBUTO_UNIFICATO_APPELLO, valoreEffettivo).importo;
   const marcaDaBollo = isGP ? 0 : 27;
-
   const paramApp = findScaglione(PARAMETRI_FORENSI_APPELLO, valoreEffettivo);
   const compensoAvvocato = isGP ? 0 : (paramApp.studio + paramApp.introduttiva + paramApp.istruttoria + paramApp.decisionale);
-  
   const speseGenerali15 = Math.round(compensoAvvocato * 0.15);
   const cpa4Avvocato = Math.round((compensoAvvocato + speseGenerali15) * 0.04);
   const iva22Avvocato = Math.round((compensoAvvocato + speseGenerali15 + cpa4Avvocato) * 0.22);
-
-  // CTU in appello: possibile rinnovo o nuova CTU (art. 356 c.p.c.)
-  // Stima prudenziale: stesse fasce del primo grado
-  let stimaCTU = 0;
-  if (valoreEffettivo <= 10000) stimaCTU = 500;
-  else if (valoreEffettivo <= 50000) stimaCTU = 1500;
-  else if (valoreEffettivo <= 250000) stimaCTU = 3000;
-  else if (valoreEffettivo <= 520000) stimaCTU = 5000;
-  else stimaCTU = 8000;
-  if (isGP) stimaCTU = 0; // prenotata a debito
-
+  const stimaCTU = isGP ? 0 : stimaCTUPerValore(valoreEffettivo);
   const totalePerParte = contributoUnificato + marcaDaBollo + compensoAvvocato + speseGenerali15 + cpa4Avvocato + iva22Avvocato + stimaCTU;
-
-  return {
-    grado: "appello",
-    contributoUnificato,
-    marcaDaBollo,
-    compensoAvvocato,
-    speseGenerali15,
-    iva22Avvocato,
-    cpa4Avvocato,
-    stimaCTU,
-    totalePerParte,
-    durataStimata: "2-3 anni",
-    note: `CU maggiorato del 50% (art. 13 D.P.R. 115/2002). Parametri forensi Tabella 12 D.M. 55/2014 agg. D.M. 147/2022.${stimaCTU > 0 ? " Include stima CTU (eventuale rinnovo art. 356 c.p.c.)." : ""}${isGP ? " Gratuito patrocinio: costi a carico dell'erario." : ""}`,
-  };
+  return { grado: "appello", contributoUnificato, marcaDaBollo, compensoAvvocato, speseGenerali15, iva22Avvocato, cpa4Avvocato, stimaCTU, totalePerParte, durataStimata: "2-3 anni", note: `CU maggiorato del 50% (art. 13 D.P.R. 115/2002). Parametri Tab. 12 D.M. 55/2014.${isGP ? " GP attivo." : ""}` };
 }
 
 // ========================
-// CALCOLO COSTI CASSAZIONE
+// CALCOLO CASSAZIONE
 // ========================
 
 function calcolaCostiCassazione(input: InputConfronto, valoreEffettivo: number): CostiGradoSuccessivo {
   const isGP = input.gratuitoPatrocinio === true;
-  
-  const scagCU = findScaglione(CONTRIBUTO_UNIFICATO_CASSAZIONE, valoreEffettivo);
-  const contributoUnificato = isGP ? 0 : scagCU.importo;
+  const contributoUnificato = isGP ? 0 : findScaglione(CONTRIBUTO_UNIFICATO_CASSAZIONE, valoreEffettivo).importo;
   const marcaDaBollo = isGP ? 0 : 27;
-
-  // In Cassazione non c'è fase istruttoria
   const paramCass = findScaglione(PARAMETRI_FORENSI_CASSAZIONE, valoreEffettivo);
   const compensoAvvocato = isGP ? 0 : (paramCass.studio + paramCass.introduttiva + paramCass.decisionale);
-  
   const speseGenerali15 = Math.round(compensoAvvocato * 0.15);
   const cpa4Avvocato = Math.round((compensoAvvocato + speseGenerali15) * 0.04);
   const iva22Avvocato = Math.round((compensoAvvocato + speseGenerali15 + cpa4Avvocato) * 0.22);
-
-  // In Cassazione NON c'è CTU (giudizio di legittimà, non di merito)
-  const stimaCTU = 0;
-
   const totalePerParte = contributoUnificato + marcaDaBollo + compensoAvvocato + speseGenerali15 + cpa4Avvocato + iva22Avvocato;
-
-  return {
-    grado: "cassazione",
-    contributoUnificato,
-    marcaDaBollo,
-    compensoAvvocato,
-    speseGenerali15,
-    iva22Avvocato,
-    cpa4Avvocato,
-    stimaCTU,
-    totalePerParte,
-    durataStimata: "2-4 anni",
-    note: `CU raddoppiato (art. 13 D.P.R. 115/2002). Parametri forensi Tabella 13 D.M. 55/2014 agg. D.M. 147/2022. No fase istruttoria, no CTU (giudizio di legittimità).${isGP ? " Gratuito patrocinio: costi a carico dell'erario." : ""}`,
-  };
+  return { grado: "cassazione", contributoUnificato, marcaDaBollo, compensoAvvocato, speseGenerali15, iva22Avvocato, cpa4Avvocato, stimaCTU: 0, totalePerParte, durataStimata: "2-4 anni", note: `CU raddoppiato (art. 13 D.P.R. 115/2002). Parametri Tab. 13 D.M. 55/2014. No CTU.${isGP ? " GP attivo." : ""}` };
 }
 
 // ========================
-// CALCOLO COSTI ARBITRATO CAM
+// CALCOLO ARBITRATO CAM
 // ========================
 
-function calcolaCostiArbitrato(input: InputConfronto, valoreEffettivo: number): CostiArbitrato {
+function calcolaCostiArbitratoCAM(input: InputConfronto, valoreEffettivo: number): CostiArbitrato {
   const isGP = input.gratuitoPatrocinio === true;
-
-  // Lookup scaglione CAM
   const scagCAM = findScaglione(TARIFFE_ARBITRATO_CAM, valoreEffettivo);
-
-  // Onorari CAM (per party = total / 2) — esenti IVA
   const onorariCAM = Math.round(scagCAM.onorariCAM / 2);
-
-  // Onorari arbitro unico: media min/max, diviso 2 per parte
   const arbitroUnicoAvg = (scagCAM.arbitroUnicoMin + scagCAM.arbitroUnicoMax) / 2;
-  const onorariArbitroBase = Math.round(arbitroUnicoAvg / 2);
-  // IVA 22% sugli onorari dell'arbitro
-  const ivaArbitro = Math.round(onorariArbitroBase * 0.22);
-  const onorariArbitro = onorariArbitroBase;
-
-  // Compenso avvocato — stessi parametri forensi giudiziali (studio + introduttiva + istruttoria + decisionale)
+  const onorariArbitro = Math.round(arbitroUnicoAvg / 2);
+  const ivaArbitro = Math.round(onorariArbitro * 0.22);
   const paramGiud = findScaglione(PARAMETRI_FORENSI_GIUDIZIALI, valoreEffettivo);
   const compensoAvvocato = isGP ? 0 : (paramGiud.studio + paramGiud.introduttiva + paramGiud.istruttoria + paramGiud.decisionale);
-
-  // Spese generali 15% + CPA 4% + IVA 22% sull'avvocato (same as causa civile)
   const speseGenerali15 = Math.round(compensoAvvocato * 0.15);
   const cpa4Avvocato = Math.round((compensoAvvocato + speseGenerali15) * 0.04);
   const iva22Avvocato = Math.round((compensoAvvocato + speseGenerali15 + cpa4Avvocato) * 0.22);
-
-  // Bollo: stima 150 EUR fissi (circa 10 fogli a 16 EUR/foglio)
   const bollo = 150;
-
-  // NO contributo unificato in arbitrato
-
-  // CTU: stessa stima del primo grado
-  let stimaCTU = 0;
-  if (valoreEffettivo <= 10000) stimaCTU = 500;
-  else if (valoreEffettivo <= 50000) stimaCTU = 1500;
-  else if (valoreEffettivo <= 250000) stimaCTU = 3000;
-  else if (valoreEffettivo <= 520000) stimaCTU = 5000;
-  else stimaCTU = 8000;
-  if (isGP) stimaCTU = 0;
-
-  // Imposta di registro sul lodo: 3% del valore (come sentenza)
+  const stimaCTU = isGP ? 0 : stimaCTUPerValore(valoreEffettivo);
   const impostaRegistroLodo = Math.round(valoreEffettivo * 0.03);
-
-  const totalePerParte = onorariCAM + onorariArbitro + ivaArbitro + compensoAvvocato +
-    speseGenerali15 + cpa4Avvocato + iva22Avvocato + bollo + stimaCTU + impostaRegistroLodo;
-  const totaleComplessivo = totalePerParte * 2;
-
+  const totalePerParte = onorariCAM + onorariArbitro + ivaArbitro + compensoAvvocato + speseGenerali15 + cpa4Avvocato + iva22Avvocato + bollo + stimaCTU + impostaRegistroLodo;
   return {
-    onorariCAM,
-    onorariArbitro,
-    ivaArbitro,
-    compensoAvvocato,
-    speseGenerali15,
-    cpa4Avvocato,
-    iva22Avvocato,
-    bollo,
-    stimaCTU,
-    impostaRegistroLodo,
-    totalePerParte,
-    totaleComplessivo,
+    onorariCAM, onorariArbitro, ivaArbitro, compensoAvvocato, speseGenerali15, cpa4Avvocato, iva22Avvocato, bollo, stimaCTU, impostaRegistroLodo,
+    totalePerParte, totaleComplessivo: totalePerParte * 2,
+    nomeIstituzione: "CAM — Camera Arbitrale di Milano",
+    tipoArbitro: "Arbitro unico (valori medi min/max)",
+    durataStimata: "6-12 mesi",
+    noteCalcolo: "Tariffe CAM in vigore dal 1 marzo 2023. Arbitro unico, valori medi. Onorari CAM esenti IVA; IVA 22% sugli onorari dell'arbitro. Non si applica il contributo unificato.",
   };
 }
 
 // ========================
-// CALCOLO GRATUITO PATROCINIO
+// CALCOLO ARBITRATO MEDYAPRO
+// ========================
+
+function calcolaCostiArbitratoMedyapro(
+  input: InputConfronto,
+  valoreEffettivo: number,
+  tipoArbitrato: TipoArbitrato
+): CostiArbitrato {
+  const isGP = input.gratuitoPatrocinio === true;
+  const isRapido = tipoArbitrato.includes("rapido");
+  const isCollegio = tipoArbitrato.includes("collegio");
+
+  // Spese amministrative (per parte — ciascuna parte versa)
+  const tabellaSpese = isRapido ? SPESE_AMM_MEDYAPRO_RAPIDO : SPESE_AMM_MEDYAPRO_ORDINARIO;
+  const onorariCAM = findScaglione(tabellaSpese, valoreEffettivo).spese;
+
+  // Compensi arbitro/collegio (totale da dividere per 2 per parte)
+  const tabellaArbitro = isCollegio ? COMPENSI_COLLEGIO_MEDYAPRO : COMPENSI_ARBITRO_UNICO_MEDYAPRO;
+  const scagArbitro = findScaglione(tabellaArbitro, valoreEffettivo) as any;
+  let compTotMin = scagArbitro.compMin;
+  let compTotMax = scagArbitro.compMax;
+  // Gestione scaglione oltre 10M con percentuale sull'eccedente
+  if (scagArbitro.percentualeEccedenza && valoreEffettivo > 10000000) {
+    const eccedente = valoreEffettivo - 10000000;
+    compTotMin += Math.round(eccedente * scagArbitro.percentualeEccedenza);
+    compTotMax += Math.round(eccedente * scagArbitro.percentualeEccedenza);
+  }
+  const compTotAvg = (compTotMin + compTotMax) / 2;
+  const onorariArbitro = Math.round(compTotAvg / 2); // per parte
+  const ivaArbitro = Math.round(onorariArbitro * 0.22);
+
+  // Compenso avvocato — stessi parametri giudiziali
+  const paramGiud = findScaglione(PARAMETRI_FORENSI_GIUDIZIALI, valoreEffettivo);
+  const compensoAvvocato = isGP ? 0 : (paramGiud.studio + paramGiud.introduttiva + paramGiud.istruttoria + paramGiud.decisionale);
+  const speseGenerali15 = Math.round(compensoAvvocato * 0.15);
+  const cpa4Avvocato = Math.round((compensoAvvocato + speseGenerali15) * 0.04);
+  const iva22Avvocato = Math.round((compensoAvvocato + speseGenerali15 + cpa4Avvocato) * 0.22);
+
+  const bollo = 150;
+  const stimaCTU = isGP ? 0 : stimaCTUPerValore(valoreEffettivo);
+  const impostaRegistroLodo = Math.round(valoreEffettivo * 0.03);
+
+  const totalePerParte = onorariCAM + onorariArbitro + ivaArbitro + compensoAvvocato + speseGenerali15 + cpa4Avvocato + iva22Avvocato + bollo + stimaCTU + impostaRegistroLodo;
+
+  const tipoArbitroLabel = isCollegio ? "Collegio arbitrale (3 arbitri, valori medi)" : "Arbitro unico (valori medi min/max)";
+  const tipoProc = isRapido ? "Arbitrato rapido" : "Arbitrato ordinario";
+  const durata = isRapido ? "3-6 mesi" : "6-12 mesi";
+
+  return {
+    onorariCAM, onorariArbitro, ivaArbitro, compensoAvvocato, speseGenerali15, cpa4Avvocato, iva22Avvocato, bollo, stimaCTU, impostaRegistroLodo,
+    totalePerParte, totaleComplessivo: totalePerParte * 2,
+    nomeIstituzione: `Medyapro — ${tipoProc}`,
+    tipoArbitro: tipoArbitroLabel,
+    durataStimata: durata,
+    noteCalcolo: `Tariffe Camera Arbitrale Medyapro Srl. ${tipoProc}, ${tipoArbitroLabel.toLowerCase()}. Spese amministrative versate da ciascuna parte al deposito. IVA 22% sugli onorari dell'arbitro. Imposta di bollo stimata €150. Non si applica il contributo unificato.`,
+  };
+}
+
+// ========================
+// GRATUITO PATROCINIO
 // ========================
 
 function calcolaGratuitoPatrocinio(redditoAnnuo?: number): GratuitoPatrocinio {
   if (redditoAnnuo === undefined || redditoAnnuo === null) {
-    return {
-      ammissibile: false,
-      limiteReddito: LIMITE_GRATUITO_PATROCINIO,
-      redditoInserito: 0,
-      note: "Inserire il reddito annuo imponibile per verificare l'ammissibilità al gratuito patrocinio.",
-    };
+    return { ammissibile: false, limiteReddito: LIMITE_GRATUITO_PATROCINIO, redditoInserito: 0, note: "Inserire il reddito annuo per verificare l'ammissibilità." };
   }
-
   const ammissibile = redditoAnnuo <= LIMITE_GRATUITO_PATROCINIO;
-
   return {
-    ammissibile,
-    limiteReddito: LIMITE_GRATUITO_PATROCINIO,
-    redditoInserito: redditoAnnuo,
+    ammissibile, limiteReddito: LIMITE_GRATUITO_PATROCINIO, redditoInserito: redditoAnnuo,
     note: ammissibile
-      ? `Reddito ${formatEuro(redditoAnnuo)} inferiore al limite di ${formatEuro(LIMITE_GRATUITO_PATROCINIO)} (D.M. 22/04/2025). Possibile ammissione al patrocinio a spese dello Stato. Le spese legali e il contributo unificato sono a carico dell'erario.`
+      ? `Reddito ${formatEuro(redditoAnnuo)} inferiore al limite di ${formatEuro(LIMITE_GRATUITO_PATROCINIO)} (D.M. 22/04/2025). Possibile ammissione al patrocinio a spese dello Stato.`
       : `Reddito ${formatEuro(redditoAnnuo)} superiore al limite di ${formatEuro(LIMITE_GRATUITO_PATROCINIO)}. Non ammissibile al gratuito patrocinio.`,
   };
 }
@@ -746,7 +663,6 @@ function calcolaGratuitoPatrocinio(redditoAnnuo?: number): GratuitoPatrocinio {
 // ========================
 
 export function calcolaConfronto(input: InputConfronto): RisultatoConfronto {
-  // Determina valore effettivo
   let valoreEffettivo = input.valoreLite;
   if (input.tipoValore !== "determinato") {
     valoreEffettivo = VALORI_INDETERMINABILI[input.tipoValore] || 25000;
@@ -756,25 +672,22 @@ export function calcolaConfronto(input: InputConfronto): RisultatoConfronto {
   const costiCausaCivile = calcolaCostiCausaCivile(input, valoreEffettivo);
   const costiAppello = calcolaCostiAppello(input, valoreEffettivo);
   const costiCassazione = calcolaCostiCassazione(input, valoreEffettivo);
-  const costiArbitrato = calcolaCostiArbitrato(input, valoreEffettivo);
+
+  const tipoArb = input.tipoArbitrato || "cam";
+  const costiArbitrato = tipoArb === "cam"
+    ? calcolaCostiArbitratoCAM(input, valoreEffettivo)
+    : calcolaCostiArbitratoMedyapro(input, valoreEffettivo, tipoArb);
+
   const gratuitoPatrocinio = calcolaGratuitoPatrocinio(input.redditoAnnuo);
 
-  // Risparmio primo grado
   const risparmioMediazione = costiCausaCivile.totalePerParte - costiMediazione.totaleNettoPerParte;
   const percentualeRisparmio = costiCausaCivile.totalePerParte > 0
-    ? Math.round((risparmioMediazione / costiCausaCivile.totalePerParte) * 100)
-    : 0;
-
-  // Totale costi causa su tre gradi di giudizio
+    ? Math.round((risparmioMediazione / costiCausaCivile.totalePerParte) * 100) : 0;
   const totaleCausaTreGradi = costiCausaCivile.totalePerParte + costiAppello.totalePerParte + costiCassazione.totalePerParte;
-  
-  // Risparmio mediazione rispetto a tre gradi
   const risparmioMediazioneTreGradi = totaleCausaTreGradi - costiMediazione.totaleNettoPerParte;
   const percentualeRisparmioTreGradi = totaleCausaTreGradi > 0
-    ? Math.round((risparmioMediazioneTreGradi / totaleCausaTreGradi) * 100)
-    : 0;
+    ? Math.round((risparmioMediazioneTreGradi / totaleCausaTreGradi) * 100) : 0;
 
-  // Vantaggi fiscali mediazione
   const vantaggiFiscali: string[] = [
     "Esenzione imposta di registro fino a €100.000 (art. 17 D.Lgs. 28/2010)",
     "Esenzione imposta di bollo su tutti gli atti del procedimento",
@@ -787,29 +700,21 @@ export function calcolaConfronto(input: InputConfronto): RisultatoConfronto {
   }
 
   return {
-    costiMediazione,
-    costiCausaCivile,
-    costiAppello,
-    costiCassazione,
-    costiArbitrato,
-    totaleCausaTreGradi,
-    risparmioMediazione,
-    percentualeRisparmio,
-    risparmioMediazioneTreGradi,
-    percentualeRisparmioTreGradi,
+    costiMediazione, costiCausaCivile, costiAppello, costiCassazione, costiArbitrato,
+    totaleCausaTreGradi, risparmioMediazione, percentualeRisparmio,
+    risparmioMediazioneTreGradi, percentualeRisparmioTreGradi,
     gratuitoPatrocinio,
     durataMediaStimata: {
       mediazione: "1-6 mesi",
       causaCivile: "2-4 anni",
       appello: "+1-3 anni",
       cassazione: "+1-3 anni",
-      arbitratoCAM: "6-12 mesi",
+      arbitratoCAM: costiArbitrato.durataStimata,
     },
     vantaggiFiscali,
   };
 }
 
-// Export tabelle per visualizzazione
 export function getTabellaCU() {
   return CONTRIBUTO_UNIFICATO.map(s => ({
     label: s.max === Infinity ? `Oltre €${s.min.toLocaleString("it-IT")}` : `€${s.min.toLocaleString("it-IT")} - €${s.max.toLocaleString("it-IT")}`,
@@ -820,10 +725,7 @@ export function getTabellaCU() {
 export function getParametriForensiGiudiziali() {
   return PARAMETRI_FORENSI_GIUDIZIALI.map(s => ({
     label: s.max === Infinity ? `Oltre €${s.min.toLocaleString("it-IT")}` : `€${s.min.toLocaleString("it-IT")} - €${s.max.toLocaleString("it-IT")}`,
-    studio: s.studio,
-    introduttiva: s.introduttiva,
-    istruttoria: s.istruttoria,
-    decisionale: s.decisionale,
+    studio: s.studio, introduttiva: s.introduttiva, istruttoria: s.istruttoria, decisionale: s.decisionale,
     totale: s.studio + s.introduttiva + s.istruttoria + s.decisionale,
   }));
 }
