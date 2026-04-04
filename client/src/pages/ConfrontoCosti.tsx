@@ -37,7 +37,7 @@ export default function ConfrontoCosti() {
   const [gratuitoPatrocinio, setGratuitoPatrocinio] = useState(false);
   const [mediatoreEsperto, setMediatoreEsperto] = useState(false);
   const [proceduraComplessa, setProceduraComplessa] = useState(false);
-  const [tipoArbitratoMedyapro, setTipoArbitratoMedyapro] = useState<TipoArbitrato>("medyapro_ordinario_unico");
+  const [tipoArbitratoMedyaPro, setTipoArbitratoMedyaPro] = useState<TipoArbitrato>("medyapro_ordinario_unico");
   const [showDetails, setShowDetails] = useState(false);
   const [showVantaggi, setShowVantaggi] = useState(true);
 
@@ -61,15 +61,15 @@ export default function ConfrontoCosti() {
     try { return calcolaConfronto({ ...baseInput, tipoArbitrato: "cam" }); } catch { return null; }
   }, [baseInput, isValid]);
 
-  const risultatoMedyapro: RisultatoConfronto | null = useMemo(() => {
+  const risultatoMedyaPro: RisultatoConfronto | null = useMemo(() => {
     if (!isValid) return null;
-    try { return calcolaConfronto({ ...baseInput, tipoArbitrato: tipoArbitratoMedyapro }); } catch { return null; }
-  }, [baseInput, isValid, tipoArbitratoMedyapro]);
+    try { return calcolaConfronto({ ...baseInput, tipoArbitrato: tipoArbitratoMedyaPro }); } catch { return null; }
+  }, [baseInput, isValid, tipoArbitratoMedyaPro]);
 
   const risultato = risultatoCAM;
 
-  const medyaproLabel = tipoArbitratoMedyapro.includes("rapido") ? "Medyapro Rapido" : "Medyapro Ordinario";
-  const medyaproLabelFull = risultatoMedyapro?.costiArbitrato.nomeIstituzione ?? medyaproLabel;
+  const medyaproLabel = tipoArbitratoMedyaPro.includes("rapido") ? "MedyaPro Rapido" : "MedyaPro Ordinario";
+  const medyaproLabelFull = risultatoMedyaPro?.costiArbitrato.nomeIstituzione ?? medyaproLabel;
 
   return (
     <div className="min-h-screen py-8 px-4">
@@ -85,7 +85,7 @@ export default function ConfrontoCosti() {
             </h1>
           </div>
           <p className="text-muted-foreground max-w-2xl">
-            Confronto completo: mediazione civile, arbitrato CAM, arbitrato Medyapro e causa ordinaria.
+            Confronto completo: mediazione civile, arbitrato CAM, arbitrato MedyaPro e causa ordinaria.
           </p>
         </div>
 
@@ -149,10 +149,10 @@ export default function ConfrontoCosti() {
                 </Select>
               </div>
 
-              {/* Selettore solo per tipo Medyapro */}
+              {/* Selettore solo per tipo MedyaPro */}
               <div className="space-y-2">
-                <Label className="text-sm font-semibold">Tipo Arbitrato Medyapro</Label>
-                <Select value={tipoArbitratoMedyapro} onValueChange={v => setTipoArbitratoMedyapro(v as TipoArbitrato)}>
+                <Label className="text-sm font-semibold">Tipo Arbitrato MedyaPro</Label>
+                <Select value={tipoArbitratoMedyaPro} onValueChange={v => setTipoArbitratoMedyaPro(v as TipoArbitrato)}>
                   <SelectTrigger className="border-2 border-foreground"><SelectValue /></SelectTrigger>
                   <SelectContent className="border-2 border-foreground">
                     <SelectItem value="medyapro_ordinario_unico">Ordinario — Arbitro unico</SelectItem>
@@ -215,7 +215,7 @@ export default function ConfrontoCosti() {
         </Card>
 
         {/* Results */}
-        {risultato && risultatoMedyapro && (
+        {risultato && risultatoMedyaPro && (
           <>
             {/* Summary Cards — 5 colonne */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 mb-4">
@@ -252,9 +252,9 @@ export default function ConfrontoCosti() {
                     <span className="text-xs font-bold text-orange-800" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>{medyaproLabel}</span>
                   </div>
                   <div className="text-xl font-bold text-orange-900 font-mono" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
-                    {formatEuro(risultatoMedyapro.costiArbitrato.totalePerParte)}
+                    {formatEuro(risultatoMedyaPro.costiArbitrato.totalePerParte)}
                   </div>
-                  <p className="text-xs text-orange-700 mt-1">per parte — {risultatoMedyapro.costiArbitrato.durataStimata}</p>
+                  <p className="text-xs text-orange-700 mt-1">per parte — {risultatoMedyaPro.costiArbitrato.durataStimata}</p>
                 </CardContent>
               </Card>
 
@@ -287,12 +287,12 @@ export default function ConfrontoCosti() {
               </Card>
             </div>
 
-            {/* Confronto CAM vs Medyapro — card dedicata */}
+            {/* Confronto CAM vs MedyaPro — card dedicata */}
             <Card className="border-2 border-foreground shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] mb-6 bg-gradient-to-r from-amber-50/60 to-orange-50/60">
               <CardHeader className="pb-2">
                 <CardTitle className="text-base flex items-center gap-2" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
                   <Briefcase className="w-4 h-4 text-amber-700" />
-                  Confronto diretto: CAM vs Medyapro
+                  Confronto diretto: CAM vs MedyaPro
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -308,12 +308,12 @@ export default function ConfrontoCosti() {
                     </thead>
                     <tbody className="font-mono" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
                       {[
-                        { label: "Spese amm. (per parte)", cam: risultato.costiArbitrato.onorariCAM, med: risultatoMedyapro.costiArbitrato.onorariCAM },
-                        { label: "Onorari arbitro (netto IVA)", cam: risultato.costiArbitrato.onorariArbitro, med: risultatoMedyapro.costiArbitrato.onorariArbitro },
-                        { label: "IVA 22% onorari arbitro", cam: risultato.costiArbitrato.ivaArbitro, med: risultatoMedyapro.costiArbitrato.ivaArbitro },
-                        { label: "Compenso avvocato", cam: risultato.costiArbitrato.compensoAvvocato, med: risultatoMedyapro.costiArbitrato.compensoAvvocato },
-                        { label: "Spese gen. 15% + CPA + IVA avv.", cam: risultato.costiArbitrato.speseGenerali15 + risultato.costiArbitrato.cpa4Avvocato + risultato.costiArbitrato.iva22Avvocato, med: risultatoMedyapro.costiArbitrato.speseGenerali15 + risultatoMedyapro.costiArbitrato.cpa4Avvocato + risultatoMedyapro.costiArbitrato.iva22Avvocato },
-                        { label: "Bollo + CTU + Registro lodo", cam: risultato.costiArbitrato.bollo + risultato.costiArbitrato.stimaCTU + risultato.costiArbitrato.impostaRegistroLodo, med: risultatoMedyapro.costiArbitrato.bollo + risultatoMedyapro.costiArbitrato.stimaCTU + risultatoMedyapro.costiArbitrato.impostaRegistroLodo },
+                        { label: "Spese amm. (per parte)", cam: risultato.costiArbitrato.onorariCAM, med: risultatoMedyaPro.costiArbitrato.onorariCAM },
+                        { label: "Onorari arbitro (netto IVA)", cam: risultato.costiArbitrato.onorariArbitro, med: risultatoMedyaPro.costiArbitrato.onorariArbitro },
+                        { label: "IVA 22% onorari arbitro", cam: risultato.costiArbitrato.ivaArbitro, med: risultatoMedyaPro.costiArbitrato.ivaArbitro },
+                        { label: "Compenso avvocato", cam: risultato.costiArbitrato.compensoAvvocato, med: risultatoMedyaPro.costiArbitrato.compensoAvvocato },
+                        { label: "Spese gen. 15% + CPA + IVA avv.", cam: risultato.costiArbitrato.speseGenerali15 + risultato.costiArbitrato.cpa4Avvocato + risultato.costiArbitrato.iva22Avvocato, med: risultatoMedyaPro.costiArbitrato.speseGenerali15 + risultatoMedyaPro.costiArbitrato.cpa4Avvocato + risultatoMedyaPro.costiArbitrato.iva22Avvocato },
+                        { label: "Bollo + CTU + Registro lodo", cam: risultato.costiArbitrato.bollo + risultato.costiArbitrato.stimaCTU + risultato.costiArbitrato.impostaRegistroLodo, med: risultatoMedyaPro.costiArbitrato.bollo + risultatoMedyaPro.costiArbitrato.stimaCTU + risultatoMedyaPro.costiArbitrato.impostaRegistroLodo },
                       ].map(({ label, cam, med }) => (
                         <tr key={label} className="border-b border-foreground/10">
                           <td className="py-2 px-3 text-sm" style={{ fontFamily: "Inter, sans-serif" }}>{label}</td>
@@ -327,16 +327,16 @@ export default function ConfrontoCosti() {
                       <tr className="border-t-2 border-foreground font-bold text-base">
                         <td className="py-3 px-3" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>TOTALE per parte</td>
                         <td className="text-right py-3 px-3 bg-amber-100 text-amber-900">{formatEuro(risultato.costiArbitrato.totalePerParte)}</td>
-                        <td className="text-right py-3 px-3 bg-orange-100 text-orange-900">{formatEuro(risultatoMedyapro.costiArbitrato.totalePerParte)}</td>
-                        <td className={`text-right py-3 px-3 bg-muted/30 text-sm font-bold ${risultatoMedyapro.costiArbitrato.totalePerParte - risultato.costiArbitrato.totalePerParte > 0 ? "text-red-600" : "text-green-600"}`}>
-                          {risultatoMedyapro.costiArbitrato.totalePerParte - risultato.costiArbitrato.totalePerParte === 0 ? "—" : `${risultatoMedyapro.costiArbitrato.totalePerParte - risultato.costiArbitrato.totalePerParte > 0 ? "+" : ""}${formatEuro(risultatoMedyapro.costiArbitrato.totalePerParte - risultato.costiArbitrato.totalePerParte)}`}
+                        <td className="text-right py-3 px-3 bg-orange-100 text-orange-900">{formatEuro(risultatoMedyaPro.costiArbitrato.totalePerParte)}</td>
+                        <td className={`text-right py-3 px-3 bg-muted/30 text-sm font-bold ${risultatoMedyaPro.costiArbitrato.totalePerParte - risultato.costiArbitrato.totalePerParte > 0 ? "text-red-600" : "text-green-600"}`}>
+                          {risultatoMedyaPro.costiArbitrato.totalePerParte - risultato.costiArbitrato.totalePerParte === 0 ? "—" : `${risultatoMedyaPro.costiArbitrato.totalePerParte - risultato.costiArbitrato.totalePerParte > 0 ? "+" : ""}${formatEuro(risultatoMedyaPro.costiArbitrato.totalePerParte - risultato.costiArbitrato.totalePerParte)}`}
                         </td>
                       </tr>
                     </tbody>
                   </table>
                 </div>
                 <p className="text-xs text-muted-foreground mt-3 italic">
-                  CAM: tariffe dal 1 marzo 2023, arbitro unico (valori medi min/max). {risultatoMedyapro.costiArbitrato.noteCalcolo}
+                  CAM: tariffe dal 1 marzo 2023, arbitro unico (valori medi min/max). {risultatoMedyaPro.costiArbitrato.noteCalcolo}
                 </p>
               </CardContent>
             </Card>
@@ -344,7 +344,7 @@ export default function ConfrontoCosti() {
             {/* Soli costi arbitrali — senza avvocato e CTU */}
             {(() => {
               const camPuro = risultato.costiArbitrato.onorariCAM + risultato.costiArbitrato.onorariArbitro + risultato.costiArbitrato.ivaArbitro + risultato.costiArbitrato.bollo + risultato.costiArbitrato.impostaRegistroLodo;
-              const medPuro = risultatoMedyapro.costiArbitrato.onorariCAM + risultatoMedyapro.costiArbitrato.onorariArbitro + risultatoMedyapro.costiArbitrato.ivaArbitro + risultatoMedyapro.costiArbitrato.bollo + risultatoMedyapro.costiArbitrato.impostaRegistroLodo;
+              const medPuro = risultatoMedyaPro.costiArbitrato.onorariCAM + risultatoMedyaPro.costiArbitrato.onorariArbitro + risultatoMedyaPro.costiArbitrato.ivaArbitro + risultatoMedyaPro.costiArbitrato.bollo + risultatoMedyaPro.costiArbitrato.impostaRegistroLodo;
               const diff = medPuro - camPuro;
               return (
                 <Card className="border-2 border-foreground shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] mb-6 bg-gradient-to-r from-amber-50/40 to-orange-50/40">
@@ -372,7 +372,7 @@ export default function ConfrontoCosti() {
                         <div className={`text-2xl font-bold font-mono ${diff > 0 ? "text-red-700" : diff < 0 ? "text-green-700" : "text-muted-foreground"}`} style={{ fontFamily: "'JetBrains Mono', monospace" }}>
                           {diff === 0 ? "—" : `${diff > 0 ? "+" : ""}${formatEuro(diff)}`}
                         </div>
-                        <p className="text-xs text-muted-foreground mt-1">{diff > 0 ? "Medyapro più costoso" : diff < 0 ? "Medyapro più economico" : "Costo uguale"}</p>
+                        <p className="text-xs text-muted-foreground mt-1">{diff > 0 ? "MedyaPro più costoso" : diff < 0 ? "MedyaPro più economico" : "Costo uguale"}</p>
                       </div>
                     </div>
                     <div className="overflow-x-auto">
@@ -387,11 +387,11 @@ export default function ConfrontoCosti() {
                         </thead>
                         <tbody className="font-mono text-xs" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
                           {[
-                            { label: "Spese amministrative (per parte)", cam: risultato.costiArbitrato.onorariCAM, med: risultatoMedyapro.costiArbitrato.onorariCAM },
-                            { label: "Onorari arbitro/collegio (netto IVA, per parte)", cam: risultato.costiArbitrato.onorariArbitro, med: risultatoMedyapro.costiArbitrato.onorariArbitro },
-                            { label: "IVA 22% onorari arbitro", cam: risultato.costiArbitrato.ivaArbitro, med: risultatoMedyapro.costiArbitrato.ivaArbitro },
-                            { label: "Bollo", cam: risultato.costiArbitrato.bollo, med: risultatoMedyapro.costiArbitrato.bollo },
-                            { label: "Imposta di registro sul lodo (3%)", cam: risultato.costiArbitrato.impostaRegistroLodo, med: risultatoMedyapro.costiArbitrato.impostaRegistroLodo },
+                            { label: "Spese amministrative (per parte)", cam: risultato.costiArbitrato.onorariCAM, med: risultatoMedyaPro.costiArbitrato.onorariCAM },
+                            { label: "Onorari arbitro/collegio (netto IVA, per parte)", cam: risultato.costiArbitrato.onorariArbitro, med: risultatoMedyaPro.costiArbitrato.onorariArbitro },
+                            { label: "IVA 22% onorari arbitro", cam: risultato.costiArbitrato.ivaArbitro, med: risultatoMedyaPro.costiArbitrato.ivaArbitro },
+                            { label: "Bollo", cam: risultato.costiArbitrato.bollo, med: risultatoMedyaPro.costiArbitrato.bollo },
+                            { label: "Imposta di registro sul lodo (3%)", cam: risultato.costiArbitrato.impostaRegistroLodo, med: risultatoMedyaPro.costiArbitrato.impostaRegistroLodo },
                           ].map(({ label, cam, med }) => {
                             const d = med - cam;
                             return (
@@ -501,8 +501,8 @@ export default function ConfrontoCosti() {
                         </tr>
                         <tr className="bg-orange-50 border-b border-foreground/10">
                           <td className="py-2 px-3 font-bold text-orange-900" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>{medyaproLabel}</td>
-                          <td className="text-right py-2 px-3 text-orange-900 font-bold">{formatEuro(risultatoMedyapro.costiArbitrato.totalePerParte)}</td>
-                          <td className="text-right py-2 px-3 text-xs">{risultatoMedyapro.costiArbitrato.durataStimata}</td>
+                          <td className="text-right py-2 px-3 text-orange-900 font-bold">{formatEuro(risultatoMedyaPro.costiArbitrato.totalePerParte)}</td>
+                          <td className="text-right py-2 px-3 text-xs">{risultatoMedyaPro.costiArbitrato.durataStimata}</td>
                         </tr>
                         <tr className="bg-red-50/50 border-b border-foreground/10">
                           <td className="py-2 px-3 text-sm" style={{ fontFamily: "Inter, sans-serif" }}>I grado (Tribunale)</td>
@@ -540,7 +540,7 @@ export default function ConfrontoCosti() {
                     data={[
                       { name: "Mediazione", "Costi totali": Math.round(risultato.costiMediazione.totaleNettoPerParte) },
                       { name: "CAM", "Costi totali": Math.round(risultato.costiArbitrato.totalePerParte) },
-                      { name: medyaproLabel, "Costi totali": Math.round(risultatoMedyapro.costiArbitrato.totalePerParte) },
+                      { name: medyaproLabel, "Costi totali": Math.round(risultatoMedyaPro.costiArbitrato.totalePerParte) },
                       { name: "I grado", "Costi totali": Math.round(risultato.costiCausaCivile.totalePerParte) },
                       { name: "I+II+III", "Costi totali": Math.round(risultato.totaleCausaTreGradi) },
                     ]}
@@ -560,7 +560,7 @@ export default function ConfrontoCosti() {
                   </BarChart>
                 </ResponsiveContainer>
                 <p className="text-xs text-muted-foreground text-center mt-3">
-                  Mediazione: 1-6 mesi. CAM: {risultato.costiArbitrato.durataStimata}. {medyaproLabel}: {risultatoMedyapro.costiArbitrato.durataStimata}. Causa civile su 3 gradi: fino a 12 anni.
+                  Mediazione: 1-6 mesi. CAM: {risultato.costiArbitrato.durataStimata}. {medyaproLabel}: {risultatoMedyaPro.costiArbitrato.durataStimata}. Causa civile su 3 gradi: fino a 12 anni.
                 </p>
               </CardContent>
             </Card>
@@ -597,7 +597,7 @@ export default function ConfrontoCosti() {
                     {[
                       { val: risultato.durataMediaStimata.mediazione, label: "Mediazione", cls: "bg-green-50 border-green-200 text-green-800" },
                       { val: risultato.costiArbitrato.durataStimata, label: "CAM", cls: "bg-amber-50 border-amber-200 text-amber-800" },
-                      { val: risultatoMedyapro.costiArbitrato.durataStimata, label: medyaproLabel, cls: "bg-orange-50 border-orange-200 text-orange-800" },
+                      { val: risultatoMedyaPro.costiArbitrato.durataStimata, label: medyaproLabel, cls: "bg-orange-50 border-orange-200 text-orange-800" },
                       { val: risultato.durataMediaStimata.causaCivile, label: "I grado", cls: "bg-red-50 border-red-200 text-red-800" },
                       { val: risultato.durataMediaStimata.appello, label: "Appello", cls: "bg-red-100 border-red-300 text-red-900" },
                     ].map(({ val, label, cls }) => (
@@ -660,7 +660,7 @@ export default function ConfrontoCosti() {
                     <TabsTrigger value="causa" className="text-xs data-[state=active]:bg-card data-[state=active]:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">I Grado</TabsTrigger>
                     <TabsTrigger value="appello" className="text-xs data-[state=active]:bg-card data-[state=active]:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">Appello</TabsTrigger>
                     <TabsTrigger value="cam" className="text-xs data-[state=active]:bg-card data-[state=active]:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">CAM</TabsTrigger>
-                    <TabsTrigger value="medyapro" className="text-xs data-[state=active]:bg-card data-[state=active]:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">Medyapro</TabsTrigger>
+                    <TabsTrigger value="medyapro" className="text-xs data-[state=active]:bg-card data-[state=active]:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">MedyaPro</TabsTrigger>
                     <TabsTrigger value="cassazione" className="text-xs data-[state=active]:bg-card data-[state=active]:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">Cassazione</TabsTrigger>
                   </TabsList>
 
@@ -678,11 +678,11 @@ export default function ConfrontoCosti() {
                         </thead>
                         <tbody className="font-mono text-xs" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
                           {[
-                            { label: "Spese avvio/C.U./Spese amm.", med: risultato.costiMediazione.indennitaOrganismo, cam: risultato.costiArbitrato.onorariCAM, medy: risultatoMedyapro.costiArbitrato.onorariCAM, causa: risultato.costiCausaCivile.contributoUnificato + risultato.costiCausaCivile.marcaDaBollo + risultato.costiCausaCivile.dirittoCopia },
-                            { label: "Onorari arbitro + IVA", med: 0, cam: risultato.costiArbitrato.onorariArbitro + risultato.costiArbitrato.ivaArbitro, medy: risultatoMedyapro.costiArbitrato.onorariArbitro + risultatoMedyapro.costiArbitrato.ivaArbitro, causa: 0 },
-                            { label: "Compenso avvocato", med: risultato.costiMediazione.compensoAvvocato, cam: risultato.costiArbitrato.compensoAvvocato, medy: risultatoMedyapro.costiArbitrato.compensoAvvocato, causa: risultato.costiCausaCivile.compensoAvvocato },
-                            { label: "Spese gen. + CPA + IVA avv.", med: risultato.costiMediazione.speseGenerali15 + risultato.costiMediazione.cpa4Avvocato + risultato.costiMediazione.iva22Avvocato, cam: risultato.costiArbitrato.speseGenerali15 + risultato.costiArbitrato.cpa4Avvocato + risultato.costiArbitrato.iva22Avvocato, medy: risultatoMedyapro.costiArbitrato.speseGenerali15 + risultatoMedyapro.costiArbitrato.cpa4Avvocato + risultatoMedyapro.costiArbitrato.iva22Avvocato, causa: risultato.costiCausaCivile.speseGenerali15 + risultato.costiCausaCivile.cpa4Avvocato + risultato.costiCausaCivile.iva22Avvocato },
-                            { label: "Registro / Bollo / CTU", med: risultato.costiMediazione.impostaRegistro + risultato.costiMediazione.costoNotaio, cam: risultato.costiArbitrato.bollo + risultato.costiArbitrato.stimaCTU + risultato.costiArbitrato.impostaRegistroLodo, medy: risultatoMedyapro.costiArbitrato.bollo + risultatoMedyapro.costiArbitrato.stimaCTU + risultatoMedyapro.costiArbitrato.impostaRegistroLodo, causa: risultato.costiCausaCivile.impostaRegistroSentenza + risultato.costiCausaCivile.stimaCTU },
+                            { label: "Spese avvio/C.U./Spese amm.", med: risultato.costiMediazione.indennitaOrganismo, cam: risultato.costiArbitrato.onorariCAM, medy: risultatoMedyaPro.costiArbitrato.onorariCAM, causa: risultato.costiCausaCivile.contributoUnificato + risultato.costiCausaCivile.marcaDaBollo + risultato.costiCausaCivile.dirittoCopia },
+                            { label: "Onorari arbitro + IVA", med: 0, cam: risultato.costiArbitrato.onorariArbitro + risultato.costiArbitrato.ivaArbitro, medy: risultatoMedyaPro.costiArbitrato.onorariArbitro + risultatoMedyaPro.costiArbitrato.ivaArbitro, causa: 0 },
+                            { label: "Compenso avvocato", med: risultato.costiMediazione.compensoAvvocato, cam: risultato.costiArbitrato.compensoAvvocato, medy: risultatoMedyaPro.costiArbitrato.compensoAvvocato, causa: risultato.costiCausaCivile.compensoAvvocato },
+                            { label: "Spese gen. + CPA + IVA avv.", med: risultato.costiMediazione.speseGenerali15 + risultato.costiMediazione.cpa4Avvocato + risultato.costiMediazione.iva22Avvocato, cam: risultato.costiArbitrato.speseGenerali15 + risultato.costiArbitrato.cpa4Avvocato + risultato.costiArbitrato.iva22Avvocato, medy: risultatoMedyaPro.costiArbitrato.speseGenerali15 + risultatoMedyaPro.costiArbitrato.cpa4Avvocato + risultatoMedyaPro.costiArbitrato.iva22Avvocato, causa: risultato.costiCausaCivile.speseGenerali15 + risultato.costiCausaCivile.cpa4Avvocato + risultato.costiCausaCivile.iva22Avvocato },
+                            { label: "Registro / Bollo / CTU", med: risultato.costiMediazione.impostaRegistro + risultato.costiMediazione.costoNotaio, cam: risultato.costiArbitrato.bollo + risultato.costiArbitrato.stimaCTU + risultato.costiArbitrato.impostaRegistroLodo, medy: risultatoMedyaPro.costiArbitrato.bollo + risultatoMedyaPro.costiArbitrato.stimaCTU + risultatoMedyaPro.costiArbitrato.impostaRegistroLodo, causa: risultato.costiCausaCivile.impostaRegistroSentenza + risultato.costiCausaCivile.stimaCTU },
                           ].map(({ label, med, cam, medy, causa }) => (
                             <tr key={label} className="border-b border-foreground/10">
                               <td className="py-2 px-2" style={{ fontFamily: "Inter, sans-serif" }}>{label}</td>
@@ -696,7 +696,7 @@ export default function ConfrontoCosti() {
                             <td className="py-3 px-2" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>TOTALE</td>
                             <td className="text-right py-3 px-2 bg-green-100 text-green-900">{formatEuro(risultato.costiMediazione.totaleNettoPerParte)}</td>
                             <td className="text-right py-3 px-2 bg-amber-100 text-amber-900">{formatEuro(risultato.costiArbitrato.totalePerParte)}</td>
-                            <td className="text-right py-3 px-2 bg-orange-100 text-orange-900">{formatEuro(risultatoMedyapro.costiArbitrato.totalePerParte)}</td>
+                            <td className="text-right py-3 px-2 bg-orange-100 text-orange-900">{formatEuro(risultatoMedyaPro.costiArbitrato.totalePerParte)}</td>
                             <td className="text-right py-3 px-2 bg-red-100 text-red-900">{formatEuro(risultato.costiCausaCivile.totalePerParte)}</td>
                           </tr>
                         </tbody>
@@ -761,18 +761,18 @@ export default function ConfrontoCosti() {
                   <TabsContent value="medyapro">
                     <div className="space-y-3">
                       <div className="bg-orange-50 border border-orange-200 p-3 mb-2">
-                        <p className="text-xs text-orange-800 font-semibold">{risultatoMedyapro.costiArbitrato.nomeIstituzione}</p>
-                        <p className="text-xs text-orange-700 mt-1">{risultatoMedyapro.costiArbitrato.tipoArbitro} — Durata: {risultatoMedyapro.costiArbitrato.durataStimata}</p>
+                        <p className="text-xs text-orange-800 font-semibold">{risultatoMedyaPro.costiArbitrato.nomeIstituzione}</p>
+                        <p className="text-xs text-orange-700 mt-1">{risultatoMedyaPro.costiArbitrato.tipoArbitro} — Durata: {risultatoMedyaPro.costiArbitrato.durataStimata}</p>
                       </div>
-                      <DetailItem label="Spese amministrative (per parte)" value={risultatoMedyapro.costiArbitrato.onorariCAM} note="Versate da ciascuna parte al deposito dell'istanza di arbitrato o di nomina dell'arbitro" />
-                      <DetailItem label="Onorari arbitro/collegio (media min/max, per parte)" value={risultatoMedyapro.costiArbitrato.onorariArbitro} note="Quota per parte = totale / 2. Liquidati dal direttivo ex art. 32 del Regolamento." />
-                      <DetailItem label="IVA 22% onorari arbitro" value={risultatoMedyapro.costiArbitrato.ivaArbitro} note="IVA 22% sugli onorari dell'arbitro/collegio" />
-                      <DetailItem label="Compenso avvocato (Tab. 2)" value={risultatoMedyapro.costiArbitrato.compensoAvvocato} note="D.M. 55/2014 — studio + introduttiva + istruttoria + decisionale" />
-                      <DetailItem label="Spese gen. + CPA + IVA avv." value={risultatoMedyapro.costiArbitrato.speseGenerali15 + risultatoMedyapro.costiArbitrato.cpa4Avvocato + risultatoMedyapro.costiArbitrato.iva22Avvocato} note="15% + 4% + 22%" />
-                      <DetailItem label="Bollo" value={risultatoMedyapro.costiArbitrato.bollo} note="Imposta di bollo su tutti gli atti e provvedimenti del procedimento (art. 33 Regolamento)" />
-                      <DetailItem label="Stima CTU" value={risultatoMedyapro.costiArbitrato.stimaCTU} note="Costi CTU determinati su base tabelle giudiziali (art. 23.5 Regolamento)" />
-                      <DetailItem label="Imposta di registro sul lodo" value={risultatoMedyapro.costiArbitrato.impostaRegistroLodo} note="3% (art. 8 Tariffa DPR 131/1986)" />
-                      <div className="border-t-2 border-foreground pt-3 flex justify-between"><span className="font-bold text-orange-800">Totale Medyapro</span><span className="font-bold font-mono text-orange-800">{formatEuro(risultatoMedyapro.costiArbitrato.totalePerParte)}</span></div>
+                      <DetailItem label="Spese amministrative (per parte)" value={risultatoMedyaPro.costiArbitrato.onorariCAM} note="Versate da ciascuna parte al deposito dell'istanza di arbitrato o di nomina dell'arbitro" />
+                      <DetailItem label="Onorari arbitro/collegio (media min/max, per parte)" value={risultatoMedyaPro.costiArbitrato.onorariArbitro} note="Quota per parte = totale / 2. Liquidati dal direttivo ex art. 32 del Regolamento." />
+                      <DetailItem label="IVA 22% onorari arbitro" value={risultatoMedyaPro.costiArbitrato.ivaArbitro} note="IVA 22% sugli onorari dell'arbitro/collegio" />
+                      <DetailItem label="Compenso avvocato (Tab. 2)" value={risultatoMedyaPro.costiArbitrato.compensoAvvocato} note="D.M. 55/2014 — studio + introduttiva + istruttoria + decisionale" />
+                      <DetailItem label="Spese gen. + CPA + IVA avv." value={risultatoMedyaPro.costiArbitrato.speseGenerali15 + risultatoMedyaPro.costiArbitrato.cpa4Avvocato + risultatoMedyaPro.costiArbitrato.iva22Avvocato} note="15% + 4% + 22%" />
+                      <DetailItem label="Bollo" value={risultatoMedyaPro.costiArbitrato.bollo} note="Imposta di bollo su tutti gli atti e provvedimenti del procedimento (art. 33 Regolamento)" />
+                      <DetailItem label="Stima CTU" value={risultatoMedyaPro.costiArbitrato.stimaCTU} note="Costi CTU determinati su base tabelle giudiziali (art. 23.5 Regolamento)" />
+                      <DetailItem label="Imposta di registro sul lodo" value={risultatoMedyaPro.costiArbitrato.impostaRegistroLodo} note="3% (art. 8 Tariffa DPR 131/1986)" />
+                      <div className="border-t-2 border-foreground pt-3 flex justify-between"><span className="font-bold text-orange-800">Totale MedyaPro</span><span className="font-bold font-mono text-orange-800">{formatEuro(risultatoMedyaPro.costiArbitrato.totalePerParte)}</span></div>
                       <p className="text-xs text-muted-foreground italic">Pagamento: IBAN IT77X0503411716000000007462 — Banco Popolare di Verona — intestato a MedyaPro Srl. Causale: numero procedura e nome parte.</p>
                     </div>
                   </TabsContent>
@@ -825,7 +825,7 @@ export default function ConfrontoCosti() {
                   <p className="font-semibold mb-1">Criteri di calcolo e avvertenza legale</p>
                   <p className="mb-2"><strong>Compensi avvocato:</strong> calcolati sui valori medi D.M. 55/2014 (agg. D.M. 147/2022). Il compenso effettivo può variare dal -50% al +100% in base a complessità, urgenza e risultati (art. 4 D.M. 55/2014).</p>
                   <p className="mb-2"><strong>Arbitrato CAM:</strong> tariffe Camera Arbitrale di Milano dal 1 marzo 2023. Arbitro unico, valori medi min/max. Onorari CAM esenti IVA; IVA 22% sugli onorari dell'arbitro. Il lodo ha efficacia di sentenza (art. 824-bis c.p.c.).</p>
-                  <p className="mb-2"><strong>Arbitrato Medyapro:</strong> tariffe Camera Arbitrale Medyapro Srl (Regolamento approvato 14 novembre 2022). Spese amministrative versate da ciascuna parte al deposito. Compensi arbitro/collegio calcolati come media tra minimo e massimo tariffario per scaglione, quota per parte = totale / 2. Compensi liquidati dal direttivo ex art. 32 Regolamento. Si applica l'imposta di bollo su tutti gli atti (art. 28.2 Regolamento). CTU determinata su tabelle giudiziali (art. 23.5 Regolamento).</p>
+                  <p className="mb-2"><strong>Arbitrato MedyaPro:</strong> tariffe Camera Arbitrale MedyaPro Srl (Regolamento approvato 14 novembre 2022). Spese amministrative versate da ciascuna parte al deposito. Compensi arbitro/collegio calcolati come media tra minimo e massimo tariffario per scaglione, quota per parte = totale / 2. Compensi liquidati dal direttivo ex art. 32 Regolamento. Si applica l'imposta di bollo su tutti gli atti (art. 28.2 Regolamento). CTU determinata su tabelle giudiziali (art. 23.5 Regolamento).</p>
                   <p><strong>Avvertenza:</strong> tutti i calcoli hanno finalità esclusivamente informativa e orientativa. Non costituiscono consulenza legale né preventivo vincolante.</p>
                 </div>
               </div>
