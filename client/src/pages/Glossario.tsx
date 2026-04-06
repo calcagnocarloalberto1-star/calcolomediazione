@@ -20,6 +20,11 @@ const glossaryEntries: GlossaryEntry[] = [
     definition: "Acronimo inglese che indica i metodi alternativi di risoluzione delle controversie, ossia tutti quei procedimenti che consentono di comporre una lite senza ricorrere al giudizio ordinario. Comprendono la mediazione, la negoziazione assistita, l'arbitrato e la conciliazione.",
   },
   {
+  term: "Amministratore di condominio in mediazione (art. 5-ter)",
+  definition: "L'art. 5-ter del D.Lgs. 28/2010, introdotto dalla Riforma Cartabia (D.Lgs. 149/2022) e in vigore dal 30 giugno 2023, stabilisce che l'amministratore di condominio è legittimato ad attivare un procedimento di mediazione, ad aderirvi e a parteciparvi autonomamente, senza necessità di alcuna delibera assembleare preventiva. La delibera dell'assemblea condominiale è richiesta soltanto nella fase finale, per approvare il verbale contenente l'accordo di conciliazione o la proposta conciliativa del mediatore. L'assemblea delibera entro il termine fissato nell'accordo o nella proposta, con le maggioranze previste dall'art. 1136 c.c. In caso di mancata approvazione entro tale termine, la conciliazione si intende non conclusa. La norma ha abrogato i commi 2, 4, 5 e 6 del previgente art. 71-quater disp. att. c.c., che richiedevano una delibera assembleare preventiva anche per la semplice partecipazione.",
+  references: "Art. 5-ter D.Lgs. 28/2010; Art. 71-quater disp. att. c.c. (come modificato da D.Lgs. 149/2022)"
+},
+  {
     term: "Avvio del procedimento",
     definition: "L'atto con cui il procedimento di mediazione viene formalmente attivato, mediante il deposito della domanda presso un organismo di mediazione accreditato. Le spese di avvio variano in base al valore della lite: €40 (fino a €1.000), €75 (da €1.001 a €50.000), €110 (oltre €50.000 e indeterminato) — art. 28, co. 4, D.M. 150/2023.",
     references: "Art. 4 D.Lgs. 28/2010; D.M. 150/2023"
