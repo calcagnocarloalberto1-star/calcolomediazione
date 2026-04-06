@@ -20,10 +20,10 @@ const glossaryEntries: GlossaryEntry[] = [
     definition: "Acronimo inglese che indica i metodi alternativi di risoluzione delle controversie, ossia tutti quei procedimenti che consentono di comporre una lite senza ricorrere al giudizio ordinario. Comprendono la mediazione, la negoziazione assistita, l'arbitrato e la conciliazione.",
   },
   {
-  term: "Amministratore di condominio in mediazione (art. 5-ter)",
-  definition: "L'art. 5-ter del D.Lgs. 28/2010, introdotto dalla Riforma Cartabia (D.Lgs. 149/2022) e in vigore dal 30 giugno 2023, stabilisce che l'amministratore di condominio è legittimato ad attivare un procedimento di mediazione, ad aderirvi e a parteciparvi autonomamente, senza necessità di alcuna delibera assembleare preventiva. La delibera dell'assemblea condominiale è richiesta soltanto nella fase finale, per approvare il verbale contenente l'accordo di conciliazione o la proposta conciliativa del mediatore. L'assemblea delibera entro il termine fissato nell'accordo o nella proposta, con le maggioranze previste dall'art. 1136 c.c. In caso di mancata approvazione entro tale termine, la conciliazione si intende non conclusa. La norma ha abrogato i commi 2, 4, 5 e 6 del previgente art. 71-quater disp. att. c.c., che richiedevano una delibera assembleare preventiva anche per la semplice partecipazione.",
-  references: "Art. 5-ter D.Lgs. 28/2010; Art. 71-quater disp. att. c.c. (come modificato da D.Lgs. 149/2022)"
-},
+    term: "Amministratore di condominio in mediazione (art. 5-ter)",
+    definition: "L'art. 5-ter del D.Lgs. 28/2010, introdotto dalla Riforma Cartabia (D.Lgs. 149/2022) e in vigore dal 30 giugno 2023, stabilisce che l'amministratore di condominio è legittimato ad attivare un procedimento di mediazione, ad aderirvi e a parteciparvi autonomamente, senza necessità di alcuna delibera assembleare preventiva. La delibera dell'assemblea condominiale è richiesta soltanto nella fase finale, per approvare il verbale contenente l'accordo di conciliazione o la proposta conciliativa del mediatore. L'assemblea delibera entro il termine fissato nell'accordo o nella proposta, con le maggioranze previste dall'art. 1136 c.c. In caso di mancata approvazione entro tale termine, la conciliazione si intende non conclusa. La norma ha abrogato i commi 2, 4, 5 e 6 del previgente art. 71-quater disp. att. c.c., che richiedevano una delibera assembleare preventiva anche per la semplice partecipazione.",
+    references: "Art. 5-ter D.Lgs. 28/2010; Art. 71-quater disp. att. c.c. (come modificato da D.Lgs. 149/2022)"
+  },
   {
     term: "Avvio del procedimento",
     definition: "L'atto con cui il procedimento di mediazione viene formalmente attivato, mediante il deposito della domanda presso un organismo di mediazione accreditato. Le spese di avvio variano in base al valore della lite: €40 (fino a €1.000), €75 (da €1.001 a €50.000), €110 (oltre €50.000 e indeterminato) — art. 28, co. 4, D.M. 150/2023.",
@@ -97,7 +97,7 @@ const glossaryEntries: GlossaryEntry[] = [
   },
   {
     term: "Indennità di mediazione",
-    definition: "Compenso dovuto all'organismo di mediazione da ciascuna parte per lo svolgimento del procedimento. L'importo è determinato in base al valore della controversia secondo le tabelle del D.M. 150/2023. Sono previste riduzioni per le mediazioni obbligatorie (-20%) e maggiorazioni in caso di accordo (+20%).",
+    definition: "Compenso dovuto all'organismo di mediazione da ciascuna parte per lo svolgimento del procedimento. L'importo è determinato in base al valore della controversia secondo le tabelle del D.M. 150/2023. Sono previste riduzioni per le mediazioni obbligatorie (-20%) e maggiorazioni differenziate in caso di accordo: +10% se l'accordo è raggiunto al primo incontro, +25% se raggiunto negli incontri successivi.",
     references: "D.M. 150/2023"
   },
   {
@@ -121,8 +121,8 @@ const glossaryEntries: GlossaryEntry[] = [
   },
   {
     term: "Mediazione obbligatoria",
-    definition: "Mediazione prevista come condizione di procedibilità della domanda giudiziale in specifiche materie: condominio, diritti reali, divisione, successioni ereditarie, patti di famiglia, locazione, comodato, affitto di aziende, responsabilità medica, diffamazione, contratti assicurativi, bancari e finanziari, e altre materie introdotte dalla Riforma Cartabia.",
-    references: "Art. 5, co. 1, D.Lgs. 28/2010"
+    definition: "Mediazione prevista come condizione di procedibilità della domanda giudiziale in specifiche materie: condominio, diritti reali, divisione, successioni ereditarie, patti di famiglia, locazione, comodato, affitto di aziende, responsabilità medica, diffamazione, contratti assicurativi, bancari e finanziari, e altre materie introdotte dalla Riforma Cartabia. Per le controversie condominiali, l'amministratore può partecipare alla mediazione senza delibera assembleare preventiva (art. 5-ter D.Lgs. 28/2010).",
+    references: "Art. 5, co. 1, D.Lgs. 28/2010; Art. 5-ter D.Lgs. 28/2010"
   },
   {
     term: "Mediazione volontaria",
@@ -156,7 +156,7 @@ const glossaryEntries: GlossaryEntry[] = [
   },
   {
     term: "Riforma Cartabia",
-    definition: "Insieme di riforme della giustizia civile introdotte dal D.Lgs. 149/2022, in attuazione della delega contenuta nella L. 206/2021. Ha significativamente modificato la disciplina della mediazione, ampliando le materie obbligatorie, rafforzando il primo incontro, introducendo la mediazione telematica e potenziando gli incentivi fiscali. Il Correttivo Cartabia (D.Lgs. 216/2024, in vigore dal 25 gennaio 2025) ha poi portato la durata massima del procedimento a sei mesi.",
+    definition: "Insieme di riforme della giustizia civile introdotte dal D.Lgs. 149/2022, in attuazione della delega contenuta nella L. 206/2021. Ha significativamente modificato la disciplina della mediazione, ampliando le materie obbligatorie, rafforzando il primo incontro, introducendo la mediazione telematica e potenziando gli incentivi fiscali. Ha inoltre introdotto l'art. 5-ter, che consente all'amministratore di condominio di partecipare alla mediazione senza delibera assembleare preventiva. Il Correttivo Cartabia (D.Lgs. 216/2024, in vigore dal 25 gennaio 2025) ha poi portato la durata massima del procedimento a sei mesi.",
     references: "D.Lgs. 149/2022; L. 206/2021; D.Lgs. 216/2024"
   },
   {
@@ -184,7 +184,6 @@ export default function Glossario() {
       e.definition.toLowerCase().includes(search.toLowerCase())
   );
 
-  // Group by first letter
   const grouped = filtered.reduce<Record<string, GlossaryEntry[]>>((acc, entry) => {
     const letter = entry.term[0].toUpperCase();
     if (!acc[letter]) acc[letter] = [];
@@ -214,7 +213,6 @@ export default function Glossario() {
           {glossaryEntries.length} termini essenziali della mediazione civile e commerciale italiana
         </p>
 
-        {/* Search */}
         <div className="relative mb-6">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 opacity-40" />
           <Input
@@ -227,7 +225,6 @@ export default function Glossario() {
           />
         </div>
 
-        {/* Letter nav */}
         <div className="flex flex-wrap gap-1 mb-6">
           {letters.map((letter) => (
             <button
@@ -241,14 +238,12 @@ export default function Glossario() {
           ))}
         </div>
 
-        {/* Results count */}
         {search && (
           <p className="text-xs opacity-60 mb-4">
-            {filtered.length} risultat{filtered.length === 1 ? 'o' : 'i'} per "{search}"
+            {filtered.length} risultat{filtered.length === 1 ? 'o' : 'i'} per &quot;{search}&quot;
           </p>
         )}
 
-        {/* Entries */}
         <div className="space-y-6">
           {letters.map((letter) => (
             <div key={letter} id={`letter-${letter}`}>
@@ -287,7 +282,7 @@ export default function Glossario() {
         {filtered.length === 0 && (
           <div className="text-center py-12 opacity-50">
             <BookOpen className="w-12 h-12 mx-auto mb-4 opacity-30" />
-            <p className="text-sm">Nessun termine trovato per "{search}"</p>
+            <p className="text-sm">Nessun termine trovato per &quot;{search}&quot;</p>
           </div>
         )}
       </div>
