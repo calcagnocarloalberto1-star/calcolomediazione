@@ -100,7 +100,7 @@ export default function GuidaDM150() {
                     Volontaria
                   </h4>
                   <p className="text-xs text-muted-foreground leading-relaxed">
-                    Scelta liberamente dalle parti senza obbligo di legge. Si applica l'indennità piena senza riduzioni.
+                    Scelta liberamente dalle parti senza obbligo di legge. Si applica l&apos;indennità piena senza riduzioni.
                   </p>
                 </div>
                 <div className="border-2 border-foreground p-4 bg-muted/30">
@@ -192,7 +192,7 @@ export default function GuidaDM150() {
             <SectionHeader icon={TrendingDown} number="4" title="Riduzioni Previste" />
             <div className="border-2 border-foreground bg-card shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] p-6">
               <p className="text-muted-foreground leading-relaxed mb-6">
-                Il D.M. 150/2023 prevede specifiche riduzioni dell'indennità di mediazione nei seguenti casi:
+                Il D.M. 150/2023 prevede specifiche riduzioni dell&apos;indennità di mediazione nei seguenti casi:
               </p>
               <div className="space-y-4">
                 <ReductionCard
@@ -222,28 +222,32 @@ export default function GuidaDM150() {
           {/* 5. Maggiorazioni */}
           <section>
             <SectionHeader icon={TrendingUp} number="5" title="Maggiorazioni" />
-            <div className="border-2 border-foreground p-4 bg-green-50 dark:bg-green-950/20">
-  <div className="flex items-start gap-3">
-    <span
-      className="inline-block px-2 py-1 bg-green-600 text-white text-xs font-bold border border-foreground"
-      style={{ fontFamily: "'JetBrains Mono', monospace" }}
-    >
-      +10% / +25%
-    </span>
-    <div>
-      <h4 className="font-bold text-sm mb-1" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
-        Accordo raggiunto
-      </h4>
-      <p className="text-xs text-muted-foreground leading-relaxed">
-        Il D.M. 150/2023 prevede maggiorazioni differenziate in base al momento in cui si raggiunge
-        l'accordo: <strong>+10%</strong> se l'accordo è raggiunto al primo incontro (art. 28, co. 9),
-        <strong> +25%</strong> se l'accordo è raggiunto negli incontri successivi (art. 28, co. 10).
-        La maggiorazione incentiva il raggiungimento dell'accordo e premia l'organismo per il risultato ottenuto.
-      </p>
-    </div>
-  </div>
-</div>
-
+            <div className="border-2 border-foreground bg-card shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] p-6">
+              <p className="text-muted-foreground leading-relaxed mb-6">
+                In determinate circostanze, l&apos;indennità di mediazione può essere maggiorata:
+              </p>
+              <div className="space-y-4">
+                <div className="border-2 border-foreground p-4 bg-green-50 dark:bg-green-950/20">
+                  <div className="flex items-start gap-3">
+                    <span
+                      className="inline-block px-2 py-1 bg-green-600 text-white text-xs font-bold border border-foreground"
+                      style={{ fontFamily: "'JetBrains Mono', monospace" }}
+                    >
+                      +10% / +25%
+                    </span>
+                    <div>
+                      <h4 className="font-bold text-sm mb-1" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
+                        Accordo raggiunto
+                      </h4>
+                      <p className="text-xs text-muted-foreground leading-relaxed">
+                        Il D.M. 150/2023 prevede maggiorazioni differenziate in base al momento in cui si raggiunge
+                        l&apos;accordo: <strong>+10%</strong> se l&apos;accordo è raggiunto al primo incontro (art. 28, co. 9),
+                        <strong> +25%</strong> se l&apos;accordo è raggiunto negli incontri successivi (art. 28, co. 10).
+                        La maggiorazione incentiva il raggiungimento dell&apos;accordo e premia l&apos;organismo per il risultato ottenuto.
+                      </p>
+                    </div>
+                  </div>
+                </div>
                 <div className="border-2 border-foreground p-4 bg-muted/20">
                   <div className="flex items-start gap-3">
                     <span
@@ -258,9 +262,9 @@ export default function GuidaDM150() {
                       </h4>
                       <p className="text-xs text-muted-foreground leading-relaxed">
                         In caso di procedimenti che richiedono perizia tecnica o che presentano materia di particolare
-                        complessità, l'organismo può prevedere costi aggiuntivi per la consulenza tecnica,
-                        da concordare con le parti. Le spese per l'eventuale consulente tecnico sono separate
-                        dall'indennità di mediazione e sono a carico delle parti che ne hanno fatto richiesta.
+                        complessità, l&apos;organismo può prevedere costi aggiuntivi per la consulenza tecnica,
+                        da concordare con le parti. Le spese per l&apos;eventuale consulente tecnico sono separate
+                        dall&apos;indennità di mediazione e sono a carico delle parti che ne hanno fatto richiesta.
                       </p>
                     </div>
                   </div>
@@ -268,7 +272,7 @@ export default function GuidaDM150() {
               </div>
               <div className="border-2 border-primary bg-primary/5 p-4 mt-6">
                 <p className="text-sm text-foreground">
-                  <strong>Nota:</strong> L'IVA al 22% si applica sull'importo totale dell'indennità (comprensivo
+                  <strong>Nota:</strong> L&apos;IVA al 22% si applica sull&apos;importo totale dell&apos;indennità (comprensivo
                   di eventuali riduzioni e maggiorazioni) ed è a carico di ciascuna parte.
                 </p>
               </div>
@@ -346,6 +350,11 @@ export default function GuidaDM150() {
                   url="https://www.normattiva.it/uri-res/N2Ls?urn:nir:stato:decreto.legislativo:2010-03-04;28"
                 />
                 <ReferenceLink
+                  title="Art. 5-ter D.Lgs. 28/2010 — Legittimazione amministratore di condominio"
+                  description="Introdotto dalla Riforma Cartabia (D.Lgs. 149/2022), in vigore dal 30 giugno 2023. L'amministratore è legittimato ad attivare, aderire e partecipare alla mediazione senza delibera assembleare preventiva. La delibera è richiesta solo per approvare l'accordo o la proposta del mediatore."
+                  url="https://www.normattiva.it/uri-res/N2Ls?urn:nir:stato:decreto.legislativo:2010-03-04;28"
+                />
+                <ReferenceLink
                   title="D.Lgs. 149/2022 (Riforma Cartabia)"
                   description="Decreto Legislativo 10 ottobre 2022, n. 149 — Attuazione della legge 26 novembre 2021, n. 206, recante delega al Governo per l'efficienza del processo civile"
                   url="https://www.normattiva.it/uri-res/N2Ls?urn:nir:stato:decreto.legislativo:2022-10-10;149"
@@ -381,7 +390,7 @@ export default function GuidaDM150() {
             Pronto a calcolare?
           </h3>
           <p className="text-muted-foreground mb-6 max-w-lg mx-auto">
-            Usa il nostro calcolatore per ottenere l'importo esatto delle indennità di mediazione
+            Usa il nostro calcolatore per ottenere l&apos;importo esatto delle indennità di mediazione
             per il tuo caso specifico.
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
