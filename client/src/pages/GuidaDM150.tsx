@@ -222,31 +222,28 @@ export default function GuidaDM150() {
           {/* 5. Maggiorazioni */}
           <section>
             <SectionHeader icon={TrendingUp} number="5" title="Maggiorazioni" />
-            <div className="border-2 border-foreground bg-card shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] p-6">
-              <p className="text-muted-foreground leading-relaxed mb-6">
-                In determinate circostanze, l'indennità di mediazione può essere maggiorata:
-              </p>
-              <div className="space-y-4">
-                <div className="border-2 border-foreground p-4 bg-green-50 dark:bg-green-950/20">
-                  <div className="flex items-start gap-3">
-                    <span
-                      className="inline-block px-2 py-1 bg-green-600 text-white text-xs font-bold border border-foreground"
-                      style={{ fontFamily: "'JetBrains Mono', monospace" }}
-                    >
-                      +20%
-                    </span>
-                    <div>
-                      <h4 className="font-bold text-sm mb-1" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
-                        Accordo raggiunto
-                      </h4>
-                      <p className="text-xs text-muted-foreground leading-relaxed">
-                        Quando le parti raggiungono un accordo di mediazione (sia al primo incontro che negli incontri
-                        successivi), l'indennità è maggiorata di un quinto (20%). Questa maggiorazione incentiva
-                        il raggiungimento dell'accordo e premia l'organismo per il risultato ottenuto.
-                      </p>
-                    </div>
-                  </div>
-                </div>
+            <div className="border-2 border-foreground p-4 bg-green-50 dark:bg-green-950/20">
+  <div className="flex items-start gap-3">
+    <span
+      className="inline-block px-2 py-1 bg-green-600 text-white text-xs font-bold border border-foreground"
+      style={{ fontFamily: "'JetBrains Mono', monospace" }}
+    >
+      +10% / +25%
+    </span>
+    <div>
+      <h4 className="font-bold text-sm mb-1" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
+        Accordo raggiunto
+      </h4>
+      <p className="text-xs text-muted-foreground leading-relaxed">
+        Il D.M. 150/2023 prevede maggiorazioni differenziate in base al momento in cui si raggiunge
+        l'accordo: <strong>+10%</strong> se l'accordo è raggiunto al primo incontro (art. 28, co. 9),
+        <strong> +25%</strong> se l'accordo è raggiunto negli incontri successivi (art. 28, co. 10).
+        La maggiorazione incentiva il raggiungimento dell'accordo e premia l'organismo per il risultato ottenuto.
+      </p>
+    </div>
+  </div>
+</div>
+
                 <div className="border-2 border-foreground p-4 bg-muted/20">
                   <div className="flex items-start gap-3">
                     <span
