@@ -76,7 +76,7 @@ export default function GuidaDM150() {
                 che ha profondamente modificato il D.Lgs. 28/2010 in materia di mediazione. Il D.M. 150/2023 sostituisce il precedente
                 D.M. 180/2010, aggiornando la Tabella delle indennità e introducendo nuove regole per il calcolo dei costi.
                 Il quadro normativo è stato ulteriormente aggiornato dal <strong className="text-foreground">Correttivo Cartabia</strong> (D.Lgs. 216/2024, in vigore dal 25 gennaio 2025),
-                che ha portato la durata massima del procedimento di mediazione a sei mesi (art. 6 D.Lgs. 28/2010).
+                che ha portato la durata ordinaria del procedimento di mediazione a sei mesi (art. 6 D.Lgs. 28/2010). È importante precisare che i sei mesi non sono un limite invalicabile: per la mediazione volontaria e per quella obbligatoria (condizione di procedibilità), le parti possono concordare per iscritto proroghe successive di tre mesi ciascuna senza limite al numero di rinnovi. Per la mediazione demandata dal giudice, è invece ammessa una sola proroga di tre mesi (massimo 9 mesi totali).
               </p>
               <div className="border-2 border-primary bg-primary/5 p-4 mt-4">
                 <p className="text-sm font-semibold text-foreground">
