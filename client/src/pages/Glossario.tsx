@@ -58,7 +58,7 @@ const glossaryEntries: GlossaryEntry[] = [
   },
   {
     term: "Correttivo Cartabia (D.Lgs. 216/2024)",
-    definition: "Decreto legislativo 21 novembre 2024, n. 216, recante disposizioni integrative e correttive del D.Lgs. 149/2022 (Riforma Cartabia). In vigore dal 25 gennaio 2025, ha modificato l'art. 6 del D.Lgs. 28/2010 portando la durata massima del procedimento di mediazione da tre a sei mesi. Ha inoltre precisato le regole sulle proroghe: nelle mediazioni volontarie e obbligatorie si possono concedere proroghe successive di tre mesi ciascuna; nelle mediazioni demandate la proroga è possibile una sola volta per tre mesi.",
+    definition: "Decreto legislativo 21 novembre 2024, n. 216, recante disposizioni integrative e correttive del D.Lgs. 149/2022 (Riforma Cartabia). In vigore dal 25 gennaio 2025, ha modificato l'art. 6 del D.Lgs. 28/2010 portando la durata ordinaria del procedimento di mediazione da tre a sei mesi. Regime delle proroghe: per la mediazione volontaria e per quella obbligatoria (condizione di procedibilità), le parti possono concordare per iscritto proroghe successive di tre mesi ciascuna, senza limite al numero (6+3+3+3... mesi). Per la mediazione demandata dal giudice, la proroga è ammessa una sola volta per tre mesi (massimo 9 mesi totali). È quindi errato affermare che una mediazione non possa durare oltre sei mesi: per la mediazione obbligatoria e volontaria non esiste un tetto massimo assoluto, purché le parti concordino ogni proroga per iscritto prima della scadenza.",
     references: "D.Lgs. 216/2024; Art. 6 D.Lgs. 28/2010"
   },
   {
@@ -111,12 +111,12 @@ const glossaryEntries: GlossaryEntry[] = [
   },
   {
     term: "Mediazione civile e commerciale",
-    definition: "Procedimento stragiudiziale di risoluzione delle controversie in cui un terzo imparziale (mediatore) assiste le parti nel trovare un accordo amichevole per la composizione della lite. Il procedimento ha una durata massima di sei mesi (art. 6, come modificato dal D.Lgs. 216/2024), prorogabile di tre mesi alla volta. Può essere volontaria, obbligatoria (per le materie indicate dall'art. 5 D.Lgs. 28/2010) o demandata dal giudice.",
-    references: "Art. 1, lett. a), D.Lgs. 28/2010; Art. 6 D.Lgs. 28/2010"
+    definition: "Procedimento stragiudiziale di risoluzione delle controversie in cui un terzo imparziale (mediatore) assiste le parti nel trovare un accordo amichevole per la composizione della lite. La durata ordinaria è di sei mesi dal deposito della domanda (art. 6 D.Lgs. 28/2010, come modificato dal D.Lgs. 216/2024, in vigore dal 25 gennaio 2025). Per la mediazione volontaria e per quella obbligatoria (condizione di procedibilità), il termine è prorogabile con accordo scritto delle parti per periodi successivi di tre mesi ciascuno, senza limite al numero di proroghe (6+3+3+3... mesi). Per la mediazione demandata dal giudice, la proroga è possibile una sola volta per ulteriori tre mesi (massimo 9 mesi totali). Non è quindi corretto affermare che una mediazione non possa superare i sei mesi: il superamento è possibile — e anzi frequente nella pratica — tramite proroghe concordate per iscritto prima della scadenza del termine in corso.",
+    references: "Art. 1, lett. a), D.Lgs. 28/2010; Art. 6 D.Lgs. 28/2010; D.Lgs. 216/2024"
   },
   {
     term: "Mediazione demandata",
-    definition: "Mediazione disposta dal giudice nel corso del processo, quando lo ritiene opportuno per la natura della causa, lo stato dell'istruzione e il comportamento delle parti. Ha durata massima di sei mesi, prorogabile per una sola volta di ulteriori tre mesi (6 + 3). Il giudice fissa una successiva udienza dopo la scadenza del termine di durata della mediazione.",
+    definition: "Mediazione disposta dal giudice nel corso del processo, quando lo ritiene opportuno per la natura della causa, lo stato dell'istruzione e il comportamento delle parti. Ha durata ordinaria di sei mesi. A differenza della mediazione obbligatoria e volontaria — dove le proroghe successive di tre mesi sono illimitate — per la mediazione demandata la proroga è possibile una sola volta, per ulteriori tre mesi, su accordo scritto delle parti chiesto prima della scadenza dei sei mesi. La durata massima assoluta della mediazione demandata è quindi di nove mesi (6 + 3). Il giudice fissa una successiva udienza dopo la scadenza del termine di durata della mediazione.",
     references: "Art. 5-quater D.Lgs. 28/2010; Art. 6 D.Lgs. 28/2010"
   },
   {
