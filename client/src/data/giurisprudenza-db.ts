@@ -948,7 +948,7 @@ export const sentenze: Sentenza[] = [
     numero: "9608",
     anno: 2026,
     data: "2026-04-15",
-    titolo: "⚠ FONDAMENTALE — Il difensore non può cumulare i ruoli di parte e di assistente: la sola presenza dell'avvocato non soddisfa la condizione di procedibilità",
+    titolo: "FONDAMENTALE — Il difensore non può cumulare i ruoli di parte e di assistente: la sola presenza dell'avvocato non soddisfa la condizione di procedibilità",
     categoria: "Partecipazione personale",
     massima: "La lettura coordinata degli artt. 5, co. 1-bis, e 8 del D.Lgs. 28/2010 — che prevedono che le parti esperiscano il procedimento di mediazione con l'assistenza degli avvocati — implica una distinzione strutturale tra la parte che partecipa e il difensore che la assiste. Ne discende che la comparizione del solo avvocato, ancorché munito di procura sostanziale, non è idonea a soddisfare la condizione di procedibilità, non potendo il difensore cumulare in sé i distinti ruoli di parte e di suo assistente. La mancata comparizione della parte chiamata non rende improcedibile la domanda della parte onerata: rileva solo sul piano sanzionatorio ex art. 12-bis e probatorio ex art. 116, co. 2, c.p.c.",
     principioDiDiritto: "Nel procedimento di mediazione obbligatoria o demandata: (1) la presenza del solo difensore, ancorché munito di procura sostanziale, non soddisfa la condizione di procedibilità, poiché parte e avvocato sono figure strutturalmente distinte e non cumulabili; (2) la mancata comparizione della parte chiamata non determina l'improcedibilità della domanda della parte onerata, rilevando solo sul piano sanzionatorio e probatorio.",
