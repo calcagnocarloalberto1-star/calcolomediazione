@@ -37,12 +37,10 @@ function getAnthropicClient(): Anthropic | null {
 }
 
 // ─── FORMAT CONSTRAINT ────────────────────────────────────────────────────
-// Appeso a ogni system prompt. Le aggiunte rispetto alla versione precedente:
-//   • istruzione esplicita sui paragrafi separati da riga vuota
-//   • istruzione di chiudere ogni sezione anche se ci si avvicina al limite
 const FORMAT_CONSTRAINT = `\n\nIMPORTANTE — Regole di formattazione OBBLIGATORIE (violazioni non accettate):
 - NON usare MAI emoji, emoticon, simboli Unicode decorativi (frecce speciali, check mark, stelle, pallini colorati, icone, simboli come \u2713 \u2717 \u2022 \u25cf \u2605 \u2192 \u27a4). Usa SOLO caratteri ASCII standard.
 - Per le tabelle Markdown: SEMPRE usare | e --- con allineamento a sinistra. OGNI riga DEVE avere ESATTAMENTE lo stesso numero di colonne dell'intestazione. NON lasciare celle vuote, scrivi "-" se non c'e' un valore.
+- OGNI riga di tabella (intestazione, separatore, righe dati) DEVE stare su una RIGA SEPARATA, terminata da newline. NON mettere mai due righe di tabella su una stessa linea.
 - PRIMA di ogni tabella lascia una riga vuota; DOPO ogni tabella lascia una riga vuota.
 - Per i punti elenco usa SOLO trattini (-), mai pallini, asterischi o altri simboli.
 - Per enfatizzare usa **grassetto**, mai emoji o simboli.
@@ -91,61 +89,6 @@ function logTruncation(provider: string, reason: string, length: number) {
     `[callLLM] OUTPUT TRONCATO — provider=${provider} reason=${reason} chars=${length}. ` +
     `Aumenta max_tokens o riduci lo scope della sezione.`
   );
-}
-
-// ─── PROVIDER: GEMINI ─────────────────────────────────────────────────────
-async function callGemini(
-  systemPrompt: string,
-  userPrompt: string,
-  maxTokens: number
-): Promise<string | null> {
-  const geminiKey = process.env.GEMINI_API_KEY;
-  if (!geminiKey) return null;
-
-  try {
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${geminiKey}`;
-    const body = {
-      systemInstruction: { parts: [{ text: systemPrompt + FORMAT_CONSTRAINT }] },
-      contents: [{ parts: [{ text: userPrompt }] }],
-      generationConfig: {
-        maxOutputTokens: Math.min(maxTokens, GEMINI_MAX_OUTPUT),
-        thinkingConfig: { thinkingBudget: 0 },
-      },
-    };
-
-    const resp = await fetch(url, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(body),
-    });
-    const data = await resp.json() as any;
-
-    if (data.error) {
-      console.error("Errore Gemini API:", data.error.message);
-      return null;
-    }
-    if (!data.candidates || data.candidates.length === 0) return null;
-
-    const candidate = data.candidates[0];
-    const parts = candidate.content?.parts || [];
-    const textParts = parts
-      .filter((p: any) => !p.thought && p.text)
-      .map((p: any) => p.text);
-
-    if (textParts.length === 0) return null;
-
-    // FIX: join con \n\n invece di \n per preservare la separazione dei paragrafi.
-    const text = textParts.join("\n\n");
-
-    if (candidate.finishReason === "MAX_TOKENS") {
-      logTruncation("gemini", "MAX_TOKENS", text.length);
-    }
-
-    return text;
-  } catch (error) {
-    console.error("Errore chiamata Gemini:", error);
-    return null;
-  }
 }
 
 // ─── PROVIDER: ANTHROPIC (con continuazione automatica) ───────────────────
@@ -206,21 +149,79 @@ async function callAnthropic(
   return fullText || null;
 }
 
+// ─── PROVIDER: GEMINI ─────────────────────────────────────────────────────
+async function callGemini(
+  systemPrompt: string,
+  userPrompt: string,
+  maxTokens: number
+): Promise<string | null> {
+  const geminiKey = process.env.GEMINI_API_KEY;
+  if (!geminiKey) return null;
+
+  try {
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${geminiKey}`;
+    const body = {
+      systemInstruction: { parts: [{ text: systemPrompt + FORMAT_CONSTRAINT }] },
+      contents: [{ parts: [{ text: userPrompt }] }],
+      generationConfig: {
+        maxOutputTokens: Math.min(maxTokens, GEMINI_MAX_OUTPUT),
+        thinkingConfig: { thinkingBudget: 0 },
+      },
+    };
+
+    const resp = await fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+    });
+    const data = await resp.json() as any;
+
+    if (data.error) {
+      console.error("Errore Gemini API:", data.error.message);
+      return null;
+    }
+    if (!data.candidates || data.candidates.length === 0) return null;
+
+    const candidate = data.candidates[0];
+    const parts = candidate.content?.parts || [];
+    const textParts = parts
+      .filter((p: any) => !p.thought && p.text)
+      .map((p: any) => p.text);
+
+    if (textParts.length === 0) return null;
+
+    // Join con \n\n per preservare la separazione dei paragrafi.
+    const text = textParts.join("\n\n");
+
+    if (candidate.finishReason === "MAX_TOKENS") {
+      logTruncation("gemini", "MAX_TOKENS", text.length);
+    }
+
+    return text;
+  } catch (error) {
+    console.error("Errore chiamata Gemini:", error);
+    return null;
+  }
+}
+
 // ─── DISPATCHER ───────────────────────────────────────────────────────────
+// Priority 1: Anthropic Claude Haiku 4.5 — affidabile per markdown e tabelle.
+// Priority 2: Gemini 2.5 Flash — fallback economico, attivo solo se manca la
+//             chiave Anthropic o se Anthropic restituisce null per errore.
 export async function callLLM(
   systemPrompt: string,
   userPrompt: string,
   maxTokens: number = DEFAULT_MAX_TOKENS
 ): Promise<string> {
-  // Priority 1: Gemini
-  const gemini = await callGemini(systemPrompt, userPrompt, maxTokens);
-  if (gemini) return cleanAIOutput(gemini);
-
-  // Priority 2: Anthropic
+  // Priority 1: Anthropic
   const claude = await callAnthropic(systemPrompt, userPrompt, maxTokens);
   if (claude) return cleanAIOutput(claude);
 
-  // Fallback: placeholder
+  // Priority 2: Gemini (fallback)
+  const gemini = await callGemini(systemPrompt, userPrompt, maxTokens);
+  if (gemini) return cleanAIOutput(gemini);
+
+  // Fallback finale: placeholder
   return generatePlaceholder(systemPrompt);
 }
 
