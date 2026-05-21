@@ -46,6 +46,17 @@ const FORMAT_CONSTRAINT = `\n\nIMPORTANTE — Regole di formattazione OBBLIGATOR
 - Per enfatizzare usa **grassetto**, mai emoji o simboli.
 - SEPARA SEMPRE i paragrafi con UNA RIGA VUOTA (due newline consecutivi). Non scrivere mai due paragrafi su righe consecutive senza riga vuota in mezzo: in Markdown verrebbero fusi in un unico blocco di testo.
 - NON troncare MAI l'analisi. Completa SEMPRE ogni sezione fino alla fine. Se ti accorgi di stare per finire lo spazio, sii piu' conciso ma chiudi sempre l'ultima frase e l'ultima sezione.
+- NON disegnare MAI alberi, schemi, grafici, gerarchie o diagrammi usando caratteri ASCII (slash /, backslash \\, pipe |, trattini --, parentesi, asterischi *). Sono illeggibili e brutti da vedere.
+- Per rappresentare alberi decisionali, gerarchie e strutture ramificate usa SOLO elenchi nidificati Markdown con trattini (-) e indentazione di 2 spazi per livello. Esempio corretto:
+  - Scenario A: Accordo in mediazione
+    - Probabilità: 60%
+    - Esito Namira: -20
+    - Esito Ministero: -20
+  - Scenario B: Causa civile
+    - Probabilità: 40%
+    - Esito Namira: -100
+    - Esito Ministero: +20
+- NON usare MAI code block (tre apici) per rappresentare strutture, tabelle, schemi o testo formattato: i code block servono solo per vero codice sorgente. Per i dati strutturati usa tabelle Markdown o elenchi nidificati.
 - Scrivi in italiano professionale e chiaro.
 - Per i simboli di valuta usa la parola "euro" o "EUR", non il simbolo.`;
 
