@@ -713,7 +713,10 @@ async function runPipeline(
     proceduraComplessa: false, modalitaTariffaria: "nazionale",
   }
 ) {
-  const truncate = (text: string, max = 3000) =>
+  // Contesto passato agli step a valle. Budget di ~8000 caratteri per step:
+  //   - input singolo: 8000
+  //   - input doppio (compatibilita, bozza): 4000 + 4000
+  const truncate = (text: string, max = 8000) =>
     text.length > max ? text.slice(0, max) + '\n\n[...troncato per brevita...]' : text;
 
   const safeStep = async <T>(stepFn: () => Promise<T>, fallback: T, stepName: string): Promise<T> => {
@@ -729,43 +732,43 @@ async function runPipeline(
     await storage.updateAnalisi(id, { prospettoEconomico: nerResult });
 
     const giuridicaResult = await safeStep(
-      () => analisiGiuridica(descrizione, parti, truncate(nerResult, 3000), tipoAnalisi),
+      () => analisiGiuridica(descrizione, parti, truncate(nerResult), tipoAnalisi),
       '[Analisi giuridica non disponibile]', 'Giuridica'
     );
     await storage.updateAnalisi(id, { analisiGiuridica: giuridicaResult });
 
     const strategicaResult = await safeStep(
-      () => guidaStrategica(descrizione, parti, truncate(nerResult, 3000)),
+      () => guidaStrategica(descrizione, parti, truncate(nerResult)),
       '[Guida strategica non disponibile]', 'Strategica'
     );
     await storage.updateAnalisi(id, { guidaStrategica: strategicaResult });
 
     const maanResult = await safeStep(
-      () => analisiMaanBatna(descrizione, parti, valoreLite, truncate(giuridicaResult, 3000)),
+      () => analisiMaanBatna(descrizione, parti, valoreLite, truncate(giuridicaResult)),
       '[Analisi MAAN/BATNA non disponibile]', 'MAAN/BATNA'
     );
     await storage.updateAnalisi(id, { analisiMaanBatna: maanResult });
 
     const compatibilitaResult = await safeStep(
-      () => compatibilitaInteressi(descrizione, parti, `${truncate(giuridicaResult, 2000)}\n\n${truncate(maanResult, 2000)}`),
+      () => compatibilitaInteressi(descrizione, parti, `${truncate(giuridicaResult, 4000)}\n\n${truncate(maanResult, 4000)}`),
       '[Compatibilita interessi non disponibile]', 'Compatibilita'
     );
     await storage.updateAnalisi(id, { compatibilitaInteressi: compatibilitaResult });
 
     const biasResult = await safeStep(
-      () => controlloBiasCognitivi(descrizione, parti, teorieSelezionate, truncate(giuridicaResult, 3000)),
+      () => controlloBiasCognitivi(descrizione, parti, teorieSelezionate, truncate(giuridicaResult)),
       '[Controllo bias non disponibile]', 'Bias'
     );
     await storage.updateAnalisi(id, { controlloBiasCognitivi: biasResult });
 
     const bozzaResult = await safeStep(
-      () => bozzaAccordo(descrizione, parti, valoreLite, `${truncate(giuridicaResult, 2000)}\n\n${truncate(compatibilitaResult, 2000)}`),
+      () => bozzaAccordo(descrizione, parti, valoreLite, `${truncate(giuridicaResult, 4000)}\n\n${truncate(compatibilitaResult, 4000)}`),
       '[Bozza accordo non disponibile]', 'Accordo'
     );
     await storage.updateAnalisi(id, { bozzaAccordo: bozzaResult });
 
     const economicaResult = await safeStep(
-      () => analisiEconomica(descrizione, parti, valoreLite, tipoAnalisi, truncate(giuridicaResult, 2000), opzioniEconomiche),
+      () => analisiEconomica(descrizione, parti, valoreLite, tipoAnalisi, truncate(giuridicaResult), opzioniEconomiche),
       '[Analisi economica non disponibile]', 'Economica'
     );
     await storage.updateAnalisi(id, { analisiEconomica: economicaResult, stato: "completata" });
