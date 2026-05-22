@@ -15,15 +15,51 @@ export default function MarkdownRenderer({ content }: MarkdownRendererProps) {
       prose-p:text-sm prose-p:leading-relaxed prose-p:mb-3
       prose-li:text-sm prose-li:leading-relaxed
       prose-strong:text-foreground
-      prose-table:border-2 prose-table:border-foreground
-      prose-th:bg-muted prose-th:px-3 prose-th:py-2 prose-th:text-left prose-th:font-bold prose-th:border prose-th:border-foreground/30 prose-th:text-sm
-      prose-td:px-3 prose-td:py-2 prose-td:border prose-td:border-foreground/20 prose-td:text-sm
       prose-blockquote:border-l-4 prose-blockquote:border-primary prose-blockquote:bg-primary/5 prose-blockquote:px-4 prose-blockquote:py-2 prose-blockquote:text-sm prose-blockquote:italic
       prose-code:bg-muted prose-code:px-1.5 prose-code:py-0.5 prose-code:text-sm prose-code:font-mono
     "
     style={{ fontFamily: "'Inter', sans-serif" }}
     >
-      <ReactMarkdown remarkPlugins={[remarkGfm]}>
+      <ReactMarkdown
+        remarkPlugins={[remarkGfm]}
+        components={{
+          // ── Tabelle: wrapper scrollabile + zebra striping + word-break ────
+          // Risolve:
+          //   - tabelle larghe che uscivano dal contenitore (ora scroll
+          //     orizzontale invece di overflow visivo)
+          //   - mancanza di alternanza colori righe
+          //   - testi lunghi nelle celle che spingevano la colonna oltre
+          //     la sua larghezza (ora break-words)
+          //   - allineamento verticale incoerente con celle multilinea
+          //     (ora align-top uniforme)
+          table: ({ node, ...props }) => (
+            <div className="my-4 overflow-x-auto border-2 border-foreground/80 bg-card shadow-[2px_2px_0px_0px_rgba(0,0,0,0.08)]">
+              <table className="w-full text-sm border-collapse" {...props} />
+            </div>
+          ),
+          thead: ({ node, ...props }) => (
+            <thead className="bg-primary text-primary-foreground" {...props} />
+          ),
+          tbody: ({ node, ...props }) => (
+            <tbody className="[&_tr:nth-child(even)]:bg-muted/30" {...props} />
+          ),
+          tr: ({ node, ...props }) => (
+            <tr className="border-b border-foreground/10 last:border-b-0" {...props} />
+          ),
+          th: ({ node, ...props }) => (
+            <th
+              className="px-3 py-2 text-left font-bold text-sm border-r border-primary-foreground/20 last:border-r-0 align-top whitespace-normal"
+              {...props}
+            />
+          ),
+          td: ({ node, ...props }) => (
+            <td
+              className="px-3 py-2 text-sm border-r border-foreground/10 last:border-r-0 align-top break-words whitespace-normal"
+              {...props}
+            />
+          ),
+        }}
+      >
         {content}
       </ReactMarkdown>
     </div>
