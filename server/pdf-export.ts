@@ -17,7 +17,17 @@ function ensureAutoTable() {
 
 function preClean(text: string): string {
   if (!text) return "";
-  return text
+  // FIX: ripara tabelle inline (righe concatenate da spazi senza newline).
+  // Necessario per analisi vecchie gia' salvate nel DB con tabelle malformate
+  // dall'AI: senza questa normalizzazione, parseMarkdownTable non le riconosce
+  // e finiscono renderizzate come paragrafo lungo nel PDF.
+  // Pattern: "<testo>|<spazi>|<testo>" = fine cella + nuova riga. Il separatore
+  // interno "<testo>|<testo>" non e' toccato perche' non ha spazi attorno al pipe.
+  const fixed = text.replace(
+    /([^\s|])[ \t]*\|[ \t]+\|[ \t]*([^\s|])/g,
+    "$1 |\n| $2"
+  );
+  return fixed
     .replace(/<br\s*\/?>/gi, " ")
     .replace(/<[^>]+>/g, "")
     .replace(/&nbsp;/g, " ")
