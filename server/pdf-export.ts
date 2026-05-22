@@ -105,7 +105,11 @@ function stripMarkdown(text: string): string {
 
 function cleanCell(text: string): string {
   const cleaned = sanitizeText(stripMarkdown(preClean(text)));
-  return cleaned.length > 250 ? cleaned.substring(0, 247) + "..." : cleaned;
+  // FIX: limite alzato da 250 -> 2000 caratteri.
+  // jspdf-autotable gestisce automaticamente il wrap multilinea delle celle.
+  // Il vecchio limite a 250 char troncava contenuto utile delle tabelle AI
+  // (scenari ZOPA, motivazioni, riferimenti normativi).
+  return cleaned.length > 2000 ? cleaned.substring(0, 1997) + "..." : cleaned;
 }
 
 interface ParsedTable { headers: string[]; rows: string[][]; }
@@ -129,7 +133,18 @@ function parseMarkdownTable(text: string): ParsedTable | null {
     rows.push(parseRow(line));
   }
   if (!headers.length || !rows.length) return null;
-  return { headers, rows };
+
+  // FIX: normalizzo le righe alla larghezza dell'header.
+  // Le righe con meno celle vengono paddate, quelle con piu' celle troncate.
+  // Cosi' jspdf-autotable disegna sempre tabelle ben allineate.
+  const cols = headers.length;
+  const normRows = rows.map(r => {
+    if (r.length < cols) return [...r, ...Array(cols - r.length).fill("")];
+    if (r.length > cols) return r.slice(0, cols);
+    return r;
+  });
+
+  return { headers, rows: normRows };
 }
 
 interface ContentSegment { type: "text" | "table"; content: string; table?: ParsedTable; }
@@ -199,10 +214,10 @@ export function generateAnalisiPdf(analisi: AnalisiCaso): Buffer {
   const bulletColor: [number, number, number] = [38, 150, 140];
 
   // ─── TIPOGRAFIA ───────────────────────────────────────────────────────────
-  const LINE_HEIGHT   = 5.2;   // era 4.5 — più respiro tra righe
-  const PARA_SPACING  = 5;     // era 2 — spazio tra paragrafi
-  const BULLET_INDENT = 8;     // rientro testo dopo bullet
-  const BULLET_DOT_X  = marginLeft + 2.5; // posizione pallino bullet
+  const LINE_HEIGHT   = 5.2;
+  const PARA_SPACING  = 5;
+  const BULLET_INDENT = 8;
+  const BULLET_DOT_X  = marginLeft + 2.5;
 
   const now = new Date();
   const dateStr = now.toLocaleDateString("it-IT", { day: "2-digit", month: "long", year: "numeric" });
@@ -218,10 +233,13 @@ export function generateAnalisiPdf(analisi: AnalisiCaso): Buffer {
     const body = table.rows.map(r => r.map(cleanCell));
     const allCells = [...heads, ...body.flat()];
     const avg = allCells.reduce((s, c) => s + c.length, 0) / Math.max(allCells.length, 1);
-    if (heads.length <= 1 || avg > 150) {
+
+    // FIX: il fallback testo per tabelle malformate non deve perdere le celle vuote.
+    // Usa "-" come placeholder per le celle vuote in modo da preservare l'allineamento.
+    if (heads.length <= 1 || avg > 300) {
       for (const row of [heads, ...body]) {
-        const txt = row.filter(c => c.trim()).join(" | ");
-        if (!txt.trim()) continue;
+        const txt = row.map(c => c.trim() || "-").join(" | ");
+        if (!txt.trim() || /^[\-\s|]+$/.test(txt)) continue;
         doc.setFontSize(9); doc.setTextColor(...darkColor); doc.setFont("helvetica", "normal");
         for (const wl of doc.splitTextToSize(sanitizeText(txt), contentWidth)) {
           checkNewPage(6); doc.text(wl, marginLeft, y); y += LINE_HEIGHT;
@@ -248,10 +266,10 @@ export function generateAnalisiPdf(analisi: AnalisiCaso): Buffer {
       didDrawPage: () => {},
     });
     y = (doc as any).lastAutoTable?.finalY ?? y + 10;
-    y += 8; // spazio dopo tabella
+    y += 8;
   }
 
-  // ─── RENDER BODY — FIX PRINCIPALE FORMATTAZIONE ───────────────────────────
+  // ─── RENDER BODY ──────────────────────────────────────────────────────────
   function renderBody(body: string) {
     if (!body.trim()) return;
 
@@ -262,8 +280,6 @@ export function generateAnalisiPdf(analisi: AnalisiCaso): Buffer {
       }
 
       const cleaned = stripMarkdown(seg.content);
-
-      // Suddividi in paragrafi separati da riga vuota
       const paragraphs = cleaned.split(/\n\n+/);
 
       for (const para of paragraphs) {
@@ -272,8 +288,6 @@ export function generateAnalisiPdf(analisi: AnalisiCaso): Buffer {
 
         const lines = trimmed.split("\n");
 
-        // Raggruppa righe consecutive in blocchi (testo normale vs bullet)
-        // per applicare spacing corretto
         for (const line of lines) {
           const l = line.trim();
           if (!l) { y += 2; continue; }
@@ -283,7 +297,6 @@ export function generateAnalisiPdf(analisi: AnalisiCaso): Buffer {
           const isNumList = /^\d+\.\s/.test(l);
 
           if (isBullet || isNumList) {
-            // Testo dopo il marcatore bullet
             const bulletText = isBullet
               ? l.replace(/^[-*]\s+/, "")
               : l.replace(/^\d+\.\s+/, "");
@@ -295,7 +308,6 @@ export function generateAnalisiPdf(analisi: AnalisiCaso): Buffer {
 
             checkNewPage(LINE_HEIGHT * wrappedLines.length + 3);
 
-            // Prima riga: disegna pallino teal + testo
             doc.setFillColor(...bulletColor);
             doc.circle(BULLET_DOT_X, y - 1.2, 0.9, "F");
 
@@ -305,17 +317,15 @@ export function generateAnalisiPdf(analisi: AnalisiCaso): Buffer {
             doc.text(wrappedLines[0], marginLeft + BULLET_INDENT, y);
             y += LINE_HEIGHT;
 
-            // Righe successive dello stesso bullet (a capo)
             for (let wi = 1; wi < wrappedLines.length; wi++) {
               checkNewPage(LINE_HEIGHT);
               doc.text(wrappedLines[wi], marginLeft + BULLET_INDENT, y);
               y += LINE_HEIGHT;
             }
 
-            y += 1.5; // piccolo respiro tra bullet
+            y += 1.5;
 
           } else {
-            // Testo normale
             const wrappedLines = doc.splitTextToSize(
               sanitizeText(l),
               contentWidth
@@ -333,7 +343,6 @@ export function generateAnalisiPdf(analisi: AnalisiCaso): Buffer {
           }
         }
 
-        // Spazio tra paragrafi
         y += PARA_SPACING;
       }
     }
@@ -400,30 +409,68 @@ export function generateAnalisiPdf(analisi: AnalisiCaso): Buffer {
   if (analisi.stato) drawMeta("Stato", analisi.stato === "completata" ? "Analisi Completata" : analisi.stato);
   y += 10;
 
-  // Box descrizione — FIX: padding interno aumentato, line height corretto
+  // ─── BOX DESCRIZIONE — FIX: paginazione corretta ──────────────────────────
+  // Vecchio comportamento: box di altezza min(necessaria, residuo pagina) +
+  // loop con `break` che troncava silenziosamente le righe in eccesso.
+  // Nuovo: se la descrizione entra nello spazio residuo della cover, disegna
+  // il box compatto. Altrimenti, sposta la descrizione su una pagina
+  // dedicata e la rende paginata correttamente (page break automatico).
   if (analisi.descrizione) {
     const descText = sanitizeText(stripMarkdown(preClean(analisi.descrizione)));
     const descLines = doc.splitTextToSize(descText, contentWidth - 16);
     const boxPaddingV = 8;
-    const boxH = Math.min(descLines.length * LINE_HEIGHT + boxPaddingV * 2, maxY - y - 10);
-    doc.setDrawColor(200, 200, 200); doc.setLineWidth(0.4);
-    doc.setFillColor(252, 252, 252);
-    doc.roundedRect(marginLeft, y, contentWidth, boxH, 2, 2, "FD");
-    doc.setFontSize(9.5); doc.setFont("helvetica", "normal"); doc.setTextColor(...darkColor);
-    let dy = y + boxPaddingV + LINE_HEIGHT * 0.2;
-    for (const dl of descLines) {
-      if (dy + LINE_HEIGHT > y + boxH - 4) break;
-      doc.text(dl, marginLeft + 8, dy);
-      dy += LINE_HEIGHT;
+    const neededH = descLines.length * LINE_HEIGHT + boxPaddingV * 2;
+    const availH = (pageHeight - 25) - y - 10; // 25 mm riservati al footer
+
+    if (neededH <= availH) {
+      // Caso A: tutto entra nella cover -> box compatto come prima
+      doc.setDrawColor(200, 200, 200); doc.setLineWidth(0.4);
+      doc.setFillColor(252, 252, 252);
+      doc.roundedRect(marginLeft, y, contentWidth, neededH, 2, 2, "FD");
+      doc.setFontSize(9.5); doc.setFont("helvetica", "normal"); doc.setTextColor(...darkColor);
+      let dy = y + boxPaddingV + LINE_HEIGHT * 0.2;
+      for (const dl of descLines) {
+        doc.text(dl, marginLeft + 8, dy);
+        dy += LINE_HEIGHT;
+      }
+      y += neededH + 8;
+    } else {
+      // Caso B: la descrizione e' lunga -> pagina dedicata
+      // Disegno il footer della cover prima di passare alla pagina dedicata
+      doc.setFontSize(7); doc.setTextColor(...lightGray); doc.setFont("helvetica", "normal");
+      doc.text(
+        "Questo documento ha valore informativo e non sostituisce la consulenza legale professionale.",
+        cx, pageHeight - 15, { align: "center" }
+      );
+      doc.addPage();
+      y = 15;
+      doc.setFillColor(...primaryColor); doc.rect(0, 0, pageWidth, 5, "F");
+      y = 22;
+      doc.setFontSize(13); doc.setTextColor(...primaryColor); doc.setFont("helvetica", "bold");
+      doc.text("Descrizione del caso", marginLeft, y);
+      y += 8;
+      doc.setDrawColor(...primaryColor); doc.setLineWidth(0.6);
+      doc.line(marginLeft, y, marginLeft + contentWidth, y);
+      y += 9;
+      doc.setFontSize(9.5); doc.setFont("helvetica", "normal"); doc.setTextColor(...darkColor);
+      for (const dl of descLines) {
+        checkNewPage(LINE_HEIGHT);
+        doc.text(dl, marginLeft, y);
+        y += LINE_HEIGHT;
+      }
     }
-    y += boxH + 8;
   }
 
-  doc.setFontSize(7); doc.setTextColor(...lightGray); doc.setFont("helvetica", "normal");
-  doc.text(
-    "Questo documento ha valore informativo e non sostituisce la consulenza legale professionale.",
-    cx, pageHeight - 15, { align: "center" }
-  );
+  // Footer della cover solo se la descrizione e' stata renderizzata sulla cover.
+  // Nel caso B il footer e' gia' stato disegnato prima di addPage().
+  // Per evitare doppia scrittura controllo numero pagine = 1.
+  if (doc.getNumberOfPages() === 1) {
+    doc.setFontSize(7); doc.setTextColor(...lightGray); doc.setFont("helvetica", "normal");
+    doc.text(
+      "Questo documento ha valore informativo e non sostituisce la consulenza legale professionale.",
+      cx, pageHeight - 15, { align: "center" }
+    );
+  }
 
   // ─── SEZIONI CONTENUTO ────────────────────────────────────────────────────
   const sections = [
@@ -441,21 +488,17 @@ export function generateAnalisiPdf(analisi: AnalisiCaso): Buffer {
     if (!sec.content) continue;
     doc.addPage(); y = 15;
 
-    // Barra colore in cima
     doc.setFillColor(...primaryColor); doc.rect(0, 0, pageWidth, 5, "F");
     y = 18;
 
-    // Badge sezione
     doc.setFillColor(...primaryColor); doc.roundedRect(marginLeft, y - 3, 14, 8, 1, 1, "F");
     doc.setFontSize(6.5); doc.setTextColor(...white); doc.setFont("helvetica", "bold");
     doc.text(sec.icon, marginLeft + 7, y + 2.5, { align: "center" });
 
-    // Titolo sezione
     doc.setFontSize(14); doc.setTextColor(...darkColor); doc.setFont("helvetica", "bold");
     doc.text(sanitizeText(sec.title), marginLeft + 18, y + 2.5);
     y += 13;
 
-    // Linea separatore
     doc.setDrawColor(...primaryColor); doc.setLineWidth(0.6);
     doc.line(marginLeft, y, marginLeft + contentWidth, y);
     y += 10;
@@ -465,43 +508,74 @@ export function generateAnalisiPdf(analisi: AnalisiCaso): Buffer {
         checkNewPage(16);
         const h = sanitizeText(stripMarkdown(sub.heading));
         if (sub.level <= 2) {
+          // FIX: heading di sezione con wrap per titoli lunghi.
+          // jsPDF non fa autowrap su doc.text; senza splitTextToSize
+          // i titoli lunghi uscivano dal margine destro.
+          const headLines = doc.splitTextToSize(h, contentWidth - 8);
+          const blockH = Math.max(9, headLines.length * 5 + 4);
+          checkNewPage(blockH + 2);
           doc.setFillColor(...sectionBg);
-          doc.roundedRect(marginLeft, y - 3.5, contentWidth, 9, 1, 1, "F");
+          doc.roundedRect(marginLeft, y - 3.5, contentWidth, blockH, 1, 1, "F");
           doc.setFontSize(10.5); doc.setTextColor(...primaryColor); doc.setFont("helvetica", "bold");
-          doc.text(h, marginLeft + 5, y + 2.2);
-          y += 11;
+          let hy = y + 2.2;
+          for (const hl of headLines) {
+            doc.text(hl, marginLeft + 5, hy);
+            hy += 5;
+          }
+          y += blockH + 2;
         } else {
+          const headLines = doc.splitTextToSize(h, contentWidth - 4);
           doc.setFontSize(10); doc.setTextColor(...darkColor); doc.setFont("helvetica", "bold");
-          doc.text(h, marginLeft + 2, y);
-          y += 7;
+          for (const hl of headLines) {
+            checkNewPage(7);
+            doc.text(hl, marginLeft + 2, y);
+            y += 5;
+          }
+          y += 2;
         }
       }
       if (sub.body) renderBody(sub.body);
-      y += 3; // respiro tra sottosezioni
+      y += 3;
     }
   }
 
-  // ─── DISCLAIMER ──────────────────────────────────────────────────────────
-  checkNewPage(55); y += 8;
-  doc.setDrawColor(...primaryColor); doc.setLineWidth(1);
-  doc.line(marginLeft, y, pageWidth - marginRight, y); y += 10;
-  doc.setFillColor(...warmBg); doc.setDrawColor(220, 215, 210); doc.setLineWidth(0.3);
-  doc.roundedRect(marginLeft, y, contentWidth, 32, 2, 2, "FD");
-  doc.setFontSize(8); doc.setTextColor(...primaryColor); doc.setFont("helvetica", "bold");
-  doc.text("AVVERTENZE", marginLeft + 5, y + 8);
-  doc.setFontSize(7.5); doc.setTextColor(...grayColor); doc.setFont("helvetica", "normal");
-  let dY = y + 14;
-  for (const dl of doc.splitTextToSize(
-    "Questo documento e stato generato automaticamente dalla piattaforma CalcoloMediazione con l'ausilio di intelligenza artificiale.",
-    contentWidth - 10
-  )) { doc.text(dl, marginLeft + 5, dY); dY += 4; }
-  dY += 1;
-  for (const dl of doc.splitTextToSize(
-    "Le informazioni contenute hanno valore puramente informativo e orientativo. Non sostituiscono in alcun modo la consulenza legale professionale di un avvocato abilitato.",
-    contentWidth - 10
-  )) { doc.text(dl, marginLeft + 5, dY); dY += 4; }
-  doc.setTextColor(...lightGray);
-  doc.text(`Generato il ${dateStr} | calcolomediazione.it`, marginLeft + 5, dY + 2);
+  // ─── DISCLAIMER — FIX: altezza dinamica e paginazione corretta ────────────
+  // Vecchio: rect di altezza fissa 32 mm; con line wrap il testo poteva
+  // uscire dal box. Nuovo: misuro le righe effettive, calcolo l'altezza,
+  // garantisco lo spazio con checkNewPage.
+  {
+    const disc1 = doc.splitTextToSize(
+      "Questo documento e stato generato automaticamente dalla piattaforma CalcoloMediazione con l'ausilio di intelligenza artificiale.",
+      contentWidth - 10
+    );
+    const disc2 = doc.splitTextToSize(
+      "Le informazioni contenute hanno valore puramente informativo e orientativo. Non sostituiscono in alcun modo la consulenza legale professionale di un avvocato abilitato.",
+      contentWidth - 10
+    );
+    const totalLines = disc1.length + disc2.length;
+    const disclaimerH = 10 + totalLines * 4 + 12; // titolo + righe + data
+    checkNewPage(disclaimerH + 12);
+
+    y += 8;
+    doc.setDrawColor(...primaryColor); doc.setLineWidth(1);
+    doc.line(marginLeft, y, pageWidth - marginRight, y); y += 10;
+
+    doc.setFillColor(...warmBg); doc.setDrawColor(220, 215, 210); doc.setLineWidth(0.3);
+    doc.roundedRect(marginLeft, y, contentWidth, disclaimerH, 2, 2, "FD");
+
+    doc.setFontSize(8); doc.setTextColor(...primaryColor); doc.setFont("helvetica", "bold");
+    doc.text("AVVERTENZE", marginLeft + 5, y + 8);
+
+    doc.setFontSize(7.5); doc.setTextColor(...grayColor); doc.setFont("helvetica", "normal");
+    let dY = y + 14;
+    for (const dl of disc1) { doc.text(dl, marginLeft + 5, dY); dY += 4; }
+    dY += 1;
+    for (const dl of disc2) { doc.text(dl, marginLeft + 5, dY); dY += 4; }
+    doc.setTextColor(...lightGray);
+    doc.text(`Generato il ${dateStr} | calcolomediazione.it`, marginLeft + 5, dY + 3);
+
+    y += disclaimerH;
+  }
 
   // ─── HEADER & FOOTER PAGINE ───────────────────────────────────────────────
   const total = doc.getNumberOfPages();
