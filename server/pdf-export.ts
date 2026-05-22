@@ -426,6 +426,10 @@ export function generateAnalisiPdf(analisi: AnalisiCaso): Buffer {
   // il box compatto. Altrimenti, sposta la descrizione su una pagina
   // dedicata e la rende paginata correttamente (page break automatico).
   if (analisi.descrizione) {
+    // Setto font PRIMA di splitTextToSize cosi' il wrap viene misurato
+    // alla stessa size con cui poi disegno: evita overflow orizzontale e
+    // stime di altezza incoerenti col rendering effettivo.
+    doc.setFontSize(9.5); doc.setFont("helvetica", "normal"); doc.setTextColor(...darkColor);
     const descText = sanitizeText(stripMarkdown(preClean(analisi.descrizione)));
     const descLines = doc.splitTextToSize(descText, contentWidth - 16);
     const boxPaddingV = 8;
@@ -437,6 +441,7 @@ export function generateAnalisiPdf(analisi: AnalisiCaso): Buffer {
       doc.setDrawColor(200, 200, 200); doc.setLineWidth(0.4);
       doc.setFillColor(252, 252, 252);
       doc.roundedRect(marginLeft, y, contentWidth, neededH, 2, 2, "FD");
+      // Rinforzo font dopo il rect (alcuni setFillColor lo resettano implicitamente)
       doc.setFontSize(9.5); doc.setFont("helvetica", "normal"); doc.setTextColor(...darkColor);
       let dy = y + boxPaddingV + LINE_HEIGHT * 0.2;
       for (const dl of descLines) {
