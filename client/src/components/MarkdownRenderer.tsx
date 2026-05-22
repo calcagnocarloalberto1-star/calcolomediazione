@@ -5,7 +5,32 @@ interface MarkdownRendererProps {
   content: string;
 }
 
+// ─── NORMALIZZAZIONE TABELLE INLINE ────────────────────────────────────────
+// Patch difensiva applicata al content prima del rendering.
+// Ripara tabelle Markdown in cui l'AI ha concatenato piu' righe su una
+// sola linea (header, separator e dati uniti da spazi al posto dei
+// newline). Senza questa normalizzazione, remark-gfm non riconosce la
+// tabella e la mostra come paragrafo lungo che esce dal contenitore o
+// viene "tagliato" a video.
+//
+// Pattern riconosciuto: "<testo>|<spazi>|<testo>" = fine cella + nuova
+// riga. Il separatore di celle interno e' "<testo>|<testo>" senza spazi,
+// quindi non viene toccato. La regex e' globale: gestisce piu' righe
+// concatenate iterativamente.
+//
+// Risolve anche eventuali tabelle nei record vecchi del DB che erano gia'
+// stati salvati malformati dall'AI prima della patch lato backend.
+function fixInlineTables(text: string): string {
+  if (!text) return text;
+  return text.replace(
+    /([^\s|])[ \t]*\|[ \t]+\|[ \t]*([^\s|])/g,
+    "$1 |\n| $2"
+  );
+}
+
 export default function MarkdownRenderer({ content }: MarkdownRendererProps) {
+  const normalized = fixInlineTables(content);
+
   return (
     <div className="prose prose-sm max-w-none dark:prose-invert
       prose-headings:font-display prose-headings:tracking-tight
@@ -23,7 +48,7 @@ export default function MarkdownRenderer({ content }: MarkdownRendererProps) {
       <ReactMarkdown
         remarkPlugins={[remarkGfm]}
         components={{
-          // ── Tabelle: wrapper scrollabile + zebra striping + word-break ────
+          // Tabelle: wrapper scrollabile + zebra striping + word-break.
           // Risolve:
           //   - tabelle larghe che uscivano dal contenitore (ora scroll
           //     orizzontale invece di overflow visivo)
@@ -60,7 +85,7 @@ export default function MarkdownRenderer({ content }: MarkdownRendererProps) {
           ),
         }}
       >
-        {content}
+        {normalized}
       </ReactMarkdown>
     </div>
   );
