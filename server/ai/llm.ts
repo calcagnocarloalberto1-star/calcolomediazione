@@ -60,11 +60,38 @@ const FORMAT_CONSTRAINT = `\n\nIMPORTANTE — Regole di formattazione OBBLIGATOR
 - Scrivi in italiano professionale e chiaro.
 - Per i simboli di valuta usa la parola "euro" o "EUR", non il simbolo.`;
 
+// ─── NORMALIZZAZIONE TABELLE INLINE ───────────────────────────────────────
+// Anche se il FORMAT_CONSTRAINT vieta esplicitamente di mettere piu' righe
+// di tabella su una stessa linea, il modello a volte concatena comunque
+// header + separator + righe data senza newline (specie sotto pressione
+// di token). Questa funzione ripara l'output spezzando dove serve.
+//
+// Pattern riconosciuto: "<testo>|<spazi>|<testo>" che e' "fine cella" seguita
+// da spazi seguita da "inizio cella nuova riga". Il separatore di celle
+// interno e' "<testo>|<testo>" (senza spazi attorno al pipe), quindi non
+// matcha. Il fix viene applicato in modo iterativo (g) per gestire piu'
+// righe concatenate nella stessa riga sorgente.
+function fixInlineTables(text: string): string {
+  // Caso 1: separator "|---|" preceduto da fine riga: "...| |---|..."
+  // Caso 2: riga dati preceduta da fine riga precedente: "...| | val |..."
+  // Una sola regex copre entrambi i casi: il "successivo" puo' essere
+  // qualsiasi non-spazio non-pipe (incluso '-' del separator e i dati).
+  return text.replace(
+    /([^\s|])[ \t]*\|[ \t]+\|[ \t]*([^\s|])/g,
+    "$1 |\n| $2"
+  );
+}
+
 // ─── CLEANUP ──────────────────────────────────────────────────────────────
 function cleanAIOutput(text: string): string {
   let result = text;
   result = result.replace(/[\u2713\u2714\u2715\u2716\u2717\u2718\u2022\u25cf\u25cb\u25a0\u25a1\u2605\u2606\u2192\u2190\u2191\u2193\u27a4\u25b6\u25c0\u2b50\u26a0\u2139\u274c\u2705\u2611\u2612\u2610\u25ba\u25c4\u2666\u2665\u2660\u2663\u2764\u270f\u270e\u2702\u2709\u260e\u231a\u231b\u23f0\u23f3\u2615\u26bd\u26be\u2728\u2733\u2734\u2747\u2756]/g, '');
   result = result.replace(/[\u{1F300}-\u{1F9FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}]/gu, '');
+
+  // FIX: ripara tabelle inline (righe concatenate senza newline).
+  // DEVE essere fatto PRIMA del fix header/separator sotto, perche'
+  // altrimenti tabelle inline non vengono mai riconosciute.
+  result = fixInlineTables(result);
 
   // Fix tabelle: header con N colonne ma separator con < N.
   const lines = result.split('\n');
