@@ -106,6 +106,18 @@ export default function Header() {
                       </div>
                     </div>
                   </Link>
+                  <a href="/calcolo-assegni/" onClick={() => setStrumentiOpen(false)} data-testid="nav-calcolo-assegni">
+                    <div role="menuitem" className="flex items-center gap-3 px-4 py-3 hover:bg-muted transition-colors duration-150 cursor-pointer border-t border-border">
+                      <Scale className="w-4 h-4 text-primary" aria-hidden="true" />
+                      <div className="flex-1">
+                        <div className="text-sm font-semibold flex items-center gap-2">
+                          Calcolo Assegni
+                          <span className="text-[10px] font-bold bg-primary text-primary-foreground px-1.5 py-0.5 rounded">NUOVO</span>
+                        </div>
+                        <div className="text-xs text-muted-foreground">Separazione &amp; Divorzio · Cass. SU 18287/2018</div>
+                      </div>
+                    </div>
+                  </a>
                 </div>
               )}
             </div>
@@ -196,6 +208,15 @@ export default function Header() {
                           <span className="font-medium">Credito d'Imposta</span>
                         </div>
                       </Link>
+                      <a href="/calcolo-assegni/" onClick={() => setMobileOpen(false)} data-testid="mobile-nav-calcolo-assegni">
+                        <div className="flex items-center gap-3 px-4 py-3 hover:bg-muted transition-colors duration-150 cursor-pointer">
+                          <Scale className="w-5 h-5 text-primary" aria-hidden="true" />
+                          <span className="font-medium flex items-center gap-2">
+                            Calcolo Assegni
+                            <span className="text-[10px] font-bold bg-primary text-primary-foreground px-1.5 py-0.5 rounded">NUOVO</span>
+                          </span>
+                        </div>
+                      </a>
                       <div className="border-t-2 border-muted mt-2 pt-2">
                         <Link href="/guida-dm-150" onClick={() => setMobileOpen(false)}>
                           <div className="px-4 py-3 text-sm font-medium hover:bg-muted cursor-pointer">Guide</div>

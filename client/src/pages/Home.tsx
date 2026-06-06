@@ -73,6 +73,15 @@ const features = [
     href: "/strategie-negoziazione",
     active: true,
   },
+  {
+    icon: Scale,
+    title: "Calcolo Assegni",
+    description: "Strumento per la stima orientativa dell'assegno di mantenimento del coniuge, dell'assegno divorzile (Cass. SU 18287/2018) e del contributo per i figli (art. 337-ter c.c.). Esportazione PDF.",
+    href: "/calcolo-assegni",
+    active: true,
+    isNew: true,
+    external: true,
+  },
 ];
 
 const steps = [
@@ -225,8 +234,15 @@ export default function Home() {
                   data-testid={`card-feature-${feature.title.toLowerCase().replace(/\s+/g, "-")}`}
                 >
                   <CardContent className="p-6">
-                    <div className="w-12 h-12 bg-primary/10 border-2 border-foreground flex items-center justify-center mb-4">
-                      <feature.icon className="w-6 h-6 text-primary" />
+                    <div className="flex items-start justify-between mb-4">
+                      <div className="w-12 h-12 bg-primary/10 border-2 border-foreground flex items-center justify-center">
+                        <feature.icon className="w-6 h-6 text-primary" />
+                      </div>
+                      {feature.isNew && (
+                        <Badge className="bg-primary text-primary-foreground border-2 border-foreground text-xs font-bold">
+                          Nuovo
+                        </Badge>
+                      )}
                     </div>
                     <h3 className="text-lg font-bold mb-2" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
                       {feature.title}
@@ -244,9 +260,15 @@ export default function Home() {
               );
 
               return feature.active ? (
-                <Link key={feature.title} href={feature.href}>
-                  {cardContent}
-                </Link>
+                feature.external ? (
+                  <a key={feature.title} href={feature.href} data-testid={`link-feature-${feature.title.toLowerCase().replace(/\s+/g, "-")}`}>
+                    {cardContent}
+                  </a>
+                ) : (
+                  <Link key={feature.title} href={feature.href}>
+                    {cardContent}
+                  </Link>
+                )
               ) : (
                 <div key={feature.title}>
                   {cardContent}

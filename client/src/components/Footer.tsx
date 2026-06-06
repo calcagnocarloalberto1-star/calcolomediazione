@@ -38,6 +38,7 @@ export default function Footer() {
               <li><FooterLink href="/confronto-costi">Confronto Mediazione vs Processo</FooterLink></li>
               <li><FooterLink href="/generatore-procura">Generatore Procura</FooterLink></li>
               <li><FooterLink href="/credito-imposta">Credito d'Imposta</FooterLink></li>
+              <li><FooterStaticLink href="/calcolo-assegni/">Calcolo Assegni Divorzio</FooterStaticLink></li>
             </ul>
           </div>
 
@@ -151,6 +152,17 @@ function FooterLink({ href, children }: { href: string; children: React.ReactNod
         {children}
       </span>
     </Link>
+  );
+}
+
+function FooterStaticLink({ href, children }: { href: string; children: React.ReactNode }) {
+  return (
+    <a
+      href={href}
+      className="text-sm text-background/90 hover:text-background transition-colors duration-150"
+    >
+      {children}
+    </a>
   );
 }
 

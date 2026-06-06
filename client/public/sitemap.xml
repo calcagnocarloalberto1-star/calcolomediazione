@@ -57,4 +57,11 @@
     <priority>0.6</priority>
   </url>
 
+  <!-- Calcolatore Assegni Divorzio/Separazione -->
+  <url>
+    <loc>https://calcolomediazione.it/calcolo-assegni/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
 </urlset>
