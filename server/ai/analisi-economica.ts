@@ -3,58 +3,54 @@ import { calcolaIndennita, formatEuro } from "../../shared/calcolo-indennita.js"
 
 // ─── CONTRIBUTO UNIFICATO — D.P.R. 115/2002, art. 13 ─────────────────────
 function calcolaContributoUnificato(valore: number): number {
-  if (valore <= 1100)    return 43;
-  if (valore <= 5200)    return 98;
-  if (valore <= 26000)   return 237;
-  if (valore <= 52000)   return 518;
-  if (valore <= 260000)  return 759;
-  if (valore <= 520000)  return 1214;
+  if (valore <= 1100) return 43;
+  if (valore <= 5200) return 98;
+  if (valore <= 26000) return 237;
+  if (valore <= 52000) return 518;
+  if (valore <= 260000) return 759;
+  if (valore <= 520000) return 1214;
   return 1686;
 }
 
 // ─── COMPENSO AVVOCATO — D.M. 55/2014 valori medi ────────────────────────
 // Tabella 2 (primo grado), Tabella 12 (appello), Tabella 13 (cassazione)
 function calcolaCompensoPrimoGrado(valore: number): number {
-  // Fasi: studio + introduttiva + istruttoria + decisionale (valori medi)
-  if (valore <= 1100)    return 800;
-  if (valore <= 5200)    return 1800;
-  if (valore <= 26000)   return 3800;
-  if (valore <= 52000)   return 6500;
-  if (valore <= 260000)  return 11000;
-  if (valore <= 520000)  return 16500;
+  if (valore <= 1100) return 800;
+  if (valore <= 5200) return 1800;
+  if (valore <= 26000) return 3800;
+  if (valore <= 52000) return 6500;
+  if (valore <= 260000) return 11000;
+  if (valore <= 520000) return 16500;
   return 25000;
 }
 
 function calcolaCompensoAppello(valore: number): number {
-  // Tabella 12 — fasi: studio + introduttiva + istruttoria + decisionale
-  if (valore <= 1100)    return 700;
-  if (valore <= 5200)    return 1500;
-  if (valore <= 26000)   return 3200;
-  if (valore <= 52000)   return 5500;
-  if (valore <= 260000)  return 9500;
-  if (valore <= 520000)  return 14000;
+  if (valore <= 1100) return 700;
+  if (valore <= 5200) return 1500;
+  if (valore <= 26000) return 3200;
+  if (valore <= 52000) return 5500;
+  if (valore <= 260000) return 9500;
+  if (valore <= 520000) return 14000;
   return 21000;
 }
 
 function calcolaCompensoCassazione(valore: number): number {
-  // Tabella 13 — fasi: studio + introduttiva + decisionale (NO istruttoria)
-  if (valore <= 1100)    return 600;
-  if (valore <= 5200)    return 1300;
-  if (valore <= 26000)   return 2800;
-  if (valore <= 52000)   return 4800;
-  if (valore <= 260000)  return 8500;
-  if (valore <= 520000)  return 12500;
+  if (valore <= 1100) return 600;
+  if (valore <= 5200) return 1300;
+  if (valore <= 26000) return 2800;
+  if (valore <= 52000) return 4800;
+  if (valore <= 260000) return 8500;
+  if (valore <= 520000) return 12500;
   return 19000;
 }
 
 function calcolaCompensoMediazione(valore: number): number {
-  // D.M. 147/2022 — fasi: attivazione + negoziazione + conciliazione (valori medi)
-  if (valore <= 1100)    return 450;
-  if (valore <= 5200)    return 900;
-  if (valore <= 26000)   return 1800;
-  if (valore <= 52000)   return 3200;
-  if (valore <= 260000)  return 5500;
-  if (valore <= 520000)  return 8500;
+  if (valore <= 1100) return 450;
+  if (valore <= 5200) return 900;
+  if (valore <= 26000) return 1800;
+  if (valore <= 52000) return 3200;
+  if (valore <= 260000) return 5500;
+  if (valore <= 520000) return 8500;
   return 13000;
 }
 
@@ -69,11 +65,50 @@ function calcolaAccessori(compensoBase: number): number {
 
 // ─── STIMA CTU ────────────────────────────────────────────────────────────
 function stimaCTU(valore: number): number {
-  if (valore <= 26000)   return 1500;
-  if (valore <= 52000)   return 2500;
-  if (valore <= 260000)  return 4000;
-  if (valore <= 520000)  return 6000;
+  if (valore <= 26000) return 1500;
+  if (valore <= 52000) return 2500;
+  if (valore <= 260000) return 4000;
+  if (valore <= 520000) return 6000;
   return 9000;
+}
+
+// ─── COSTI NOTARILI STIMATI ───────────────────────────────────────────────
+function calcolaCostiNotarili({
+  valoreImmobile,
+  primaCasa,
+  onorarioNotarileStimato,
+  impostaRegistroAliquota,
+  impostaIpotecaria,
+  impostaCatastale,
+  altreSpeseNotarili,
+}: {
+  valoreImmobile: number;
+  primaCasa: boolean;
+  onorarioNotarileStimato: number | null;
+  impostaRegistroAliquota: number | null;
+  impostaIpotecaria: number | null;
+  impostaCatastale: number | null;
+  altreSpeseNotarili: number | null;
+}) {
+  const aliquotaRegistro = impostaRegistroAliquota ?? (primaCasa ? 0.02 : 0.09);
+  const registro = Math.round(valoreImmobile * aliquotaRegistro);
+  const ipotecaria = impostaIpotecaria ?? 50;
+  const catastale = impostaCatastale ?? 50;
+  const onorario = onorarioNotarileStimato ?? 2500;
+  const altreSpese = altreSpeseNotarili ?? 300;
+  const imponibileNotaio = onorario + altreSpese;
+  const ivaNotaio = Math.round(imponibileNotaio * 0.22);
+  const totale = registro + ipotecaria + catastale + onorario + altreSpese + ivaNotaio;
+
+  return {
+    registro,
+    ipotecaria,
+    catastale,
+    onorario,
+    altreSpese,
+    ivaNotaio,
+    totale,
+  };
 }
 
 export async function analisiEconomica(
@@ -91,21 +126,59 @@ export async function analisiEconomica(
     mediatoreEsperto: boolean;
     proceduraComplessa: boolean;
     modalitaTariffaria: string;
+    attivaCalcoloCostiNotarili?: boolean;
+    tipoAttoNotarile?: string | null;
+    valoreImmobile?: number | null;
+    applicaPrezzoValore?: boolean;
+    onorarioNotarileStimato?: number | null;
+    impostaRegistroAliquota?: number | null;
+    impostaIpotecaria?: number | null;
+    impostaCatastale?: number | null;
+    altreSpeseNotarili?: number | null;
   } = {
-    materiaImmobiliare: false, primaCasa: false, renditaCatastale: null,
-    categoriaCatastale: null, gratuitoPatrocinio: false, mediatoreEsperto: false,
-    proceduraComplessa: false, modalitaTariffaria: "nazionale",
+    materiaImmobiliare: false,
+    primaCasa: false,
+    renditaCatastale: null,
+    categoriaCatastale: null,
+    gratuitoPatrocinio: false,
+    mediatoreEsperto: false,
+    proceduraComplessa: false,
+    modalitaTariffaria: "nazionale",
+    attivaCalcoloCostiNotarili: false,
+    tipoAttoNotarile: "trasferimento_immobiliare",
+    valoreImmobile: null,
+    applicaPrezzoValore: false,
+    onorarioNotarileStimato: null,
+    impostaRegistroAliquota: null,
+    impostaIpotecaria: null,
+    impostaCatastale: null,
+    altreSpeseNotarili: null,
   }
 ): Promise<string> {
   const valore = valoreLite || 25000;
   const {
-    materiaImmobiliare, primaCasa, renditaCatastale, categoriaCatastale,
-    gratuitoPatrocinio, mediatoreEsperto, proceduraComplessa, modalitaTariffaria,
+    materiaImmobiliare,
+    primaCasa,
+    renditaCatastale,
+    categoriaCatastale,
+    gratuitoPatrocinio,
+    mediatoreEsperto,
+    proceduraComplessa,
+    modalitaTariffaria,
+    attivaCalcoloCostiNotarili = false,
+    tipoAttoNotarile = "trasferimento_immobiliare",
+    valoreImmobile = null,
+    applicaPrezzoValore = false,
+    onorarioNotarileStimato = null,
+    impostaRegistroAliquota = null,
+    impostaIpotecaria = null,
+    impostaCatastale = null,
+    altreSpeseNotarili = null,
   } = opzioniEconomiche;
+
   const isGenova = modalitaTariffaria === "coa_genova";
 
   // ─── CALCOLO DETERMINISTICO MEDIAZIONE ──────────────────────────────────
-  // Scenario A1: mediazione positiva al primo incontro
   const resultAccordoPrimo = calcolaIndennita({
     valoreLite: valore,
     tipoMediazione: "obbligatoria",
@@ -116,7 +189,6 @@ export async function analisiEconomica(
     proceduraComplessa: false,
   });
 
-  // Scenario A2: mediazione positiva agli incontri successivi
   const resultAccordoSuccessivi = calcolaIndennita({
     valoreLite: valore,
     tipoMediazione: "obbligatoria",
@@ -127,7 +199,6 @@ export async function analisiEconomica(
     proceduraComplessa,
   });
 
-  // Scenario negativo (solo primo incontro)
   const resultNegativo = calcolaIndennita({
     valoreLite: valore,
     tipoMediazione: "obbligatoria",
@@ -136,22 +207,19 @@ export async function analisiEconomica(
     modalitaTariffaria: isGenova ? "coa_genova" : "nazionale",
   });
 
-  // Compenso avvocato mediazione
   const compensoAvvMed = calcolaCompensoMediazione(valore);
   const accessoriAvvMed = calcolaAccessori(compensoAvvMed);
 
-  // Esenzione art. 17 (accordo)
   const esenzioneRegistro = Math.min(valore, 100000) * 0.03;
 
-  // Credito d'imposta
-  const creditoIndennita = Math.min(resultAccordoSuccessivi.totalePerParte * 0.50, 600);
-  const creditoAvvocato = Math.min(compensoAvvMed * 0.50, 600);
+  const creditoIndennita = Math.min(resultAccordoSuccessivi.totalePerParte * 0.5, 600);
+  const creditoAvvocato = Math.min(compensoAvvMed * 0.5, 600);
   const creditoTotale = creditoIndennita + creditoAvvocato;
 
   // ─── CALCOLO DETERMINISTICO PROCESSO ────────────────────────────────────
   const cu1 = calcolaContributoUnificato(valore);
-  const cu2 = Math.round(cu1 * 1.5);   // appello: +50%
-  const cu3 = cu1 * 2;                  // cassazione: raddoppio
+  const cu2 = Math.round(cu1 * 1.5);
+  const cu3 = cu1 * 2;
 
   const avv1 = calcolaCompensoPrimoGrado(valore);
   const acc1 = calcolaAccessori(avv1);
@@ -161,32 +229,42 @@ export async function analisiEconomica(
   const acc3 = calcolaAccessori(avv3);
 
   const ctu1 = stimaCTU(valore);
-  const ctu2 = ctu1; // prudenziale: stessa stima in appello
-  const registro1 = Math.round(valore * 0.03); // registro su sentenza
+  const ctu2 = ctu1;
+  const registro1 = Math.round(valore * 0.03);
 
-  const altreCosts1 = 27 + 30; // marca bollo + diritti copia
+  const altreCosts1 = 27 + 30;
   const altreCosts2 = 27;
   const altreCosts3 = 27;
 
-  // Totali per grado
-  const tot1 = cu1 + avv1 + acc1 + ctu1 + registro1 + altreCosts1
-             + resultNegativo.totalePerParte; // mediazione negativa prima
+  const tot1 = cu1 + avv1 + acc1 + ctu1 + registro1 + altreCosts1 + resultNegativo.totalePerParte;
   const tot2 = cu2 + avv2 + acc2 + ctu2 + altreCosts2;
   const tot3 = cu3 + avv3 + acc3 + altreCosts3;
 
-  // Cumulativi
   const cumul1 = tot1;
   const cumul2 = tot1 + tot2;
   const cumul3 = tot1 + tot2 + tot3;
 
-  // Mediazione positiva (scenario peggiore = accordo successivi)
-  const totMed = resultAccordoSuccessivi.totalePerParte
-               + compensoAvvMed + accessoriAvvMed;
-  const totMedNetto = gratuitoPatrocinio ? 0 : totMed;
+  const totMed = resultAccordoSuccessivi.totalePerParte + compensoAvvMed + accessoriAvvMed;
+
+  const costiNotarili = materiaImmobiliare && attivaCalcoloCostiNotarili
+    ? calcolaCostiNotarili({
+        valoreImmobile: valoreImmobile || valore,
+        primaCasa,
+        onorarioNotarileStimato,
+        impostaRegistroAliquota,
+        impostaIpotecaria,
+        impostaCatastale,
+        altreSpeseNotarili,
+      })
+    : null;
+
+  const totMedConNotarili = totMed + (costiNotarili?.totale || 0);
+  const totMedNetto = gratuitoPatrocinio ? 0 : totMedConNotarili;
 
   const risparmio1 = cumul1 - totMedNetto;
   const risparmio2 = cumul2 - totMedNetto;
   const risparmio3 = cumul3 - totMedNetto;
+
   const risparmioPerc1 = cumul1 > 0 ? Math.round((risparmio1 / cumul1) * 100) : 0;
   const risparmioPerc2 = cumul2 > 0 ? Math.round((risparmio2 / cumul2) * 100) : 0;
   const risparmioPerc3 = cumul3 > 0 ? Math.round((risparmio3 / cumul3) * 100) : 0;
@@ -195,18 +273,25 @@ export async function analisiEconomica(
   let catastaleSection = "";
   if (materiaImmobiliare && renditaCatastale && renditaCatastale > 0) {
     const moltiplicatori: Record<string, { label: string; mult: number }> = {
-      prima_casa:        { label: "Prima casa",         mult: 115.5 },
+      prima_casa: { label: "Prima casa", mult: 115.5 },
       altri_fabbricati_ac: { label: "Altre abitazioni", mult: 126 },
-      cat_b:             { label: "Cat. B",             mult: 176.4 },
-      cat_a10_d:         { label: "Uffici/D",           mult: 63 },
-      cat_c1_e:          { label: "Negozi/E",           mult: 42.84 },
-      terreno_agricolo:  { label: "Terreno agricolo",   mult: 112.5 },
+      cat_b: { label: "Cat. B", mult: 176.4 },
+      cat_a10_d: { label: "Uffici/D", mult: 63 },
+      cat_c1_e: { label: "Negozi/E", mult: 42.84 },
+      terreno_agricolo: { label: "Terreno agricolo", mult: 112.5 },
     };
-    const cat = moltiplicatori[categoriaCatastale || "prima_casa"] || moltiplicatori.prima_casa;
+
+    const cat =
+      moltiplicatori[categoriaCatastale || "prima_casa"] || moltiplicatori.prima_casa;
+
     const renditaRivalutata = renditaCatastale * 1.05;
     const valoreCatastale = Math.round(renditaRivalutata * cat.mult * 100) / 100;
     const congruo = valore >= valoreCatastale;
-    const scostamento = valoreCatastale > 0 ? Math.round(((valore - valoreCatastale) / valoreCatastale) * 100) : 0;
+    const scostamento =
+      valoreCatastale > 0
+        ? Math.round(((valore - valoreCatastale) / valoreCatastale) * 100)
+        : 0;
+
     catastaleSection = `
 VERIFICA CONGRUITA' CATASTALE (art. 29 D.M. 150/2023):
 - Rendita catastale dichiarata: ${formatEuro(renditaCatastale)}
@@ -215,15 +300,18 @@ VERIFICA CONGRUITA' CATASTALE (art. 29 D.M. 150/2023):
 - Valore catastale calcolato: ${formatEuro(valoreCatastale)}
 - Valore della domanda: ${formatEuro(valore)}
 - Scostamento: ${scostamento > 0 ? "+" : ""}${scostamento}%
-- Esito: ${congruo ? "CONGRUO" : "NON CONGRUO — rischio accertamento Agenzia delle Entrate (artt. 51-52 D.P.R. 131/1986)"}`;
+- Esito: ${
+      congruo
+        ? "CONGRUO"
+        : "NON CONGRUO — rischio accertamento Agenzia delle Entrate (artt. 51-52 D.P.R. 131/1986)"
+    }`;
   }
 
-  // ─── PROMPT ALL'AI CON NUMERI GIA' CALCOLATI ─────────────────────────
   const systemPrompt = `Sei un esperto di costi legali e fiscalità della mediazione civile italiana.
 Hai a disposizione i CALCOLI GIA' EFFETTUATI dal sistema. Il tuo compito è SOLO presentarli in modo professionale, commentarli e trarre conclusioni. NON ricalcolare nulla — usa esclusivamente i numeri forniti.`;
 
   const userPrompt = `Caso: ${descrizione}
-Parti: ${parti.map(p => `${p.nome} (${p.ruolo})`).join(", ")}
+Parti: ${parti.map((p) => `${p.nome} (${p.ruolo})`).join(", ")}
 Valore della lite: ${formatEuro(valore)}
 Tipo: ${tipoAnalisi === "mediazione" ? "Mediazione civile" : "Negoziazione assistita"}
 Tariffario: ${isGenova ? "COA Genova" : "Nazionale D.M. 150/2023"}
@@ -246,11 +334,26 @@ ${resultAccordoSuccessivi.maggiorazioneArt31 > 0 ? `- Maggiorazione art. 31 co. 
 - Compenso avvocato mediazione (D.M. 147/2022, valori medi): ${formatEuro(compensoAvvMed)}
 - Accessori avvocato (spese gen. 15% + CPA 4% + IVA 22%): ${formatEuro(accessoriAvvMed)}
 - TOTALE MEDIAZIONE per parte: ${formatEuro(totMed)}
+${costiNotarili ? `- TOTALE COSTI NOTARILI: ${formatEuro(costiNotarili.totale)}` : ""}
+${costiNotarili ? `- TOTALE MEDIAZIONE + NOTAIO per parte: ${formatEuro(totMedConNotarili)}` : ""}
 ${gratuitoPatrocinio ? "- Con gratuito patrocinio: EUR 0,00 (a carico erario)" : ""}
 - Esenzione imposta di registro (art. 17 D.Lgs. 28/2010): ${formatEuro(esenzioneRegistro)} (su ${formatEuro(Math.min(valore, 100000))})
 - Credito d'imposta indennità (50%, max EUR 600): ${formatEuro(creditoIndennita)}
 - Credito d'imposta avvocato (50%, max EUR 600): ${formatEuro(creditoAvvocato)}
 - CREDITO D'IMPOSTA TOTALE: ${formatEuro(creditoTotale)}
+${costiNotarili ? `
+SEZIONE COSTI NOTARILI DELL'ACCORDO:
+- Tipo atto notarile: ${tipoAttoNotarile}
+- Base di calcolo immobile: ${formatEuro(valoreImmobile || valore)}
+- Regime fiscale: ${primaCasa ? "prima casa" : "ordinario"}
+- Prezzo-valore: ${applicaPrezzoValore ? "SI" : "NO"}
+- Imposta di registro atto: ${formatEuro(costiNotarili.registro)}
+- Imposta ipotecaria: ${formatEuro(costiNotarili.ipotecaria)}
+- Imposta catastale: ${formatEuro(costiNotarili.catastale)}
+- Onorario notarile stimato: ${formatEuro(costiNotarili.onorario)}
+- Spese vive notarili: ${formatEuro(costiNotarili.altreSpese)}
+- IVA su onorario e spese: ${formatEuro(costiNotarili.ivaNotaio)}
+` : ""}
 ${catastaleSection}
 
 SCENARIO A-bis — MEDIAZIONE POSITIVA (accordo al primo incontro):
@@ -299,14 +402,15 @@ ${previousAnalysis}
 ═══════════════════════════════════════════════
 Presenta questi dati in formato markdown con:
 1. Tabella "Mediazione Positiva" con tutte le voci
-2. Tabella "Processo I Grado" con tutte le voci
-3. Tabella "Appello II Grado" con tutte le voci
-4. Tabella "Cassazione III Grado" con tutte le voci
-5. Tabella comparativa finale cumulativa con risparmio percentuale
-6. Sezione "Vantaggi Fiscali della Mediazione" (art. 17, credito imposta)
-7. Sezione "Analisi Temporale"
-${catastaleSection ? "8. Sezione 'Verifica Congruità Catastale' con i dati forniti" : ""}
-${gratuitoPatrocinio ? "- Sezione 'Effetti Gratuito Patrocinio'" : ""}
+2. ${costiNotarili ? `Tabella "Costi Notarili dell'Accordo"` : `Breve nota sull'assenza di costi notarili applicabili`}
+3. Tabella "Processo I Grado" con tutte le voci
+4. Tabella "Appello II Grado" con tutte le voci
+5. Tabella "Cassazione III Grado" con tutte le voci
+6. Tabella comparativa finale cumulativa con risparmio percentuale
+7. Sezione "Vantaggi Fiscali della Mediazione" (art. 17, credito imposta)
+8. Sezione "Analisi Temporale"
+${catastaleSection ? `9. Sezione "Verifica Congruità Catastale" con i dati forniti` : ""}
+${gratuitoPatrocinio ? `10. Sezione "Effetti Gratuito Patrocinio"` : ""}
 - Conclusioni con raccomandazione economica
 
 USA ESCLUSIVAMENTE i numeri forniti sopra. Non ricalcolare nulla. Usa trattini (-) per gli elenchi, tabelle markdown standard.`;
