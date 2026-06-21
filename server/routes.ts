@@ -24,7 +24,8 @@ const PAGES = [
   { path: "/", title: "CalcoloMediazione - Calcolatore Indennità Mediazione Civile", desc: "Piattaforma professionale per il calcolo delle indennità di mediazione D.M. 150/2023. Analisi AI del caso, confronto costi primo grado, appello e cassazione, stima CTU, esenzione prima casa, verifica congruità valore catastale, generatore procura.", priority: "1.0", changefreq: "weekly" },
   { path: "/calcolatore", title: "Calcolatore Indennità Mediazione D.M. 150/2023 con Verifica Congruità Catastale", desc: "Calcola le indennità di mediazione civile e commerciale secondo le tariffe del D.M. 150/2023. Doppia tariffa, esenzioni, compensi avvocato, costi notarili con esenzione prima casa, verifica congruità valore catastale (art. 29 D.M. 150/2023).", priority: "0.9", changefreq: "monthly" },
   { path: "/analisi-caso-ai", title: "Analisi AI del Caso di Mediazione con Confronto Economico", desc: "Analisi completa del caso di mediazione con intelligenza artificiale: analisi giuridica, MAAN/BATNA, bias cognitivi, bozza accordo, confronto economico primo grado, appello e cassazione con stima CTU, verifica congruità valore catastale.", priority: "0.9", changefreq: "monthly" },
-  { path: "/confronto-costi", title: "Confronto Costi Mediazione vs Processo: Primo Grado, Appello, Cassazione", desc: "Confronta i costi della mediazione con quelli del processo su tre gradi di giudizio. Contributo unificato, compensi avvocato, CTU in appello, parametri forensi D.M. 55/2014 Tabelle 2, 12 e 13.", priority: "0.8", changefreq: "monthly" },
+  { path: "/confronto-costi", title: "Confronto Costi Mediazione vs Processo: Primo Grado, Appello, Cassazione", desc: "Confronta i costi della mediazione con quelli del processo su tre gradi di giudizio. Contributo unificato, compensi avvocato, CTU in appello, parametri forensi D.M. 55/2014 Tabelle 2, 12 e 13.", priority: "0.9", changefreq: "monthly" },
+  { path: "/costi-notarili", title: "Costi Notarili Mediazione vs Sentenza - Onorari, Imposte, Visure", desc: "Stima dei costi notarili nella mediazione civile e nelle sentenze: onorari, IVA, cassa, visure, imposte di registro/ipotecaria/catastale. Confronto accordo di mediazione (esenzione art. 17 D.Lgs. 28/2010) vs sentenza.", priority: "0.8", changefreq: "monthly" },
   { path: "/faq", title: "FAQ Mediazione Civile - Domande Frequenti", desc: "Domande frequenti sulla mediazione civile e commerciale: indennità, costi notarili per trascrizione immobiliare, esenzioni fiscali, verifica congruità catastale, credito d'imposta, gratuito patrocinio, esenzione prima casa e analisi AI.", priority: "0.7", changefreq: "monthly" },
   { path: "/guida-dm-150", title: "Guida Completa D.M. 150/2023 - Tariffe Mediazione", desc: "Guida dettagliata al Decreto Ministeriale 150/2023 sulle tariffe di mediazione civile e commerciale. Tabelle, calcoli ed esempi pratici.", priority: "0.7", changefreq: "monthly" },
   { path: "/generatore-procura", title: "Generatore Procura Speciale per Mediazione", desc: "Genera la procura speciale per la mediazione civile con tutti i poteri necessari. Conforme al D.Lgs. 28/2010.", priority: "0.8", changefreq: "monthly" },
@@ -80,7 +81,28 @@ const PAGE_CONTENT: Record<string, string> = {
       <li><a href="/faq">Domande Frequenti sulla Mediazione Civile</a></li>
       <li><a href="/guida-dm-150">Guida Completa al D.M. 150/2023</a></li>
       <li><a href="/glossario">Glossario della Mediazione Civile</a></li>
+    </ul>
+    <h2>Hub Olismo Integrato - Approfondimenti professionali</h2>
+    <p>Due hub specialistici a cura dell'avv. Carlo Alberto Calcagno: norma, procedura e persona nello stesso spazio.</p>
+    <ul>
+      <li><a href="https://olismo-integrato.it/mediazione-civile.html" rel="noopener external">Mediazione Civile e Commerciale (Olismo Integrato)</a> - D.Lgs. 28/2010 + Riforma Cartabia, matrice strumenti per condominio, banche, responsabilita medica, societa e successioni</li>
+      <li><a href="https://olismo-integrato.it/mediazione-familiare.html" rel="noopener external">Mediazione Familiare Sistemica (Olismo Integrato)</a> - separazione, divorzio, accordi genitoriali, art. 473-bis.10 c.p.c., Convenzione di Istanbul</li>
     </ul>`,
+
+  "/costi-notarili": `
+    <h1>Costi Notarili nella Mediazione Civile vs Sentenza</h1>
+    <p>Stima dei costi notarili nella mediazione civile (accordo trascrivibile) e nelle sentenze: onorari, IVA, cassa, visure, imposte di registro, ipotecaria e catastale.</p>
+    <h2>Cosa calcola</h2>
+    <ul>
+      <li>Onorari notarili parametrici (D.M. 140/2012)</li>
+      <li>IVA 22%, cassa nazionale del notariato 4%</li>
+      <li>Visure ipotecarie e catastali</li>
+      <li>Imposte indirette: registro, ipotecaria, catastale (D.P.R. 131/1986)</li>
+      <li>Esenzione art. 17 D.Lgs. 28/2010 per gli accordi di mediazione</li>
+      <li>Confronto economico mediazione vs sentenza</li>
+    </ul>
+    <h2>Riferimenti normativi</h2>
+    <p>D.M. 140/2012 sui parametri notarili, D.P.R. 131/1986 (Testo Unico imposta di registro), art. 17 D.Lgs. 28/2010 (esenzioni fiscali in mediazione), L. 89/1913 (Legge Notarile).</p>`,
 
   "/calcolatore": `
     <h1>Calcolatore Indennità Mediazione D.M. 150/2023</h1>
@@ -650,17 +672,26 @@ export async function registerRoutes(
     const siteUrl = getSiteUrl(req);
     const today = new Date().toISOString().slice(0, 10);
     let xml = `<?xml version="1.0" encoding="UTF-8"?>\n`;
-    xml += `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n`;
+    xml += `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"\n        xmlns:xhtml="http://www.w3.org/1999/xhtml">\n`;
     for (const page of PAGES) {
+      const fullUrl = `${siteUrl}${page.path === "/" ? "/" : page.path}`;
       xml += `  <url>\n`;
-      xml += `    <loc>${siteUrl}${page.path === "/" ? "" : page.path}</loc>\n`;
+      xml += `    <loc>${fullUrl}</loc>\n`;
+      xml += `    <xhtml:link rel="alternate" hreflang="it-IT" href="${fullUrl}"/>\n`;
       xml += `    <lastmod>${today}</lastmod>\n`;
       xml += `    <changefreq>${page.changefreq}</changefreq>\n`;
       xml += `    <priority>${page.priority}</priority>\n`;
       xml += `  </url>\n`;
     }
+    // Pagine istituzionali non incluse in PAGES
+    for (const p of ["/privacy-policy", "/cookie-policy", "/termini-condizioni"]) {
+      xml += `  <url>\n    <loc>${siteUrl}${p}</loc>\n    <changefreq>yearly</changefreq>\n    <priority>0.3</priority>\n  </url>\n`;
+    }
+    // Sezione statica esterna (calcolo assegni)
+    xml += `  <url>\n    <loc>${siteUrl}/calcolo-assegni/</loc>\n    <xhtml:link rel="alternate" hreflang="it-IT" href="${siteUrl}/calcolo-assegni/"/>\n    <changefreq>monthly</changefreq>\n    <priority>0.8</priority>\n  </url>\n`;
     xml += `</urlset>`;
     res.setHeader("Content-Type", "application/xml");
+    res.setHeader("Cache-Control", "public, max-age=3600");
     res.send(xml);
   });
 
@@ -698,16 +729,29 @@ export async function registerRoutes(
 
   app.get("/robots.txt", (req, res) => {
     const siteUrl = getSiteUrl(req);
-    const txt = `User-agent: *
+    const txt = `# robots.txt - ${siteUrl.replace("https://", "")}
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /admin
+
+# Bot AI / training: accesso consentito ai contenuti pubblici
+User-agent: GPTBot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: ClaudeBot
 Allow: /
 
 Sitemap: ${siteUrl}/sitemap.xml
-
-# Disallow admin and API
-Disallow: /api/
-Disallow: /admin
 `;
     res.setHeader("Content-Type", "text/plain");
+    res.setHeader("Cache-Control", "public, max-age=3600");
     res.send(txt);
   });
 
