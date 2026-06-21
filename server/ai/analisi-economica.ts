@@ -462,5 +462,7 @@ Esempio corretto:
 
 Se la tabella non rispetta queste regole, il rendering UI e PDF si rompe.`;
 
-  return callLLM(systemPrompt, userPrompt, 12000);
+  // maxTokens omesso: il dispatcher chiede sempre il massimo del provider
+  // e gestisce continuazione automatica in caso di troncamento.
+  return callLLM(systemPrompt, userPrompt);
 }

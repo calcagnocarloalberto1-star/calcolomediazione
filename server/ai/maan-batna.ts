@@ -100,5 +100,7 @@ ${analisiPrecedenti}${costiContext}
 
 Produci tutte e 9 le sezioni richieste. Celle delle tabelle brevi, max 50 caratteri.`;
 
-  return callLLM(systemPrompt, userPrompt, 12000);
+  // maxTokens omesso: il dispatcher chiede sempre il massimo del provider
+  // e gestisce continuazione automatica in caso di troncamento.
+  return callLLM(systemPrompt, userPrompt);
 }

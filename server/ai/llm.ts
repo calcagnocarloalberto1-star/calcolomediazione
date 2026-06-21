@@ -10,10 +10,14 @@ const GEMINI_MODEL = "gemini-2.5-flash";
 // Gemini 2.5 Flash supporta fino a 65536; Claude Haiku 4.5 fino a 16384.
 const GEMINI_MAX_OUTPUT = 32768;
 const ANTHROPIC_MAX_OUTPUT = 16384;
+// Default richiesto al provider: il dispatcher chiede SEMPRE il massimo del
+// provider, cosi' non c'e' mai un cap artificioso che tronca l'output.
 const DEFAULT_MAX_TOKENS = 16384;
 
 // Massimo numero di continuazioni automatiche se la risposta viene troncata.
-const MAX_CONTINUATIONS = 2;
+// Con 4 continuazioni e 16k token Anthropic possiamo arrivare a ~80k token
+// totali di output, sufficienti anche per analisi molto lunghe senza tagli.
+const MAX_CONTINUATIONS = 4;
 
 // ─── CLIENTS ──────────────────────────────────────────────────────────────
 let geminiClient: GoogleGenerativeAI | null = null;
@@ -138,7 +142,10 @@ async function callAnthropic(
   const anthropic = getAnthropicClient();
   if (!anthropic) return null;
 
-  const cap = Math.min(maxTokens, ANTHROPIC_MAX_OUTPUT);
+  // Chiediamo SEMPRE il massimo del provider: se il modello vuole essere
+  // breve lo sara' comunque, ma cosi' eliminiamo ogni cap artificioso.
+  const cap = ANTHROPIC_MAX_OUTPUT;
+  void maxTokens;
   const messages: Array<{ role: "user" | "assistant"; content: string }> = [
     { role: "user", content: userPrompt },
   ];
@@ -174,9 +181,12 @@ async function callAnthropic(
       messages.push({
         role: "user",
         content:
-          "Sei stato interrotto a meta'. Continua ESATTAMENTE dal punto in cui ti sei fermato, " +
-          "senza ripetere quanto gia' detto, senza preamboli e senza ricominciare la sezione. " +
-          "Concludi tutte le sezioni mancanti.",
+          "Sei stato interrotto a meta'. Continua ESATTAMENTE dal carattere in cui ti sei fermato, " +
+          "senza ripetere nulla, senza preamboli (NIENTE 'continuo da dove ero rimasto'), senza " +
+          "ricominciare la sezione, senza riscrivere intestazioni gia' presenti. Concludi tutte " +
+          "le sezioni mancanti fino alla fine. Se eri a meta' di una frase, riprendi a meta' frase. " +
+          "Se eri a meta' di una tabella, riprendi con la prossima riga di tabella corretta. " +
+          "NON aggiungere MAI testo del tipo '...continua' o '[continuazione]'.",
       });
     } catch (error) {
       console.error("Errore chiamata Anthropic:", error);
@@ -187,12 +197,14 @@ async function callAnthropic(
   return fullText || null;
 }
 
-// ─── PROVIDER: GEMINI ─────────────────────────────────────────────────────
-async function callGemini(
+// ─── PROVIDER: GEMINI (con continuazione automatica) ──────────────────────
+type GeminiContent = { role: "user" | "model"; parts: Array<{ text: string }> };
+
+async function callGeminiOnce(
   systemPrompt: string,
-  userPrompt: string,
-  maxTokens: number
-): Promise<string | null> {
+  contents: GeminiContent[],
+  cap: number
+): Promise<{ text: string; finishReason: string | null } | null> {
   const geminiKey = process.env.GEMINI_API_KEY;
   if (!geminiKey) return null;
 
@@ -200,9 +212,9 @@ async function callGemini(
     const url = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${geminiKey}`;
     const body = {
       systemInstruction: { parts: [{ text: systemPrompt + FORMAT_CONSTRAINT }] },
-      contents: [{ parts: [{ text: userPrompt }] }],
+      contents,
       generationConfig: {
-        maxOutputTokens: Math.min(maxTokens, GEMINI_MAX_OUTPUT),
+        maxOutputTokens: cap,
         thinkingConfig: { thinkingBudget: 0 },
       },
     };
@@ -228,18 +240,63 @@ async function callGemini(
 
     if (textParts.length === 0) return null;
 
-    // Join con \n\n per preservare la separazione dei paragrafi.
-    const text = textParts.join("\n\n");
-
-    if (candidate.finishReason === "MAX_TOKENS") {
-      logTruncation("gemini", "MAX_TOKENS", text.length);
-    }
-
-    return text;
+    return {
+      text: textParts.join("\n\n"),
+      finishReason: candidate.finishReason || null,
+    };
   } catch (error) {
     console.error("Errore chiamata Gemini:", error);
     return null;
   }
+}
+
+async function callGemini(
+  systemPrompt: string,
+  userPrompt: string,
+  maxTokens: number
+): Promise<string | null> {
+  // Chiediamo SEMPRE il massimo del provider, come per Anthropic.
+  const cap = GEMINI_MAX_OUTPUT;
+  void maxTokens;
+
+  const contents: GeminiContent[] = [
+    { role: "user", parts: [{ text: userPrompt }] },
+  ];
+
+  let fullText = "";
+  let continuations = 0;
+
+  while (continuations <= MAX_CONTINUATIONS) {
+    const result = await callGeminiOnce(systemPrompt, contents, cap);
+    if (!result) return fullText || null;
+
+    fullText += result.text;
+
+    if (result.finishReason !== "MAX_TOKENS") {
+      return fullText;
+    }
+
+    // Output troncato: prepariamo una continuazione.
+    logTruncation("gemini", "MAX_TOKENS", fullText.length);
+    continuations++;
+    if (continuations > MAX_CONTINUATIONS) break;
+
+    contents.push({ role: "model", parts: [{ text: result.text }] });
+    contents.push({
+      role: "user",
+      parts: [{
+        text:
+          "Sei stato interrotto a meta'. Continua ESATTAMENTE dal carattere in cui ti sei fermato, " +
+          "senza ripetere nulla, senza preamboli, senza ricominciare la sezione, senza riscrivere " +
+          "intestazioni gia' presenti. Concludi tutte le sezioni mancanti fino alla fine. Se eri " +
+          "a meta' di una frase, riprendi a meta' frase. Se eri a meta' di una tabella, riprendi " +
+          "con la prossima riga di tabella corretta. NON aggiungere mai testo del tipo " +
+          "'...continua' o '[continuazione]'.",
+      }],
+    });
+  }
+
+  return fullText || null;
 }
 
 // ─── DISPATCHER ───────────────────────────────────────────────────────────
