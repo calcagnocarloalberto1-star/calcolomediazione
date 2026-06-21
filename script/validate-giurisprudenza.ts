@@ -37,12 +37,27 @@ export function validateGiurisprudenza(data: Sentenza[] = sentenze): ValidationE
     }
   }
 
-  // 2) Sentenze duplicate per chiave logica (tipoOrgano + organo + numero + anno)
-  // Se numero è vuoto (sentenze storiche senza numero pubblicato), uso il titolo come fallback
-  // per identificare la sentenza univocamente.
+  // 2) Sentenze duplicate per chiave logica (tipoOrgano + organo_canonico + numero + anno)
+  // Normalizziamo l'organo rimuovendo specificazioni di sezione (", Sez. ...", " civ.", ecc.)
+  // così "Trib. Catania" e "Trib. Catania, Sez. IV" risultano la stessa sede.
+  // Se numero è vuoto (sentenze storiche senza numero pubblicato), fallback su titolo.
+  const canonicalizeOrgano = (organo: string): string => {
+    return organo
+      .trim()
+      .toLowerCase()
+      // Espandi "trib." -> "tribunale" e "cass." -> "cassazione" per unificare le forme abbreviate
+      .replace(/^trib\b\.?/, "tribunale")
+      .replace(/^cass\b\.?/, "cassazione")
+      // Rimuovi tutto dopo la prima virgola (sezioni, sottoarticolazioni)
+      .split(",")[0]
+      // Rimuovi qualifiche post-nome (" civ.", " civile", " pen.")
+      .replace(/\s+(civ\.?|civile|pen\.?|penale|lav\.?|lavoro)$/i, "")
+      .replace(/\s+/g, " ")
+      .trim();
+  };
   const dedupMap = new Map<string, Sentenza[]>();
   for (const s of data) {
-    const organoKey = s.organo.trim().toLowerCase();
+    const organoKey = canonicalizeOrgano(s.organo);
     const numeroKey = (s.numero || `__notitle__${s.titolo.slice(0, 60).toLowerCase()}`).trim();
     const key = `${s.tipoOrgano}|${organoKey}|${numeroKey}|${s.anno}`;
     if (!dedupMap.has(key)) dedupMap.set(key, []);

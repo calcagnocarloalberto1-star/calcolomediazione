@@ -1,7 +1,7 @@
 // ═══════════════════════════════════════════════════════════════════════════
 // Database giurisprudenziale sulla mediazione civile e commerciale
 // Dal 2010 (D.Lgs. 28/2010) ad oggi
-// Aggiornato a giugno 2026 — 89 pronunce
+// Aggiornato a giugno 2026 — 88 pronunce
 // ═══════════════════════════════════════════════════════════════════════════
 
 export interface Sentenza {
@@ -865,28 +865,13 @@ export const sentenze: Sentenza[] = [
 
 
 
-  {
-    id: 52,
-    organo: "Trib. Catania, Sez. IV",
-    tipoOrgano: "tribunale",
-    numero: "2505",
-    anno: 2025,
-    data: "2025-05-12",
-    titolo: "Opposizione a D.I.: mancata partecipazione = doppio c.u., non improcedibilità dell'opposizione",
-    categoria: "Decreto ingiuntivo",
-    massima: "Nel giudizio di opposizione a decreto ingiuntivo, l'assenza ingiustificata della parte opponente alla mediazione non determina l'improcedibilità dell'opposizione stessa. La pronuncia di improcedibilità ex SS.UU. 19596/2020 riguarda la domanda monitoria del creditore, non l'opposizione. La mancata partecipazione comporta invece la condanna al doppio del contributo unificato ex art. 12-bis.",
-    principioDiDiritto: "L'assenza ingiustificata dell'opponente alla mediazione nel giudizio di opposizione a D.I. non determina improcedibilità dell'opposizione, ma la condanna al doppio del c.u. ex art. 12-bis D.Lgs. 28/2010.",
-    riferimentiNormativi: ["Art. 12-bis D.Lgs. 28/2010", "Art. 5-bis D.Lgs. 28/2010", "Cass. SS.UU. 19596/2020"],
-    temiChiave: ["opposizione decreto ingiuntivo", "mancata partecipazione", "improcedibilità", "doppio contributo unificato", "art. 12-bis"],
-    fonteUrl: "https://www.101mediatori.it/sentenze-mediazione/nel-giudizio-di-opposizione-a-decreto-ingiuntivo-l-assenza-ingiustificata-della-parte-opponente-alla-mediazione-non-determina-l-improcedibilita-dell-1660.aspx",
-  },
 
   // ══════════════════════════════════════════════════════════════════════════
   // PRONUNCE 2026 — RECENTISSIME
   // ══════════════════════════════════════════════════════════════════════════
 
   {
-    id: 53,
+    id: 52,
     organo: "Corte di Cassazione",
     tipoOrgano: "cassazione",
     numero: "5063",
@@ -903,7 +888,7 @@ export const sentenze: Sentenza[] = [
   },
 
   {
-    id: 54,
+    id: 53,
     organo: "Corte di Cassazione",
     tipoOrgano: "cassazione",
     numero: "5474",
@@ -920,7 +905,7 @@ export const sentenze: Sentenza[] = [
   },
 
   {
-    id: 55,
+    id: 54,
     organo: "Corte di Cassazione",
     tipoOrgano: "cassazione",
     numero: "8050",
@@ -937,7 +922,7 @@ export const sentenze: Sentenza[] = [
   },
 
   {
-    id: 56,
+    id: 55,
     organo: "Corte di Cassazione",
     tipoOrgano: "cassazione",
     numero: "1791",
@@ -954,7 +939,7 @@ export const sentenze: Sentenza[] = [
   },
 
   {
-    id: 57,
+    id: 56,
     organo: "Corte d'Appello di Ancona",
     tipoOrgano: "corte_appello",
     numero: "1141",
@@ -971,7 +956,7 @@ export const sentenze: Sentenza[] = [
   },
 
   {
-    id: 58,
+    id: 57,
     organo: "Tribunale di Cassino",
     tipoOrgano: "tribunale",
     numero: "1186",
@@ -988,7 +973,7 @@ export const sentenze: Sentenza[] = [
   },
 
   {
-    id: 59,
+    id: 58,
     organo: "Cass. civ., Sez. III",
     tipoOrgano: "cassazione",
     numero: "9608",
@@ -1008,7 +993,7 @@ export const sentenze: Sentenza[] = [
   // ─── NUOVE SENTENZE GIUGNO 2026 (15) ──────────────────────────────────────────
 
   {
-    id: 60,
+    id: 59,
     organo: "Cassazione",
     tipoOrgano: "cassazione",
     numero: "14885",
@@ -1025,7 +1010,7 @@ export const sentenze: Sentenza[] = [
   },
 
   {
-    id: 61,
+    id: 60,
     organo: "Cassazione",
     tipoOrgano: "cassazione",
     numero: "15584",
@@ -1042,7 +1027,7 @@ export const sentenze: Sentenza[] = [
   },
 
   {
-    id: 62,
+    id: 61,
     organo: "Tribunale di Napoli",
     tipoOrgano: "tribunale",
     numero: "7656",
@@ -1059,7 +1044,7 @@ export const sentenze: Sentenza[] = [
   },
 
   {
-    id: 63,
+    id: 62,
     organo: "Tribunale di Taranto",
     tipoOrgano: "tribunale",
     numero: "1069",
@@ -1076,7 +1061,7 @@ export const sentenze: Sentenza[] = [
   },
 
   {
-    id: 64,
+    id: 63,
     organo: "Tribunale di Cosenza",
     tipoOrgano: "tribunale",
     numero: "719",
@@ -1093,7 +1078,7 @@ export const sentenze: Sentenza[] = [
   },
 
   {
-    id: 65,
+    id: 64,
     organo: "Corte d'Appello di Napoli",
     tipoOrgano: "corte_appello",
     numero: "3298",
@@ -1110,7 +1095,7 @@ export const sentenze: Sentenza[] = [
   },
 
   {
-    id: 66,
+    id: 65,
     organo: "Tribunale di Milano",
     tipoOrgano: "tribunale",
     numero: "390",
@@ -1127,7 +1112,7 @@ export const sentenze: Sentenza[] = [
   },
 
   {
-    id: 67,
+    id: 66,
     organo: "Tribunale di Napoli",
     tipoOrgano: "tribunale",
     numero: "3457",
@@ -1144,7 +1129,7 @@ export const sentenze: Sentenza[] = [
   },
 
   {
-    id: 68,
+    id: 67,
     organo: "Tribunale di Udine",
     tipoOrgano: "tribunale",
     numero: "133",
@@ -1161,7 +1146,7 @@ export const sentenze: Sentenza[] = [
   },
 
   {
-    id: 69,
+    id: 68,
     organo: "Corte d'Appello di Bologna",
     tipoOrgano: "corte_appello",
     numero: "1076",
@@ -1178,7 +1163,7 @@ export const sentenze: Sentenza[] = [
   },
 
   {
-    id: 70,
+    id: 69,
     organo: "Tribunale di Latina",
     tipoOrgano: "tribunale",
     numero: "736",
@@ -1195,7 +1180,7 @@ export const sentenze: Sentenza[] = [
   },
 
   {
-    id: 71,
+    id: 70,
     organo: "Corte Costituzionale",
     tipoOrgano: "corte_costituzionale",
     numero: "28",
@@ -1212,7 +1197,7 @@ export const sentenze: Sentenza[] = [
   },
 
   {
-    id: 72,
+    id: 71,
     organo: "Tribunale di Roma",
     tipoOrgano: "tribunale",
     numero: "1400",
@@ -1229,7 +1214,7 @@ export const sentenze: Sentenza[] = [
   },
 
   {
-    id: 73,
+    id: 72,
     organo: "Tribunale di Salerno",
     tipoOrgano: "tribunale",
     numero: "664",
@@ -1246,7 +1231,7 @@ export const sentenze: Sentenza[] = [
   },
 
   {
-    id: 74,
+    id: 73,
     organo: "Corte d'Appello di Napoli",
     tipoOrgano: "corte_appello",
     numero: "2674",
@@ -1265,7 +1250,7 @@ export const sentenze: Sentenza[] = [
   // ─── SENTENZE STORICHE DI RIFERIMENTO (giugno 2026) ───────────────────────────
 
   {
-    id: 75,
+    id: 74,
     organo: "Corte Costituzionale",
     tipoOrgano: "corte_costituzionale",
     numero: "97",
@@ -1282,7 +1267,7 @@ export const sentenze: Sentenza[] = [
   },
 
   {
-    id: 76,
+    id: 75,
     organo: "Cassazione",
     tipoOrgano: "cassazione",
     numero: "10846",
@@ -1299,7 +1284,7 @@ export const sentenze: Sentenza[] = [
   },
 
   {
-    id: 77,
+    id: 76,
     organo: "Cassazione",
     tipoOrgano: "cassazione",
     numero: "2273",
@@ -1316,7 +1301,7 @@ export const sentenze: Sentenza[] = [
   },
 
   {
-    id: 78,
+    id: 77,
     organo: "Cassazione",
     tipoOrgano: "cassazione",
     numero: "13029",
@@ -1333,7 +1318,7 @@ export const sentenze: Sentenza[] = [
   },
 
   {
-    id: 79,
+    id: 78,
     organo: "Cassazione",
     tipoOrgano: "cassazione",
     numero: "22805",
@@ -1350,7 +1335,7 @@ export const sentenze: Sentenza[] = [
   },
 
   {
-    id: 80,
+    id: 79,
     organo: "Cassazione",
     tipoOrgano: "cassazione",
     numero: "7269",
@@ -1367,7 +1352,7 @@ export const sentenze: Sentenza[] = [
   },
 
   {
-    id: 81,
+    id: 80,
     organo: "Cassazione",
     tipoOrgano: "cassazione",
     numero: "14029",
@@ -1384,7 +1369,7 @@ export const sentenze: Sentenza[] = [
   },
 
   {
-    id: 82,
+    id: 81,
     organo: "Cassazione",
     tipoOrgano: "cassazione",
     numero: "26185",
@@ -1401,7 +1386,7 @@ export const sentenze: Sentenza[] = [
   },
 
   {
-    id: 83,
+    id: 82,
     organo: "Cassazione",
     tipoOrgano: "cassazione",
     numero: "12304",
@@ -1418,7 +1403,7 @@ export const sentenze: Sentenza[] = [
   },
 
   {
-    id: 84,
+    id: 83,
     organo: "Cassazione",
     tipoOrgano: "cassazione",
     numero: "28695",
@@ -1435,7 +1420,7 @@ export const sentenze: Sentenza[] = [
   },
 
   {
-    id: 85,
+    id: 84,
     organo: "Cassazione",
     tipoOrgano: "cassazione",
     numero: "2205",
@@ -1452,7 +1437,7 @@ export const sentenze: Sentenza[] = [
   },
 
   {
-    id: 86,
+    id: 85,
     organo: "Cassazione",
     tipoOrgano: "cassazione",
     numero: "27251",
@@ -1469,7 +1454,7 @@ export const sentenze: Sentenza[] = [
   },
 
   {
-    id: 87,
+    id: 86,
     organo: "Cassazione",
     tipoOrgano: "cassazione",
     numero: "10978",
@@ -1485,7 +1470,7 @@ export const sentenze: Sentenza[] = [
     fonteUrl: "https://www.dirittobancario.it/art/sulla-procura-sostanziale-nel-procedimento-di-mediazione/",
   },
   {
-    id: 88,
+    id: 87,
     organo: "Tribunale di Tivoli",
     tipoOrgano: "tribunale",
     numero: "269",
@@ -1501,7 +1486,7 @@ export const sentenze: Sentenza[] = [
     fonteUrl: "https://www.mondoadr.it/giurisprudenza_art/non-basta-mandare-linvito-al-solo-avvocato-se-la-convocazione-in-mediazione-e-irregolare-il-decreto-ingiuntivo-va-revocato-2/",
   },
   {
-    id: 89,
+    id: 88,
     organo: "Tribunale di Civitavecchia",
     tipoOrgano: "tribunale",
     numero: "503",
