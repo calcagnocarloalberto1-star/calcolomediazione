@@ -43,7 +43,8 @@ export default function GuidaDM150() {
               { n: "4", label: "Riduzioni Previste" },
               { n: "5", label: "Maggiorazioni" },
               { n: "6", label: "Esempio Pratico" },
-              { n: "7", label: "Riferimenti Normativi" },
+              { n: "7", label: "Costi Notarili in Mediazione" },
+              { n: "8", label: "Riferimenti Normativi" },
             ].map((item) => (
               <span
                 key={item.n}
@@ -331,9 +332,128 @@ export default function GuidaDM150() {
             </div>
           </section>
 
-          {/* 7. Riferimenti Normativi */}
+          {/* 7. Costi Notarili in Mediazione */}
           <section>
-            <SectionHeader icon={ExternalLink} number="7" title="Riferimenti Normativi" />
+            <SectionHeader icon={Calculator} number="7" title="Costi Notarili in Mediazione" />
+            <div className="border-2 border-foreground bg-card shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] p-6">
+              <p className="text-muted-foreground leading-relaxed mb-4">
+                Quando l’accordo di mediazione produce effetti di trasferimento immobiliare (es. compravendita,
+                divisione, datio in solutum, costituzione di diritti reali), occorre l’intervento del notaio
+                per la stipula dell’atto pubblico e la trascrizione nei pubblici registri. Il calcolatore di
+                calcolomediazione.it stima i costi notarili sulla base dei seguenti parametri.
+              </p>
+
+              <h4 className="font-bold text-sm mt-6 mb-3" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
+                Onorario notarile (scaglioni base imponibile)
+              </h4>
+              <div className="overflow-x-auto border-2 border-foreground">
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="border-b-2 border-foreground bg-muted/30">
+                      <th className="text-left px-4 py-2 font-bold border-r-2 border-foreground">Valore base imponibile</th>
+                      <th className="text-right px-4 py-2 font-bold">Onorario base</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr className="border-b border-muted"><td className="px-4 py-2 border-r-2 border-foreground">fino a €100.000</td><td className="px-4 py-2 text-right" style={{ fontFamily: "'JetBrains Mono', monospace" }}>€1.500</td></tr>
+                    <tr className="border-b border-muted bg-muted/10"><td className="px-4 py-2 border-r-2 border-foreground">€100.001 – €200.000</td><td className="px-4 py-2 text-right" style={{ fontFamily: "'JetBrains Mono', monospace" }}>€2.000</td></tr>
+                    <tr className="border-b border-muted"><td className="px-4 py-2 border-r-2 border-foreground">€200.001 – €300.000</td><td className="px-4 py-2 text-right" style={{ fontFamily: "'JetBrains Mono', monospace" }}>€2.500</td></tr>
+                    <tr className="border-b border-muted bg-muted/10"><td className="px-4 py-2 border-r-2 border-foreground">€300.001 – €500.000</td><td className="px-4 py-2 text-right" style={{ fontFamily: "'JetBrains Mono', monospace" }}>€3.200</td></tr>
+                    <tr><td className="px-4 py-2 border-r-2 border-foreground">oltre €500.000</td><td className="px-4 py-2 text-right" style={{ fontFamily: "'JetBrains Mono', monospace" }}>€4.000</td></tr>
+                  </tbody>
+                </table>
+              </div>
+              <p className="text-xs text-muted-foreground mt-2">
+                Sull’onorario si applicano IVA 22% e Cassa Notariato 4%. Le visure ipocatastali sono stimate €300 forfettarie.
+              </p>
+
+              <h4 className="font-bold text-sm mt-6 mb-3" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
+                Imposta di registro e benefici della mediazione
+              </h4>
+              <p className="text-muted-foreground leading-relaxed mb-3 text-sm">
+                L’<strong className="text-foreground">art. 17, commi 2 e 3, D.Lgs. 28/2010</strong> stabilisce un beneficio fiscale specifico
+                per gli accordi di mediazione: l’imposta di registro <strong>non si applica fino a €100.000</strong> di valore
+                dell’accordo. Oltre tale soglia, l’imposta si applica solo sull’eccedenza con le aliquote ordinarie:
+              </p>
+              <ul className="text-sm text-muted-foreground space-y-1 ml-6 list-disc mb-3">
+                <li><strong>2%</strong> per acquisto prima casa (con requisiti L. 1058/1996 e nota II-bis Tariffa);</li>
+                <li><strong>9%</strong> per acquisto seconda casa o altri immobili tra privati;</li>
+                <li>imposta minima di €1.000 ai sensi dell’art. 10, co. 2, D.Lgs. 23/2011 (solo se dovuta).</li>
+              </ul>
+              <div className="border-2 border-primary bg-primary/5 p-3 mb-4">
+                <p className="text-xs text-foreground">
+                  <strong>Esempio:</strong> accordo di mediazione per acquisto prima casa di €150.000.
+                  Imposta di registro: (150.000 – 100.000) × 2% = €1.000. Senza mediazione, sarebbe stata €3.000.
+                  Risparmio diretto: €2.000.
+                </p>
+              </div>
+
+              <h4 className="font-bold text-sm mt-6 mb-3" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
+                Imposte ipotecaria e catastale; imposta di bollo
+              </h4>
+              <p className="text-muted-foreground leading-relaxed text-sm mb-3">
+                Le imposte ipotecaria e catastale per i trasferimenti immobiliari tra privati sono dovute in misura fissa
+                (€50 + €50 ai sensi del D.Lgs. 23/2011). Il calcolatore le applica anche in mediazione in via prudenziale,
+                pur essendovi orientamenti (Agenzia Entrate, Risp. 235/2020 e art. 17 D.Lgs. 28/2010) che ne sostengono
+                l’esenzione entro la soglia di €100.000.
+              </p>
+              <p className="text-muted-foreground leading-relaxed text-sm">
+                L’<strong className="text-foreground">imposta di bollo</strong> sull’atto notarile (€230 fuori mediazione) è esente
+                ai sensi dell’art. 17, co. 2, D.Lgs. 28/2010 per gli atti emanati in esecuzione dell’accordo di mediazione.
+              </p>
+
+              <h4 className="font-bold text-sm mt-6 mb-3" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
+                Cessione da impresa con IVA
+              </h4>
+              <p className="text-muted-foreground leading-relaxed text-sm">
+                Se il cedente è un’impresa soggetta a IVA (es. impresa costruttrice che vende entro 5 anni dall’ultimazione),
+                l’atto è soggetto a IVA: <strong>4%</strong> prima casa, <strong>10%</strong> altri immobili abitativi,
+                <strong> 22%</strong> immobili di lusso. In tale ipotesi le imposte di registro, ipotecaria e catastale sono dovute
+                in misura fissa (€200 ciascuna) ai sensi del principio di alternatività IVA/registro (art. 40 D.P.R. 131/1986).
+              </p>
+
+              <div className="border-2 border-foreground bg-muted/10 p-4 mt-6">
+                <h4 className="font-bold text-sm mb-3" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
+                  Esempio pratico — Prima casa €150.000 in mediazione
+                </h4>
+                <div className="space-y-1 text-sm">
+                  <ExampleRow label="Onorario notarile (scaglione €100.001-€200.000)" value="€2.000,00" />
+                  <ExampleRow label="IVA 22% su onorario" value="€440,00" />
+                  <ExampleRow label="Cassa Notariato 4% su onorario" value="€80,00" />
+                  <ExampleRow label="Visure ipocatastali (forfettarie)" value="€300,00" />
+                  <ExampleRow label="Imposta di registro (50.000 × 2%) — art. 17 D.Lgs. 28/2010" value="€1.000,00" />
+                  <ExampleRow label="Imposta ipotecaria (fissa)" value="€50,00" />
+                  <ExampleRow label="Imposta catastale (fissa)" value="€50,00" />
+                  <ExampleRow label="Imposta di bollo (esente in mediazione)" value="€0,00" highlight="reduction" />
+                  <div className="border-t-2 border-foreground pt-2 mt-2">
+                    <ExampleRow label="Totale stimato" value="€3.920,00" bold />
+                  </div>
+                </div>
+                <p className="text-xs text-muted-foreground mt-3">
+                  Stesso accordo fuori mediazione: registro 3.000 + bollo 230 + onorario+iva+cassa+visure 2.820 + ipo/catastali 100 = circa €6.150.
+                  Risparmio stimato grazie alla mediazione: ~€2.230.
+                </p>
+              </div>
+
+              <div className="mt-6 flex flex-col sm:flex-row gap-3">
+                <Link href="/costi-notarili">
+                  <span className="inline-flex items-center gap-2 px-6 py-3 text-sm font-bold bg-primary text-primary-foreground border-2 border-foreground shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] transition-all duration-150 cursor-pointer">
+                    <Calculator className="w-4 h-4" />
+                    Calcolatore puri costi notarili
+                  </span>
+                </Link>
+                <Link href="/confronto-costi">
+                  <span className="inline-flex items-center gap-2 px-6 py-3 text-sm font-bold bg-card text-foreground border-2 border-foreground shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] transition-all duration-150 cursor-pointer">
+                    Confronto costi mediazione vs giudizio
+                  </span>
+                </Link>
+              </div>
+            </div>
+          </section>
+
+          {/* 8. Riferimenti Normativi */}
+          <section>
+            <SectionHeader icon={ExternalLink} number="8" title="Riferimenti Normativi" />
             <div className="border-2 border-foreground bg-card shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] p-6">
               <p className="text-muted-foreground leading-relaxed mb-6">
                 Di seguito i principali riferimenti normativi in materia di mediazione civile e commerciale:

@@ -1,0 +1,285 @@
+import { useState, useMemo } from "react";
+import { Link } from "wouter";
+import { ArrowLeft, Building2, Calculator, Info, Scale } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { Switch } from "@/components/ui/switch";
+import {
+  Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
+} from "@/components/ui/select";
+import { Badge } from "@/components/ui/badge";
+import {
+  confrontaNotarile,
+  type RegimeFiscale,
+  type TipologiaCatastale,
+} from "@shared/notarile";
+
+function fmtEuro(n: number): string {
+  return new Intl.NumberFormat("it-IT", {
+    style: "currency",
+    currency: "EUR",
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
+  }).format(Math.round(n || 0));
+}
+
+export default function CostiNotarili() {
+  const [regime, setRegime] = useState<RegimeFiscale>("prima_casa");
+  const [tipologia, setTipologia] = useState<TipologiaCatastale>("prima_casa");
+  const [prezzoStr, setPrezzoStr] = useState("150000");
+  const [usaPrezzoValore, setUsaPrezzoValore] = useState(false);
+  const [renditaStr, setRenditaStr] = useState("");
+  const [venditoreImpresaIva, setVenditoreImpresaIva] = useState(false);
+
+  const prezzo = parseFloat(prezzoStr) || 0;
+  const rendita = parseFloat(renditaStr) || 0;
+
+  const confronto = useMemo(() => {
+    return confrontaNotarile({
+      prezzo,
+      prezzo_valore: usaPrezzoValore,
+      rendita_catastale: rendita || null,
+      tipologia,
+      regime,
+      venditoreImpresaIva,
+    });
+  }, [prezzo, usaPrezzoValore, rendita, tipologia, regime, venditoreImpresaIva]);
+
+  const m = confronto.con_mediazione.voci;
+  const s = confronto.con_sentenza.voci;
+
+  return (
+    <div className="min-h-screen py-8 px-4">
+      <div className="max-w-5xl mx-auto">
+        {/* Header */}
+        <div className="mb-8">
+          <Link href="/">
+            <span className="inline-flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors duration-150 mb-6 cursor-pointer">
+              <ArrowLeft className="w-4 h-4" />
+              Torna alla Home
+            </span>
+          </Link>
+          <div className="flex items-center gap-3 mb-3">
+            <div className="w-10 h-10 bg-primary flex items-center justify-center border-2 border-foreground shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]">
+              <Building2 className="w-5 h-5 text-primary-foreground" />
+            </div>
+            <h1
+              className="text-2xl sm:text-3xl font-bold"
+              style={{ fontFamily: "'Space Grotesk', sans-serif" }}
+            >
+              Calcolatore Costi Notarili
+            </h1>
+          </div>
+          <p className="text-muted-foreground max-w-2xl">
+            Stima dei puri costi notarili e fiscali per il trasferimento immobiliare,
+            con confronto tra accordo di mediazione e sentenza del giudice.
+            Motore unificato (shared/notarile.ts) — stessi numeri usati dall&apos;Analisi AI e dal Calcolatore.
+          </p>
+        </div>
+
+        {/* Input */}
+        <Card className="border-2 border-foreground shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] mb-6">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Calculator className="w-5 h-5" />
+              Parametri
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="prezzo">Prezzo / valore dichiarato (€)</Label>
+                <Input
+                  id="prezzo"
+                  type="number"
+                  min="0"
+                  value={prezzoStr}
+                  onChange={(e) => setPrezzoStr(e.target.value)}
+                  className="border-2 border-foreground"
+                />
+              </div>
+              <div>
+                <Label htmlFor="regime">Regime fiscale</Label>
+                <Select value={regime} onValueChange={(v) => setRegime(v as RegimeFiscale)}>
+                  <SelectTrigger className="border-2 border-foreground">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="prima_casa">Prima casa (registro 2%)</SelectItem>
+                    <SelectItem value="seconda_casa">Seconda casa / altro (registro 9%)</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="flex items-center gap-3 border-2 border-foreground p-3 bg-muted/10">
+                <Switch
+                  checked={usaPrezzoValore}
+                  onCheckedChange={setUsaPrezzoValore}
+                />
+                <div>
+                  <Label className="cursor-pointer">Usa &quot;prezzo-valore&quot;</Label>
+                  <p className="text-xs text-muted-foreground">
+                    Art. 1 c. 497 L. 296/2006: base imponibile = rendita rivalutata × coefficiente
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-center gap-3 border-2 border-foreground p-3 bg-muted/10">
+                <Switch
+                  checked={venditoreImpresaIva}
+                  onCheckedChange={setVenditoreImpresaIva}
+                />
+                <div>
+                  <Label className="cursor-pointer">Cessione da impresa con IVA</Label>
+                  <p className="text-xs text-muted-foreground">
+                    IVA 4%/10%, registro/ipo/catastale fissi €200
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {usaPrezzoValore && (
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="rendita">Rendita catastale (€)</Label>
+                  <Input
+                    id="rendita"
+                    type="number"
+                    min="0"
+                    value={renditaStr}
+                    onChange={(e) => setRenditaStr(e.target.value)}
+                    placeholder="es. 800"
+                    className="border-2 border-foreground"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="tipologia">Tipologia catastale</Label>
+                  <Select value={tipologia} onValueChange={(v) => setTipologia(v as TipologiaCatastale)}>
+                    <SelectTrigger className="border-2 border-foreground">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="prima_casa">Prima casa (coeff. 115,5)</SelectItem>
+                      <SelectItem value="seconda_casa">Seconda casa (coeff. 126)</SelectItem>
+                      <SelectItem value="terreni_non_edificabili">Terreni non edificabili (coeff. 112,5)</SelectItem>
+                      <SelectItem value="fabbricati_C_A10">Fabbricati C/A10 (coeff. 63)</SelectItem>
+                      <SelectItem value="fabbricati_D_E">Fabbricati D/E (coeff. 65,52)</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* Risultati: confronto a due colonne */}
+        <Card className="border-2 border-foreground shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] mb-6">
+          <CardHeader>
+            <CardTitle className="flex items-center justify-between">
+              <span className="flex items-center gap-2">
+                <Scale className="w-5 h-5" />
+                Confronto costi
+              </span>
+              <Badge variant="outline" className="font-mono">
+                Base imponibile: {fmtEuro(confronto.base)}
+              </Badge>
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="overflow-x-auto border-2 border-foreground">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b-2 border-foreground bg-muted/30">
+                    <th className="text-left px-4 py-2 font-bold border-r-2 border-foreground">Voce</th>
+                    <th className="text-right px-4 py-2 font-bold border-r-2 border-foreground">Accordo in mediazione</th>
+                    <th className="text-right px-4 py-2 font-bold">Sentenza del giudice</th>
+                  </tr>
+                </thead>
+                <tbody className="font-mono">
+                  <Row label="Imposta di registro" mVal={m.imposta_registro} sVal={s.imposta_registro} />
+                  <Row label="Imposta di bollo" mVal={m.imposta_bollo} sVal={s.imposta_bollo} alt />
+                  <Row label="Imposta ipotecaria" mVal={m.imposta_ipotecaria} sVal={s.imposta_ipotecaria} />
+                  <Row label="Imposta catastale" mVal={m.imposta_catastale} sVal={s.imposta_catastale} alt />
+                  {venditoreImpresaIva && (
+                    <Row label="IVA su atto" mVal={m.iva} sVal={s.iva} />
+                  )}
+                  <Row label="Onorario notaio (stima)" mVal={m.onorario_notaio} sVal={s.onorario_notaio} alt={!venditoreImpresaIva} />
+                  <Row label="IVA 22% su onorario" mVal={m.iva_onorario} sVal={s.iva_onorario} alt={venditoreImpresaIva} />
+                  <Row label="Cassa Notariato 4%" mVal={m.cassa_notarile} sVal={s.cassa_notarile} alt={!venditoreImpresaIva} />
+                  <Row label="Visure e volture" mVal={m.visure_volture} sVal={s.visure_volture} alt={venditoreImpresaIva} />
+                  <tr className="border-t-2 border-foreground bg-primary/10 font-bold">
+                    <td className="px-4 py-2 border-r-2 border-foreground">Totale stimato</td>
+                    <td className="px-4 py-2 text-right border-r-2 border-foreground">{fmtEuro(confronto.con_mediazione.totale)}</td>
+                    <td className="px-4 py-2 text-right">{fmtEuro(confronto.con_sentenza.totale)}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            {confronto.risparmio > 0 && (
+              <div className="mt-4 border-2 border-green-700 bg-green-50 dark:bg-green-950/20 p-4">
+                <p className="text-sm font-bold text-green-800 dark:text-green-300">
+                  Risparmio stimato con accordo in mediazione: {fmtEuro(confronto.risparmio)}
+                </p>
+                <p className="text-xs text-green-700 dark:text-green-400 mt-1">
+                  Esenzione art. 17, co. 2-3, D.Lgs. 28/2010 + nessun contributo unificato + nessuna spesa di lite.
+                </p>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* Note */}
+        <Card className="border-2 border-foreground shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] mb-6">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-base">
+              <Info className="w-4 h-4" />
+              Note di calcolo
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="text-sm space-y-2">
+            <p>
+              <strong>Mediazione:</strong> {confronto.con_mediazione.note.join(" ; ")}
+            </p>
+            <p>
+              <strong>Sentenza:</strong> {confronto.con_sentenza.note.join(" ; ")}
+            </p>
+            <div className="border-2 border-muted-foreground/30 bg-muted/10 p-3 mt-3">
+              <p className="text-xs text-muted-foreground">
+                {confronto.disclaimer}
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* CTA */}
+        <div className="flex flex-col sm:flex-row gap-3">
+          <Link href="/calcolatore">
+            <span className="inline-flex items-center gap-2 px-6 py-3 text-sm font-bold bg-primary text-primary-foreground border-2 border-foreground shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] transition-all duration-150 cursor-pointer">
+              <Calculator className="w-4 h-4" />
+              Calcolatore Indennità di Mediazione
+            </span>
+          </Link>
+          <Link href="/confronto-costi">
+            <span className="inline-flex items-center gap-2 px-6 py-3 text-sm font-bold bg-card text-foreground border-2 border-foreground shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] transition-all duration-150 cursor-pointer">
+              <Scale className="w-4 h-4" />
+              Confronto costi mediazione vs giudizio
+            </span>
+          </Link>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function Row({ label, mVal, sVal, alt }: { label: string; mVal?: number; sVal?: number; alt?: boolean }) {
+  return (
+    <tr className={`border-b border-muted ${alt ? "bg-muted/10" : ""}`}>
+      <td className="px-4 py-2 border-r-2 border-foreground font-sans">{label}</td>
+      <td className="px-4 py-2 text-right border-r-2 border-foreground">{fmtEuro(mVal ?? 0)}</td>
+      <td className="px-4 py-2 text-right">{fmtEuro(sVal ?? 0)}</td>
+    </tr>
+  );
+}

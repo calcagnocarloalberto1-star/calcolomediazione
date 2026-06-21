@@ -20,6 +20,7 @@
  */
 
 import { formatEuro, type ModalitaTariffaria } from "./calcolo-indennita.js";
+import { calcolaCostiNotarili as calcolaCostiNotarileUnif, type RegimeFiscale, type ScenarioNotarile } from "./notarile.js";
 
 // ========================
 // TIPI
@@ -335,54 +336,36 @@ const COMPENSI_COLLEGIO_MEDYAPRO = [
 // ========================
 // COSTI NOTARILI
 // ========================
-
-const COSTI_NOTARILI_SECONDA_CASA = [
-  { min: 0, max: 10000, onorario: 1300 },
-  { min: 10000.01, max: 25000, onorario: 1550 },
-  { min: 25000.01, max: 50000, onorario: 1800 },
-  { min: 50000.01, max: 250000, onorario: 2200 },
-  { min: 250000.01, max: 500000, onorario: 2500 },
-  { min: 500000.01, max: 2500000, onorario: 3200 },
-  { min: 2500000.01, max: 5000000, onorario: 3900 },
-  { min: 5000000.01, max: Infinity, onorario: 5000 },
-];
-
-const COSTI_NOTARILI_PRIMA_CASA = [
-  { min: 0, max: 10000, onorario: 900 },
-  { min: 10000.01, max: 25000, onorario: 1100 },
-  { min: 25000.01, max: 50000, onorario: 1250 },
-  { min: 50000.01, max: 250000, onorario: 1500 },
-  { min: 250000.01, max: 500000, onorario: 1750 },
-  { min: 500000.01, max: 2500000, onorario: 2200 },
-  { min: 2500000.01, max: 5000000, onorario: 2700 },
-  { min: 5000000.01, max: Infinity, onorario: 3500 },
-];
+// Le tabelle locali (COSTI_NOTARILI_PRIMA_CASA / SECONDA_CASA) sono state
+// rimosse: ora si utilizza esclusivamente il motore unificato
+// `shared/notarile.ts` (NOTARILE_CONFIG.onorario_stima) condiviso con
+// Analisi AI, Calcolatore, ConfrontoCosti e CostiNotarili.
 
 // ========================
 // IMPOSTE IMMOBILIARI
 // ========================
 
+/**
+ * Calcolo imposte immobiliari — versione UNIFICATA con shared/notarile.ts.
+ * Stesso motore usato da Analisi AI, Calcolatore, ConfrontoCosti e CostiNotarili.
+ */
 function calcolaImposteImmobiliari(
   valoreImmobile: number,
   primaCasa: boolean,
   inMediazione: boolean
 ): ImposteImmobiliari {
-  const aliquota = primaCasa ? 0.02 : 0.09;
-  const aliquotaLabel = primaCasa ? "2%" : "9%";
-  let impostaRegistro = Math.round(valoreImmobile * aliquota);
-  if (impostaRegistro < 1000) impostaRegistro = 1000;
-  if (inMediazione) {
-    const valoreImponibile = Math.max(0, valoreImmobile - 100000);
-    impostaRegistro = Math.round(valoreImponibile * aliquota);
-    if (valoreImmobile <= 100000) impostaRegistro = 0;
-  }
-  const impostaIpotecaria = 50;
-  const impostaCatastale = 50;
+  const regime: RegimeFiscale = primaCasa ? "prima_casa" : "seconda_casa";
+  const scenario: ScenarioNotarile = inMediazione ? "con_mediazione" : "con_sentenza";
+  const det = calcolaCostiNotarileUnif({ base: valoreImmobile, regime, scenario });
+  const impostaRegistro = det.voci.imposta_registro ?? 0;
+  const impostaIpotecaria = det.voci.imposta_ipotecaria ?? 50;
+  const impostaCatastale = det.voci.imposta_catastale ?? 50;
   const totaleImposte = impostaRegistro + impostaIpotecaria + impostaCatastale;
+  const aliquotaLabel = primaCasa ? "2%" : "9%";
   let note = primaCasa
     ? `Agevolazione prima casa: registro ${aliquotaLabel} (art. 1 nota II-bis Tariffa Parte I). Ipotecaria e catastale €50 fisse ciascuna.`
     : `Aliquota ordinaria ${aliquotaLabel} (seconda casa). Ipotecaria e catastale €50 fisse ciascuna.`;
-  if (inMediazione) note += " Esenzione registro fino a €100.000 (art. 17 D.Lgs. 28/2010).";
+  if (inMediazione) note += " Esenzione registro fino a €100.000 e bollo (art. 17 D.Lgs. 28/2010).";
   return { impostaRegistro, impostaIpotecaria, impostaCatastale, totaleImposte, aliquotaRegistro: aliquotaLabel, isPrimaCasa: primaCasa, note };
 }
 
@@ -475,8 +458,13 @@ function calcolaCostiMediazione(input: InputConfronto, valoreEffettivo: number):
   let costoNotaio = 0;
   if (input.materiaImmobiliare) {
     const primaCasaFlag = input.primaCasa ?? false;
-    const tabellaNotaio = primaCasaFlag ? COSTI_NOTARILI_PRIMA_CASA : COSTI_NOTARILI_SECONDA_CASA;
-    costoNotaio = findScaglione(tabellaNotaio, valoreEffettivo).onorario;
+    const regimeNot: RegimeFiscale = primaCasaFlag ? "prima_casa" : "seconda_casa";
+    // Onorario notarile + IVA 22% + Cassa 4% + visure €300 (motore unificato)
+    const dettNot = calcolaCostiNotarileUnif({ base: valoreEffettivo, regime: regimeNot, scenario: "con_mediazione" });
+    costoNotaio = (dettNot.voci.onorario_notaio ?? 0)
+      + (dettNot.voci.iva_onorario ?? 0)
+      + (dettNot.voci.cassa_notarile ?? 0)
+      + (dettNot.voci.visure_volture ?? 0);
   }
 
   const totalePerParte = indennitaOrganismo + compensoAvvocato + speseGenerali15 + cpa4Avvocato + iva22Avvocato + impostaRegistro + costoNotaio;
