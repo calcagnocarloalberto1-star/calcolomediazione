@@ -25,7 +25,7 @@ const PAGES = [
   { path: "/calcolatore", title: "Calcolatore Indennità Mediazione D.M. 150/2023 con Verifica Congruità Catastale", desc: "Calcola le indennità di mediazione civile e commerciale secondo le tariffe del D.M. 150/2023. Doppia tariffa, esenzioni, compensi avvocato, costi notarili con esenzione prima casa, verifica congruità valore catastale (art. 29 D.M. 150/2023).", priority: "0.9", changefreq: "monthly" },
   { path: "/analisi-caso-ai", title: "Analisi AI del Caso di Mediazione con Confronto Economico", desc: "Analisi completa del caso di mediazione con intelligenza artificiale: analisi giuridica, MAAN/BATNA, bias cognitivi, bozza accordo, confronto economico primo grado, appello e cassazione con stima CTU, verifica congruità valore catastale.", priority: "0.9", changefreq: "monthly" },
   { path: "/confronto-costi", title: "Confronto Costi Mediazione vs Processo: Primo Grado, Appello, Cassazione", desc: "Confronta i costi della mediazione con quelli del processo su tre gradi di giudizio. Contributo unificato, compensi avvocato, CTU in appello, parametri forensi D.M. 55/2014 Tabelle 2, 12 e 13.", priority: "0.9", changefreq: "monthly" },
-  { path: "/costi-notarili", title: "Costi Notarili Mediazione vs Sentenza - Onorari, Imposte, Visure", desc: "Stima dei costi notarili nella mediazione civile e nelle sentenze: onorari, IVA, cassa, visure, imposte di registro/ipotecaria/catastale. Confronto accordo di mediazione (esenzione art. 17 D.Lgs. 28/2010) vs sentenza.", priority: "0.8", changefreq: "monthly" },
+  { path: "/costi-notarili", title: "Calcola Costi Notarili Mediazione · CalcoloMediazione", desc: "Calcola i costi notarili per accordo di mediazione o sentenza: onorari, imposta di registro, ipotecaria, catastale e IVA. Esenzione art. 17 D.Lgs. 28/2010.", priority: "0.8", changefreq: "monthly" },
   { path: "/faq", title: "FAQ Mediazione Civile - Domande Frequenti", desc: "Domande frequenti sulla mediazione civile e commerciale: indennità, costi notarili per trascrizione immobiliare, esenzioni fiscali, verifica congruità catastale, credito d'imposta, gratuito patrocinio, esenzione prima casa e analisi AI.", priority: "0.7", changefreq: "monthly" },
   { path: "/guida-dm-150", title: "Guida Completa D.M. 150/2023 - Tariffe Mediazione", desc: "Guida dettagliata al Decreto Ministeriale 150/2023 sulle tariffe di mediazione civile e commerciale. Tabelle, calcoli ed esempi pratici.", priority: "0.7", changefreq: "monthly" },
   { path: "/generatore-procura", title: "Generatore Procura Speciale per Mediazione", desc: "Genera la procura speciale per la mediazione civile con tutti i poteri necessari. Conforme al D.Lgs. 28/2010.", priority: "0.8", changefreq: "monthly" },
@@ -90,19 +90,24 @@ const PAGE_CONTENT: Record<string, string> = {
     </ul>`,
 
   "/costi-notarili": `
-    <h1>Costi Notarili nella Mediazione Civile vs Sentenza</h1>
-    <p>Stima dei costi notarili nella mediazione civile (accordo trascrivibile) e nelle sentenze: onorari, IVA, cassa, visure, imposte di registro, ipotecaria e catastale.</p>
-    <h2>Cosa calcola</h2>
+    <h1>Costi Notarili: Stima e Confronto Mediazione vs Sentenza</h1>
+    <p>Calcolatore gratuito dei costi notarili per accordo di mediazione o sentenza: onorari notarili, imposta di registro, ipotecaria, catastale, IVA e cassa. Confronto strutturato con esenzione art. 17 D.Lgs. 28/2010 e agevolazioni prima casa.</p>
+    <h2>Calcolo costi notarili: cosa include</h2>
     <ul>
-      <li>Onorari notarili parametrici (D.M. 140/2012)</li>
-      <li>IVA 22%, cassa nazionale del notariato 4%</li>
+      <li>Onorari notarili parametrici (D.M. 140/2012, L. 89/1913)</li>
+      <li>IVA 22% e cassa nazionale del notariato 4%</li>
       <li>Visure ipotecarie e catastali</li>
       <li>Imposte indirette: registro, ipotecaria, catastale (D.P.R. 131/1986)</li>
-      <li>Esenzione art. 17 D.Lgs. 28/2010 per gli accordi di mediazione</li>
-      <li>Confronto economico mediazione vs sentenza</li>
+      <li>Onorari forensi D.M. 55/2014 per assistenza in mediazione</li>
     </ul>
+    <h2>Esenzione art. 17 D.Lgs. 28/2010</h2>
+    <p>L'accordo di mediazione che dispone trasferimenti immobiliari beneficia dell'esenzione dall'imposta di registro entro il limite di 100.000 euro di valore, oltre a esenzione da bollo e tasse ipocatastali in misura fissa. La normativa rappresenta uno dei vantaggi economici più rilevanti rispetto alla sentenza, che sconta sempre le imposte ordinarie del D.P.R. 131/1986.</p>
+    <h2>Prima casa: agevolazioni e requisiti</h2>
+    <p>L'acquisto della prima abitazione (non di lusso, categorie catastali A/2-A/7) gode di imposta di registro al 2% (anziché 9%) e imposte ipotecaria/catastale in misura fissa di 50 euro ciascuna. Il calcolatore applica automaticamente le agevolazioni se l'immobile soddisfa i requisiti della Nota II-bis art. 1 della Tariffa, Parte Prima, D.P.R. 131/1986.</p>
+    <h2>Confronto mediazione vs sentenza</h2>
+    <p>A parità di valore immobiliare, l'accordo di mediazione consente un risparmio fino al 90% sulle imposte indirette grazie al combinato disposto dell'art. 17 D.Lgs. 28/2010 e delle agevolazioni prima casa. La sentenza non beneficia di alcuna esenzione equivalente e sconta sempre l'imposta di registro proporzionale ordinaria.</p>
     <h2>Riferimenti normativi</h2>
-    <p>D.M. 140/2012 sui parametri notarili, D.P.R. 131/1986 (Testo Unico imposta di registro), art. 17 D.Lgs. 28/2010 (esenzioni fiscali in mediazione), L. 89/1913 (Legge Notarile).</p>`,
+    <p>D.M. 140/2012 (parametri notarili), L. 89/1913 (Legge Notarile), D.P.R. 131/1986 (Testo Unico imposta di registro), art. 17 D.Lgs. 28/2010 (esenzioni fiscali in mediazione), D.M. 55/2014 (parametri forensi), Nota II-bis Tariffa allegata al D.P.R. 131/1986 (prima casa).</p>`,
 
   "/calcolatore": `
     <h1>Calcolatore Indennità Mediazione D.M. 150/2023</h1>
