@@ -1,5 +1,11 @@
 import { callLLM } from "./llm.js";
 import { calcolaIndennita, formatEuro } from "../../shared/calcolo-indennita.js";
+import {
+  confrontaNotarile,
+  renderNotarileMarkdown,
+  type TipologiaCatastale,
+  type RegimeFiscale,
+} from "./notarile.js";
 
 // ─── CONTRIBUTO UNIFICATO — D.P.R. 115/2002, art. 13 ─────────────────────
 function calcolaContributoUnificato(valore: number): number {
@@ -130,6 +136,7 @@ export async function analisiEconomica(
     tipoAttoNotarile?: string | null;
     valoreImmobile?: number | null;
     applicaPrezzoValore?: boolean;
+    venditoreImpresaIva?: boolean;
     onorarioNotarileStimato?: number | null;
     impostaRegistroAliquota?: number | null;
     impostaIpotecaria?: number | null;
@@ -148,6 +155,7 @@ export async function analisiEconomica(
     tipoAttoNotarile: "trasferimento_immobiliare",
     valoreImmobile: null,
     applicaPrezzoValore: false,
+    venditoreImpresaIva: false,
     onorarioNotarileStimato: null,
     impostaRegistroAliquota: null,
     impostaIpotecaria: null,
@@ -169,6 +177,7 @@ export async function analisiEconomica(
     tipoAttoNotarile = "trasferimento_immobiliare",
     valoreImmobile = null,
     applicaPrezzoValore = false,
+    venditoreImpresaIva = false,
     onorarioNotarileStimato = null,
     impostaRegistroAliquota = null,
     impostaIpotecaria = null,
@@ -257,6 +266,39 @@ export async function analisiEconomica(
         altreSpeseNotarili,
       })
     : null;
+
+  // ─── CONFRONTO NOTARILE MEDIAZIONE vs SENTENZA ─────────────────────────
+  // Motore avanzato basato su notarile.ts: usato quando l'utente attiva il
+  // calcolo notarili E vuole prezzo-valore o acquisto da impresa con IVA.
+  let confrontoNotarileMd = "";
+  if (materiaImmobiliare && attivaCalcoloCostiNotarili) {
+    const tipologia: TipologiaCatastale = primaCasa ? "prima_casa" : "seconda_casa";
+    const regime: RegimeFiscale = primaCasa ? "prima_casa" : "seconda_casa";
+    try {
+      const confronto = confrontaNotarile({
+        rendita_catastale: renditaCatastale ?? undefined,
+        tipologia,
+        prezzo: valoreImmobile ?? valore,
+        prezzo_valore: applicaPrezzoValore,
+        regime,
+        venditoreImpresaIva,
+      });
+      confrontoNotarileMd = renderNotarileMarkdown({
+        rendita_catastale: renditaCatastale ?? undefined,
+        tipologia,
+        prezzo: valoreImmobile ?? valore,
+        prezzo_valore: applicaPrezzoValore,
+        regime,
+        venditoreImpresaIva,
+      });
+      // Aggiungiamo info di sintesi al log per debug; non blocca il flusso
+      console.log(
+        `[notarile] base=${confronto.base} mediazione=${confronto.con_mediazione.totale} sentenza=${confronto.con_sentenza.totale}`,
+      );
+    } catch (err) {
+      console.error("Errore confronto notarile:", err);
+    }
+  }
 
   const totMedConNotarili = totMed + (costiNotarili?.totale || 0);
   const totMedNetto = gratuitoPatrocinio ? 0 : totMedConNotarili;
@@ -353,6 +395,11 @@ SEZIONE COSTI NOTARILI DELL'ACCORDO:
 - Onorario notarile stimato: ${formatEuro(costiNotarili.onorario)}
 - Spese vive notarili: ${formatEuro(costiNotarili.altreSpese)}
 - IVA su onorario e spese: ${formatEuro(costiNotarili.ivaNotaio)}
+` : ""}
+${confrontoNotarileMd ? `
+
+CONFRONTO NOTARILE — Mediazione vs Sentenza (motore notarile.ts):
+${confrontoNotarileMd}
 ` : ""}
 ${catastaleSection}
 

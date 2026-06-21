@@ -1,12 +1,15 @@
 /**
  * notarile.js — Motore di calcolo costi notarili e fiscali
- * CalcoloMediazione.it — modulo unico per Calcolatore Indennità + Analisi AI
+ * CalcoloMediazione.it — modulo unico per Calcolatore Indennità (frontend) + Analisi AI
  * Aggiornato: 2026-06
+ *
+ * NOTA: per uso server/TypeScript usare server/ai/notarile.ts (fonte di verità).
+ * Questo file replica le stesse funzioni per il frontend statico.
  *
  * FONTI:
  *  - Onorari notaio: liberalizzati dal DL 1/2012 -> valori SOLO ORIENTATIVI (parametri DM 140/2012)
  *  - Imposte: DPR 131/1986 (Registro), D.Lgs 347/1990 (ipo-catastali)
- *  - Prezzo-valore: L. 296/2006 art.1 c.497
+ *  - Prezzo-valore: L. 296/2006 art. 1 c. 497
  *  - Esenzione accordo di mediazione: art. 17 D.Lgs 28/2010
  *
  * ATTENZIONE: gli onorari sono stime di mercato, NON tariffe legali.
@@ -25,14 +28,14 @@ export const NOTARILE_CONFIG = {
   },
 
   imposte_privato: {
-    prima_casa: { registro_perc: 2, registro_min: 1000, ipotecaria: 50, catastale: 50 },
+    prima_casa:   { registro_perc: 2, registro_min: 1000, ipotecaria: 50, catastale: 50 },
     seconda_casa: { registro_perc: 9, registro_min: 1000, ipotecaria: 50, catastale: 50 }
   },
 
   imposte_impresa_iva: {
-    prima_casa: { iva_perc: 4, registro: 200, ipotecaria: 200, catastale: 200 },
+    prima_casa:   { iva_perc: 4,  registro: 200, ipotecaria: 200, catastale: 200 },
     seconda_casa: { iva_perc: 10, registro: 200, ipotecaria: 200, catastale: 200 },
-    lusso: { iva_perc: 22, registro: 200, ipotecaria: 200, catastale: 200 }
+    lusso:        { iva_perc: 22, registro: 200, ipotecaria: 200, catastale: 200 }
   },
 
   esenzione_mediazione: {
@@ -42,10 +45,10 @@ export const NOTARILE_CONFIG = {
 
   onorario_stima: {
     scaglioni: [
-      { fino_a: 100000, compenso: 1500 },
-      { fino_a: 200000, compenso: 2000 },
-      { fino_a: 300000, compenso: 2500 },
-      { fino_a: 500000, compenso: 3200 },
+      { fino_a: 100000,  compenso: 1500 },
+      { fino_a: 200000,  compenso: 2000 },
+      { fino_a: 300000,  compenso: 2500 },
+      { fino_a: 500000,  compenso: 3200 },
       { fino_a: Infinity, compenso: 4000 }
     ],
     iva_perc: 22,
@@ -125,7 +128,7 @@ export function calcolaCostiNotarili({
 export function confrontaNotarile(input) {
   const base = calcolaBaseImponibile(input);
   const conMediazione = calcolaCostiNotarili({ ...input, base, scenario: "con_mediazione" });
-  const conSentenza = calcolaCostiNotarili({ ...input, base, scenario: "con_sentenza" });
+  const conSentenza   = calcolaCostiNotarili({ ...input, base, scenario: "con_sentenza" });
 
   return {
     base,
@@ -164,4 +167,57 @@ export function renderNotarileCalcolatore(containerEl, input) {
         </tr>
       </thead>
       <tbody>
-        <tr><td>Imposta di registro</td><td>${fmtEuro(m.imposta_registro || 0)}</td><td>${fmtEuro(s.imposta_registro || 
+        <tr><td>Imposta di registro</td><td>${fmtEuro(m.imposta_registro || 0)}</td><td>${fmtEuro(s.imposta_registro || 0)}</td></tr>
+        <tr><td>Imposta di bollo</td><td>${fmtEuro(m.imposta_bollo || 0)}</td><td>${fmtEuro(s.imposta_bollo || 0)}</td></tr>
+        <tr><td>Imposta ipotecaria</td><td>${fmtEuro(m.imposta_ipotecaria || 0)}</td><td>${fmtEuro(s.imposta_ipotecaria || 0)}</td></tr>
+        <tr><td>Imposta catastale</td><td>${fmtEuro(m.imposta_catastale || 0)}</td><td>${fmtEuro(s.imposta_catastale || 0)}</td></tr>
+        <tr><td>Onorario notaio (stima)</td><td>${fmtEuro(m.onorario_notaio || 0)}</td><td>${fmtEuro(s.onorario_notaio || 0)}</td></tr>
+        <tr><td>IVA su onorario</td><td>${fmtEuro(m.iva_onorario || 0)}</td><td>${fmtEuro(s.iva_onorario || 0)}</td></tr>
+        <tr><td>Cassa notarile</td><td>${fmtEuro(m.cassa_notarile || 0)}</td><td>${fmtEuro(s.cassa_notarile || 0)}</td></tr>
+        <tr><td>Visure e volture</td><td>${fmtEuro(m.visure_volture || 0)}</td><td>${fmtEuro(s.visure_volture || 0)}</td></tr>
+        <tr><th>Totale</th><th>${fmtEuro(r.con_mediazione.totale)}</th><th>${fmtEuro(r.con_sentenza.totale)}</th></tr>
+      </tbody>
+    </table>
+
+    <p><strong>Risparmio con accordo in mediazione:</strong> ${fmtEuro(r.risparmio)}</p>
+
+    <div>
+      <p><strong>Note mediazione:</strong></p>
+      <ul>${r.con_mediazione.note.map(n => `<li>${n}</li>`).join("")}</ul>
+    </div>
+
+    <div>
+      <p><strong>Note sentenza:</strong></p>
+      <ul>${r.con_sentenza.note.map(n => `<li>${n}</li>`).join("")}</ul>
+    </div>
+
+    <p style="font-size: 0.9em; color: #555;">${r.disclaimer}</p>
+  `;
+}
+
+export function renderNotarileMarkdown(input) {
+  const r = confrontaNotarile(input);
+  const m = r.con_mediazione.voci;
+  const s = r.con_sentenza.voci;
+
+  return `Base imponibile: ${fmtEuro(r.base)}
+
+| Voce | Accordo in mediazione | Sentenza del giudice |
+|---|---|---|
+| Imposta di registro | ${fmtEuro(m.imposta_registro || 0)} | ${fmtEuro(s.imposta_registro || 0)} |
+| Imposta di bollo | ${fmtEuro(m.imposta_bollo || 0)} | ${fmtEuro(s.imposta_bollo || 0)} |
+| Imposta ipotecaria | ${fmtEuro(m.imposta_ipotecaria || 0)} | ${fmtEuro(s.imposta_ipotecaria || 0)} |
+| Imposta catastale | ${fmtEuro(m.imposta_catastale || 0)} | ${fmtEuro(s.imposta_catastale || 0)} |
+| Onorario notaio (stima) | ${fmtEuro(m.onorario_notaio || 0)} | ${fmtEuro(s.onorario_notaio || 0)} |
+| IVA su onorario | ${fmtEuro(m.iva_onorario || 0)} | ${fmtEuro(s.iva_onorario || 0)} |
+| Cassa notarile | ${fmtEuro(m.cassa_notarile || 0)} | ${fmtEuro(s.cassa_notarile || 0)} |
+| Visure e volture | ${fmtEuro(m.visure_volture || 0)} | ${fmtEuro(s.visure_volture || 0)} |
+| **Totale** | **${fmtEuro(r.con_mediazione.totale)}** | **${fmtEuro(r.con_sentenza.totale)}** |
+
+Risparmio con accordo in mediazione: **${fmtEuro(r.risparmio)}**
+
+Mediazione: ${r.con_mediazione.note.join(" ; ")}
+Sentenza: ${r.con_sentenza.note.join(" ; ")}
+
+> ${r.disclaimer}`;
+}
