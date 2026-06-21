@@ -6,6 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/hooks/use-toast";
+import { SeoHead } from "@/components/SeoHead";
 import {
   FileText,
   Download,
@@ -598,6 +599,11 @@ export default function GeneratoreProcura() {
 
   return (
     <div className="min-h-screen bg-background">
+      <SeoHead
+        title="Generatore Procura Speciale Mediazione — art. 8 D.Lgs. 28/2010 (Word e PDF)"
+        description="Genera la procura speciale per la partecipazione alla mediazione ai sensi dell’art. 8, D.Lgs. 28/2010, con poteri sostanziali ex Cass. Civ. 8473/2019. Esportazione in Word e PDF."
+        canonical="https://calcolomediazione.it/generatore-procura"
+      />
       {/* Hero */}
       <section className="border-b-[3px] border-foreground bg-card">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">

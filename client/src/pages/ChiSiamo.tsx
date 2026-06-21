@@ -1,9 +1,15 @@
 import { Link } from "wouter";
 import { ArrowLeft, User, Scale, Brain, BookOpen, Award } from "lucide-react";
+import { SeoHead } from "@/components/SeoHead";
 
 export default function ChiSiamo() {
   return (
     <div className="min-h-screen bg-background">
+      <SeoHead
+        title="Chi Siamo — Avv. Carlo Alberto Calcagno, mediatore e formatore ODM"
+        description="CalcoloMediazione è il progetto dell’avv. Carlo Alberto Calcagno, mediatore familiare e civile ODM Genova, commissario ADR COA Genova. Strumenti gratuiti per avvocati e mediatori."
+        canonical="https://calcolomediazione.it/chi-siamo"
+      />
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <Link href="/">
           <span className="inline-flex items-center gap-2 text-sm font-medium mb-6 cursor-pointer hover:opacity-70 transition-opacity" style={{ color: 'var(--primary)' }}>

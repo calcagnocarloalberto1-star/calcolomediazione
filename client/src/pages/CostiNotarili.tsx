@@ -15,6 +15,8 @@ import {
   type TipologiaCatastale,
 } from "@shared/notarile";
 import { ExportButtons } from "@/components/ExportButtons";
+import { SeoHead } from "@/components/SeoHead";
+import { DisclaimerLegale } from "@/components/DisclaimerLegale";
 import type { ReportData } from "@/lib/export-risultati";
 
 function fmtEuro(n: number): string {
@@ -138,6 +140,11 @@ export default function CostiNotarili() {
 
   return (
     <div className="min-h-screen py-8 px-4">
+      <SeoHead
+        title="Costi Notarili Mediazione vs Sentenza — Onorari, Imposte, Visure"
+        description="Stima dei costi notarili nella mediazione civile e nelle sentenze: onorari, IVA, cassa, visure, imposte di registro/ipotecaria/catastale. Confronto tra accordo di mediazione (esenzione art. 17 D.Lgs. 28/2010) e sentenza."
+        canonical="https://calcolomediazione.it/costi-notarili"
+      />
       <div className="max-w-5xl mx-auto">
         {/* Header */}
         <div className="mb-8">
@@ -349,6 +356,13 @@ export default function CostiNotarili() {
             </div>
           </CardContent>
         </Card>
+
+        <DisclaimerLegale
+          variant="full"
+          riferimenti={["D.P.R. 131/1986", "D.M. 140/2012", "D.Lgs. 28/2010 art. 17", "L. 89/1913 (Legge Notarile)"]}
+          noteSpecifiche="Le stime di costo notarile si basano sui parametri ministeriali del D.M. 140/2012 e sulle imposte indirette (registro/ipotecaria/catastale). Negli accordi di mediazione si applica l’esenzione art. 17 D.Lgs. 28/2010 fino al limite previsto."
+          className="mb-6"
+        />
 
         {/* CTA */}
         <div className="flex flex-col sm:flex-row gap-3">

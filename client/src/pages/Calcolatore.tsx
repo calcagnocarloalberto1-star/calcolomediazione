@@ -33,6 +33,8 @@ import {
   type RisultatoVerificaCatastale,
 } from "@shared/valore-catastale";
 import { ExportButtons } from "@/components/ExportButtons";
+import { SeoHead } from "@/components/SeoHead";
+import { DisclaimerLegale } from "@/components/DisclaimerLegale";
 import type { ReportData } from "@/lib/export-risultati";
 
 // ─── BUILDER REPORT EXPORT ──────────────────────────────────────────────
@@ -153,6 +155,11 @@ export default function Calcolatore() {
 
   return (
     <div className="min-h-screen py-8 px-4">
+      <SeoHead
+        title="Calcolatore Indennità Mediazione D.M. 150/2023 — Tariffe Nazionali e COA Genova"
+        description="Calcola le indennità di mediazione civile secondo il D.M. 150/2023: tariffe nazionali Tabella A e regolamento COA Genova. Spese di avvio, riduzioni art. 28, maggiorazioni art. 31, agevolazioni fiscali art. 17 D.Lgs. 28/2010."
+        canonical="https://calcolomediazione.it/calcolatore"
+      />
       <div className="max-w-5xl mx-auto">
         {/* Page Header */}
         <div className="mb-8">
@@ -859,21 +866,11 @@ export default function Calcolatore() {
           </Card>
         </div>
 
-        {/* Disclaimer metodologico e legale */}
-        <div className="mt-8 text-xs text-muted-foreground bg-muted/50 p-4 border border-foreground/10" data-testid="text-disclaimer-calcolatore">
-          <div className="flex items-start gap-2">
-            <Scale className="w-4 h-4 flex-shrink-0 mt-0.5" />
-            <div>
-              <p className="font-semibold mb-1">Criteri di calcolo e avvertenza legale</p>
-              <p className="mb-2">
-                <strong>Compensi avvocato:</strong> i compensi legali indicati nei calcolatori sono determinati sulla base dei <strong>valori medi</strong> previsti dal D.M. 55/2014 (aggiornato dal D.M. 147/2022), sommando le fasi applicabili (studio, introduttiva, istruttoria, decisionale per il giudizio; attivazione, negoziazione, conciliazione per la mediazione). Il D.M. 55/2014 prevede per ciascuna fase un valore minimo, un valore medio e un valore massimo: il compenso effettivo può variare significativamente (indicativamente dal -50% al +100% rispetto ai valori medi) in base alla complessità della causa, al numero delle parti, all'urgenza, al pregio dell'opera e ai risultati conseguiti, secondo i criteri dell'art. 4 D.M. 55/2014.
-              </p>
-              <p>
-                <strong>Avvertenza:</strong> tutti i calcoli forniti da questa piattaforma hanno finalità esclusivamente informativa e orientativa. Non costituiscono in alcun modo una consulenza legale, un preventivo vincolante né un parere professionale. Per una valutazione precisa e personalizzata dei costi, si raccomanda di consultare un avvocato o un professionista abilitato.
-              </p>
-            </div>
-          </div>
-        </div>
+        <DisclaimerLegale
+          variant="full"
+          riferimenti={["D.M. 150/2023", "D.Lgs. 28/2010", "D.M. 55/2014 (D.M. 147/2022)", "art. 17 D.Lgs. 28/2010", "art. 29 D.M. 150/2023"]}
+          noteSpecifiche="I calcoli applicano gli scaglioni della Tabella A del D.M. 150/2023 per il regime nazionale e il Regolamento COA Genova quando attivo. La verifica di congruità catastale segue l'art. 29 D.M. 150/2023."
+        />
       </div>
     </div>
   );

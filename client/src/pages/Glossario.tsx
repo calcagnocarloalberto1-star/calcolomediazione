@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link } from "wouter";
 import { ArrowLeft, BookOpen, Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
+import { SeoHead } from "@/components/SeoHead";
 
 interface GlossaryEntry {
   term: string;
@@ -195,6 +196,11 @@ export default function Glossario() {
 
   return (
     <div className="min-h-screen bg-background">
+      <SeoHead
+        title="Glossario della Mediazione Civile — Termini Tecnici e Giuridici"
+        description="Glossario completo dei termini tecnici della mediazione civile e commerciale: art. 5, ODM, MAAN, BATNA, caucus, verbale, proposta del mediatore, esenzione art. 17."
+        canonical="https://calcolomediazione.it/glossario"
+      />
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <Link href="/">
           <span className="inline-flex items-center gap-2 text-sm font-medium mb-6 cursor-pointer hover:opacity-70 transition-opacity" style={{ color: 'var(--primary)' }}>

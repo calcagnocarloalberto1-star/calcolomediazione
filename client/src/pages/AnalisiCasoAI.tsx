@@ -8,6 +8,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { SeoHead } from "@/components/SeoHead";
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
@@ -467,6 +468,11 @@ export default function AnalisiCasoAI() {
   if (analisi && (analisi.stato === "completata" || currentStep > 0)) {
     return (
       <div className="min-h-screen py-8 px-4">
+      <SeoHead
+        title="Analisi AI del Caso di Mediazione — Estrazione Entità, Strategia e Costi"
+        description="Analisi automatica del caso di mediazione con intelligenza artificiale: estrazione entità, analisi giuridica, strategia di mediazione, stima dei costi e generazione documenti."
+        canonical="https://calcolomediazione.it/analisi-caso-ai"
+      />
         <div className="max-w-5xl mx-auto">
           {/* Header */}
           <div className="mb-6">

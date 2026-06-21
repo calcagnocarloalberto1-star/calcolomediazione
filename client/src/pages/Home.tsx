@@ -23,6 +23,8 @@ import {
   Clock,
   Building2,
 } from "lucide-react";
+import { PartnerCards } from "@/components/PartnerCards";
+import { SeoHead } from "@/components/SeoHead";
 
 const features = [
   {
@@ -147,6 +149,32 @@ export default function Home() {
 
   return (
     <div className="min-h-screen">
+      <SeoHead
+        title="CalcoloMediazione — Calcolatore Indennità Mediazione Civile, Analisi AI e Confronto Costi"
+        description="Piattaforma gratuita per avvocati e mediatori: calcolatore indennità D.M. 150/2023, analisi AI del caso, confronto costi mediazione vs processo su tre gradi di giudizio, stima costi notarili, credito d'imposta, generatore procura."
+        canonical="https://calcolomediazione.it/"
+        jsonLd={[
+          {
+            "@context": "https://schema.org",
+            "@type": "WebApplication",
+            name: "CalcoloMediazione",
+            url: "https://calcolomediazione.it/",
+            applicationCategory: "LegalService",
+            operatingSystem: "Web",
+            inLanguage: "it-IT",
+            offers: { "@type": "Offer", price: "0", priceCurrency: "EUR" },
+            areaServed: { "@type": "Country", name: "Italia" },
+          },
+          {
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            itemListElement: [
+              { "@type": "ListItem", position: 1, name: "Home", item: "https://calcolomediazione.it/" },
+            ],
+          },
+        ]}
+      />
+
       {/* Deadline Banner */}
       <DeadlineBanner />
 
@@ -286,6 +314,9 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {/* Partner Cards — Olismo Integrato */}
+      <PartnerCards />
 
       {/* How it works */}
       <section className="py-16 px-4 bg-muted/50" data-testid="section-come-funziona">

@@ -26,6 +26,8 @@ import {
 } from "@shared/costi-procedura";
 import { formatEuro, type ModalitaTariffaria } from "@shared/calcolo-indennita";
 import { ExportButtons } from "@/components/ExportButtons";
+import { SeoHead } from "@/components/SeoHead";
+import { DisclaimerLegale } from "@/components/DisclaimerLegale";
 import type { ReportData } from "@/lib/export-risultati";
 
 // --- BUILDER REPORT EXPORT ---
@@ -198,6 +200,11 @@ export default function ConfrontoCosti() {
 
   return (
     <div className="min-h-screen py-8 px-4">
+      <SeoHead
+        title="Confronto Costi Mediazione vs Processo — Tre Gradi di Giudizio + Arbitrato"
+        description="Confronta i costi totali della mediazione civile rispetto al processo (primo grado, appello, cassazione) e all'arbitrato CAM/MedyaPro. Include contributo unificato, compensi avvocato D.M. 55/2014, CTU, indennità mediazione D.M. 150/2023."
+        canonical="https://calcolomediazione.it/confronto-costi"
+      />
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-8">
@@ -953,19 +960,12 @@ export default function ConfrontoCosti() {
               )}
             </Card>
 
-            {/* Disclaimer */}
-            <div className="text-xs text-muted-foreground bg-muted/50 p-4 border border-foreground/10 mb-4">
-              <div className="flex items-start gap-2">
-                <Info className="w-4 h-4 flex-shrink-0 mt-0.5" />
-                <div>
-                  <p className="font-semibold mb-1">Criteri di calcolo e avvertenza legale</p>
-                  <p className="mb-2"><strong>Compensi avvocato:</strong> calcolati sui valori medi D.M. 55/2014 (agg. D.M. 147/2022). Il compenso effettivo può variare dal -50% al +100% in base a complessità, urgenza e risultati (art. 4 D.M. 55/2014).</p>
-                  <p className="mb-2"><strong>Arbitrato CAM:</strong> tariffe Camera Arbitrale di Milano dal 1 marzo 2023. Arbitro unico, valori medi min/max. Onorari CAM esenti IVA; IVA 22% sugli onorari dell'arbitro. Il lodo ha efficacia di sentenza (art. 824-bis c.p.c.).</p>
-                  <p className="mb-2"><strong>Arbitrato MedyaPro:</strong> tariffe Camera Arbitrale MedyaPro Srl (Regolamento approvato 14 novembre 2022). Spese amministrative versate da ciascuna parte al deposito. Compensi arbitro/collegio calcolati come media tra minimo e massimo tariffario per scaglione, quota per parte = totale / 2. Compensi liquidati dal direttivo ex art. 32 Regolamento. Si applica l'imposta di bollo su tutti gli atti (art. 28.2 Regolamento). CTU determinata su tabelle giudiziali (art. 23.5 Regolamento).</p>
-                  <p><strong>Avvertenza:</strong> tutti i calcoli hanno finalità esclusivamente informativa e orientativa. Non costituiscono consulenza legale né preventivo vincolante.</p>
-                </div>
-              </div>
-            </div>
+            <DisclaimerLegale
+              variant="full"
+              riferimenti={["D.M. 150/2023", "D.Lgs. 28/2010", "D.M. 55/2014", "Regolamento CAM Milano 2023", "Regolamento MedyaPro 2022"]}
+              noteSpecifiche="Il motore confronta mediazione civile, processo (primo grado, appello, cassazione) e arbitrato CAM/MedyaPro. Le tariffe arbitrali sono aggiornate ai regolamenti delle rispettive camere; il lodo ha efficacia di sentenza (art. 824-bis c.p.c.)."
+              className="mb-4"
+            />
           </>
         )}
 

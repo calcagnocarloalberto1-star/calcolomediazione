@@ -1,65 +1,118 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml">
 
   <!-- Homepage -->
   <url>
     <loc>https://calcolomediazione.it/</loc>
+    <xhtml:link rel="alternate" hreflang="it-IT" href="https://calcolomediazione.it/"/>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
 
-  <!-- Strumenti principali -->
+  <!-- Motori principali -->
   <url>
     <loc>https://calcolomediazione.it/analisi-caso-ai</loc>
+    <xhtml:link rel="alternate" hreflang="it-IT" href="https://calcolomediazione.it/analisi-caso-ai"/>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
     <loc>https://calcolomediazione.it/calcolatore</loc>
+    <xhtml:link rel="alternate" hreflang="it-IT" href="https://calcolomediazione.it/calcolatore"/>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
     <loc>https://calcolomediazione.it/confronto-costi</loc>
+    <xhtml:link rel="alternate" hreflang="it-IT" href="https://calcolomediazione.it/confronto-costi"/>
     <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://calcolomediazione.it/generatore-procura</loc>
+    <loc>https://calcolomediazione.it/costi-notarili</loc>
+    <xhtml:link rel="alternate" hreflang="it-IT" href="https://calcolomediazione.it/costi-notarili"/>
     <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://calcolomediazione.it/giurisprudenza</loc>
-    <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://calcolomediazione.it/credito-imposta</loc>
+    <xhtml:link rel="alternate" hreflang="it-IT" href="https://calcolomediazione.it/credito-imposta"/>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://calcolomediazione.it/generatore-procura</loc>
+    <xhtml:link rel="alternate" hreflang="it-IT" href="https://calcolomediazione.it/generatore-procura"/>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
 
-  <!-- Sezioni menu -->
+  <!-- Conoscenza / risorse -->
   <url>
-    <loc>https://calcolomediazione.it/guide</loc>
+    <loc>https://calcolomediazione.it/giurisprudenza</loc>
+    <xhtml:link rel="alternate" hreflang="it-IT" href="https://calcolomediazione.it/giurisprudenza"/>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://calcolomediazione.it/faq</loc>
+    <xhtml:link rel="alternate" hreflang="it-IT" href="https://calcolomediazione.it/faq"/>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://calcolomediazione.it/strategie</loc>
+    <loc>https://calcolomediazione.it/guida-dm-150</loc>
+    <xhtml:link rel="alternate" hreflang="it-IT" href="https://calcolomediazione.it/guida-dm-150"/>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://calcolomediazione.it/strategie-negoziazione</loc>
+    <xhtml:link rel="alternate" hreflang="it-IT" href="https://calcolomediazione.it/strategie-negoziazione"/>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://calcolomediazione.it/risorse</loc>
+    <loc>https://calcolomediazione.it/glossario</loc>
+    <xhtml:link rel="alternate" hreflang="it-IT" href="https://calcolomediazione.it/glossario"/>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
 
-  <!-- Calcolatore Assegni Divorzio/Separazione -->
+  <!-- Pagine istituzionali -->
+  <url>
+    <loc>https://calcolomediazione.it/chi-siamo</loc>
+    <xhtml:link rel="alternate" hreflang="it-IT" href="https://calcolomediazione.it/chi-siamo"/>
+    <changefreq>yearly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://calcolomediazione.it/contatti</loc>
+    <xhtml:link rel="alternate" hreflang="it-IT" href="https://calcolomediazione.it/contatti"/>
+    <changefreq>yearly</changefreq>
+    <priority>0.4</priority>
+  </url>
+  <url>
+    <loc>https://calcolomediazione.it/privacy-policy</loc>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+  <url>
+    <loc>https://calcolomediazione.it/cookie-policy</loc>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+  <url>
+    <loc>https://calcolomediazione.it/termini-condizioni</loc>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+
+  <!-- Calcolatore Assegni (sezione statica esterna) -->
   <url>
     <loc>https://calcolomediazione.it/calcolo-assegni/</loc>
+    <xhtml:link rel="alternate" hreflang="it-IT" href="https://calcolomediazione.it/calcolo-assegni/"/>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>

@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { Link } from "wouter";
 import { HelpCircle, Euro, Brain, ArrowLeft, TrendingUp, Shield, FileText, Scale, AlertTriangle, CheckCircle, ExternalLink } from "lucide-react";
+import { SeoHead } from "@/components/SeoHead";
 import {
   Accordion,
   AccordionContent,
@@ -270,6 +271,11 @@ export default function FAQ() {
 
   return (
     <div className="min-h-screen py-12 px-4">
+      <SeoHead
+        title="FAQ Mediazione Civile — Domande Frequenti D.M. 150/2023 e D.Lgs. 28/2010"
+        description="Le risposte alle domande più frequenti sulla mediazione civile: indennità, primo incontro, materie obbligatorie, agevolazioni fiscali art. 17, credito d’imposta, art. 5-quater (mediazione demandata)."
+        canonical="https://calcolomediazione.it/faq"
+      />
       <div className="max-w-4xl mx-auto">
         <div className="mb-12">
           <Link href="/">
