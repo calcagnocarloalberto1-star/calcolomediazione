@@ -18,7 +18,7 @@ const SEO_PAGES: Record<string, { title: string; description: string }> = {
   "/strategie-negoziazione": { title: "Strategie di Negoziazione per la Mediazione Civile", description: "Guida alle principali strategie e tecniche di negoziazione nella mediazione civile: MAAN/BATNA, negoziazione integrativa, ZOPA, ancoraggio e comunicazione." },
   "/glossario": { title: "Glossario della Mediazione Civile", description: "Glossario completo dei termini utilizzati nella mediazione civile e commerciale. Definizioni chiare e riferimenti normativi." },
   "/calcolo-assegni": { title: "Calcolo Assegni di Separazione e Divorzio", description: "Strumento orientativo per il calcolo dell'assegno di mantenimento del coniuge, dell'assegno divorzile (Cass. SU 18287/2018) e del contributo al mantenimento dei figli (art. 337-ter c.c.). Esportazione PDF del report motivato." },
-  "/chi-siamo": { title: "Chi Siamo - CalcoloMediazione", description: "Scopri il team dietro CalcoloMediazione, la piattaforma professionale per mediatori civili e commerciali." },
+  "/chi-siamo": { title: "Chi Siamo \u2014 Avv. Carlo Alberto Calcagno, mediatore e Legal Tech Genova", description: "Avv. Carlo Alberto Calcagno: mediatore familiare e civile ODM Genova, commissario ADR COA Genova, formatore. Legal Tech, AI applicata alla mediazione e ADR. Tutti gli strumenti gratuiti di CalcoloMediazione." },
   "/contatti": { title: "Contatti - CalcoloMediazione", description: "Contatta il team di CalcoloMediazione per informazioni, supporto tecnico e collaborazioni." },
 };
 
