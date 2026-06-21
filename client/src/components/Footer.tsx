@@ -14,7 +14,7 @@ export default function Footer() {
                 Risorse Utili
               </h4>
             </div>
-            <ul className="space-y-2">
+            <ul className="space-y-0">
               <li><FooterLink href="/faq">Domande Frequenti (FAQ)</FooterLink></li>
               <li><FooterLink href="/glossario">Glossario Mediazione</FooterLink></li>
               <li><FooterLink href="/giurisprudenza">Giurisprudenza</FooterLink></li>
@@ -32,7 +32,7 @@ export default function Footer() {
                 Calcolatori
               </h4>
             </div>
-            <ul className="space-y-2">
+            <ul className="space-y-0">
               <li><FooterLink href="/calcolatore">Calcolatore Indennità</FooterLink></li>
               <li><FooterLink href="/analisi-caso-ai">Analisi AI Caso</FooterLink></li>
               <li><FooterLink href="/confronto-costi">Confronto Mediazione vs Processo</FooterLink></li>
@@ -50,7 +50,7 @@ export default function Footer() {
                 Riferimenti Normativi
               </h4>
             </div>
-            <ul className="space-y-2">
+            <ul className="space-y-0">
               <li><FooterExternalLink href="https://www.normattiva.it/uri-res/N2Ls?urn:nir:stato:decreto.legislativo:2010-03-04;28!vig=">D.Lgs. 28/2010 - Mediazione civile</FooterExternalLink></li>
               <li><FooterLink href="/guida-dm-150">D.M. 150/2023 - Guida tariffe</FooterLink></li>
               <li><FooterExternalLink href="https://www.normattiva.it/uri-res/N2Ls?urn:nir:stato:decreto.legislativo:2022-10-10;149!vig=">D.Lgs. 149/2022 - Riforma Cartabia</FooterExternalLink></li>
@@ -67,7 +67,7 @@ export default function Footer() {
                 Legale e Contatti
               </h4>
             </div>
-            <ul className="space-y-2">
+            <ul className="space-y-0">
               <li><FooterLink href="/chi-siamo">Chi Siamo</FooterLink></li>
               <li><FooterLink href="/contatti">Contatti</FooterLink></li>
               <li><FooterLink href="/privacy-policy">Privacy Policy</FooterLink></li>
@@ -147,8 +147,8 @@ export default function Footer() {
 function FooterLink({ href, children }: { href: string; children: React.ReactNode }) {
   return (
     <Link href={href}>
-      {/* FIX: opacity-80 → text-background/90 per contrasto sufficiente su sfondo scuro */}
-      <span className="text-sm text-background/90 hover:text-background cursor-pointer transition-colors duration-150">
+      {/* FIX a11y mobile: area touch >= 36px (py-2 → 8+8+20≈36px) */}
+      <span className="block py-2 text-sm text-background/90 hover:text-background cursor-pointer transition-colors duration-150">
         {children}
       </span>
     </Link>
@@ -159,7 +159,7 @@ function FooterStaticLink({ href, children }: { href: string; children: React.Re
   return (
     <a
       href={href}
-      className="text-sm text-background/90 hover:text-background transition-colors duration-150"
+      className="block py-2 text-sm text-background/90 hover:text-background transition-colors duration-150"
     >
       {children}
     </a>
@@ -172,10 +172,12 @@ function FooterExternalLink({ href, children }: { href: string; children: React.
       href={href}
       target="_blank"
       rel="noopener noreferrer"
-      className="text-sm text-background/90 hover:text-background transition-colors duration-150 inline-flex items-center gap-1"
+      className="block py-2 text-sm text-background/90 hover:text-background transition-colors duration-150 items-center gap-1"
     >
-      {children}
-      <ExternalLink className="w-3 h-3" aria-hidden="true" />
+      <span className="inline-flex items-center gap-1">
+        {children}
+        <ExternalLink className="w-3 h-3" aria-hidden="true" />
+      </span>
     </a>
   );
 }
