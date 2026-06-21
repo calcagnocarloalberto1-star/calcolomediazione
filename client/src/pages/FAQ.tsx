@@ -221,32 +221,32 @@ const faqSections: FAQSection[] = [
     badge: "Aggiornato 2026",
     questions: [
       {
-        q: "La parte deve partecipare personalmente alla mediazione o può farsi rappresentare?",
-        a: "L’art. 8 del D.Lgs. 28/2010 prevede la comparizione personale della parte, ma ammette espressamente la rappresentanza tramite un soggetto munito di apposita procura sostanziale (distinta dalla procura alle liti) che attribuisca il potere di disporre del diritto controverso. La giurisprudenza più recente di Cassazione (Cass. 9608/2026 e Cass. 10978/2026) ha definito con precisione presupposti e limiti di tale rappresentanza. Il rappresentante sostanziale deve avere conoscenza dei fatti e poteri dispositivi effettivi: non basta una procura generica.",
+        q: "La parte deve partecipare personalmente alla mediazione obbligatoria o può farsi rappresentare?",
+        a: "L’art. 8, comma 4, del D.Lgs. 28/2010 prevede la comparizione personale della parte, ma ammette espressamente la rappresentanza tramite un terzo (anche il difensore) munito di apposita procura speciale sostanziale, distinta dalla procura alle liti ex art. 83 c.p.c., che attribuisca il potere di disporre del diritto controverso. Cass. 8473/2019 ha fissato il principio, confermato e precisato da Cass. 14676/2025, Cass. 9608/2026 e Cass. 10978/2026. Il rappresentante sostanziale deve essere a conoscenza dei fatti di causa e avere poteri dispositivi effettivi (conciliare, transigere, sottoscrivere l’accordo): una procura generica o limitata al giudizio non basta. Approfondimenti nella nostra <a href=\"/giurisprudenza\" class=\"underline text-primary\">banca dati giurisprudenza</a> alla categoria Procura sostanziale.",
       },
       {
-        q: "Il difensore può rappresentare la parte anche come rappresentante sostanziale?",
-        a: "Sì, ma a condizioni precise. Cass. 9608/2026 (Rubino-Gianniti) aveva inizialmente affermato la non cumulabilità dei ruoli di assistente tecnico e rappresentante sostanziale in capo allo stesso avvocato in assenza di procura ad hoc. Cass. 10978/2026 (Scarpa-Trapuzzano) ha riequilibrato l’orientamento chiarendo che il difensore può essere validamente nominato rappresentante sostanziale del proprio assistito, purché sia munito di una procura speciale scritta separata dalla procura alle liti, contenente espressamente il potere di disporre del diritto controverso. La sola procura ad litem (art. 83 c.p.c.) non è sufficiente.",
+        q: "L’avvocato difensore può rappresentare la parte in mediazione come rappresentante sostanziale?",
+        a: "Sì, ma a condizioni precise. Cass. 9608/2026 (Rubino-Gianniti) ha affermato la non cumulabilità dei ruoli di assistente tecnico e rappresentante sostanziale in capo allo stesso avvocato in assenza di procura ad hoc. Cass. 10978/2026 (Scarpa-Trapuzzano) ha precisato che il difensore può essere validamente nominato rappresentante sostanziale del proprio assistito, purché sia munito di una procura speciale sostanziale scritta, separata dalla procura alle liti, contenente espressamente il potere di disporre del diritto controverso (conciliare, transigere, sottoscrivere l’accordo). La sola procura ad litem ex art. 83 c.p.c. non è sufficiente: serve un atto autonomo. Puoi generare gratuitamente un modello aggiornato di procura speciale sostanziale dal nostro <a href=\"/generatore-procura\" class=\"underline text-primary\">Generatore Procura</a>.",
       },
       {
-        q: "La procura sostanziale richiede l’autenticazione del notaio?",
-        a: "No, di regola la procura sostanziale per la mediazione richiede la sola forma scritta con sottoscrizione del rappresentato, senza necessità di autenticazione notarile ex art. 1392 c.c. (Cass. 10978/2026). Fa eccezione il caso in cui la legge richieda una forma diversa per l’atto che il rappresentante è chiamato a compiere: ad esempio se l’accordo di mediazione comporta atti soggetti a trascrizione (art. 2643 c.c.), la procura deve avere la stessa forma dell’atto da trascrivere (forma scritta autenticata o atto pubblico). Il nostro generatore procura produce il modello corretto per ciascuna casistica.",
+        q: "La procura speciale sostanziale per la mediazione deve essere autenticata dal notaio?",
+        a: "No, di regola la procura sostanziale per la mediazione richiede la sola scrittura privata non autenticata con sottoscrizione del rappresentato, senza necessità di autenticazione notarile (Cass. 8473/2019, Cass. 14676/2025, Cass. 10978/2026). L’art. 1392 c.c. impone la forma dell’atto da compiere solo quando il rappresentante deve concludere un negozio che richiede forma vincolata: ad esempio se l’accordo di mediazione comporta atti soggetti a trascrizione (art. 2643 c.c.) la procura deve avere la stessa forma (scrittura privata autenticata o atto pubblico). Il <a href=\"/generatore-procura\" class=\"underline text-primary\">Generatore Procura</a> produce automaticamente il modello corretto in base alla materia (diritti reali, locazione, condominio, successioni, contratti).",
       },
       {
-        q: "Cosa succede se la convocazione in mediazione è notificata solo al difensore?",
-        a: "Dipende dal tipo di mediazione. Nella mediazione obbligatoria ex art. 5 D.Lgs. 28/2010, l’invito notificato al solo difensore della parte chiamata non integra valida convocazione se la procura conferita è limitata al giudizio e non comprende poteri di rappresentanza sostanziale (Trib. Tivoli 269/2026): in tale ipotesi il procedimento è improcedibile e il decreto ingiuntivo opposto va revocato. Nella mediazione demandata dal giudice ex art. 5-quater, invece, Trib. Civitavecchia 503/2026 ha ritenuto sufficiente l’invito al solo difensore della parte già costituita in giudizio, ritenendo che eccessivi formalismi vanifichino la ratio deflattiva.",
+        q: "Cosa succede se l’invito alla mediazione è notificato solo all’avvocato e non alla parte?",
+        a: "Dipende dal tipo di mediazione. Nella mediazione obbligatoria ex art. 5 D.Lgs. 28/2010, l’invito notificato al solo difensore della parte chiamata non integra valida convocazione se la procura conferita è limitata al giudizio e non comprende poteri di rappresentanza sostanziale (Trib. Tivoli 269/2026): in tale ipotesi il procedimento è improcedibile e il decreto ingiuntivo opposto va revocato. Nella mediazione demandata dal giudice ex art. 5-quater, invece, Trib. Civitavecchia 503/2026 ha ritenuto sufficiente l’invito al solo difensore della parte già costituita in giudizio, ritenendo che eccessivi formalismi vanifichino la ratio deflattiva. Tutte le pronunce di merito sul tema sono consultabili nella <a href=\"/giurisprudenza\" class=\"underline text-primary\">banca dati giurisprudenza</a> filtrando per categoria Procura sostanziale.",
       },
       {
-        q: "La condizione di procedibilità si verifica anche per le domande riconvenzionali?",
-        a: "No. Cass. 15584/2026 (Scarano-Pellecchia) ha consolidato l’orientamento secondo cui la condizione di procedibilità ex art. 5 D.Lgs. 28/2010 si valuta esclusivamente con riferimento all’atto introduttivo del giudizio. Eventuali domande riconvenzionali o ampliamenti successivi del thema decidendum non richiedono una nuova mediazione, purché la controversia originaria rientri nelle materie obbligatorie e l’esperimento si sia svolto in modo effettivo. Il principio era già stato delineato da Cass. SS.UU. 3452/2024.",
+        q: "La condizione di procedibilità si applica anche alle domande riconvenzionali?",
+        a: "No. Cass. SS.UU. 3452/2024 (rel. Nazzicone) ha stabilito che la condizione di procedibilità prevista dall’art. 5 D.Lgs. 28/2010 sussiste per il solo atto introduttivo del giudizio e non per le domande riconvenzionali, sia collegate che eccentriche. Cass. 15584/2026 (Scarano-Pellecchia) ha consolidato l’orientamento. Eventuali ampliamenti del thema decidendum o nuove domande riconvenzionali non richiedono una nuova mediazione, purché la controversia originaria rientri nelle materie obbligatorie e l’esperimento si sia svolto in modo effettivo. Il principio è stato recepito anche dal D.Lgs. 216/2024 (correttivo Cartabia in vigore dal 25 gennaio 2025).",
       },
       {
-        q: "Esiste un principio di simmetria tra domanda di mediazione e domanda giudiziale?",
-        a: "Sì. Trib. Milano 390/2026 ha affermato il principio di simmetria: la domanda di mediazione deve essere sostanzialmente corrispondente, quanto a parti e oggetto, alla domanda giudiziale poi proposta. La mancata simmetria comporta improcedibilità: se il giudizio è introdotto da o contro soggetti non convocati in mediazione, o per oggetti diversi, la condizione di procedibilità non è soddisfatta. Implicazione pratica: l’istanza di mediazione va redatta con cura per anticipare tutte le posizioni soggettive che saranno parte del successivo giudizio.",
+        q: "Esiste un principio di simmetria tra istanza di mediazione e atto di citazione?",
+        a: "Sì. Trib. Milano 390/2026 ha affermato il principio di simmetria: l’istanza di mediazione deve essere sostanzialmente corrispondente, quanto a parti e oggetto, alla domanda giudiziale poi proposta. La mancata simmetria comporta improcedibilità: se il giudizio è introdotto da o contro soggetti non convocati in mediazione, o per oggetti diversi rispetto a quelli oggetto del procedimento conciliativo, la condizione di procedibilità non è soddisfatta. Implicazione pratica: l’istanza di mediazione va redatta con cura per anticipare tutte le posizioni soggettive (litisconsorti necessari) e i petita che saranno parte del successivo giudizio. Consulta la <a href=\"/giurisprudenza\" class=\"underline text-primary\">banca dati giurisprudenza</a> per approfondire.",
       },
       {
-        q: "Il generatore procura del sito tiene conto di questi orientamenti?",
-        a: "Sì. Il generatore procura disponibile su calcolomediazione.it è aggiornato all’orientamento più recente della Cassazione, in particolare Cass. 10978/2026 e Cass. 9608/2026. Produce un modello di procura speciale sostanziale conforme alle indicazioni della giurisprudenza, separato dalla procura alle liti, con clausole specifiche per i poteri dispositivi e una nota di richiamo agli arresti di legittimità. È possibile scaricare il documento in formato PDF o DOCX e personalizzarlo. Il database giurisprudenziale del sito contiene attualmente 95 pronunce, di cui le ultime sulla procura sostanziale (ids 91-95) sono consultabili nella sezione Giurisprudenza.",
+        q: "Come ottenere un modello aggiornato di procura speciale sostanziale per la mediazione?",
+        a: "Il <a href=\"/generatore-procura\" class=\"underline text-primary\">Generatore Procura</a> di calcolomediazione.it produce gratuitamente un modello di procura speciale sostanziale conforme all’orientamento giurisprudenziale più recente (Cass. 8473/2019, 14676/2025, 9608/2026, 10978/2026). Il modello è separato dalla procura alle liti, contiene clausole specifiche per i poteri dispositivi (conciliare, transigere, sottoscrivere l’accordo, rinunciare, riscuotere), include una nota di richiamo agli arresti di legittimità e si adatta automaticamente alla materia (diritti reali, condominio, locazione, ecc.). È possibile scaricare il documento in formato PDF o DOCX e personalizzarlo. La <a href=\"/giurisprudenza\" class=\"underline text-primary\">banca dati giurisprudenza</a> contiene 95 pronunce, di cui 16 dedicate alla procura sostanziale.",
       },
     ],
   },
@@ -277,6 +277,7 @@ const faqSections: FAQSection[] = [
 export default function FAQ() {
   useEffect(() => {
     const allQuestions = faqSections.flatMap((section) => section.questions);
+    const stripHtml = (s: string) => s.replace(/<[^>]+>/g, "");
     const jsonLd = {
       "@context": "https://schema.org",
       "@type": "FAQPage",
@@ -287,7 +288,7 @@ export default function FAQ() {
         "name": item.q,
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": item.a,
+          "text": stripHtml(item.a),
         },
       })),
     };
@@ -368,7 +369,7 @@ export default function FAQ() {
                       <span className="pr-4">{item.q}</span>
                     </AccordionTrigger>
                     <AccordionContent className="text-muted-foreground leading-relaxed pb-5">
-                      {item.a}
+                      <span dangerouslySetInnerHTML={{ __html: item.a }} />
                     </AccordionContent>
                   </AccordionItem>
                 ))}
