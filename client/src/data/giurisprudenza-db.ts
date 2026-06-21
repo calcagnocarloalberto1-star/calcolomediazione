@@ -1,7 +1,7 @@
 // ═══════════════════════════════════════════════════════════════════════════
 // Database giurisprudenziale sulla mediazione civile e commerciale
 // Dal 2010 (D.Lgs. 28/2010) ad oggi
-// Aggiornato a giugno 2026 — 95 pronunce
+// Aggiornato a giugno 2026 — 93 pronunce
 // ═══════════════════════════════════════════════════════════════════════════
 
 export interface Sentenza {
@@ -1542,38 +1542,6 @@ export const sentenze: Sentenza[] = [
   },
   {
     id: 92,
-    organo: "Cassazione",
-    tipoOrgano: "cassazione",
-    numero: "9608",
-    anno: 2026,
-    data: "2026-04-15",
-    titolo: "Mediazione obbligatoria: non cumulabilità dei ruoli di parte e difensore senza procura sostanziale",
-    categoria: "Procura sostanziale",
-    massima: "Nel procedimento di mediazione obbligatoria, il difensore della parte non può cumulare in sé il ruolo di assistente tecnico e quello di rappresentante sostanziale della parte stessa in assenza di apposita procura speciale che attribuisca poteri di disposizione del diritto controverso. La sola procura alle liti non è sufficiente a integrare la rappresentanza sostanziale richiesta dall'art. 8 D.Lgs. 28/2010.",
-    principioDiDiritto: "La partecipazione personale della parte alla mediazione può essere sostituita da un rappresentante sostanziale solo in presenza di procura speciale scritta che conferisca espressamente poteri dispositivi sul diritto controverso; la procura alle liti, di per sé, non basta.",
-    nota: "Ordinanza Pres. Rubino, Rel. Gianniti. Pronuncia che ha generato un acceso dibattito interpretativo, poi riequilibrata da Cass. 10978/2026 (Scarpa/Trapuzzano) che ha chiarito che il medesimo difensore può essere rappresentante sostanziale purché munito di procura ad hoc. Centrale per il generatore procura: serve sempre un atto distinto dalla procura alle liti.",
-    riferimentiNormativi: ["Art. 8 D.Lgs. 28/2010", "Art. 83 c.p.c.", "Art. 1392 c.c."],
-    temiChiave: ["procura sostanziale", "difensore", "non cumulabilità ruoli", "mediazione obbligatoria", "rappresentanza"],
-    fonteUrl: "https://www.dirittobancario.it/cat/giurisprudenza/contratti-e-garanzie-giurisprudenza/",
-  },
-  {
-    id: 93,
-    organo: "Cassazione",
-    tipoOrgano: "cassazione",
-    numero: "15584",
-    anno: 2026,
-    data: "2026-05-21",
-    titolo: "Procedibilità mediazione: il perimetro temporale è il solo atto introduttivo",
-    categoria: "Procedibilità",
-    massima: "La condizione di procedibilità ex art. 5 D.Lgs. 28/2010 deve essere verificata con esclusivo riferimento all'atto introduttivo del giudizio. Eventuali domande riconvenzionali o ampliamenti successivi del thema decidendum non richiedono nuova mediazione, purché la controversia originaria rientri nelle materie previste dalla legge e l'esperimento si sia svolto in modo effettivo.",
-    principioDiDiritto: "La procedibilità mediante mediazione obbligatoria si valuta esclusivamente sull'atto introduttivo; domande riconvenzionali e ampliamenti successivi non riattivano l'obbligo di mediazione.",
-    nota: "Pres. Scarano, Rel. Pellecchia. Pronuncia che consolida l'orientamento sul perimetro temporale della procedibilità, già delineato da Cass. SS.UU. 3452/2024. Rilevante per l'analisi caso AI: distinguere tra controversia originaria e ampliamenti.",
-    riferimentiNormativi: ["Art. 5 D.Lgs. 28/2010", "Art. 5-quater D.Lgs. 28/2010", "Cass. SS.UU. 3452/2024"],
-    temiChiave: ["procedibilità", "atto introduttivo", "domanda riconvenzionale", "perimetro temporale", "mediazione obbligatoria"],
-    fonteUrl: "https://ntplusdiritto.ilsole24ore.com/art/rassegna-massime-cassazione-civile-AIcFkkiD",
-  },
-  {
-    id: 94,
     organo: "Tribunale di Tivoli",
     tipoOrgano: "tribunale",
     numero: "269",
@@ -1589,7 +1557,7 @@ export const sentenze: Sentenza[] = [
     fonteUrl: "https://www.mondoadr.it/giurisprudenza_art/non-basta-mandare-linvito-al-solo-avvocato-se-la-convocazione-in-mediazione-e-irregolare-il-decreto-ingiuntivo-va-revocato-2/",
   },
   {
-    id: 95,
+    id: 93,
     organo: "Tribunale di Civitavecchia",
     tipoOrgano: "tribunale",
     numero: "503",
