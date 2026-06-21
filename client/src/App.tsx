@@ -12,6 +12,7 @@ import AnalisiCasoAI from "@/pages/AnalisiCasoAI";
 import FAQ from "@/pages/FAQ";
 import GuidaDM150 from "@/pages/GuidaDM150";
 import ConfrontoCosti from "@/pages/ConfrontoCosti";
+import CostiNotarili from "@/pages/CostiNotarili";
 import PrivacyPolicy from "@/pages/PrivacyPolicy";
 import CookiePolicy from "@/pages/CookiePolicy";
 import TerminiCondizioni from "@/pages/TerminiCondizioni";
@@ -36,6 +37,7 @@ function AppRouter() {
       <Route path="/faq" component={FAQ} />
       <Route path="/guida-dm-150" component={GuidaDM150} />
       <Route path="/confronto-costi" component={ConfrontoCosti} />
+      <Route path="/costi-notarili" component={CostiNotarili} />
       <Route path="/privacy-policy" component={PrivacyPolicy} />
       <Route path="/cookie-policy" component={CookiePolicy} />
       <Route path="/termini-condizioni" component={TerminiCondizioni} />

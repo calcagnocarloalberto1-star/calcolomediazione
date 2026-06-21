@@ -1,7 +1,7 @@
 // ═══════════════════════════════════════════════════════════════════════════
 // Database giurisprudenziale sulla mediazione civile e commerciale
 // Dal 2010 (D.Lgs. 28/2010) ad oggi
-// Aggiornato al 30 aprile 2026 — 57 pronunce
+// Aggiornato a giugno 2026 — 63 pronunce
 // ═══════════════════════════════════════════════════════════════════════════
 
 export interface Sentenza {
@@ -940,6 +940,108 @@ export const sentenze: Sentenza[] = [
   // ══════════════════════════════════════════════════════════════════════════
   // PRONUNCE 2026 — RECENTISSIME
   // ══════════════════════════════════════════════════════════════════════════
+
+  {
+    id: 58,
+    organo: "Corte di Cassazione",
+    tipoOrgano: "cassazione",
+    numero: "5063",
+    anno: 2025,
+    data: "2025-02-26",
+    titolo: "Mediazione obbligatoria solo per l'atto introduttivo, non per le domande riconvenzionali",
+    categoria: "Condizione di procedibilità",
+    massima: "La mediazione obbligatoria ai sensi dell'art. 5 D.Lgs. 28/2010, quale condizione di procedibilità, si applica esclusivamente all'atto introduttivo del giudizio e non alle domande riconvenzionali, in linea con la funzione deflattiva della mediazione, che si realizza al momento dell'introduzione della causa. Conferma il principio enunciato da Cass. SU 3452/2024.",
+    principioDiDiritto: "La condizione di procedibilità della mediazione obbligatoria si applica al solo atto introduttivo del giudizio. Le domande riconvenzionali, anche se vertenti su materie soggette a mediazione obbligatoria, non richiedono un nuovo esperimento del tentativo di conciliazione.",
+    nota: "Decisione del 26 febbraio 2025 (Sez. 2 civile). Si inserisce nel filone consolidato dalle Sezioni Unite (Cass. SU 3452/2024). La sentenza affronta anche il tema delle distanze legali (litisconsorzio necessario di tutti i comproprietari pro indiviso quando si chieda demolizione o ripristino).",
+    riferimentiNormativi: ["Art. 5 D.Lgs. 28/2010", "Cass. SU 3452/2024"],
+    temiChiave: ["mediazione obbligatoria", "domanda riconvenzionale", "atto introduttivo", "condizione di procedibilità", "funzione deflattiva"],
+    fonteUrl: "https://apps.dirittopratico.it/sentenza/cassazione/roma/2025/5063.html",
+  },
+
+  {
+    id: 59,
+    organo: "Corte di Cassazione",
+    tipoOrgano: "cassazione",
+    numero: "5474",
+    anno: 2025,
+    data: "2025-03-01",
+    titolo: "L'eccezione di improcedibilità per mancata mediazione va sollevata in primo grado, non in appello",
+    categoria: "Condizione di procedibilità",
+    massima: "In tema di mediazione obbligatoria ex art. 5, comma 1-bis, D.Lgs. 28/2010, il preventivo esperimento del procedimento di mediazione è condizione di procedibilità della domanda, ma l'improcedibilità deve essere eccepita dal convenuto, a pena di decadenza, o rilevata d'ufficio dal giudice, non oltre la prima udienza. Se ciò non avviene, il giudice d'appello può disporre la mediazione, ma non vi è obbligato.",
+    principioDiDiritto: "L'eccezione di improcedibilità per mancato esperimento della mediazione obbligatoria è tempestiva solo se proposta dal convenuto entro la prima udienza del giudizio di primo grado, o rilevata d'ufficio nello stesso termine. Diversamente, la parte incorre in decadenza e in appello l'esperimento della mediazione costituisce condizione di procedibilità solo se disposto discrezionalmente dal giudice ai sensi dell'art. 5-quater.",
+    nota: "Ordinanza n. 5474 del 1 marzo 2025 (Sez. 2). Riguardava una controversia ereditaria. Conferma il precedente Cass. 4843/2019. Rilevante per la prassi: il difensore del convenuto deve attivarsi tempestivamente nelle prime difese; in mancanza, l'improcedibilità non è più rilevabile in grado di appello.",
+    riferimentiNormativi: ["Art. 5, co. 1-bis, D.Lgs. 28/2010", "Art. 5-quater D.Lgs. 28/2010", "Cass. 4843/2019"],
+    temiChiave: ["eccezione improcedibilità", "decadenza", "prima udienza", "appello", "mediazione delegata"],
+    fonteUrl: "https://www.cfnews.it/diritto/eccezione-di-mediazione-ai-fini-dell-improcedibilit%E0-in-appello-non-pu%F2-pi%F9-essere-sollevata/",
+  },
+
+  {
+    id: 60,
+    organo: "Corte di Cassazione",
+    tipoOrgano: "cassazione",
+    numero: "8050",
+    anno: 2025,
+    data: "2025-03-27",
+    titolo: "Procedibilità soddisfatta con il primo incontro, anche se le parti dichiarano di non proseguire",
+    categoria: "Condizione di procedibilità",
+    massima: "Ai fini della procedibilità dell'azione giudiziaria nelle materie soggette a mediazione obbligatoria, è sufficiente che le parti compaiano dinanzi al mediatore per il primo incontro e che, in tale sede, manifestino la propria intenzione, anche negativa, di proseguire il procedimento. Non sussiste un obbligo di intraprendere le fasi successive della mediazione o di raggiungere un accordo.",
+    principioDiDiritto: "L'onere di esperire il tentativo obbligatorio di mediazione si concretizza nell'avvio effettivo della procedura e nella comparizione delle parti al primo incontro informativo. La manifestazione, anche immediata e negativa, della volontà di non proseguire — espressa dopo le informazioni del mediatore — è sufficiente a soddisfare la condizione di procedibilità ex art. 5, co. 1-bis, D.Lgs. 28/2010.",
+    nota: "Ordinanza n. 8050/2025. Riguardava una donazione immobiliare. Conferma il consolidato indirizzo (Cass. 8473/2019) sulla natura del primo incontro come momento informativo-valutativo. Da bilanciare però con Cass. 9608/2026 che richiede la comparizione personale della parte (non basta il difensore).",
+    riferimentiNormativi: ["Art. 5, co. 1-bis, D.Lgs. 28/2010", "Art. 8 D.Lgs. 28/2010", "Cass. 8473/2019"],
+    temiChiave: ["primo incontro", "indisponibilità a proseguire", "condizione di procedibilità", "funzione informativa", "donazione immobiliare"],
+    fonteUrl: "https://www.mondoadr.it/giurisprudenza_art/procedibilita-basta-dichiarazione-di-indisponibilita-alla-fine-del-1-incontro/",
+  },
+
+  {
+    id: 61,
+    organo: "Corte di Cassazione",
+    tipoOrgano: "cassazione",
+    numero: "1791",
+    anno: 2025,
+    data: "2025-01-24",
+    titolo: "Niente mediazione obbligatoria per le controversie su garanzia fideiussoria",
+    categoria: "Condizione di procedibilità",
+    massima: "La condizione di procedibilità della mediazione obbligatoria non si applica alle controversie aventi ad oggetto la garanzia fideiussoria, in quanto contratto atipico non riconducibile ai 'contratti bancari e finanziari' tipici previsti dall'art. 5, comma 1-bis, D.Lgs. 28/2010. La richiesta di decreto ingiuntivo per l'azione di regresso dopo l'escussione della garanzia non rientra tra le materie a mediazione obbligatoria.",
+    principioDiDiritto: "L'elencazione delle materie a mediazione obbligatoria dell'art. 5, co. 1-bis, D.Lgs. 28/2010 ha natura tassativa. I 'contratti bancari e finanziari' devono essere intesi in senso stretto e tipico: la garanzia fideiussoria, in quanto contratto atipico, ne è esclusa.",
+    nota: "Ordinanza n. 1791 del 24 gennaio 2025 (Sez. 3). Richiama Cass. 31209/2022. Adotta un'interpretazione restrittiva dell'elenco di materie a mediazione obbligatoria, conforme al principio di tassatività delle condizioni di procedibilità.",
+    riferimentiNormativi: ["Art. 5, co. 1-bis, D.Lgs. 28/2010", "Cass. 31209/2022"],
+    temiChiave: ["contratti bancari finanziari", "fideiussione", "contratto atipico", "interpretazione tassativa", "decreto ingiuntivo", "regresso"],
+    fonteUrl: "https://www.ilcaso.it/sentenze/ultime/32610",
+  },
+
+  {
+    id: 62,
+    organo: "Corte d'Appello di Ancona",
+    tipoOrgano: "corte_appello",
+    numero: "1141",
+    anno: 2025,
+    data: "2025-09-30",
+    titolo: "La mediazione obbligatoria non si estende alle domande riconvenzionali",
+    categoria: "Condizione di procedibilità",
+    massima: "L'obbligo di esperire il tentativo di mediazione ex art. 5 D.Lgs. 28/2010, come condizione per la procedibilità dell'azione, si riferisce esclusivamente all'atto introduttivo del giudizio e non si estende alle domande riconvenzionali proposte dalla parte convenuta. Una volta che il processo è validamente avviato perché la mediazione sulla domanda principale è stata esperita, la domanda riconvenzionale — anche se vertente su diritti rientranti nelle materie obbligatorie — non necessita di una nuova mediazione per essere procedibile.",
+    principioDiDiritto: "L'obiettivo deflattivo della mediazione si esaurisce con l'avvio del giudizio: una volta pendente il processo, la sua duplicazione attraverso un nuovo tentativo per la riconvenzionale sarebbe irrazionale e contraria al principio di economia processuale. Conforme a Cass. SU 3452/2024.",
+    nota: "Sentenza di merito che applica fedelmente il principio Cass. SU 3452/2024. Utile come precedente di secondo grado per i giudici di merito.",
+    riferimentiNormativi: ["Art. 5 D.Lgs. 28/2010", "Cass. SU 3452/2024", "Cass. 5063/2025"],
+    temiChiave: ["domanda riconvenzionale", "corte d'appello", "atto introduttivo", "funzione deflattiva", "non duplicazione"],
+    fonteUrl: "https://www.mondoadr.it/giurisprudenza_art/mediazione-obbligatoria-condizione-di-procedibilita-per-latto-introduttivo/",
+  },
+
+  {
+    id: 63,
+    organo: "Tribunale di Cassino",
+    tipoOrgano: "tribunale",
+    numero: "1186",
+    anno: 2025,
+    data: "2025-09-19",
+    titolo: "Simmetria tra istanza di mediazione e atto di citazione: i fatti essenziali devono corrispondere",
+    categoria: "Condizione di procedibilità",
+    massima: "Nelle materie a mediazione obbligatoria (nella specie, condominio), la condizione di procedibilità richiede una corrispondenza sostanziale tra i fatti essenziali esposti nell'istanza di mediazione e quelli posti a fondamento della domanda giudiziale. Difetta la procedibilità quando l'istanza di mediazione affronta una controversia diversa, anche per parte, oggetto o causa petendi, rispetto a quella poi introdotta in giudizio.",
+    principioDiDiritto: "La condizione di procedibilità della mediazione obbligatoria non è soddisfatta dalla semplice formalità del deposito di un'istanza presso un organismo: è necessaria una simmetria sostanziale tra l'istanza e l'atto di citazione, in modo che il tentativo di conciliazione abbia effettivamente per oggetto la lite poi devoluta al giudice.",
+    nota: "Tribunale di Cassino, sentenza 19 settembre 2025, n. 1186. Materia condominiale. Importante per la prassi: l'istanza di mediazione deve essere redatta con cura, indicando con precisione i fatti essenziali — pena la non corrispondenza con il successivo atto di citazione e la conseguente improcedibilità della domanda.",
+    riferimentiNormativi: ["Art. 5, co. 1-bis, D.Lgs. 28/2010", "Art. 4 D.Lgs. 28/2010"],
+    temiChiave: ["simmetria istanza-citazione", "corrispondenza sostanziale", "condominio", "fatti essenziali", "causa petendi"],
+    fonteUrl: "https://bgmonotai.it/mediazione-obbligatoria-e-simmetria-tra-istanza-e-citazione-larresto-di-cassino/",
+  },
 
   {
     id: 57,

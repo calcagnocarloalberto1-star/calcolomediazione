@@ -21,6 +21,7 @@ import {
   Swords,
   AlertTriangle,
   Clock,
+  Building2,
 } from "lucide-react";
 
 const features = [
@@ -43,6 +44,13 @@ const features = [
     title: "Confronto Costi",
     description: "Mediazione vs processo su tre gradi di giudizio: primo grado, appello e cassazione. CU, compensi avvocato, CTU, esenzione prima casa.",
     href: "/confronto-costi",
+    active: true,
+  },
+  {
+    icon: Building2,
+    title: "Costi Notarili",
+    description: "Stima dei puri costi notarili: onorario, IVA, cassa, visure, imposte di registro/ipotecaria/catastale. Confronto accordo di mediazione vs sentenza.",
+    href: "/costi-notarili",
     active: true,
   },
   {
