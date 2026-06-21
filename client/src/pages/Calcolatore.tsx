@@ -32,6 +32,93 @@ import {
   type CategoriaCatastale,
   type RisultatoVerificaCatastale,
 } from "@shared/valore-catastale";
+import { ExportButtons } from "@/components/ExportButtons";
+import type { ReportData } from "@/lib/export-risultati";
+
+// ─── BUILDER REPORT EXPORT ──────────────────────────────────────────────
+function buildReportCalcolatore(
+  r: CalcoloRisultato,
+  tipoMediazione: TipoMediazione,
+  tipoValore: TipoValore,
+  valoreLite: string,
+  esito: EsitoMediazione
+): ReportData {
+  const valore = tipoValore === "determinato" ? `\u20AC ${parseFloat(valoreLite || "0").toLocaleString("it-IT")}` : tipoValore.replace("_", " ");
+  const modalita = r.modalitaTariffaria === "coa_genova" ? "Tariffa COA Genova" : "Tariffa Nazionale (D.M. 150/2023)";
+  const tipoMedLabel = tipoMediazione === "obbligatoria" ? "Mediazione obbligatoria" : tipoMediazione === "demandata" ? "Mediazione demandata dal giudice" : "Mediazione volontaria";
+  const esitoLabel: Record<EsitoMediazione, string> = {
+    nessuno_primo: "Mancato accordo al primo incontro",
+    nessuno_successivi: "Mancato accordo dopo il primo incontro",
+    accordo_primo: "Accordo al primo incontro",
+    accordo_successivi: "Accordo dopo il primo incontro",
+  };
+
+  const primoIncontroRows = [
+    { label: "Spese di avvio (art. 28, co. 4)", value: formatEuro(r.speseAvvio) },
+    { label: "Indennità base primo incontro (art. 28, co. 5)", value: formatEuro(r.speseBase) },
+  ];
+  if (r.riduzioneObbligatoria > 0) {
+    primoIncontroRows.push({
+      label: `Riduzione ${tipoMediazione === "obbligatoria" ? "obbligatoria" : "demandata"}`,
+      value: `- ${formatEuro(r.riduzioneObbligatoria)}`,
+    });
+  }
+  primoIncontroRows.push({
+    label: "Totale Primo Incontro",
+    value: formatEuro(r.totalePrimoIncontro),
+    bold: true,
+  } as { label: string; value: string; bold?: boolean });
+
+  const ulterioriRows: { label: string; value: string; bold?: boolean }[] = [];
+  if (r.ulterioriSpese > 0) {
+    ulterioriRows.push({ label: "Ulteriori spese (incontri successivi)", value: formatEuro(r.ulterioriSpese) });
+  }
+  if (r.detrazioneSpese > 0) {
+    ulterioriRows.push({ label: "Detrazione spese primo incontro (art. 34, co. 2)", value: `- ${formatEuro(r.detrazioneSpese)}` });
+  }
+  if (r.maggiorazioneSuccesso > 0) {
+    ulterioriRows.push({ label: `Maggiorazione per accordo (${esito === "accordo_primo" ? "+10%" : "+25%"})`, value: `+ ${formatEuro(r.maggiorazioneSuccesso)}` });
+  }
+  if (r.maggiorazioneArt31 > 0) {
+    ulterioriRows.push({ label: "Maggiorazione art. 31, co. 3 (+20%)", value: `+ ${formatEuro(r.maggiorazioneArt31)}` });
+  }
+
+  const totaliRows = [
+    { label: "Totale per Parte", value: formatEuro(r.totalePerParte), bold: true },
+    { label: "IVA 22%", value: formatEuro(r.iva) },
+    { label: "Totale con IVA (per parte)", value: formatEuro(r.totaleConIva), bold: true },
+    { label: "Totale Complessivo (2 parti)", value: formatEuro(r.totaleComplessivo), bold: true },
+  ];
+
+  const sections = [
+    {
+      title: "Parametri del calcolo",
+      rows: [
+        { label: "Modalità tariffaria", value: modalita },
+        { label: "Scaglione", value: r.scaglione },
+        { label: "Valore della lite", value: valore },
+        { label: "Tipo di mediazione", value: tipoMedLabel },
+        { label: "Esito", value: esitoLabel[esito] },
+      ],
+    },
+    { title: "Primo incontro", rows: primoIncontroRows },
+  ];
+  if (ulterioriRows.length > 0) sections.push({ title: "Incontri successivi / Maggiorazioni", rows: ulterioriRows });
+  sections.push({ title: "Totali", rows: totaliRows });
+
+  const footerNotes: string[] = [];
+  if (r.esenzioneArt17.esenteBollo) footerNotes.push("Esenzione imposta di bollo (art. 17 D.Lgs. 28/2010) su tutti gli atti del procedimento.");
+  if (r.esenzioneArt17.esenteRegistro && r.esenzioneArt17.limiteEsenzione > 0) footerNotes.push(`Esenzione imposta di registro fino a ${formatEuro(r.esenzioneArt17.limiteEsenzione)} del valore dell'accordo.`);
+  footerNotes.push("Importi calcolati secondo D.M. 150/2023; valori soggetti a variazioni in funzione della concreta gestione della procedura.");
+
+  return {
+    title: "Calcolo Indennità di Mediazione",
+    subtitle: `${modalita} — ${tipoMedLabel} — Valore lite: ${valore}`,
+    sections,
+    footerNotes,
+    fileName: `calcolo-indennita-mediazione-${Date.now()}`,
+  };
+}
 
 export default function Calcolatore() {
   const [modalitaTariffaria, setModalitaTariffaria] = useState<ModalitaTariffaria>("nazionale");
@@ -451,6 +538,13 @@ export default function Calcolatore() {
                         {risultato.modalitaTariffaria === "coa_genova" ? "COA Genova" : "Nazionale"}
                       </Badge>
                     </div>
+                  </div>
+                  <div className="mt-3">
+                    <ExportButtons
+                      label="calcolo"
+                      testIdPrefix="export-calcolatore"
+                      buildReport={() => buildReportCalcolatore(risultato, tipoMediazione, tipoValore, valoreLite, esito)}
+                    />
                   </div>
                 </CardHeader>
                 <CardContent>
