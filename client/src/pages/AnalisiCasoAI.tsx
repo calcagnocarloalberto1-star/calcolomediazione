@@ -188,6 +188,11 @@ export default function AnalisiCasoAI() {
   const [gratuitoPatrocinio, setGratuitoPatrocinio] = useState(false);
   const [mediatoreEsperto, setMediatoreEsperto] = useState(false);
   const [proceduraComplessa, setProceduraComplessa] = useState(false);
+  // ─── Costi notarili ──────────────────────────────────────────────────────
+  const [attivaCalcoloCostiNotarili, setAttivaCalcoloCostiNotarili] = useState(false);
+  const [valoreImmobile, setValoreImmobile] = useState<string>("");
+  const [applicaPrezzoValore, setApplicaPrezzoValore] = useState(false);
+  const [venditoreImpresaIva, setVenditoreImpresaIva] = useState(false);
   const [dragActive, setDragActive] = useState(false);
   const [files, setFiles] = useState<File[]>([]);
 
@@ -305,6 +310,15 @@ export default function AnalisiCasoAI() {
         renditaCatastale: materiaImmobiliare && renditaCatastaleAI ? parseFloat(renditaCatastaleAI) : null,
         categoriaCatastale: materiaImmobiliare ? categoriaCatastaleAI : null,
         gratuitoPatrocinio, mediatoreEsperto, proceduraComplessa,
+        // Costi notarili (motore notarile.ts)
+        attivaCalcoloCostiNotarili: materiaImmobiliare && attivaCalcoloCostiNotarili,
+        tipoAttoNotarile: "trasferimento_immobiliare",
+        valoreImmobile:
+          materiaImmobiliare && attivaCalcoloCostiNotarili && valoreImmobile
+            ? parseFloat(valoreImmobile)
+            : null,
+        applicaPrezzoValore: materiaImmobiliare && attivaCalcoloCostiNotarili && applicaPrezzoValore,
+        venditoreImpresaIva: materiaImmobiliare && attivaCalcoloCostiNotarili && venditoreImpresaIva,
       };
 
       const res = await apiRequest("POST", "/api/analisi", body);
@@ -746,7 +760,33 @@ export default function AnalisiCasoAI() {
                   </div>
                 )}
                 {materiaImmobiliare && (
-                  <div className="p-3 border-2 border-foreground/20 bg-muted/20 space-y-3">
+                  <div className="sm:col-span-3 p-3 border-2 border-foreground/20 bg-muted/20 space-y-3">
+                    <div className="flex items-center gap-3">
+                      <Switch checked={attivaCalcoloCostiNotarili} onCheckedChange={setAttivaCalcoloCostiNotarili} data-testid="switch-analisi-costi-notarili" />
+                      <span className="text-sm font-semibold">{attivaCalcoloCostiNotarili ? "Costi notarili: ATTIVI" : "Calcolo costi notarili"}</span>
+                    </div>
+                    {attivaCalcoloCostiNotarili && (
+                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                        <div className="space-y-1">
+                          <Label className="text-xs">Valore immobile / prezzo (€)</Label>
+                          <Input type="number" value={valoreImmobile} onChange={e => setValoreImmobile(e.target.value)}
+                            placeholder="Es. 110000" className="border-2 border-foreground/50 font-mono text-sm h-9"
+                            style={{ fontFamily: "'JetBrains Mono', monospace" }} data-testid="input-valore-immobile-ai" />
+                        </div>
+                        <div className="flex items-center gap-3">
+                          <Switch checked={applicaPrezzoValore} onCheckedChange={setApplicaPrezzoValore} data-testid="switch-prezzo-valore" />
+                          <span className="text-xs">{applicaPrezzoValore ? "Prezzo-valore (L. 296/2006)" : "Base = prezzo"}</span>
+                        </div>
+                        <div className="flex items-center gap-3">
+                          <Switch checked={venditoreImpresaIva} onCheckedChange={setVenditoreImpresaIva} data-testid="switch-venditore-impresa" />
+                          <span className="text-xs">{venditoreImpresaIva ? "Acquisto da impresa (IVA)" : "Acquisto da privato"}</span>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
+                {materiaImmobiliare && (
+                  <div className="sm:col-span-3 p-3 border-2 border-foreground/20 bg-muted/20 space-y-3">
                     <span className="text-xs font-semibold" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>Verifica Congruità Catastale (art. 29 D.M. 150/2023)</span>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                       <div className="space-y-1">

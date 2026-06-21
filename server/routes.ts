@@ -418,7 +418,17 @@ export async function registerRoutes(
 
   app.post("/api/analisi", async (req, res) => {
     try {
-      const { titolo, descrizione, tipoAnalisi, modalitaTariffaria, valoreLite, tipoValore, parti, teorieSelezionate, documentiText, materiaImmobiliare, primaCasa, renditaCatastale, categoriaCatastale, gratuitoPatrocinio, mediatoreEsperto, proceduraComplessa } = req.body;
+      const {
+        titolo, descrizione, tipoAnalisi, modalitaTariffaria, valoreLite, tipoValore, parti,
+        teorieSelezionate, documentiText,
+        materiaImmobiliare, primaCasa, renditaCatastale, categoriaCatastale,
+        gratuitoPatrocinio, mediatoreEsperto, proceduraComplessa,
+        // Nuovi campi notarili
+        attivaCalcoloCostiNotarili, tipoAttoNotarile, valoreImmobile,
+        applicaPrezzoValore, venditoreImpresaIva,
+        onorarioNotarileStimato, impostaRegistroAliquota, impostaIpotecaria,
+        impostaCatastale, altreSpeseNotarili,
+      } = req.body;
       if (!titolo || !descrizione) {
         return res.status(400).json({ error: "Titolo e descrizione sono obbligatori" });
       }
@@ -447,6 +457,17 @@ export async function registerRoutes(
           mediatoreEsperto: mediatoreEsperto || false,
           proceduraComplessa: proceduraComplessa || false,
           modalitaTariffaria: modalitaTariffaria || "nazionale",
+          // Nuovi campi notarili (motore costi notarili integrato)
+          attivaCalcoloCostiNotarili: attivaCalcoloCostiNotarili || false,
+          tipoAttoNotarile: tipoAttoNotarile || "trasferimento_immobiliare",
+          valoreImmobile: valoreImmobile ?? valoreLite ?? null,
+          applicaPrezzoValore: applicaPrezzoValore || false,
+          venditoreImpresaIva: venditoreImpresaIva || false,
+          onorarioNotarileStimato: onorarioNotarileStimato ?? null,
+          impostaRegistroAliquota: impostaRegistroAliquota ?? null,
+          impostaIpotecaria: impostaIpotecaria ?? null,
+          impostaCatastale: impostaCatastale ?? null,
+          altreSpeseNotarili: altreSpeseNotarili ?? null,
         }
       );
       res.json({ ...analisi, accessToken: (analisi as any).accessToken });
@@ -707,10 +728,31 @@ async function runPipeline(
     renditaCatastale: number | null; categoriaCatastale: string | null;
     gratuitoPatrocinio: boolean; mediatoreEsperto: boolean;
     proceduraComplessa: boolean; modalitaTariffaria: string;
+    // Nuovi campi notarili
+    attivaCalcoloCostiNotarili?: boolean;
+    tipoAttoNotarile?: string | null;
+    valoreImmobile?: number | null;
+    applicaPrezzoValore?: boolean;
+    venditoreImpresaIva?: boolean;
+    onorarioNotarileStimato?: number | null;
+    impostaRegistroAliquota?: number | null;
+    impostaIpotecaria?: number | null;
+    impostaCatastale?: number | null;
+    altreSpeseNotarili?: number | null;
   } = {
     materiaImmobiliare: false, primaCasa: false, renditaCatastale: null,
     categoriaCatastale: null, gratuitoPatrocinio: false, mediatoreEsperto: false,
     proceduraComplessa: false, modalitaTariffaria: "nazionale",
+    attivaCalcoloCostiNotarili: false,
+    tipoAttoNotarile: "trasferimento_immobiliare",
+    valoreImmobile: null,
+    applicaPrezzoValore: false,
+    venditoreImpresaIva: false,
+    onorarioNotarileStimato: null,
+    impostaRegistroAliquota: null,
+    impostaIpotecaria: null,
+    impostaCatastale: null,
+    altreSpeseNotarili: null,
   }
 ) {
   // Contesto passato agli step a valle. Budget di ~8000 caratteri per step:
