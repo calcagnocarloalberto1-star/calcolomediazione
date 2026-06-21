@@ -30,6 +30,8 @@ import {
   Users,
   Shield,
 } from "lucide-react";
+import { ExportButtons } from "@/components/ExportButtons";
+import type { ReportData } from "@/lib/export-risultati";
 
 // Calcolo logica credito d'imposta
 interface InputCredito {
@@ -154,6 +156,58 @@ function giorniAllaScadenza(): number {
   oggi.setHours(0, 0, 0, 0);
   scadenza.setHours(0, 0, 0, 0);
   return Math.ceil((scadenza.getTime() - oggi.getTime()) / (1000 * 60 * 60 * 24));
+}
+
+// --- BUILDER REPORT EXPORT ---
+function buildReportCreditoImposta(
+  r: RisultatoCredito,
+  input: InputCredito,
+  fmt: (n: number) => string
+): ReportData {
+  const tipoMedLabel = input.tipoMediazione === "obbligatoria" ? "Mediazione obbligatoria"
+    : input.tipoMediazione === "demandata" ? "Mediazione demandata dal giudice" : "Mediazione volontaria";
+  const esitoLabel = input.esito === "accordo" ? "Accordo raggiunto" : "Mancato accordo";
+  const soggettoLabel = input.tipoSoggetto === "persona_fisica" ? "Persona fisica" : "Persona giuridica";
+
+  const parametri = [
+    { label: "Tipo di mediazione", value: tipoMedLabel },
+    { label: "Esito", value: esitoLabel },
+    { label: "Soggetto", value: soggettoLabel },
+    { label: "Indennita versata", value: fmt(input.indennitaVersata) },
+    { label: "Compenso avvocato", value: fmt(input.compensoAvvocato) },
+    { label: "Contributo unificato versato", value: fmt(input.contributoUnificato) },
+    { label: "Altri crediti gia maturati nell'anno", value: fmt(input.altriCreditiAnno) },
+    { label: "Gratuito patrocinio", value: input.gratuitoPatrocinio ? "Si" : "No" },
+  ];
+
+  const dettaglioRows: { label: string; value: string; bold?: boolean }[] = [
+    { label: "Credito su indennita organismo (lett. a)", value: fmt(r.creditoIndennita) },
+    { label: "Credito su compenso avvocato (lett. b)", value: fmt(r.creditoAvvocato) },
+  ];
+  if (input.tipoMediazione === "demandata") {
+    dettaglioRows.push({ label: "Credito su contributo unificato (lett. c)", value: fmt(r.creditoContributoUnificato) });
+  }
+  dettaglioRows.push(
+    { label: "Tetto per singola procedura (lett. a + b)", value: fmt(r.tettoPerProcedura) },
+    { label: `Tetto annuale (${soggettoLabel})`, value: fmt(r.tettoAnnuale) },
+    { label: "Totale teorico per procedura", value: fmt(r.totalePerProcedura), bold: true },
+    { label: "Credito d'imposta spettante (effettivo)", value: fmt(r.creditoEffettivo), bold: true },
+  );
+
+  const sections: ReportData["sections"] = [
+    { title: "Parametri del calcolo", rows: parametri },
+    { title: "Calcolo del credito d'imposta", rows: dettaglioRows },
+  ];
+
+  const footerNotes = r.note.length > 0 ? r.note : ["Calcolo basato su art. 20 D.Lgs. 28/2010 e D.M. 1° agosto 2023."];
+
+  return {
+    title: "Calcolo Credito d'Imposta in Mediazione",
+    subtitle: `${tipoMedLabel} - ${esitoLabel} - ${soggettoLabel}`,
+    sections,
+    footerNotes,
+    fileName: `credito-imposta-mediazione-${Date.now()}`,
+  };
 }
 
 export default function CreditoImposta() {
@@ -472,10 +526,26 @@ export default function CreditoImposta() {
             {risultato && (
               <Card className="border-2 border-foreground shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]" data-testid="card-risultato">
                 <CardHeader className="pb-4 bg-primary/5 border-b-2 border-foreground">
-                  <CardTitle className="flex items-center gap-2" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
-                    <Euro className="w-5 h-5 text-primary" />
-                    Risultato Calcolo
-                  </CardTitle>
+                  <div className="flex items-center justify-between flex-wrap gap-2">
+                    <CardTitle className="flex items-center gap-2" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
+                      <Euro className="w-5 h-5 text-primary" />
+                      Risultato Calcolo
+                    </CardTitle>
+                    <ExportButtons
+                      label="calcolo credito"
+                      testIdPrefix="export-credito"
+                      buildReport={() => buildReportCreditoImposta(risultato, {
+                        tipoMediazione,
+                        esito,
+                        indennitaVersata: parseFloat(indennitaVersata) || 0,
+                        compensoAvvocato: parseFloat(compensoAvvocato) || 0,
+                        contributoUnificato: parseFloat(contributoUnificato) || 0,
+                        tipoSoggetto,
+                        altriCreditiAnno: parseFloat(altriCreditiAnno) || 0,
+                        gratuitoPatrocinio,
+                      }, formatEuro)}
+                    />
+                  </div>
                 </CardHeader>
                 <CardContent className="p-0">
                   {/* Totale */}

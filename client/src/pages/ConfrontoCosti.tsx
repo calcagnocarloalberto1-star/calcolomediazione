@@ -25,6 +25,131 @@ import {
   type TipoArbitrato,
 } from "@shared/costi-procedura";
 import { formatEuro, type ModalitaTariffaria } from "@shared/calcolo-indennita";
+import { ExportButtons } from "@/components/ExportButtons";
+import type { ReportData } from "@/lib/export-risultati";
+
+// --- BUILDER REPORT EXPORT ---
+function buildReportConfronto(
+  cam: RisultatoConfronto,
+  medya: RisultatoConfronto,
+  params: {
+    valoreLite: string;
+    tipoValore: string;
+    tipoMediazione: "volontaria" | "obbligatoria" | "demandata";
+    materiaImmobiliare: boolean;
+    primaCasa: boolean;
+    modalitaTariffaria: ModalitaTariffaria;
+    medyaproLabel: string;
+  }
+): ReportData {
+  const valore = params.tipoValore === "determinato"
+    ? `€ ${parseFloat(params.valoreLite || "0").toLocaleString("it-IT")}`
+    : params.tipoValore.replace("_", " ");
+  const tipoMedLabel = params.tipoMediazione === "obbligatoria" ? "Mediazione obbligatoria"
+    : params.tipoMediazione === "demandata" ? "Mediazione demandata" : "Mediazione volontaria";
+  const modalitaLabel = params.modalitaTariffaria === "coa_genova" ? "COA Genova" : "Nazionale (D.M. 150/2023)";
+
+  const m = cam.costiMediazione;
+  const c = cam.costiCausaCivile;
+  const a = cam.costiArbitrato;
+  const a2 = medya.costiArbitrato;
+
+  const parametri = [
+    { label: "Valore della lite", value: valore },
+    { label: "Tipo di mediazione", value: tipoMedLabel },
+    { label: "Tariffa mediazione", value: modalitaLabel },
+    { label: "Materia immobiliare", value: params.materiaImmobiliare ? (params.primaCasa ? "Si (prima casa)" : "Si (altri immobili)") : "No" },
+  ];
+
+  const mediazioneRows: { label: string; value: string; bold?: boolean }[] = [
+    { label: "Indennita organismo", value: formatEuro(m.indennitaOrganismo) },
+    { label: "Spese di avvio", value: formatEuro(m.speseAvvio) },
+    { label: "Compenso avvocato", value: formatEuro(m.compensoAvvocato) },
+    { label: "Spese generali 15%", value: formatEuro(m.speseGenerali15) },
+    { label: "CPA 4% avvocato", value: formatEuro(m.cpa4Avvocato) },
+    { label: "IVA 22% avvocato", value: formatEuro(m.iva22Avvocato) },
+  ];
+  if (m.impostaRegistro > 0) mediazioneRows.push({ label: "Imposta di registro", value: formatEuro(m.impostaRegistro) });
+  if (m.imposteImmobiliari) {
+    const ii = m.imposteImmobiliari;
+    mediazioneRows.push({ label: `Imposte immobiliari (registro ${ii.aliquotaRegistro})`, value: formatEuro(ii.totaleImposte) });
+  }
+  if (m.costoNotaio > 0) mediazioneRows.push({ label: "Costo notarile (onorario + IVA + cassa + visure)", value: formatEuro(m.costoNotaio) });
+  mediazioneRows.push({ label: "Totale per parte", value: formatEuro(m.totalePerParte), bold: true });
+  if (m.creditoImposta > 0) mediazioneRows.push({ label: "Credito d'imposta", value: `- ${formatEuro(m.creditoImposta)}` });
+  mediazioneRows.push({ label: "Totale netto per parte", value: formatEuro(m.totaleNettoPerParte), bold: true });
+
+  const causaRows: { label: string; value: string; bold?: boolean }[] = [
+    { label: "Contributo unificato", value: formatEuro(c.contributoUnificato) },
+    { label: "Marca da bollo", value: formatEuro(c.marcaDaBollo) },
+    { label: "Diritto copia", value: formatEuro(c.dirittoCopia) },
+    { label: "Compenso avvocato", value: formatEuro(c.compensoAvvocato) },
+    { label: "Spese generali 15%", value: formatEuro(c.speseGenerali15) },
+    { label: "CPA 4% avvocato", value: formatEuro(c.cpa4Avvocato) },
+    { label: "IVA 22% avvocato", value: formatEuro(c.iva22Avvocato) },
+    { label: "Imposta di registro sentenza", value: formatEuro(c.impostaRegistroSentenza) },
+    { label: "Stima CTU", value: formatEuro(c.stimaCTU) },
+    { label: "Totale per parte (I grado)", value: formatEuro(c.totalePerParte), bold: true },
+  ];
+
+  const arbCamRows: { label: string; value: string; bold?: boolean }[] = [
+    { label: "Onorari istituzione (CAM)", value: formatEuro(a.onorariCAM) },
+    { label: "Onorari arbitro", value: formatEuro(a.onorariArbitro) },
+    { label: "IVA arbitro", value: formatEuro(a.ivaArbitro) },
+    { label: "Compenso avvocato", value: formatEuro(a.compensoAvvocato) },
+    { label: "Spese generali 15%", value: formatEuro(a.speseGenerali15) },
+    { label: "CPA 4% avvocato", value: formatEuro(a.cpa4Avvocato) },
+    { label: "IVA 22% avvocato", value: formatEuro(a.iva22Avvocato) },
+    { label: "Bollo", value: formatEuro(a.bollo) },
+    { label: "Stima CTU", value: formatEuro(a.stimaCTU) },
+    { label: "Imposta di registro lodo", value: formatEuro(a.impostaRegistroLodo) },
+    { label: `Totale per parte - ${a.durataStimata}`, value: formatEuro(a.totalePerParte), bold: true },
+  ];
+
+  const arbMedyaRows: { label: string; value: string; bold?: boolean }[] = [
+    { label: `Onorari istituzione (${params.medyaproLabel})`, value: formatEuro(a2.onorariCAM) },
+    { label: "Onorari arbitro", value: formatEuro(a2.onorariArbitro) },
+    { label: "IVA arbitro", value: formatEuro(a2.ivaArbitro) },
+    { label: "Compenso avvocato", value: formatEuro(a2.compensoAvvocato) },
+    { label: "Spese generali 15%", value: formatEuro(a2.speseGenerali15) },
+    { label: "CPA 4% avvocato", value: formatEuro(a2.cpa4Avvocato) },
+    { label: "IVA 22% avvocato", value: formatEuro(a2.iva22Avvocato) },
+    { label: "Bollo", value: formatEuro(a2.bollo) },
+    { label: "Stima CTU", value: formatEuro(a2.stimaCTU) },
+    { label: "Imposta di registro lodo", value: formatEuro(a2.impostaRegistroLodo) },
+    { label: `Totale per parte - ${a2.durataStimata}`, value: formatEuro(a2.totalePerParte), bold: true },
+  ];
+
+  const riepilogoRows = [
+    { label: "Mediazione - totale netto per parte", value: formatEuro(m.totaleNettoPerParte), bold: true },
+    { label: "Arbitrato CAM - totale per parte", value: formatEuro(a.totalePerParte), bold: true },
+    { label: `${params.medyaproLabel} - totale per parte`, value: formatEuro(a2.totalePerParte), bold: true },
+    { label: "Causa Civile I grado - totale per parte", value: formatEuro(c.totalePerParte), bold: true },
+    { label: "Causa Civile tre gradi (I+II+Cass.) - stima", value: formatEuro(cam.totaleCausaTreGradi), bold: true },
+    { label: "Risparmio mediazione vs causa I grado", value: `${formatEuro(cam.risparmioMediazione)} (${cam.percentualeRisparmio}%)`, bold: true },
+    { label: "Risparmio mediazione vs tre gradi", value: `${formatEuro(cam.risparmioMediazioneTreGradi)} (${cam.percentualeRisparmioTreGradi}%)`, bold: true },
+  ];
+
+  const footerNotes: string[] = [];
+  if (cam.gratuitoPatrocinio.ammissibile) footerNotes.push(`Parte ammissibile al gratuito patrocinio (reddito EUR ${cam.gratuitoPatrocinio.redditoInserito.toLocaleString("it-IT")} <= limite EUR ${cam.gratuitoPatrocinio.limiteReddito.toLocaleString("it-IT")}).`);
+  cam.vantaggiFiscali.slice(0, 6).forEach(v => footerNotes.push(v));
+  footerNotes.push("Stime indicative basate su D.M. 150/2023 (indennita), D.M. 55/2014 agg. 147/2022 (parametri forensi), D.P.R. 131/1986 (registro), D.Lgs. 28/2010 (esenzioni mediazione).");
+
+  return {
+    title: "Confronto Costi: Mediazione vs Arbitrato vs Causa",
+    subtitle: `${tipoMedLabel} - Valore lite: ${valore} - Tariffa: ${modalitaLabel}`,
+    sections: [
+      { title: "Parametri del confronto", rows: parametri },
+      { title: "Riepilogo totali", rows: riepilogoRows },
+      { title: "Costi Mediazione - dettaglio per parte", rows: mediazioneRows },
+      { title: "Arbitrato CAM - dettaglio per parte", rows: arbCamRows },
+      { title: `${params.medyaproLabel} - dettaglio per parte`, rows: arbMedyaRows },
+      { title: "Causa Civile I grado - dettaglio per parte", rows: causaRows },
+    ],
+    footerNotes,
+    fileName: `confronto-costi-${Date.now()}`,
+  };
+}
 
 export default function ConfrontoCosti() {
   const [modalitaTariffaria, setModalitaTariffaria] = useState<ModalitaTariffaria>("nazionale");
@@ -217,6 +342,17 @@ export default function ConfrontoCosti() {
         {/* Results */}
         {risultato && risultatoMedyaPro && (
           <>
+            {/* Export buttons */}
+            <div className="mb-4 flex justify-end">
+              <ExportButtons
+                label="confronto"
+                testIdPrefix="export-confronto"
+                buildReport={() => buildReportConfronto(risultato, risultatoMedyaPro, {
+                  valoreLite, tipoValore, tipoMediazione, materiaImmobiliare,
+                  primaCasa, modalitaTariffaria, medyaproLabel,
+                })}
+              />
+            </div>
             {/* Summary Cards — 5 colonne */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 mb-4">
               <Card className="border-2 border-foreground shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] bg-green-50">

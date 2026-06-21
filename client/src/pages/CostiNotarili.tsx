@@ -14,6 +14,8 @@ import {
   type RegimeFiscale,
   type TipologiaCatastale,
 } from "@shared/notarile";
+import { ExportButtons } from "@/components/ExportButtons";
+import type { ReportData } from "@/lib/export-risultati";
 
 function fmtEuro(n: number): string {
   return new Intl.NumberFormat("it-IT", {
@@ -22,6 +24,91 @@ function fmtEuro(n: number): string {
     minimumFractionDigits: 0,
     maximumFractionDigits: 0,
   }).format(Math.round(n || 0));
+}
+
+// --- BUILDER REPORT EXPORT ---
+type ConfrontaResult = ReturnType<typeof confrontaNotarile>;
+function buildReportNotarile(
+  confronto: ConfrontaResult,
+  params: {
+    prezzo: number;
+    regime: RegimeFiscale;
+    tipologia: TipologiaCatastale;
+    usaPrezzoValore: boolean;
+    rendita: number;
+    venditoreImpresaIva: boolean;
+  }
+): ReportData {
+  const fmt = (n: number) => new Intl.NumberFormat("it-IT", { style: "currency", currency: "EUR", minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(Math.round(n || 0));
+  const m = confronto.con_mediazione.voci;
+  const s = confronto.con_sentenza.voci;
+  const regimeLabel = params.regime === "prima_casa" ? "Prima casa (registro 2%)" : "Seconda casa / altro (registro 9%)";
+  const tipologiaLabel: Record<TipologiaCatastale, string> = {
+    prima_casa: "Prima casa (coeff. 115,5)",
+    seconda_casa: "Seconda casa (coeff. 126)",
+    terreni_non_edificabili: "Terreni non edificabili (coeff. 112,5)",
+    fabbricati_C_A10: "Fabbricati C/A10 (coeff. 63)",
+    fabbricati_D_E: "Fabbricati D/E (coeff. 65,52)",
+  };
+
+  const parametri = [
+    { label: "Prezzo / valore dichiarato", value: fmt(params.prezzo) },
+    { label: "Regime fiscale", value: regimeLabel },
+    { label: "Metodo base imponibile", value: params.usaPrezzoValore ? "Prezzo-valore (rendita rivalutata * coeff.)" : "Prezzo dichiarato" },
+    { label: "Tipologia catastale", value: tipologiaLabel[params.tipologia] },
+    { label: "Cessione da impresa con IVA", value: params.venditoreImpresaIva ? "Si" : "No" },
+    { label: "Base imponibile calcolata", value: fmt(confronto.base) },
+  ];
+  if (params.usaPrezzoValore && params.rendita > 0) {
+    parametri.splice(3, 0, { label: "Rendita catastale", value: fmt(params.rendita) });
+  }
+
+  const buildVoci = (v: typeof m) => {
+    const rows: { label: string; value: string; bold?: boolean }[] = [
+      { label: "Imposta di registro", value: fmt(v.imposta_registro || 0) },
+      { label: "Imposta di bollo", value: fmt(v.imposta_bollo || 0) },
+      { label: "Imposta ipotecaria", value: fmt(v.imposta_ipotecaria || 0) },
+      { label: "Imposta catastale", value: fmt(v.imposta_catastale || 0) },
+    ];
+    if (params.venditoreImpresaIva) rows.push({ label: "IVA su atto", value: fmt(v.iva || 0) });
+    rows.push(
+      { label: "Onorario notaio (stima)", value: fmt(v.onorario_notaio || 0) },
+      { label: "IVA 22% su onorario", value: fmt(v.iva_onorario || 0) },
+      { label: "Cassa Notariato 4%", value: fmt(v.cassa_notarile || 0) },
+      { label: "Visure e volture", value: fmt(v.visure_volture || 0) }
+    );
+    return rows;
+  };
+
+  const mediazioneRows = buildVoci(m);
+  mediazioneRows.push({ label: "Totale stimato in mediazione", value: fmt(confronto.con_mediazione.totale), bold: true });
+  const sentenzaRows = buildVoci(s);
+  sentenzaRows.push({ label: "Totale stimato in sentenza", value: fmt(confronto.con_sentenza.totale), bold: true });
+
+  const riepilogoRows = [
+    { label: "Totale costi - Accordo in mediazione", value: fmt(confronto.con_mediazione.totale), bold: true },
+    { label: "Totale costi - Sentenza del giudice", value: fmt(confronto.con_sentenza.totale), bold: true },
+    { label: "Risparmio mediazione", value: fmt(confronto.risparmio), bold: true },
+  ];
+
+  const footerNotes = [
+    `Mediazione: ${confronto.con_mediazione.note.join(" ; ")}`,
+    `Sentenza: ${confronto.con_sentenza.note.join(" ; ")}`,
+    confronto.disclaimer,
+  ];
+
+  return {
+    title: "Stima Costi Notarili",
+    subtitle: `${regimeLabel} - Base imponibile: ${fmt(confronto.base)}`,
+    sections: [
+      { title: "Parametri della stima", rows: parametri },
+      { title: "Riepilogo confronto", rows: riepilogoRows },
+      { title: "Accordo in mediazione - dettaglio", rows: mediazioneRows },
+      { title: "Sentenza del giudice - dettaglio", rows: sentenzaRows },
+    ],
+    footerNotes,
+    fileName: `costi-notarili-${Date.now()}`,
+  };
 }
 
 export default function CostiNotarili() {
@@ -186,6 +273,15 @@ export default function CostiNotarili() {
                 Base imponibile: {fmtEuro(confronto.base)}
               </Badge>
             </CardTitle>
+            <div className="mt-3">
+              <ExportButtons
+                label="calcolo notarile"
+                testIdPrefix="export-notarile"
+                buildReport={() => buildReportNotarile(confronto, {
+                  prezzo, regime, tipologia, usaPrezzoValore, rendita, venditoreImpresaIva,
+                })}
+              />
+            </div>
           </CardHeader>
           <CardContent>
             <div className="overflow-x-auto border-2 border-foreground">
