@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { Link } from "wouter";
 import { ArrowLeft, Brain, Target, Crosshair, ShieldAlert, Scale, Eye, Frame, Lightbulb, TrendingUp, BookOpen } from "lucide-react";
+import { SeoHead } from "@/components/SeoHead";
 import {
   Accordion,
   AccordionContent,
@@ -238,6 +239,11 @@ export default function StrategieNegoziazione() {
 
   return (
     <div className="min-h-screen py-12 px-4">
+      <SeoHead
+        title="Strategie di Negoziazione — MAAN/BATNA, ZOPA, Ancoraggio, Metodo Harvard"
+        description="Le principali strategie di negoziazione applicate alla mediazione civile: MAAN/BATNA, ZOPA, ancoraggio, metodo Harvard, negoziazione integrativa e gestione delle emozioni al tavolo."
+        canonical="https://calcolomediazione.it/strategie-negoziazione"
+      />
       <div className="max-w-4xl mx-auto">
         {/* Header */}
         <div className="mb-12">

@@ -6,6 +6,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
+import { SeoHead } from "@/components/SeoHead";
 import {
   sentenze,
   cercaSentenze,
@@ -232,6 +233,11 @@ export default function Giurisprudenza() {
 
   return (
     <div className="min-h-screen bg-background">
+      <SeoHead
+        title="Giurisprudenza Mediazione Civile 2010-2026 — Cassazione, Costituzionale, Merito"
+        description="Motore di ricerca della giurisprudenza in tema di mediazione civile: sentenze della Corte Costituzionale, Cassazione e merito dal 2010 al 2026, comprese le ultime pronunce sulla Riforma Cartabia."
+        canonical="https://calcolomediazione.it/giurisprudenza"
+      />
       {/* Hero */}
       <section className="border-b-[3px] border-foreground bg-card">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12">

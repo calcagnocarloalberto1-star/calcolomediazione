@@ -1,9 +1,15 @@
 import { Link } from "wouter";
 import { ArrowLeft, Mail, Globe, MapPin, ExternalLink } from "lucide-react";
+import { SeoHead } from "@/components/SeoHead";
 
 export default function Contatti() {
   return (
     <div className="min-h-screen bg-background">
+      <SeoHead
+        title="Contatti — CalcoloMediazione"
+        description="Contatta CalcoloMediazione per segnalazioni, suggerimenti e collaborazioni professionali in materia di mediazione civile e commerciale."
+        canonical="https://calcolomediazione.it/contatti"
+      />
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <Link href="/">
           <span className="inline-flex items-center gap-2 text-sm font-medium mb-6 cursor-pointer hover:opacity-70 transition-opacity" style={{ color: 'var(--primary)' }}>

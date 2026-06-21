@@ -1,6 +1,23 @@
+# robots.txt — calcolomediazione.it
+# Documentazione: https://calcolomediazione.it/
+
 User-agent: *
 Allow: /
 Disallow: /api/
 Disallow: /admin
 
+# Bot AI/training — accesso consentito ai contenuti pubblici, no training
+User-agent: GPTBot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+# Sitemaps
 Sitemap: https://calcolomediazione.it/sitemap.xml

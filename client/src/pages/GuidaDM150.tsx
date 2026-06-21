@@ -1,12 +1,18 @@
 import { Link } from "wouter";
 import { ArrowLeft, BookOpen, Scale, Table2, TrendingDown, TrendingUp, Calculator, ExternalLink } from "lucide-react";
 import { getScaglioni, formatEuro } from "@shared/calcolo-indennita";
+import { SeoHead } from "@/components/SeoHead";
 
 export default function GuidaDM150() {
   const scaglioni = getScaglioni();
 
   return (
     <div className="min-h-screen py-12 px-4">
+      <SeoHead
+        title="Guida al D.M. 150/2023 — Indennità, Spese di Avvio, Primo Incontro"
+        description="Guida completa al Decreto Ministeriale 150/2023: scaglioni, spese di avvio art. 28, maggiorazioni art. 31, art. 29 (verifica catastale), tariffe COA Genova, costi notarili."
+        canonical="https://calcolomediazione.it/guida-dm-150"
+      />
       <div className="max-w-4xl mx-auto">
         {/* Header */}
         <div className="mb-12">

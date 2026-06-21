@@ -31,6 +31,8 @@ import {
   Shield,
 } from "lucide-react";
 import { ExportButtons } from "@/components/ExportButtons";
+import { SeoHead } from "@/components/SeoHead";
+import { DisclaimerLegale } from "@/components/DisclaimerLegale";
 import type { ReportData } from "@/lib/export-risultati";
 
 // Calcolo logica credito d'imposta
@@ -254,6 +256,11 @@ export default function CreditoImposta() {
 
   return (
     <div className="min-h-screen py-8 px-4">
+      <SeoHead
+        title="Credito d'Imposta Mediazione Civile — Art. 20 D.Lgs. 28/2010 — Scadenza 31 marzo"
+        description="Calcola il credito d'imposta per le procedure di mediazione civile (art. 20 D.Lgs. 28/2010, D.M. 1° agosto 2023): indennità del mediatore, compensi avvocato, contributo unificato. Tetti per procedura e annuali. Domanda entro il 31 marzo."
+        canonical="https://calcolomediazione.it/credito-imposta"
+      />
       <div className="max-w-5xl mx-auto">
         {/* Page Header */}
         <div className="mb-8">
@@ -776,6 +783,12 @@ export default function CreditoImposta() {
             </Card>
           </div>
         </div>
+        <DisclaimerLegale
+          variant="full"
+          riferimenti={["art. 20 D.Lgs. 28/2010", "D.M. 1° agosto 2023", "D.M. 150/2023", "D.M. 55/2014"]}
+          noteSpecifiche="Il credito d’imposta segue le regole dell’art. 20 D.Lgs. 28/2010 come modificato dalla Riforma Cartabia e dal D.M. 1° agosto 2023. Tetti per procedura e annuali sono applicati in cascata; in caso di domande eccedenti il credito è attribuito proporzionalmente."
+          className="mt-6"
+        />
       </div>
     </div>
   );
