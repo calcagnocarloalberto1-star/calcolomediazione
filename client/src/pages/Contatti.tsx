@@ -85,9 +85,14 @@ export default function Contatti() {
               </h2>
               <div className="space-y-3">
                 <ProjectLink
-                  name="EnneagrammaEvolutivo.com"
+                  name="EnneagrammaEvolutivo.it"
                   description="Percorsi di crescita personale e consapevolezza"
-                  href="https://enneagrammaevolutivo.com"
+                  href="https://enneagrammaevolutivo.it"
+                />
+                <ProjectLink
+                  name="Olismo-Integrato.it"
+                  description="Approccio olistico e integrato alla mediazione"
+                  href="https://olismo-integrato.it"
                 />
               </div>
             </div>

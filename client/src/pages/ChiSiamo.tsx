@@ -79,7 +79,7 @@ export default function ChiSiamo() {
             Studioso di storia del diritto e delle procedure di conciliazione, coniuga la competenza giuridica con un forte interesse per l'innovazione tecnologica applicata al settore legale, in particolare per l'impiego dell'intelligenza artificiale a supporto della mediazione.
           </p>
           <p className="text-sm leading-relaxed opacity-90">
-            È autore di diversi progetti web nel campo dell'ADR e della crescita personale, tra cui <a href="https://enneagrammaevolutivo.com" target="_blank" rel="noopener noreferrer" className="underline" style={{ color: 'var(--primary)' }}>EnneagrammaEvolutivo.com</a>.
+            È autore di diversi progetti web nel campo dell'ADR e della crescita personale, tra cui <a href="https://enneagrammaevolutivo.it" target="_blank" rel="noopener noreferrer" className="underline" style={{ color: 'var(--primary)' }}>EnneagrammaEvolutivo.it</a> e <a href="https://olismo-integrato.it" target="_blank" rel="noopener noreferrer" className="underline" style={{ color: 'var(--primary)' }}>Olismo-Integrato.it</a>.
           </p>
         </div>
 
