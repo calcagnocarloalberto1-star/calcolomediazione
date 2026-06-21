@@ -141,9 +141,61 @@ export default function CostiNotarili() {
   return (
     <div className="min-h-screen py-8 px-4">
       <SeoHead
-        title="Costi Notarili Mediazione vs Sentenza — Onorari, Imposte, Visure"
-        description="Stima dei costi notarili nella mediazione civile e nelle sentenze: onorari, IVA, cassa, visure, imposte di registro/ipotecaria/catastale. Confronto tra accordo di mediazione (esenzione art. 17 D.Lgs. 28/2010) e sentenza."
+        title="Calcola Costi Notarili Mediazione · CalcoloMediazione"
+        description="Calcola i costi notarili per accordo di mediazione o sentenza: onorari, imposta di registro, ipotecaria, catastale e IVA. Esenzione art. 17 D.Lgs. 28/2010."
         canonical="https://calcolomediazione.it/costi-notarili"
+      />
+      {/* FAQPage schema.org - boost SERP visibility con FAQ rich result */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "FAQPage",
+            mainEntity: [
+              {
+                "@type": "Question",
+                name: "Quali sono i costi notarili per un accordo di mediazione?",
+                acceptedAnswer: {
+                  "@type": "Answer",
+                  text: "Per un trasferimento immobiliare in mediazione si stimano: onorario del notaio (variabile in funzione del valore), visure ipocatastali, IVA al 22% e cassa nazionale del notariato al 4%. Si aggiungono le imposte di registro, ipotecaria e catastale, salvo applicazione dell'esenzione prevista dall'art. 17 del D.Lgs. 28/2010.",
+                },
+              },
+              {
+                "@type": "Question",
+                name: "Cosa prevede l'art. 17 D.Lgs. 28/2010 sull'esenzione fiscale dell'accordo di mediazione?",
+                acceptedAnswer: {
+                  "@type": "Answer",
+                  text: "L'art. 17 D.Lgs. 28/2010 prevede l'esenzione dall'imposta di registro entro il limite di valore di 100.000 euro per gli accordi conciliativi raggiunti in sede di mediazione. Oltre questa soglia, l'imposta si applica sulla sola parte eccedente.",
+                },
+              },
+              {
+                "@type": "Question",
+                name: "Quanto si risparmia con la mediazione rispetto alla sentenza per i costi notarili?",
+                acceptedAnswer: {
+                  "@type": "Answer",
+                  text: "Nell'accordo di mediazione si applica l'esenzione dell'imposta di registro entro 100.000 euro (art. 17 D.Lgs. 28/2010), che nella sentenza non opera. Per un immobile di 200.000 euro il risparmio sull'imposta di registro e' significativo, oltre alla riduzione dei tempi e dei compensi forensi.",
+                },
+              },
+              {
+                "@type": "Question",
+                name: "L'agevolazione prima casa e' cumulabile con l'esenzione mediazione?",
+                acceptedAnswer: {
+                  "@type": "Answer",
+                  text: "Si. L'agevolazione prima casa riduce l'imposta di registro al 2% (anziche' 9%) e si applica nell'accordo di mediazione in via residuale, sulla parte di valore eccedente la soglia di 100.000 euro dell'esenzione art. 17 D.Lgs. 28/2010.",
+                },
+              },
+              {
+                "@type": "Question",
+                name: "Come si calcola la base imponibile dell'imposta di registro per un immobile?",
+                acceptedAnswer: {
+                  "@type": "Answer",
+                  text: "Per gli immobili residenziali si applica il sistema del prezzo-valore: la base imponibile e' data dalla rendita catastale rivalutata moltiplicata per il coefficiente di legge (115,5 per prima casa, 126 per altri). Per immobili non residenziali si usa il valore venale dichiarato.",
+                },
+              },
+            ],
+          }),
+        }}
       />
       <div className="max-w-5xl mx-auto">
         {/* Header */}
@@ -162,7 +214,7 @@ export default function CostiNotarili() {
               className="text-2xl sm:text-3xl font-bold"
               style={{ fontFamily: "'Space Grotesk', sans-serif" }}
             >
-              Calcolatore Costi Notarili
+              Costi Notarili: Stima e Confronto Mediazione vs Sentenza
             </h1>
           </div>
           <p className="text-muted-foreground max-w-2xl">
@@ -170,6 +222,52 @@ export default function CostiNotarili() {
             con confronto tra accordo di mediazione e sentenza del giudice.
             Motore unificato (shared/notarile.ts) — stessi numeri usati dall&apos;Analisi AI e dal Calcolatore.
           </p>
+
+          {/* Blocco SEO con H2 strutturati per Google */}
+          <section className="mt-6 mb-4 max-w-3xl text-sm space-y-4 border-l-4 border-foreground/10 pl-4">
+            <div>
+              <h2 className="text-base font-bold text-foreground mb-1">
+                Calcolo costi notarili: cosa include la stima
+              </h2>
+              <p className="text-muted-foreground">
+                Il calcolatore copre tutte le voci che concorrono al costo finale di un atto di
+                trasferimento immobiliare: onorario notarile (parametrato al valore dell&apos;immobile),
+                cassa nazionale del notariato al 4%, IVA al 22%, visure ipocatastali e camerali,
+                oltre alle imposte di registro, ipotecaria e catastale.
+              </p>
+            </div>
+            <div>
+              <h2 className="text-base font-bold text-foreground mb-1">
+                Esenzione fiscale dell&apos;accordo di mediazione (art. 17 D.Lgs. 28/2010)
+              </h2>
+              <p className="text-muted-foreground">
+                Gli accordi conciliativi raggiunti in mediazione godono dell&apos;esenzione
+                dell&apos;imposta di registro entro la soglia di 100.000 euro. Oltre, l&apos;imposta
+                si applica sulla sola parte eccedente. Questa agevolazione, prevista anche dalla
+                Riforma Cartabia (D.Lgs. 149/2022), non opera nella sentenza del giudice.
+              </p>
+            </div>
+            <div>
+              <h2 className="text-base font-bold text-foreground mb-1">
+                Prima casa: agevolazioni fiscali e imposta di registro ridotta
+              </h2>
+              <p className="text-muted-foreground">
+                L&apos;agevolazione prima casa riduce l&apos;imposta di registro dal 9% al 2% sulla
+                base imponibile catastale (rendita rivalutata x coefficiente 115,5).
+                È cumulabile con l&apos;esenzione art. 17, applicandosi residualmente sull&apos;eccedenza.
+              </p>
+            </div>
+            <div>
+              <h2 className="text-base font-bold text-foreground mb-1">
+                Confronto pratico: accordo di mediazione vs sentenza
+              </h2>
+              <p className="text-muted-foreground">
+                Il calcolatore evidenzia in chiaro la differenza economica tra i due scenari su
+                un&apos;identica base immobiliare, includendo onorari notarili, imposte e
+                differenze fiscali. Inserisci i dati qui sotto per ottenere la stima.
+              </p>
+            </div>
+          </section>
         </div>
 
         {/* Input */}
