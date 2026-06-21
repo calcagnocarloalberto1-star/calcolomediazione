@@ -190,10 +190,17 @@ function generaTestoProcura(
   const nomeDelegato = delegato.nomeCognome ? `${prefissoDelegato}${delegato.nomeCognome}` : `${prefissoDelegato}____________________`;
   const studioOResidenza = delegato.qualifica === "terzo" ? "residente in" : "con studio in";
 
-  // Clausola Cass. 9608/2026
-  const clausolaNonDifensore = delegato.nomeDifensoreCostituto
-    ? `Il/La delegato/a dichiara di non essere il difensore costituito della parte delegante nel presente procedimento di mediazione. Il difensore della parte delegante nel presente procedimento è l'Avv. ${delegato.nomeDifensoreCostituto}, soggetto diverso dal delegato, in conformità al principio stabilito da Cass. civ., Sez. III, ord. n. 9608 del 15 aprile 2026, secondo cui il difensore non può cumulare in sé i distinti ruoli di parte e di suo assistente.`
-    : `Il/La delegato/a dichiara di non essere il difensore costituito della parte delegante nel presente procedimento di mediazione, in conformità al principio stabilito da Cass. civ., Sez. III, ord. n. 9608 del 15 aprile 2026, secondo cui il difensore non può cumulare in sé i distinti ruoli di parte e di suo assistente.`;
+  // Clausola Cass. — varia in base alla qualifica del delegato
+  let clausolaCass: string;
+  if (delegato.qualifica === "difensore") {
+    // Cass. 10978/2026 — il difensore può essere anche rappresentante sostanziale
+    clausolaCass = `Il/La delegato/a, pur essendo il difensore costituito della parte delegante nel presente procedimento di mediazione, è munito di apposita procura sostanziale, distinta dalla procura alle liti, in conformità al principio stabilito da Cass. civ., Sez. II, ord. n. 10978 del 24 aprile 2026 (Pres. Scarpa, Rel. Trapuzzano), secondo cui nel procedimento di mediazione obbligatoria ex D.Lgs. 28/2010 la procura sostanziale può essere validamente conferita anche al medesimo difensore della parte, in forma scritta non autenticata ex art. 1392 c.c., salvo che la legge richieda forma diversa per l'atto da compiere (es. trascrizione ex art. 2643 c.c.).`;
+  } else {
+    // Cass. 9608/2026 — terzo o avvocato diverso dal difensore
+    clausolaCass = delegato.nomeDifensoreCostituto
+      ? `Il/La delegato/a dichiara di non essere il difensore costituito della parte delegante nel presente procedimento di mediazione. Il difensore della parte delegante nel presente procedimento è l'Avv. ${delegato.nomeDifensoreCostituto}, soggetto diverso dal delegato, in conformità al principio stabilito da Cass. civ., Sez. III, ord. n. 9608 del 15 aprile 2026.`
+      : `Il/La delegato/a dichiara di non essere il difensore costituito della parte delegante nel presente procedimento di mediazione, in conformità al principio stabilito da Cass. civ., Sez. III, ord. n. 9608 del 15 aprile 2026, secondo cui il difensore non può cumulare in sé i distinti ruoli di parte e di suo assistente.`;
+  }
 
   return `PROCURA SPECIALE PER LA PARTECIPAZIONE ALLA MEDIAZIONE
 ai sensi dell'art. 8, commi 4 e 4-bis, D.Lgs. n. 28/2010
@@ -228,7 +235,7 @@ La presente procura è conferita ai sensi e per gli effetti dell'art. 8, commi 4
 
 Si dichiara che la presente procura è conferita a titolo speciale e che il/la delegato/a è a conoscenza dei fatti oggetto della controversia.
 
-${clausolaNonDifensore}
+${clausolaCass}
 
 Luogo e data: ______________________, ${oggi}
 
@@ -300,9 +307,15 @@ async function generaDocx(
   if (delegato.pec) delegatoText += `, PEC: ${delegato.pec}`;
   delegatoText += ",";
 
-  const clausolaNonDifensore = delegato.nomeDifensoreCostituto
-    ? `Il/La delegato/a dichiara di non essere il difensore costituito della parte delegante nel presente procedimento di mediazione. Il difensore della parte delegante nel presente procedimento e' l'Avv. ${delegato.nomeDifensoreCostituto}, soggetto diverso dal delegato, in conformita' al principio stabilito da Cass. civ., Sez. III, ord. n. 9608 del 15 aprile 2026.`
-    : `Il/La delegato/a dichiara di non essere il difensore costituito della parte delegante nel presente procedimento di mediazione, in conformita' al principio stabilito da Cass. civ., Sez. III, ord. n. 9608 del 15 aprile 2026, secondo cui il difensore non puo' cumulare in se' i distinti ruoli di parte e di suo assistente.`;
+  let clausolaCass: string;
+  if (delegato.qualifica === "difensore") {
+    // Cass. 10978/2026 — il difensore puo' essere anche rappresentante sostanziale
+    clausolaCass = `Il/La delegato/a, pur essendo il difensore costituito della parte delegante nel presente procedimento di mediazione, e' munito di apposita procura sostanziale, distinta dalla procura alle liti, in conformita' al principio stabilito da Cass. civ., Sez. II, ord. n. 10978 del 24 aprile 2026 (Pres. Scarpa, Rel. Trapuzzano), secondo cui nel procedimento di mediazione obbligatoria ex D.Lgs. 28/2010 la procura sostanziale puo' essere validamente conferita anche al medesimo difensore della parte, in forma scritta non autenticata ex art. 1392 c.c., salvo che la legge richieda forma diversa per l'atto da compiere (es. trascrizione ex art. 2643 c.c.).`;
+  } else {
+    clausolaCass = delegato.nomeDifensoreCostituto
+      ? `Il/La delegato/a dichiara di non essere il difensore costituito della parte delegante nel presente procedimento di mediazione. Il difensore della parte delegante nel presente procedimento e' l'Avv. ${delegato.nomeDifensoreCostituto}, soggetto diverso dal delegato, in conformita' al principio stabilito da Cass. civ., Sez. III, ord. n. 9608 del 15 aprile 2026.`
+      : `Il/La delegato/a dichiara di non essere il difensore costituito della parte delegante nel presente procedimento di mediazione, in conformita' al principio stabilito da Cass. civ., Sez. III, ord. n. 9608 del 15 aprile 2026, secondo cui il difensore non puo' cumulare in se' i distinti ruoli di parte e di suo assistente.`;
+  }
 
   const poteri = [
     "partecipare a tutti gli incontri di mediazione, sia in presenza che in modalita' telematica o da remoto con collegamento audiovisivo;",
@@ -378,7 +391,7 @@ async function generaDocx(
           }),
           new Paragraph({
             spacing: { after: 300 },
-            children: [new TextRun({ text: clausolaNonDifensore, size: 24, font: "Times New Roman", bold: true })],
+            children: [new TextRun({ text: clausolaCass, size: 24, font: "Times New Roman", bold: true })],
           }),
           new Paragraph({
             spacing: { before: 400, after: 400 },
@@ -628,23 +641,33 @@ export default function GeneratoreProcura() {
 
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
 
-        {/* Avviso FONDAMENTALE Cass. 9608/2026 */}
-        <div className="flex items-start gap-3 bg-red-50 border-2 border-red-400 p-4">
-          <AlertTriangle className="w-5 h-5 text-red-600 mt-0.5 flex-shrink-0" />
-          <div className="text-sm text-red-900">
-            <p className="font-semibold mb-1">ATTENZIONE — Cass. civ., Sez. III, ord. n. 9608 del 15 aprile 2026</p>
+        {/* Avviso EVOLUZIONE GIURISPRUDENZIALE — Cass. 9608/2026 vs Cass. 10978/2026 */}
+        <div className="flex items-start gap-3 bg-amber-50 border-2 border-amber-400 p-4">
+          <AlertTriangle className="w-5 h-5 text-amber-700 mt-0.5 flex-shrink-0" />
+          <div className="text-sm text-amber-900">
+            <p className="font-semibold mb-2">ATTENZIONE — Due ipotesi possibili per la procura sostanziale</p>
             <p className="mb-2">
-              La Cassazione ha stabilito che <strong>il difensore costituito non può cumulare in sé i ruoli di parte e di assistente</strong>.
-              La presenza del solo avvocato che assiste la parte nel procedimento, anche se munito di procura sostanziale,
-              <strong> non soddisfa la condizione di procedibilità</strong>.
+              La giurisprudenza della Cassazione ha conosciuto una recente evoluzione. Sono oggi configurabili <strong>tre scenari</strong>:
             </p>
-            <p>
-              La procura sostanziale può essere conferita esclusivamente a:
-            </p>
-            <ul className="mt-1 ml-4 space-y-0.5 list-disc">
-              <li><strong>Un terzo</strong> (familiare, collaboratore, fiduciario — chiunque non sia l&apos;avvocato difensore)</li>
-              <li><strong>Un avvocato diverso</strong> dal difensore costituito nel procedimento di mediazione</li>
+            <ul className="mt-1 ml-4 space-y-1.5 list-disc">
+              <li>
+                <strong>Procura sostanziale al medesimo difensore</strong> — è oggi ammessa da <strong>Cass. civ., Sez. II, ord. n. 10978 del 24 aprile 2026</strong> (Pres. Scarpa, Rel. Trapuzzano):
+                nel procedimento di mediazione obbligatoria il difensore costituito può essere anche rappresentante sostanziale,
+                purché munito di apposita procura distinta dalla procura alle liti, in forma scritta non autenticata
+                (salvo accordi che richiedano trascrizione ex art. 2643 c.c.).
+              </li>
+              <li>
+                <strong>Procura sostanziale a un avvocato diverso dal difensore</strong> — sempre ammissibile, è la soluzione prudenziale
+                anche alla luce di <strong>Cass. civ., Sez. III, ord. n. 9608 del 15 aprile 2026</strong>.
+              </li>
+              <li>
+                <strong>Procura sostanziale a un terzo</strong> (familiare, collaboratore, fiduciario) — sempre ammissibile.
+              </li>
             </ul>
+            <p className="mt-2 text-xs">
+              <strong>Nota di prudenza operativa:</strong> Cass. 10978/2026 è recentissima e potrebbe non essere ancora consolidata in tutti gli organismi di mediazione.
+              Si consiglia di valutare caso per caso e, ove possibile, di documentare con precisione la procura sostanziale e la sua distinzione dalla procura alle liti.
+            </p>
           </div>
         </div>
 
@@ -715,13 +738,14 @@ export default function GeneratoreProcura() {
               <h2 className="text-lg font-bold" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
                 Dati Delegato
               </h2>
-              <span className="text-xs text-muted-foreground ml-2">(terzo o avvocato non difensore)</span>
+              <span className="text-xs text-muted-foreground ml-2">(terzo, avvocato diverso, o il medesimo difensore ex Cass. 10978/2026)</span>
             </div>
 
             {/* Avviso inline nel form */}
-            <div className="bg-red-50 border border-red-200 rounded p-3 mb-5 text-xs text-red-800">
-              <strong>Cass. 9608/2026:</strong> il delegato NON può essere l&apos;avvocato che assiste la parte nel presente procedimento di mediazione.
-              Può essere un terzo o un avvocato diverso dal difensore costituito.
+            <div className="bg-blue-50 border border-blue-200 rounded p-3 mb-5 text-xs text-blue-900">
+              <strong>Cass. 10978/2026</strong> (24 aprile 2026): nel procedimento di mediazione obbligatoria la procura sostanziale può essere conferita anche al medesimo difensore della parte,
+              purché distinta dalla procura alle liti. In alternativa, secondo l&apos;orientamento di <strong>Cass. 9608/2026</strong>,
+              il delegato può essere un terzo o un avvocato diverso dal difensore costituito.
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -736,7 +760,8 @@ export default function GeneratoreProcura() {
                     <SelectValue placeholder="Seleziona..." />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="avvocato_terzo">Avvocato (NON il difensore nel presente procedimento)</SelectItem>
+                    <SelectItem value="difensore">Il medesimo difensore costituito della parte (Cass. 10978/2026)</SelectItem>
+                    <SelectItem value="avvocato_terzo">Avvocato diverso dal difensore costituito</SelectItem>
                     <SelectItem value="terzo">Terzo non avvocato (familiare, collaboratore, fiduciario)</SelectItem>
                   </SelectContent>
                 </Select>
@@ -745,7 +770,7 @@ export default function GeneratoreProcura() {
               {/* Nome difensore costituto (per la clausola Cass. 9608/2026) */}
               <div className="sm:col-span-2">
                 <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-1.5 block">
-                  Nome del difensore costituito nel procedimento (opzionale — per clausola Cass. 9608/2026)
+                  Nome del difensore costituito nel procedimento (opzionale — per clausola Cass. 9608/2026; ignorato se il delegato è il medesimo difensore)
                 </Label>
                 <Input
                   type="text"
