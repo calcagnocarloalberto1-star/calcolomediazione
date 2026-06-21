@@ -21,14 +21,20 @@ import {
   Landmark,
 } from "lucide-react";
 import { SeoHead } from "@/components/SeoHead";
+import { chiSiamoJsonLd } from "./chi-siamo-jsonld";
 
 export default function ChiSiamo() {
   return (
-    <div className="min-h-screen bg-background">
+    <main
+      className="min-h-screen bg-background"
+      itemScope
+      itemType="https://schema.org/AboutPage"
+    >
       <SeoHead
-        title="Chi Siamo — Avv. Carlo Alberto Calcagno, mediatore e formatore ODM"
-        description="CalcoloMediazione è il progetto dell’avv. Carlo Alberto Calcagno, mediatore familiare e civile ODM Genova, commissario ADR COA Genova. Strumenti gratuiti per avvocati e mediatori."
+        title="Chi Siamo — Avv. Carlo Alberto Calcagno, mediatore e Legal Tech Genova"
+        description="Avv. Carlo Alberto Calcagno: mediatore familiare e civile ODM Genova, commissario ADR COA Genova, formatore. Legal Tech, AI applicata alla mediazione e ADR. Tutti gli strumenti gratuiti di CalcoloMediazione."
         canonical="https://calcolomediazione.it/chi-siamo"
+        jsonLd={chiSiamoJsonLd}
       />
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <Link href="/">
@@ -37,16 +43,16 @@ export default function ChiSiamo() {
           </span>
         </Link>
 
-        <div className="flex items-center gap-3 mb-8">
+        <header className="flex items-center gap-3 mb-8">
           <User className="w-8 h-8" style={{ color: 'var(--primary)' }} />
           <h1 className="text-2xl font-bold" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
             Chi Siamo
           </h1>
-        </div>
+        </header>
 
         {/* Hero section */}
-        <div className="bg-card border-[2px] border-foreground shadow-[4px_4px_0px_0px] shadow-foreground/20 p-6 sm:p-8 mb-6">
-          <h2 className="text-xl font-bold mb-4" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
+        <section aria-labelledby="hero-title" className="bg-card border-[2px] border-foreground shadow-[4px_4px_0px_0px] shadow-foreground/20 p-6 sm:p-8 mb-6">
+          <h2 id="hero-title" className="text-xl font-bold mb-4" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
             CalcoloMediazione.it
           </h2>
           <p className="text-sm leading-relaxed opacity-90 mb-4">
@@ -55,11 +61,11 @@ export default function ChiSiamo() {
           <p className="text-sm leading-relaxed opacity-90">
             Il sito integra un sistema di intelligenza artificiale avanzato per l’analisi dei casi, una banca dati giurisprudenziale curata, un generatore di procura speciale sostanziale conforme agli orientamenti di Cassazione 2025-2026, una guida ai costi notarili, un calcolo del credito d’imposta e una sezione di strategie di negoziazione. Tutto gratuito, senza pubblicità e senza affiliazioni.
           </p>
-        </div>
+        </section>
 
         {/* Il Progetto */}
-        <div className="bg-card border-[2px] border-foreground shadow-[4px_4px_0px_0px] shadow-foreground/20 p-6 sm:p-8 mb-6">
-          <h2 className="text-xl font-bold mb-2" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
+        <section aria-labelledby="progetto-title" className="bg-card border-[2px] border-foreground shadow-[4px_4px_0px_0px] shadow-foreground/20 p-6 sm:p-8 mb-6">
+          <h2 id="progetto-title" className="text-xl font-bold mb-2" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
             Il Progetto
           </h2>
           <p className="text-xs opacity-70 mb-5">
@@ -139,15 +145,28 @@ export default function ChiSiamo() {
               description="Tutto il sito è gratuito, senza pubblicità e senza affiliazione ad alcun organismo di mediazione. Un servizio professionale per la comunità giuridica."
             />
           </div>
-        </div>
+        </section>
 
         {/* L'Autore */}
-        <div className="bg-card border-[2px] border-foreground shadow-[4px_4px_0px_0px] shadow-foreground/20 p-6 sm:p-8 mb-6">
-          <h2 className="text-xl font-bold mb-2" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
+        <section
+          aria-labelledby="autore-title"
+          className="bg-card border-[2px] border-foreground shadow-[4px_4px_0px_0px] shadow-foreground/20 p-6 sm:p-8 mb-6"
+          itemScope
+          itemType="https://schema.org/Person"
+          itemProp="author"
+        >
+          <meta itemProp="honorificPrefix" content="Avv." />
+          <meta itemProp="jobTitle" content="Avvocato e mediatore civile, commerciale e familiare" />
+          <span itemProp="address" itemScope itemType="https://schema.org/PostalAddress" className="hidden">
+            <meta itemProp="addressLocality" content="Genova" />
+            <meta itemProp="addressRegion" content="Liguria" />
+            <meta itemProp="addressCountry" content="IT" />
+          </span>
+          <h2 id="autore-title" className="text-xl font-bold mb-2" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
             L’Autore
           </h2>
           <p className="text-xs opacity-70 mb-5">
-            Avv. Carlo Alberto Calcagno — Genova
+            <span itemProp="name">Avv. Carlo Alberto Calcagno</span> — Genova
           </p>
 
           <p className="text-sm leading-relaxed opacity-90 mb-3">
@@ -170,14 +189,14 @@ export default function ChiSiamo() {
             Ha ideato e cura altri progetti web nel campo dell’ADR, della crescita personale e degli approcci integrativi alla persona:{" "}
             <a href="https://enneagrammaevolutivo.it" target="_blank" rel="noopener noreferrer" className="underline" style={{ color: 'var(--primary)' }}>EnneagrammaEvolutivo.it</a>{" "}
             (Enneagramma come strumento di consapevolezza e di lettura dei conflitti) e{" "}
-            <a href="https://olismo-integrato.it" target="_blank" rel="noopener noreferrer" className="underline" style={{ color: 'var(--primary)' }}>Olismo-Integrato.it</a>{" "}
+            <a href="https://olismo-integrato.it" target="_blank" rel="noopener noreferrer" className="underline" style={{ color: 'var(--primary)' }} itemProp="sameAs">Olismo-Integrato.it</a>{" "}
             (approccio olistico-integrato al benessere e alla relazione).
           </p>
-        </div>
+        </section>
 
         {/* Aree di competenza */}
-        <div className="bg-card border-[2px] border-foreground shadow-[4px_4px_0px_0px] shadow-foreground/20 p-6 sm:p-8 mb-6">
-          <h2 className="text-xl font-bold mb-5" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
+        <section aria-labelledby="competenze-title" className="bg-card border-[2px] border-foreground shadow-[4px_4px_0px_0px] shadow-foreground/20 p-6 sm:p-8 mb-6">
+          <h2 id="competenze-title" className="text-xl font-bold mb-5" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
             Aree di Competenza
           </h2>
 
@@ -213,11 +232,11 @@ export default function ChiSiamo() {
               description="Sviluppo full-stack di strumenti legali, integrazione di modelli AI, prompt engineering per la materia giuridica."
             />
           </div>
-        </div>
+        </section>
 
         {/* Missione */}
-        <div className="bg-card border-[2px] border-foreground shadow-[4px_4px_0px_0px] shadow-foreground/20 p-6 sm:p-8">
-          <h2 className="text-xl font-bold mb-4" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
+        <section aria-labelledby="missione-title" className="bg-card border-[2px] border-foreground shadow-[4px_4px_0px_0px] shadow-foreground/20 p-6 sm:p-8">
+          <h2 id="missione-title" className="text-xl font-bold mb-4" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
             La Nostra Missione
           </h2>
           <div className="space-y-3 text-sm leading-relaxed opacity-90">
@@ -234,9 +253,9 @@ export default function ChiSiamo() {
               <li><strong>Integrazione:</strong> coniugare rigore tecnico-giuridico, intelligenza artificiale e approcci olistici alla gestione del conflitto</li>
             </ul>
           </div>
-        </div>
+        </section>
       </div>
-    </div>
+    </main>
   );
 }
 
