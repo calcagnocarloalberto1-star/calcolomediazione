@@ -36,31 +36,95 @@ interface MarkdownRendererProps {
 // La funzione è idempotente: se applicata a testo già corretto non produce
 // modifiche. Tutte le regex sono testate su output reali dell'analisi AI.
 
+// Restituisce true se la riga è un separatore GFM (---|:---:|---).
+function isSeparatorRow(line: string): boolean {
+  const t = line.trim();
+  if (!t.includes("-")) return false;
+  // Rimuovo pipe iniziale/finale eventualmente assenti.
+  const inner = t.replace(/^\|/, "").replace(/\|$/, "");
+  if (!inner.includes("-")) return false;
+  // Ogni cella deve essere fatta solo da -, :, spazi (almeno un -).
+  return inner.split("|").every((c) => /^\s*:?-{1,}:?\s*$/.test(c));
+}
+
+// Restituisce true se la riga sembra una riga di tabella (contiene almeno un
+// pipe non in fondo isolato e una struttura cella|cella).
+function looksLikeTableRow(line: string): boolean {
+  const t = line.trim();
+  if (!t.includes("|")) return false;
+  // Almeno due segmenti separati da pipe (es. "a | b" o "| a | b |").
+  const parts = t.replace(/^\|/, "").replace(/\|$/, "").split("|");
+  return parts.length >= 2;
+}
+
+// Aggiunge pipe iniziale/finale se mancanti, in modo da rendere la riga
+// conforme allo standard GFM.
+function wrapPipes(line: string): string {
+  let t = line.trim();
+  if (!t.startsWith("|")) t = "| " + t;
+  if (!t.endsWith("|")) t = t + " |";
+  return t;
+}
+
+// Normalizza un blocco "tabella" multilinea: garantisce pipe iniziale/finale
+// su header, separatore e righe successive.
+function normalizeTableBlock(lines: string[]): string[] {
+  return lines.map((l) => (looksLikeTableRow(l) || isSeparatorRow(l) ? wrapPipes(l) : l));
+}
+
 function normalizeMarkdownTables(text: string): string {
   if (!text) return text;
-  let result = text;
 
-  // STEP 1 — Riga vuota prima della tabella
-  // Cerca: carattere non-pipe + \n + riga-pipe + \n + riga-separatore
-  // Il lookahead (?=...) verifica che la riga successiva sia effettivamente
-  // un separatore GFM (solo -, :, |, spazi) prima di inserire la riga vuota,
-  // così non spezza liste o altri elementi che iniziano con |.
-  result = result.replace(
-    /([^\n|])\n(\|[^\n]+\n[ \t]*\|[ \t]*[-:]+[-:\s|]*)/g,
-    "$1\n\n$2"
+  // STEP 0 — Pre-pulizia: separatori non-standard |===| o |___| → |---|
+  let result = text.replace(
+    /^\s*\|?([ \t]*[=_][-=_:\s|]*)\|?[ \t]*$/gm,
+    (m) => m.replace(/[=_]/g, "-")
   );
 
-  // STEP 2 — Separatori non-standard: |===| o |___| → |---|
-  result = result.replace(
-    /^\|([ \t]*[=_][-=_\s|]*)\|[ \t]*$/gm,
-    (match) => match.replace(/[=_]/g, "-")
-  );
+  // STEP 1 — Scan riga per riga per identificare le tabelle e:
+  //   a) garantire riga vuota prima dell'header (richiesta GFM)
+  //   b) aggiungere pipe iniziale/finale mancanti su header, separatore,
+  //      righe della tabella
+  //   c) garantire riga vuota dopo l'ultima riga della tabella
+  const lines = result.split("\n");
+  const out: string[] = [];
+  let i = 0;
+  while (i < lines.length) {
+    const line = lines[i];
+    const next = i + 1 < lines.length ? lines[i + 1] : "";
+    // Inizio tabella: riga che sembra una riga di tabella + riga successiva
+    // che è un separatore (anche senza pipe iniziale/finale).
+    if (looksLikeTableRow(line) && isSeparatorRow(next)) {
+      // a) blank line prima
+      if (out.length > 0) {
+        const prev = out[out.length - 1];
+        if (prev.trim() !== "" && !looksLikeTableRow(prev) && !isSeparatorRow(prev)) {
+          out.push("");
+        }
+      }
+      // Raccolgo tutte le righe della tabella
+      const block: string[] = [line, next];
+      let j = i + 2;
+      while (j < lines.length && (looksLikeTableRow(lines[j]) || isSeparatorRow(lines[j]))) {
+        block.push(lines[j]);
+        j++;
+      }
+      // b) normalizzo pipe
+      const normalized = normalizeTableBlock(block);
+      out.push(...normalized);
+      // c) blank line dopo (se non c'è già)
+      if (j < lines.length && lines[j].trim() !== "") out.push("");
+      i = j;
+      continue;
+    }
+    out.push(line);
+    i++;
+  }
+  result = out.join("\n");
 
-  // STEP 3 — Righe concatenate (fix legacy per record DB pre-patch)
-  // "testo| |testo" indica due righe di tabella unite su una sola riga.
-  // La regex originale era troppo aggressiva su celle vuote; questa versione
-  // opera solo quando c'è uno spazio bianco ESTERNO alle celle (≥1 spazio
-  // dopo | e ≥1 spazio prima di |), che segnala un confine di riga.
+  // STEP 2 — Fix legacy: righe concatenate su una sola riga
+  // "testo| |testo" indica due righe di tabella unite. Conservato per
+  // compatibilità con record DB pre-patch.
   result = result.replace(
     /([^\s|])[ \t]*\|[ \t]{2,}\|[ \t]*([^\s|])/g,
     "$1 |\n| $2"

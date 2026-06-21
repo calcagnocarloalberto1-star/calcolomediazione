@@ -15,19 +15,71 @@ function ensureAutoTable() {
   }
 }
 
+// ─── HELPERS NORMALIZZAZIONE TABELLE ─────────────────────────────────────
+function isSepRow(line: string): boolean {
+  const t = line.trim();
+  if (!t.includes("-")) return false;
+  const inner = t.replace(/^\|/, "").replace(/\|$/, "");
+  if (!inner.includes("-")) return false;
+  return inner.split("|").every((c) => /^\s*:?-{1,}:?\s*$/.test(c));
+}
+
+function looksLikeRow(line: string): boolean {
+  const t = line.trim();
+  if (!t.includes("|")) return false;
+  return t.replace(/^\|/, "").replace(/\|$/, "").split("|").length >= 2;
+}
+
+function wrapPipes(line: string): string {
+  let t = line.trim();
+  if (!t.startsWith("|")) t = "| " + t;
+  if (!t.endsWith("|")) t = t + " |";
+  return t;
+}
+
+function normalizeTablesInText(text: string): string {
+  let res = text.replace(
+    /^\s*\|?([ \t]*[=_][-=_:\s|]*)\|?[ \t]*$/gm,
+    (m) => m.replace(/[=_]/g, "-")
+  );
+  const lines = res.split("\n");
+  const out: string[] = [];
+  let i = 0;
+  while (i < lines.length) {
+    const line = lines[i];
+    const next = i + 1 < lines.length ? lines[i + 1] : "";
+    if (looksLikeRow(line) && isSepRow(next)) {
+      if (out.length > 0) {
+        const prev = out[out.length - 1];
+        if (prev.trim() !== "" && !looksLikeRow(prev) && !isSepRow(prev)) out.push("");
+      }
+      const block: string[] = [line, next];
+      let j = i + 2;
+      while (j < lines.length && (looksLikeRow(lines[j]) || isSepRow(lines[j]))) {
+        block.push(lines[j]);
+        j++;
+      }
+      for (const b of block) out.push(wrapPipes(b));
+      if (j < lines.length && lines[j].trim() !== "") out.push("");
+      i = j;
+      continue;
+    }
+    out.push(line);
+    i++;
+  }
+  return out.join("\n");
+}
+
 function preClean(text: string): string {
   if (!text) return "";
   // FIX: ripara tabelle inline (righe concatenate da spazi senza newline).
-  // Necessario per analisi vecchie gia' salvate nel DB con tabelle malformate
-  // dall'AI: senza questa normalizzazione, parseMarkdownTable non le riconosce
-  // e finiscono renderizzate come paragrafo lungo nel PDF.
-  // Pattern: "<testo>|<spazi>|<testo>" = fine cella + nuova riga. Il separatore
-  // interno "<testo>|<testo>" non e' toccato perche' non ha spazi attorno al pipe.
   const fixed = text.replace(
     /([^\s|])[ \t]*\|[ \t]+\|[ \t]*([^\s|])/g,
     "$1 |\n| $2"
   );
-  return fixed
+  // Normalizza pipe mancanti, blank line, separatori non-standard.
+  const normalized = normalizeTablesInText(fixed);
+  return normalized
     .replace(/<br\s*\/?>/gi, " ")
     .replace(/<[^>]+>/g, "")
     .replace(/&nbsp;/g, " ")
@@ -125,8 +177,10 @@ function cleanCell(text: string): string {
 interface ParsedTable { headers: string[]; rows: string[][]; }
 
 function parseMarkdownTable(text: string): ParsedTable | null {
-  const lines = text.trim().split("\n");
-  if (lines.length < 3) return null;
+  // Applica wrapPipes per essere robusto anche se chiamato con righe non normalizzate.
+  const rawLines = text.trim().split("\n");
+  if (rawLines.length < 3) return null;
+  const lines = rawLines.map((l) => (looksLikeRow(l) || isSepRow(l) ? wrapPipes(l) : l));
   const headerLine = lines[0].trim();
   if (!headerLine.startsWith("|") || !headerLine.endsWith("|")) return null;
   if (headerLine.length > 1000) return null;
@@ -138,7 +192,8 @@ function parseMarkdownTable(text: string): ParsedTable | null {
   const rows: string[][] = [];
   for (let i = 2; i < lines.length; i++) {
     const line = lines[i].trim();
-    if (!line || !line.startsWith("|") || !line.endsWith("|")) break;
+    if (!line) break;
+    if (!line.startsWith("|") || !line.endsWith("|")) break;
     if (/^\|[-\s|:]+\|$/.test(line)) continue;
     rows.push(parseRow(line));
   }
@@ -161,19 +216,21 @@ interface ContentSegment { type: "text" | "table"; content: string; table?: Pars
 
 function splitSegments(text: string): ContentSegment[] {
   const segments: ContentSegment[] = [];
+  // Usiamo looksLikeRow/isSepRow: il testo è già normalizzato da preClean,
+  // ma restiamo tolleranti.
   const lines = text.split("\n");
   let buf: string[] = [];
   let i = 0;
   while (i < lines.length) {
     const line = lines[i];
     const isTableStart =
-      line.trim().startsWith("|") && line.trim().endsWith("|") &&
-      i + 1 < lines.length && lines[i + 1].trim().match(/^\|[\s|:\-]+\|$/);
+      looksLikeRow(line) &&
+      i + 1 < lines.length && isSepRow(lines[i + 1]);
     if (isTableStart) {
       if (buf.length) { segments.push({ type: "text", content: buf.join("\n") }); buf = []; }
       const tableLines = [line, lines[i + 1]];
       i += 2;
-      while (i < lines.length && lines[i].trim().startsWith("|") && lines[i].trim().endsWith("|")) {
+      while (i < lines.length && (looksLikeRow(lines[i]) || isSepRow(lines[i]))) {
         tableLines.push(lines[i++]);
       }
       const table = parseMarkdownTable(tableLines.join("\n"));

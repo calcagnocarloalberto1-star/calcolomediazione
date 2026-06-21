@@ -78,44 +78,12 @@ function stimaCTU(valore: number): number {
   return 9000;
 }
 
-// ─── COSTI NOTARILI STIMATI ───────────────────────────────────────────────
-function calcolaCostiNotarili({
-  valoreImmobile,
-  primaCasa,
-  onorarioNotarileStimato,
-  impostaRegistroAliquota,
-  impostaIpotecaria,
-  impostaCatastale,
-  altreSpeseNotarili,
-}: {
-  valoreImmobile: number;
-  primaCasa: boolean;
-  onorarioNotarileStimato: number | null;
-  impostaRegistroAliquota: number | null;
-  impostaIpotecaria: number | null;
-  impostaCatastale: number | null;
-  altreSpeseNotarili: number | null;
-}) {
-  const aliquotaRegistro = impostaRegistroAliquota ?? (primaCasa ? 0.02 : 0.09);
-  const registro = Math.round(valoreImmobile * aliquotaRegistro);
-  const ipotecaria = impostaIpotecaria ?? 50;
-  const catastale = impostaCatastale ?? 50;
-  const onorario = onorarioNotarileStimato ?? 2500;
-  const altreSpese = altreSpeseNotarili ?? 300;
-  const imponibileNotaio = onorario + altreSpese;
-  const ivaNotaio = Math.round(imponibileNotaio * 0.22);
-  const totale = registro + ipotecaria + catastale + onorario + altreSpese + ivaNotaio;
-
-  return {
-    registro,
-    ipotecaria,
-    catastale,
-    onorario,
-    altreSpese,
-    ivaNotaio,
-    totale,
-  };
-}
+// ─── COSTI NOTARILI — MOTORE UNIFICATO (notarile.ts) ──────────────────────
+// La logica notarile vive ora SOLO in notarile.ts ed è condivisa da
+// Calcolatore Indennità e Analisi AI. La funzione locale (con aliquote
+// piatte 2%/9% SENZA esenzione art. 17 D.Lgs 28/2010) è stata RIMOSSA per
+// evitare divergenza con il motore del calcolatore. Le sezioni del prompt
+// usano i dati di confrontaNotarile() / renderNotarileMarkdown().
 
 export async function analisiEconomica(
   descrizione: string,
@@ -255,43 +223,53 @@ export async function analisiEconomica(
 
   const totMed = resultAccordoSuccessivi.totalePerParte + compensoAvvMed + accessoriAvvMed;
 
-  const costiNotarili = materiaImmobiliare && attivaCalcoloCostiNotarili
-    ? calcolaCostiNotarili({
-        valoreImmobile: valoreImmobile || valore,
-        primaCasa,
-        onorarioNotarileStimato,
-        impostaRegistroAliquota,
-        impostaIpotecaria,
-        impostaCatastale,
-        altreSpeseNotarili,
-      })
-    : null;
-
-  // ─── CONFRONTO NOTARILE MEDIAZIONE vs SENTENZA ─────────────────────────
-  // Motore avanzato basato su notarile.ts: usato quando l'utente attiva il
-  // calcolo notarili E vuole prezzo-valore o acquisto da impresa con IVA.
+  // ─── CONFRONTO NOTARILE MEDIAZIONE vs SENTENZA (motore unificato) ──────
+  // Tutta la sezione notarile usa ora SOLO notarile.ts (confrontaNotarile),
+  // lo stesso motore usato dal Calcolatore Indennità → zero divergenza.
+  // L'oggetto `costiNotarili` è ora un riassunto dello scenario
+  // "con_mediazione" del confronto.
+  let costiNotarili: {
+    base: number;
+    registro: number;
+    ipotecaria: number;
+    catastale: number;
+    bollo: number;
+    onorario: number;
+    ivaNotaio: number;
+    cassa: number;
+    visure: number;
+    totale: number;
+  } | null = null;
   let confrontoNotarileMd = "";
+  let totaleSentenza = 0;
   if (materiaImmobiliare && attivaCalcoloCostiNotarili) {
     const tipologia: TipologiaCatastale = primaCasa ? "prima_casa" : "seconda_casa";
     const regime: RegimeFiscale = primaCasa ? "prima_casa" : "seconda_casa";
     try {
-      const confronto = confrontaNotarile({
+      const notInput = {
         rendita_catastale: renditaCatastale ?? undefined,
         tipologia,
         prezzo: valoreImmobile ?? valore,
         prezzo_valore: applicaPrezzoValore,
         regime,
         venditoreImpresaIva,
-      });
-      confrontoNotarileMd = renderNotarileMarkdown({
-        rendita_catastale: renditaCatastale ?? undefined,
-        tipologia,
-        prezzo: valoreImmobile ?? valore,
-        prezzo_valore: applicaPrezzoValore,
-        regime,
-        venditoreImpresaIva,
-      });
-      // Aggiungiamo info di sintesi al log per debug; non blocca il flusso
+      };
+      const confronto = confrontaNotarile(notInput);
+      confrontoNotarileMd = renderNotarileMarkdown(notInput);
+      const v = confronto.con_mediazione.voci;
+      costiNotarili = {
+        base: confronto.base,
+        registro: v.imposta_registro || 0,
+        ipotecaria: v.imposta_ipotecaria || 0,
+        catastale: v.imposta_catastale || 0,
+        bollo: v.imposta_bollo || 0,
+        onorario: v.onorario_notaio || 0,
+        ivaNotaio: v.iva_onorario || 0,
+        cassa: v.cassa_notarile || 0,
+        visure: v.visure_volture || 0,
+        totale: confronto.con_mediazione.totale,
+      };
+      totaleSentenza = confronto.con_sentenza.totale;
       console.log(
         `[notarile] base=${confronto.base} mediazione=${confronto.con_mediazione.totale} sentenza=${confronto.con_sentenza.totale}`,
       );
@@ -384,17 +362,23 @@ ${gratuitoPatrocinio ? "- Con gratuito patrocinio: EUR 0,00 (a carico erario)" :
 - Credito d'imposta avvocato (50%, max EUR 600): ${formatEuro(creditoAvvocato)}
 - CREDITO D'IMPOSTA TOTALE: ${formatEuro(creditoTotale)}
 ${costiNotarili ? `
-SEZIONE COSTI NOTARILI DELL'ACCORDO:
+SEZIONE COSTI NOTARILI DELL'ACCORDO (scenario "con mediazione"):
 - Tipo atto notarile: ${tipoAttoNotarile}
-- Base di calcolo immobile: ${formatEuro(valoreImmobile || valore)}
+- Base di calcolo immobile: ${formatEuro(costiNotarili.base)}
 - Regime fiscale: ${primaCasa ? "prima casa" : "ordinario"}
 - Prezzo-valore: ${applicaPrezzoValore ? "SI" : "NO"}
-- Imposta di registro atto: ${formatEuro(costiNotarili.registro)}
+- Acquisto da impresa con IVA: ${venditoreImpresaIva ? "SI" : "NO"}
+- Imposta di registro: ${formatEuro(costiNotarili.registro)}
+- Imposta di bollo: ${formatEuro(costiNotarili.bollo)}
 - Imposta ipotecaria: ${formatEuro(costiNotarili.ipotecaria)}
 - Imposta catastale: ${formatEuro(costiNotarili.catastale)}
 - Onorario notarile stimato: ${formatEuro(costiNotarili.onorario)}
-- Spese vive notarili: ${formatEuro(costiNotarili.altreSpese)}
-- IVA su onorario e spese: ${formatEuro(costiNotarili.ivaNotaio)}
+- IVA 22% su onorario: ${formatEuro(costiNotarili.ivaNotaio)}
+- Cassa notarile 4%: ${formatEuro(costiNotarili.cassa)}
+- Visure e volture: ${formatEuro(costiNotarili.visure)}
+- TOTALE notarile in mediazione: ${formatEuro(costiNotarili.totale)}
+- TOTALE notarile con sentenza: ${formatEuro(totaleSentenza)}
+- Risparmio notarile con accordo: ${formatEuro(totaleSentenza - costiNotarili.totale)}
 ` : ""}
 ${confrontoNotarileMd ? `
 
@@ -460,7 +444,23 @@ ${catastaleSection ? `9. Sezione "Verifica Congruità Catastale" con i dati forn
 ${gratuitoPatrocinio ? `10. Sezione "Effetti Gratuito Patrocinio"` : ""}
 - Conclusioni con raccomandazione economica
 
-USA ESCLUSIVAMENTE i numeri forniti sopra. Non ricalcolare nulla. Usa trattini (-) per gli elenchi, tabelle markdown standard.`;
+USA ESCLUSIVAMENTE i numeri forniti sopra. Non ricalcolare nulla. Usa trattini (-) per gli elenchi.
+
+FORMATO TABELLE MARKDOWN (REGOLE OBBLIGATORIE):
+- Ogni tabella DEVE essere preceduta da una riga completamente vuota e seguita da una riga completamente vuota.
+- Ogni riga della tabella DEVE iniziare con "|" e terminare con "|".
+- La riga separatore DEVE essere "| --- | --- | --- |" (un "---" per ogni colonna), preceduta e seguita da "|".
+- Non spezzare la tabella con righe vuote interne tra l'header e l'ultima riga.
+- Non usare = o _ nel separatore: solo trattini (-).
+- Non inserire testo prima o dopo le righe della tabella sulla stessa riga.
+Esempio corretto:
+
+| Voce | Importo |
+| --- | --- |
+| Spese avvio | EUR 60,00 |
+| Totale | EUR 100,00 |
+
+Se la tabella non rispetta queste regole, il rendering UI e PDF si rompe.`;
 
   return callLLM(systemPrompt, userPrompt, 12000);
 }
