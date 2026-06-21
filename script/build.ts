@@ -1,6 +1,7 @@
 import { build as esbuild } from "esbuild";
 import { build as viteBuild } from "vite";
 import { rm, readFile } from "fs/promises";
+import { runValidation } from "./validate-giurisprudenza.js";
 
 // server deps to bundle to reduce openat(2) syscalls
 // which helps cold start times
@@ -33,6 +34,10 @@ const allowlist = [
 ];
 
 async function buildAll() {
+  // Pre-build validation: blocca la build se il db giurisprudenziale ha
+  // duplicati (per id o per organo+numero+anno) o campi obbligatori mancanti.
+  runValidation(true);
+
   await rm("dist", { recursive: true, force: true });
 
   console.log("building client...");
