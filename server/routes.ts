@@ -755,10 +755,14 @@ async function runPipeline(
     altreSpeseNotarili: null,
   }
 ) {
-  // Contesto passato agli step a valle. Budget di ~8000 caratteri per step:
-  //   - input singolo: 8000
-  //   - input doppio (compatibilita, bozza): 4000 + 4000
-  const truncate = (text: string, max = 8000) =>
+  // Contesto passato agli step a valle. Claude Haiku 4.5 ha 200k token di
+  // context, quindi possiamo permetterci budget ampi senza problemi.
+  // Budget per step:
+  //   - input singolo: 16000 caratteri (~4k token, era 8000)
+  //   - input doppio (compatibilita, bozza): 8000 + 8000 (era 4000 + 4000)
+  // Questo riduce drasticamente i casi in cui il contesto a valle perde
+  // informazioni importanti dalle sezioni precedenti.
+  const truncate = (text: string, max = 16000) =>
     text.length > max ? text.slice(0, max) + '\n\n[...troncato per brevita...]' : text;
 
   const safeStep = async <T>(stepFn: () => Promise<T>, fallback: T, stepName: string): Promise<T> => {
@@ -792,7 +796,7 @@ async function runPipeline(
     await storage.updateAnalisi(id, { analisiMaanBatna: maanResult });
 
     const compatibilitaResult = await safeStep(
-      () => compatibilitaInteressi(descrizione, parti, `${truncate(giuridicaResult, 4000)}\n\n${truncate(maanResult, 4000)}`),
+      () => compatibilitaInteressi(descrizione, parti, `${truncate(giuridicaResult, 8000)}\n\n${truncate(maanResult, 8000)}`),
       '[Compatibilita interessi non disponibile]', 'Compatibilita'
     );
     await storage.updateAnalisi(id, { compatibilitaInteressi: compatibilitaResult });
@@ -804,7 +808,7 @@ async function runPipeline(
     await storage.updateAnalisi(id, { controlloBiasCognitivi: biasResult });
 
     const bozzaResult = await safeStep(
-      () => bozzaAccordo(descrizione, parti, valoreLite, `${truncate(giuridicaResult, 4000)}\n\n${truncate(compatibilitaResult, 4000)}`),
+      () => bozzaAccordo(descrizione, parti, valoreLite, `${truncate(giuridicaResult, 8000)}\n\n${truncate(compatibilitaResult, 8000)}`),
       '[Bozza accordo non disponibile]', 'Accordo'
     );
     await storage.updateAnalisi(id, { bozzaAccordo: bozzaResult });
