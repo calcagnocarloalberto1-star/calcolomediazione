@@ -1,7 +1,7 @@
 // ═══════════════════════════════════════════════════════════════════════════
 // Database giurisprudenziale sulla mediazione civile e commerciale
 // Dal 2010 (D.Lgs. 28/2010) ad oggi
-// Aggiornato a giugno 2026 — 91 pronunce
+// Aggiornato a giugno 2026 — 95 pronunce
 // ═══════════════════════════════════════════════════════════════════════════
 
 export interface Sentenza {
@@ -1539,6 +1539,70 @@ export const sentenze: Sentenza[] = [
     riferimentiNormativi: ["Art. 8 D.Lgs. 28/2010", "Art. 1392 c.c.", "Art. 2643 c.c.", "Cass. 8473/2019", "Cass. 14676/2025", "Cass. 9608/2026"],
     temiChiave: ["procura sostanziale", "difensore", "mediazione obbligatoria", "forma scritta", "non autenticazione", "rappresentanza"],
     fonteUrl: "https://www.dirittobancario.it/art/sulla-procura-sostanziale-nel-procedimento-di-mediazione/",
+  },
+  {
+    id: 92,
+    organo: "Cassazione",
+    tipoOrgano: "cassazione",
+    numero: "9608",
+    anno: 2026,
+    data: "2026-04-15",
+    titolo: "Mediazione obbligatoria: non cumulabilità dei ruoli di parte e difensore senza procura sostanziale",
+    categoria: "Procura sostanziale",
+    massima: "Nel procedimento di mediazione obbligatoria, il difensore della parte non può cumulare in sé il ruolo di assistente tecnico e quello di rappresentante sostanziale della parte stessa in assenza di apposita procura speciale che attribuisca poteri di disposizione del diritto controverso. La sola procura alle liti non è sufficiente a integrare la rappresentanza sostanziale richiesta dall'art. 8 D.Lgs. 28/2010.",
+    principioDiDiritto: "La partecipazione personale della parte alla mediazione può essere sostituita da un rappresentante sostanziale solo in presenza di procura speciale scritta che conferisca espressamente poteri dispositivi sul diritto controverso; la procura alle liti, di per sé, non basta.",
+    nota: "Ordinanza Pres. Rubino, Rel. Gianniti. Pronuncia che ha generato un acceso dibattito interpretativo, poi riequilibrata da Cass. 10978/2026 (Scarpa/Trapuzzano) che ha chiarito che il medesimo difensore può essere rappresentante sostanziale purché munito di procura ad hoc. Centrale per il generatore procura: serve sempre un atto distinto dalla procura alle liti.",
+    riferimentiNormativi: ["Art. 8 D.Lgs. 28/2010", "Art. 83 c.p.c.", "Art. 1392 c.c."],
+    temiChiave: ["procura sostanziale", "difensore", "non cumulabilità ruoli", "mediazione obbligatoria", "rappresentanza"],
+    fonteUrl: "https://www.dirittobancario.it/cat/giurisprudenza/contratti-e-garanzie-giurisprudenza/",
+  },
+  {
+    id: 93,
+    organo: "Cassazione",
+    tipoOrgano: "cassazione",
+    numero: "15584",
+    anno: 2026,
+    data: "2026-05-21",
+    titolo: "Procedibilità mediazione: il perimetro temporale è il solo atto introduttivo",
+    categoria: "Procedibilità",
+    massima: "La condizione di procedibilità ex art. 5 D.Lgs. 28/2010 deve essere verificata con esclusivo riferimento all'atto introduttivo del giudizio. Eventuali domande riconvenzionali o ampliamenti successivi del thema decidendum non richiedono nuova mediazione, purché la controversia originaria rientri nelle materie previste dalla legge e l'esperimento si sia svolto in modo effettivo.",
+    principioDiDiritto: "La procedibilità mediante mediazione obbligatoria si valuta esclusivamente sull'atto introduttivo; domande riconvenzionali e ampliamenti successivi non riattivano l'obbligo di mediazione.",
+    nota: "Pres. Scarano, Rel. Pellecchia. Pronuncia che consolida l'orientamento sul perimetro temporale della procedibilità, già delineato da Cass. SS.UU. 3452/2024. Rilevante per l'analisi caso AI: distinguere tra controversia originaria e ampliamenti.",
+    riferimentiNormativi: ["Art. 5 D.Lgs. 28/2010", "Art. 5-quater D.Lgs. 28/2010", "Cass. SS.UU. 3452/2024"],
+    temiChiave: ["procedibilità", "atto introduttivo", "domanda riconvenzionale", "perimetro temporale", "mediazione obbligatoria"],
+    fonteUrl: "https://ntplusdiritto.ilsole24ore.com/art/rassegna-massime-cassazione-civile-AIcFkkiD",
+  },
+  {
+    id: 94,
+    organo: "Tribunale di Tivoli",
+    tipoOrgano: "tribunale",
+    numero: "269",
+    anno: 2026,
+    data: "2026-03-15",
+    titolo: "Convocazione in mediazione al solo difensore: irregolare se la procura è limitata al giudizio",
+    categoria: "Procura sostanziale",
+    massima: "L'invito alla mediazione obbligatoria notificato al solo difensore della parte chiamata non integra valida convocazione quando la procura conferita sia limitata al giudizio e non comprenda espressamente il potere di rappresentanza sostanziale ai fini della procedura di mediazione. In tale ipotesi il decreto ingiuntivo opposto deve essere revocato per improcedibilità.",
+    principioDiDiritto: "La convocazione in mediazione del solo difensore è valida unicamente quando la procura comprenda espressamente poteri di rappresentanza sostanziale; in difetto, la convocazione è irregolare e determina improcedibilità.",
+    nota: "Sentenza n. 269/2026 del Tribunale di Tivoli, pubblicata su Mondo ADR. Applicazione concreta di Cass. 9608/2026 e 10978/2026 a livello di merito: la procura alle liti standard non basta. Operativamente: l'organismo deve verificare che l'invito raggiunga la parte personalmente o un rappresentante sostanziale, non il solo difensore con procura ad litem.",
+    riferimentiNormativi: ["Art. 5 D.Lgs. 28/2010", "Art. 8 D.Lgs. 28/2010", "Art. 83 c.p.c.", "Cass. 9608/2026", "Cass. 10978/2026"],
+    temiChiave: ["procura sostanziale", "convocazione mediazione", "difensore", "decreto ingiuntivo", "improcedibilità", "merito"],
+    fonteUrl: "https://www.mondoadr.it/giurisprudenza_art/non-basta-mandare-linvito-al-solo-avvocato-se-la-convocazione-in-mediazione-e-irregolare-il-decreto-ingiuntivo-va-revocato-2/",
+  },
+  {
+    id: 95,
+    organo: "Tribunale di Civitavecchia",
+    tipoOrgano: "tribunale",
+    numero: "503",
+    anno: 2026,
+    data: "2026-04-10",
+    titolo: "Mediazione demandata: l'invito al difensore può bastare, no a formalismi che svuotano la procedibilità",
+    categoria: "Procura sostanziale",
+    massima: "Nella mediazione demandata dal giudice ex art. 5-quater D.Lgs. 28/2010, la comunicazione dell'invito al solo difensore della parte già costituita in giudizio integra valida convocazione, atteso che il difensore è già pienamente edotto della controversia. Eccessivi formalismi nella verifica della procura sostanziale rischiano di svuotare la procedibilità e tradiscono la ratio deflattiva della mediazione.",
+    principioDiDiritto: "Nella mediazione demandata, l'invito al difensore della parte già costituita è sufficiente; non vanno applicati eccessivi formalismi sulla procura sostanziale che vanificherebbero la finalità deflattiva della mediazione.",
+    nota: "Sentenza n. 503/2026 del Tribunale di Civitavecchia (10/04/2026). Posizione di merito che si distingue dalla rigorosa applicazione di Cass. 9608/2026: nella mediazione demandata, dove le parti sono già costituite, l'invito al difensore è sufficiente. Importante distinguere mediazione obbligatoria ex art. 5 (richiede procura sostanziale stretta) dalla demandata ex art. 5-quater (più flessibile).",
+    riferimentiNormativi: ["Art. 5-quater D.Lgs. 28/2010", "Art. 8 D.Lgs. 28/2010", "Art. 83 c.p.c.", "Cass. 9608/2026"],
+    temiChiave: ["mediazione demandata", "procura sostanziale", "difensore", "art. 5-quater", "antiformalismo", "procedibilità"],
+    fonteUrl: "https://www.mondoadr.it/giurisprudenza_art/nella-mediazione-demandata-puo-bastare-linvito-al-difensore-no-a-formalismi-che-svuotano-la-procedibilita/",
   },
 ];
 
