@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import { Switch, Route } from "wouter";
 import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
@@ -26,25 +27,59 @@ import NotFound from "@/pages/not-found";
 import Admin from "@/pages/Admin";
 import StrategieNegoziazione from "@/pages/StrategieNegoziazione";
 import { usePageTracker } from "@/hooks/use-page-tracker";
+import { ErrorBoundary } from "@/components/ErrorBoundary";
+import { installGlobalErrorHandlers } from "@/lib/error-logger";
+
+// Installa handler globali una sola volta all'avvio del modulo.
+installGlobalErrorHandlers();
+
+// Helper: avvolge una pagina in ErrorBoundary con un tag identificativo.
+function Boundary({ tag, section, children }: { tag: string; section: string; children: ReactNode }) {
+  return (
+    <ErrorBoundary tag={tag} section={section}>
+      {children}
+    </ErrorBoundary>
+  );
+}
 
 function AppRouter() {
   usePageTracker();
   return (
     <Switch>
       <Route path="/" component={Home} />
-      <Route path="/calcolatore" component={Calcolatore} />
-      <Route path="/analisi-caso-ai" component={AnalisiCasoAI} />
+      <Route path="/calcolatore">
+        <Boundary tag="calculator" section="il calcolatore indennità">
+          <Calcolatore />
+        </Boundary>
+      </Route>
+      <Route path="/analisi-caso-ai">
+        <Boundary tag="ai-analysis" section="l'analisi AI del caso">
+          <AnalisiCasoAI />
+        </Boundary>
+      </Route>
       <Route path="/faq" component={FAQ} />
       <Route path="/guida-dm-150" component={GuidaDM150} />
-      <Route path="/confronto-costi" component={ConfrontoCosti} />
-      <Route path="/costi-notarili" component={CostiNotarili} />
+      <Route path="/confronto-costi">
+        <Boundary tag="comparison-table" section="il confronto costi">
+          <ConfrontoCosti />
+        </Boundary>
+      </Route>
+      <Route path="/costi-notarili">
+        <Boundary tag="notary-calculator" section="il calcolo costi notarili">
+          <CostiNotarili />
+        </Boundary>
+      </Route>
       <Route path="/privacy-policy" component={PrivacyPolicy} />
       <Route path="/cookie-policy" component={CookiePolicy} />
       <Route path="/termini-condizioni" component={TerminiCondizioni} />
       <Route path="/chi-siamo" component={ChiSiamo} />
       <Route path="/contatti" component={Contatti} />
       <Route path="/glossario" component={Glossario} />
-      <Route path="/generatore-procura" component={GeneratoreProcura} />
+      <Route path="/generatore-procura">
+        <Boundary tag="procura" section="il generatore procura">
+          <GeneratoreProcura />
+        </Boundary>
+      </Route>
       <Route path="/giurisprudenza" component={Giurisprudenza} />
       <Route path="/credito-imposta" component={CreditoImposta} />
       <Route path="/strategie-negoziazione" component={StrategieNegoziazione} />
