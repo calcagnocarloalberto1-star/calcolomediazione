@@ -1,7 +1,7 @@
 // ═══════════════════════════════════════════════════════════════════════════
 // Database giurisprudenziale sulla mediazione civile e commerciale
 // Dal 2010 (D.Lgs. 28/2010) ad oggi
-// Aggiornato a giugno 2026 — 90 pronunce
+// Aggiornato a giugno 2026 — 91 pronunce
 // ═══════════════════════════════════════════════════════════════════════════
 
 export interface Sentenza {
@@ -1522,6 +1522,23 @@ export const sentenze: Sentenza[] = [
     riferimentiNormativi: ["Art. 5 comma 6 D.Lgs. 28/2010", "Art. 11 D.Lgs. 28/2010", "Art. 2964 c.c."],
     temiChiave: ["decadenza", "verbale negativo", "secondo termine", "deposito verbale", "mediazione fallita"],
     fonteUrl: "https://www.ilfogliodelconsiglio.it/wp-content/uploads/27251-2018.pdf",
+  },
+
+  {
+    id: 91,
+    organo: "Cassazione",
+    tipoOrgano: "cassazione",
+    numero: "10978",
+    anno: 2026,
+    data: "2026-04-24",
+    titolo: "Procura sostanziale in mediazione: ammissibile il conferimento al medesimo difensore",
+    categoria: "Procura sostanziale",
+    massima: "Nel procedimento di mediazione obbligatoria di cui al D.Lgs. 28/2010, la comparizione personale della parte può essere sostituita da quella di un rappresentante sostanziale munito di apposita procura, anche coincidente con il difensore della parte stessa. La procura sostanziale richiede la sola forma scritta con sottoscrizione del rappresentato, senza necessità di autenticazione ex art. 1392 c.c., salvo che la legge richieda forma diversa per l'atto da compiere (es. trascrizione ex art. 2643 c.c.).",
+    principioDiDiritto: "La procura sostanziale per la partecipazione alla mediazione obbligatoria può essere validamente conferita anche al medesimo difensore della parte; non richiede autenticazione notarile salvo specifica previsione di legge per la forma dell'atto da compiere.",
+    nota: "Ordinanza Pres. Scarpa, Rel. Trapuzzano. Pronuncia che riequilibra l'orientamento di Cass. 9608/2026 (secondo cui il difensore non poteva cumulare in sé i ruoli di parte e di assistente), chiarendo che ciò che conta è la sussistenza di un'apposita procura sostanziale distinta dalla procura alle liti. Cita Cass. 8473/2019 e Cass. 14676/2025. Caso di un condominio. Pubblicata su Diritto Bancario il 21 maggio 2026. Implicazioni operative: il difensore costituito può partecipare alla mediazione anche in qualità di rappresentante sostanziale, purché munito di procura speciale scritta separata, contenente il potere di disporre del diritto controverso.",
+    riferimentiNormativi: ["Art. 8 D.Lgs. 28/2010", "Art. 1392 c.c.", "Art. 2643 c.c.", "Cass. 8473/2019", "Cass. 14676/2025", "Cass. 9608/2026"],
+    temiChiave: ["procura sostanziale", "difensore", "mediazione obbligatoria", "forma scritta", "non autenticazione", "rappresentanza"],
+    fonteUrl: "https://www.dirittobancario.it/art/sulla-procura-sostanziale-nel-procedimento-di-mediazione/",
   },
 ];
 
