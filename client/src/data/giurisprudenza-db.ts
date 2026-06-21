@@ -1,7 +1,7 @@
 // ═══════════════════════════════════════════════════════════════════════════
 // Database giurisprudenziale sulla mediazione civile e commerciale
 // Dal 2010 (D.Lgs. 28/2010) ad oggi
-// Aggiornato a giugno 2026 — 93 pronunce
+// Aggiornato a giugno 2026 — 89 pronunce
 // ═══════════════════════════════════════════════════════════════════════════
 
 export interface Sentenza {
@@ -571,6 +571,7 @@ export const sentenze: Sentenza[] = [
     titolo: "Divisione beni ereditari: avvocato delegato deve munirsi di procura sostanziale",
     categoria: "Procura sostanziale",
     massima: "In una causa di divisione di beni ereditari soggetta a mediazione obbligatoria, l'avvocato delegato a partecipare alla mediazione in luogo del proprio assistito deve essere munito di procura speciale sostanziale. La mera procura alle liti non è sufficiente. Il delegato deve avere il potere di disporre dei diritti successori oggetto della controversia.",
+    nota: "Ribadisce Cass. 8473/2019 e 20643/2023. Anticipa la svolta di Cass. 9608/2026.",
     riferimentiNormativi: ["Art. 5, co. 1, D.Lgs. 28/2010", "Art. 8, co. 4, D.Lgs. 28/2010", "Cass. 8473/2019"],
     temiChiave: ["successioni", "divisione ereditaria", "procura sostanziale", "avvocato delegato", "diritti successori"],
     fonteUrl: "https://www.osservatorioconflitticonciliazione.it/lavvocato-in-mediazione-deve-avere-la-procura-sostanziale/",
@@ -678,6 +679,7 @@ export const sentenze: Sentenza[] = [
     titolo: "Accordo mediazione condominiale: vincolante se la delibera di approvazione non è impugnata",
     categoria: "Efficacia accordo",
     massima: "L'accordo di mediazione condominiale è definitivamente vincolante per tutti i condomini quando la delibera assembleare che lo ha approvato non viene impugnata nei termini perentori di cui all'art. 1137 c.c. Il condomino dissenziente che non ha impugnato tempestivamente la delibera non può successivamente contestare la vincolatività dell'accordo.",
+    nota: "Da coordinare con art. 5-ter D.Lgs. 28/2010: la delibera di approvazione dell'accordo è necessaria; una volta approvata e non impugnata, l'accordo è definitivamente vincolante.",
     riferimentiNormativi: ["Art. 5-ter D.Lgs. 28/2010", "Art. 1136 c.c.", "Art. 1137 c.c."],
     temiChiave: ["accordo mediazione", "condominio", "delibera approvazione", "impugnazione", "vincolatività", "termine 30 giorni"],
     fonteUrl: "https://www.assiac.it/rassegna-giurisprudenziale-2025/",
@@ -734,24 +736,9 @@ export const sentenze: Sentenza[] = [
     fonteUrl: "https://www.mondoadr.it",
   },
 
-  {
-    id: 44,
-    organo: "Trib. Napoli Nord, Sez. I",
-    tipoOrgano: "tribunale",
-    numero: "2844",
-    anno: 2024,
-    data: "2024-06-11",
-    titolo: "Avvocato delegato in mediazione: necessaria procura sostanziale specifica — conferma post-Cartabia",
-    categoria: "Procura sostanziale",
-    massima: "L'avvocato che partecipa alla mediazione in sostituzione del proprio assistito deve essere munito di apposita procura sostanziale, distinta dalla procura alle liti. La sola procura processuale, anche se amplissima, non è idonea a conferire i poteri dispositivi necessari per la partecipazione alla mediazione. Il difensore che si presenta senza tale procura non soddisfa la condizione di procedibilità.",
-    nota: "Ribadisce Cass. 8473/2019 e 20643/2023. Anticipa la svolta di Cass. 9608/2026.",
-    riferimentiNormativi: ["Art. 8, co. 4, D.Lgs. 28/2010", "Art. 5, co. 1, D.Lgs. 28/2010", "Cass. 8473/2019", "Cass. 20643/2023"],
-    temiChiave: ["procura sostanziale", "avvocato delegato", "procura alle liti", "partecipazione personale", "procedibilità"],
-    fonteUrl: "https://www.osservatorioconflitticonciliazione.it/lavvocato-in-mediazione-deve-avere-la-procura-sostanziale/",
-  },
 
   {
-    id: 45,
+    id: 44,
     organo: "Cass. civ., Sez. III",
     tipoOrgano: "cassazione",
     numero: "18485",
@@ -766,7 +753,7 @@ export const sentenze: Sentenza[] = [
   },
 
   {
-    id: 46,
+    id: 45,
     organo: "Cass. civ., Sez. II",
     tipoOrgano: "cassazione",
     numero: "2119",
@@ -782,7 +769,7 @@ export const sentenze: Sentenza[] = [
   },
 
   {
-    id: 47,
+    id: 46,
     organo: "Trib. Roma, Sez. V",
     tipoOrgano: "tribunale",
     numero: "172",
@@ -797,7 +784,7 @@ export const sentenze: Sentenza[] = [
   },
 
   {
-    id: 48,
+    id: 47,
     organo: "Cass. civ., Sez. III",
     tipoOrgano: "cassazione",
     numero: "14676",
@@ -813,7 +800,7 @@ export const sentenze: Sentenza[] = [
   },
 
   {
-    id: 49,
+    id: 48,
     organo: "Trib. Torino, Sez. civ.",
     tipoOrgano: "tribunale",
     numero: "2181",
@@ -828,7 +815,7 @@ export const sentenze: Sentenza[] = [
   },
 
   {
-    id: 50,
+    id: 49,
     organo: "Trib. Napoli, Sez. civ.",
     tipoOrgano: "tribunale",
     numero: "3268",
@@ -844,7 +831,7 @@ export const sentenze: Sentenza[] = [
   },
 
   {
-    id: 51,
+    id: 50,
     organo: "Cass. civ., Sez. II",
     tipoOrgano: "cassazione",
     numero: "25446",
@@ -860,7 +847,7 @@ export const sentenze: Sentenza[] = [
   },
 
   {
-    id: 52,
+    id: 51,
     organo: "Trib. Milano, Sez. VI",
     tipoOrgano: "tribunale",
     numero: "9925",
@@ -875,54 +862,11 @@ export const sentenze: Sentenza[] = [
     fonteUrl: "https://meditaliarete.it/la-mancata-partecipazione-alla-mediazione-obbligatoria-e-le-conseguenze-sanzionatorie-ex-art-12-bis-d-lgs-28-2010/",
   },
 
-  {
-    id: 53,
-    organo: "Trib. Roma",
-    tipoOrgano: "tribunale",
-    numero: "1633",
-    anno: 2026,
-    data: "2026-02-03",
-    titolo: "Accordo di mediazione condominiale vincolante se delibera di approvazione non impugnata tempestivamente",
-    categoria: "Efficacia accordo",
-    massima: "L'accordo di mediazione condominiale è vincolante nei confronti di tutta la compagine condominiale quando la delibera assembleare che lo ha approvato non viene impugnata tempestivamente nei termini di cui all'art. 1137 c.c. A fronte di un dissenso espresso in assemblea non seguito dall'impugnazione della deliberazione entro i termini perentori, la conciliazione deve considerarsi definitivamente vincolante per tutti i condomini.",
-    nota: "Da coordinare con art. 5-ter D.Lgs. 28/2010: la delibera di approvazione dell'accordo è necessaria; una volta approvata e non impugnata, l'accordo è definitivamente vincolante.",
-    riferimentiNormativi: ["Art. 5-ter D.Lgs. 28/2010", "Art. 1137 c.c.", "Art. 1136 c.c."],
-    temiChiave: ["accordo mediazione condominiale", "delibera approvazione", "impugnazione delibera", "vincolatività accordo", "termine art. 1137"],
-    fonteUrl: "https://www.assiac.it/rassegna-giurisprudenziale-2025/",
-  },
+
+
 
   {
-    id: 54,
-    organo: "Cass. civ., Sez. II",
-    tipoOrgano: "cassazione",
-    numero: "2709",
-    anno: 2026,
-    data: "2026-02-07",
-    titolo: "Deroga criteri di riparto condominiale: nulla senza consenso unanime",
-    categoria: "Condominio",
-    massima: "Quando l'assemblea introduce una deroga generale ai criteri legali di riparto delle spese condominiali esonerando un condomino dagli oneri, senza il consenso unanime di tutti i partecipanti, la delibera è nulla per violazione dell'art. 1123 c.c. La nullità non è sanabile dalla mancata impugnazione nei termini ex art. 1137 c.c., applicabile solo alle delibere annullabili.",
-    riferimentiNormativi: ["Art. 1123 c.c.", "Art. 1135 c.c.", "Art. 1136 c.c.", "Art. 1137 c.c."],
-    temiChiave: ["deroga criteri riparto", "unanimità", "delibera nulla", "spese condominiali", "art. 1123 c.c."],
-    fonteUrl: "https://www.assiac.it/rassegna-giurisprudenziale-2025/",
-  },
-
-  {
-    id: 55,
-    organo: "Trib. Torino, Sez. civ.",
-    tipoOrgano: "tribunale",
-    numero: "2181",
-    anno: 2025,
-    data: "2025-05-05",
-    titolo: "Sanzione art. 12-bis: malattia non documentata non è giustificato motivo di assenza",
-    categoria: "Mancata partecipazione",
-    massima: "Il Tribunale di Torino conferma che le condizioni di salute invocate come giustificato motivo per l'assenza alla mediazione devono essere documentate da certificazione medica specifica. La sola invocazione generica di malattia o età avanzata non è sufficiente. La parte impossibilitata deve conferire procura sostanziale al difensore o a un terzo. L'assenza ingiustificata comporta sanzione ex art. 12-bis indipendentemente dall'esito nel merito.",
-    riferimentiNormativi: ["Art. 12-bis D.Lgs. 28/2010", "Art. 8, co. 4, D.Lgs. 28/2010"],
-    temiChiave: ["malattia", "giustificato motivo", "documentazione medica", "sanzione", "art. 12-bis", "Torino"],
-    fonteUrl: "https://www.osservatorioconflitticonciliazione.it/mediazione-civile-le-conseguenze-della-mancata-partecipazione/",
-  },
-
-  {
-    id: 56,
+    id: 52,
     organo: "Trib. Catania, Sez. IV",
     tipoOrgano: "tribunale",
     numero: "2505",
@@ -942,7 +886,7 @@ export const sentenze: Sentenza[] = [
   // ══════════════════════════════════════════════════════════════════════════
 
   {
-    id: 58,
+    id: 53,
     organo: "Corte di Cassazione",
     tipoOrgano: "cassazione",
     numero: "5063",
@@ -959,7 +903,7 @@ export const sentenze: Sentenza[] = [
   },
 
   {
-    id: 59,
+    id: 54,
     organo: "Corte di Cassazione",
     tipoOrgano: "cassazione",
     numero: "5474",
@@ -976,7 +920,7 @@ export const sentenze: Sentenza[] = [
   },
 
   {
-    id: 60,
+    id: 55,
     organo: "Corte di Cassazione",
     tipoOrgano: "cassazione",
     numero: "8050",
@@ -993,7 +937,7 @@ export const sentenze: Sentenza[] = [
   },
 
   {
-    id: 61,
+    id: 56,
     organo: "Corte di Cassazione",
     tipoOrgano: "cassazione",
     numero: "1791",
@@ -1010,7 +954,7 @@ export const sentenze: Sentenza[] = [
   },
 
   {
-    id: 62,
+    id: 57,
     organo: "Corte d'Appello di Ancona",
     tipoOrgano: "corte_appello",
     numero: "1141",
@@ -1027,7 +971,7 @@ export const sentenze: Sentenza[] = [
   },
 
   {
-    id: 63,
+    id: 58,
     organo: "Tribunale di Cassino",
     tipoOrgano: "tribunale",
     numero: "1186",
@@ -1044,7 +988,7 @@ export const sentenze: Sentenza[] = [
   },
 
   {
-    id: 57,
+    id: 59,
     organo: "Cass. civ., Sez. III",
     tipoOrgano: "cassazione",
     numero: "9608",
@@ -1064,7 +1008,7 @@ export const sentenze: Sentenza[] = [
   // ─── NUOVE SENTENZE GIUGNO 2026 (15) ──────────────────────────────────────────
 
   {
-    id: 64,
+    id: 60,
     organo: "Cassazione",
     tipoOrgano: "cassazione",
     numero: "14885",
@@ -1081,7 +1025,7 @@ export const sentenze: Sentenza[] = [
   },
 
   {
-    id: 65,
+    id: 61,
     organo: "Cassazione",
     tipoOrgano: "cassazione",
     numero: "15584",
@@ -1098,7 +1042,7 @@ export const sentenze: Sentenza[] = [
   },
 
   {
-    id: 66,
+    id: 62,
     organo: "Tribunale di Napoli",
     tipoOrgano: "tribunale",
     numero: "7656",
@@ -1115,7 +1059,7 @@ export const sentenze: Sentenza[] = [
   },
 
   {
-    id: 67,
+    id: 63,
     organo: "Tribunale di Taranto",
     tipoOrgano: "tribunale",
     numero: "1069",
@@ -1132,7 +1076,7 @@ export const sentenze: Sentenza[] = [
   },
 
   {
-    id: 68,
+    id: 64,
     organo: "Tribunale di Cosenza",
     tipoOrgano: "tribunale",
     numero: "719",
@@ -1149,7 +1093,7 @@ export const sentenze: Sentenza[] = [
   },
 
   {
-    id: 69,
+    id: 65,
     organo: "Corte d'Appello di Napoli",
     tipoOrgano: "corte_appello",
     numero: "3298",
@@ -1166,7 +1110,7 @@ export const sentenze: Sentenza[] = [
   },
 
   {
-    id: 70,
+    id: 66,
     organo: "Tribunale di Milano",
     tipoOrgano: "tribunale",
     numero: "390",
@@ -1183,7 +1127,7 @@ export const sentenze: Sentenza[] = [
   },
 
   {
-    id: 71,
+    id: 67,
     organo: "Tribunale di Napoli",
     tipoOrgano: "tribunale",
     numero: "3457",
@@ -1200,7 +1144,7 @@ export const sentenze: Sentenza[] = [
   },
 
   {
-    id: 72,
+    id: 68,
     organo: "Tribunale di Udine",
     tipoOrgano: "tribunale",
     numero: "133",
@@ -1217,7 +1161,7 @@ export const sentenze: Sentenza[] = [
   },
 
   {
-    id: 73,
+    id: 69,
     organo: "Corte d'Appello di Bologna",
     tipoOrgano: "corte_appello",
     numero: "1076",
@@ -1234,7 +1178,7 @@ export const sentenze: Sentenza[] = [
   },
 
   {
-    id: 74,
+    id: 70,
     organo: "Tribunale di Latina",
     tipoOrgano: "tribunale",
     numero: "736",
@@ -1251,7 +1195,7 @@ export const sentenze: Sentenza[] = [
   },
 
   {
-    id: 75,
+    id: 71,
     organo: "Corte Costituzionale",
     tipoOrgano: "corte_costituzionale",
     numero: "28",
@@ -1268,7 +1212,7 @@ export const sentenze: Sentenza[] = [
   },
 
   {
-    id: 76,
+    id: 72,
     organo: "Tribunale di Roma",
     tipoOrgano: "tribunale",
     numero: "1400",
@@ -1285,7 +1229,7 @@ export const sentenze: Sentenza[] = [
   },
 
   {
-    id: 77,
+    id: 73,
     organo: "Tribunale di Salerno",
     tipoOrgano: "tribunale",
     numero: "664",
@@ -1302,7 +1246,7 @@ export const sentenze: Sentenza[] = [
   },
 
   {
-    id: 78,
+    id: 74,
     organo: "Corte d'Appello di Napoli",
     tipoOrgano: "corte_appello",
     numero: "2674",
@@ -1321,7 +1265,7 @@ export const sentenze: Sentenza[] = [
   // ─── SENTENZE STORICHE DI RIFERIMENTO (giugno 2026) ───────────────────────────
 
   {
-    id: 79,
+    id: 75,
     organo: "Corte Costituzionale",
     tipoOrgano: "corte_costituzionale",
     numero: "97",
@@ -1338,7 +1282,7 @@ export const sentenze: Sentenza[] = [
   },
 
   {
-    id: 80,
+    id: 76,
     organo: "Cassazione",
     tipoOrgano: "cassazione",
     numero: "10846",
@@ -1355,7 +1299,7 @@ export const sentenze: Sentenza[] = [
   },
 
   {
-    id: 81,
+    id: 77,
     organo: "Cassazione",
     tipoOrgano: "cassazione",
     numero: "2273",
@@ -1372,7 +1316,7 @@ export const sentenze: Sentenza[] = [
   },
 
   {
-    id: 82,
+    id: 78,
     organo: "Cassazione",
     tipoOrgano: "cassazione",
     numero: "13029",
@@ -1389,7 +1333,7 @@ export const sentenze: Sentenza[] = [
   },
 
   {
-    id: 83,
+    id: 79,
     organo: "Cassazione",
     tipoOrgano: "cassazione",
     numero: "22805",
@@ -1406,7 +1350,7 @@ export const sentenze: Sentenza[] = [
   },
 
   {
-    id: 84,
+    id: 80,
     organo: "Cassazione",
     tipoOrgano: "cassazione",
     numero: "7269",
@@ -1423,7 +1367,7 @@ export const sentenze: Sentenza[] = [
   },
 
   {
-    id: 85,
+    id: 81,
     organo: "Cassazione",
     tipoOrgano: "cassazione",
     numero: "14029",
@@ -1440,7 +1384,7 @@ export const sentenze: Sentenza[] = [
   },
 
   {
-    id: 86,
+    id: 82,
     organo: "Cassazione",
     tipoOrgano: "cassazione",
     numero: "26185",
@@ -1457,7 +1401,7 @@ export const sentenze: Sentenza[] = [
   },
 
   {
-    id: 87,
+    id: 83,
     organo: "Cassazione",
     tipoOrgano: "cassazione",
     numero: "12304",
@@ -1474,7 +1418,7 @@ export const sentenze: Sentenza[] = [
   },
 
   {
-    id: 88,
+    id: 84,
     organo: "Cassazione",
     tipoOrgano: "cassazione",
     numero: "28695",
@@ -1491,7 +1435,7 @@ export const sentenze: Sentenza[] = [
   },
 
   {
-    id: 89,
+    id: 85,
     organo: "Cassazione",
     tipoOrgano: "cassazione",
     numero: "2205",
@@ -1508,7 +1452,7 @@ export const sentenze: Sentenza[] = [
   },
 
   {
-    id: 90,
+    id: 86,
     organo: "Cassazione",
     tipoOrgano: "cassazione",
     numero: "27251",
@@ -1525,7 +1469,7 @@ export const sentenze: Sentenza[] = [
   },
 
   {
-    id: 91,
+    id: 87,
     organo: "Cassazione",
     tipoOrgano: "cassazione",
     numero: "10978",
@@ -1541,7 +1485,7 @@ export const sentenze: Sentenza[] = [
     fonteUrl: "https://www.dirittobancario.it/art/sulla-procura-sostanziale-nel-procedimento-di-mediazione/",
   },
   {
-    id: 92,
+    id: 88,
     organo: "Tribunale di Tivoli",
     tipoOrgano: "tribunale",
     numero: "269",
@@ -1557,7 +1501,7 @@ export const sentenze: Sentenza[] = [
     fonteUrl: "https://www.mondoadr.it/giurisprudenza_art/non-basta-mandare-linvito-al-solo-avvocato-se-la-convocazione-in-mediazione-e-irregolare-il-decreto-ingiuntivo-va-revocato-2/",
   },
   {
-    id: 93,
+    id: 89,
     organo: "Tribunale di Civitavecchia",
     tipoOrgano: "tribunale",
     numero: "503",

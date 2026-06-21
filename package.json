@@ -6,6 +6,8 @@
   "scripts": {
     "dev": "NODE_ENV=development tsx server/index.ts",
     "build": "tsx script/build.ts",
+    "validate:giurisprudenza": "tsx script/validate-giurisprudenza.ts",
+    "prebuild": "tsx script/validate-giurisprudenza.ts",
     "start": "NODE_ENV=production node dist/index.cjs",
     "check": "tsc",
     "db:push": "drizzle-kit push"
