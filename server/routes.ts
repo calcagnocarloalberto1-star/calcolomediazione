@@ -14,6 +14,7 @@ import { analisiEconomica } from "./ai/analisi-economica.js";
 import { callLLM } from "./ai/llm.js";
 import { generateAnalisiPdf } from "./pdf-export.js";
 import { stats } from "./stats.js";
+import { registerClientErrorRoute } from "./client-errors.js";
 
 const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 20 * 1024 * 1024 } });
 
@@ -381,6 +382,11 @@ export async function registerRoutes(
     stats.track('page_view', path, userAgent, ip);
     res.json({ ok: true });
   });
+
+  // ─── CLIENT ERROR LOGGING ────────────────────────────────────────────────
+  // Riceve eccezioni JS dal browser (window.onerror, unhandledrejection, ErrorBoundary)
+  // e le inoltra a un Google Apps Script Web App (ERROR_LOG_WEBHOOK_URL).
+  registerClientErrorRoute(app);
 
   // ─── ADMIN ────────────────────────────────────────────────────────────────
   const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "CalcoloMediazione2026!";
