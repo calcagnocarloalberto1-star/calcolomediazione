@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { Link } from "wouter";
-import { HelpCircle, Euro, Brain, ArrowLeft, TrendingUp, Shield, FileText, Scale, AlertTriangle, CheckCircle, ExternalLink } from "lucide-react";
+import { HelpCircle, Euro, Brain, ArrowLeft, TrendingUp, Shield, FileText, Scale, AlertTriangle, CheckCircle, ExternalLink, Users } from "lucide-react";
 import { SeoHead } from "@/components/SeoHead";
 import {
   Accordion,
@@ -216,6 +216,41 @@ const faqSections: FAQSection[] = [
     ],
   },
   {
+    icon: Users,
+    title: "Procura e partecipazione alla mediazione",
+    badge: "Aggiornato 2026",
+    questions: [
+      {
+        q: "La parte deve partecipare personalmente alla mediazione o può farsi rappresentare?",
+        a: "L’art. 8 del D.Lgs. 28/2010 prevede la comparizione personale della parte, ma ammette espressamente la rappresentanza tramite un soggetto munito di apposita procura sostanziale (distinta dalla procura alle liti) che attribuisca il potere di disporre del diritto controverso. La giurisprudenza più recente di Cassazione (Cass. 9608/2026 e Cass. 10978/2026) ha definito con precisione presupposti e limiti di tale rappresentanza. Il rappresentante sostanziale deve avere conoscenza dei fatti e poteri dispositivi effettivi: non basta una procura generica.",
+      },
+      {
+        q: "Il difensore può rappresentare la parte anche come rappresentante sostanziale?",
+        a: "Sì, ma a condizioni precise. Cass. 9608/2026 (Rubino-Gianniti) aveva inizialmente affermato la non cumulabilità dei ruoli di assistente tecnico e rappresentante sostanziale in capo allo stesso avvocato in assenza di procura ad hoc. Cass. 10978/2026 (Scarpa-Trapuzzano) ha riequilibrato l’orientamento chiarendo che il difensore può essere validamente nominato rappresentante sostanziale del proprio assistito, purché sia munito di una procura speciale scritta separata dalla procura alle liti, contenente espressamente il potere di disporre del diritto controverso. La sola procura ad litem (art. 83 c.p.c.) non è sufficiente.",
+      },
+      {
+        q: "La procura sostanziale richiede l’autenticazione del notaio?",
+        a: "No, di regola la procura sostanziale per la mediazione richiede la sola forma scritta con sottoscrizione del rappresentato, senza necessità di autenticazione notarile ex art. 1392 c.c. (Cass. 10978/2026). Fa eccezione il caso in cui la legge richieda una forma diversa per l’atto che il rappresentante è chiamato a compiere: ad esempio se l’accordo di mediazione comporta atti soggetti a trascrizione (art. 2643 c.c.), la procura deve avere la stessa forma dell’atto da trascrivere (forma scritta autenticata o atto pubblico). Il nostro generatore procura produce il modello corretto per ciascuna casistica.",
+      },
+      {
+        q: "Cosa succede se la convocazione in mediazione è notificata solo al difensore?",
+        a: "Dipende dal tipo di mediazione. Nella mediazione obbligatoria ex art. 5 D.Lgs. 28/2010, l’invito notificato al solo difensore della parte chiamata non integra valida convocazione se la procura conferita è limitata al giudizio e non comprende poteri di rappresentanza sostanziale (Trib. Tivoli 269/2026): in tale ipotesi il procedimento è improcedibile e il decreto ingiuntivo opposto va revocato. Nella mediazione demandata dal giudice ex art. 5-quater, invece, Trib. Civitavecchia 503/2026 ha ritenuto sufficiente l’invito al solo difensore della parte già costituita in giudizio, ritenendo che eccessivi formalismi vanifichino la ratio deflattiva.",
+      },
+      {
+        q: "La condizione di procedibilità si verifica anche per le domande riconvenzionali?",
+        a: "No. Cass. 15584/2026 (Scarano-Pellecchia) ha consolidato l’orientamento secondo cui la condizione di procedibilità ex art. 5 D.Lgs. 28/2010 si valuta esclusivamente con riferimento all’atto introduttivo del giudizio. Eventuali domande riconvenzionali o ampliamenti successivi del thema decidendum non richiedono una nuova mediazione, purché la controversia originaria rientri nelle materie obbligatorie e l’esperimento si sia svolto in modo effettivo. Il principio era già stato delineato da Cass. SS.UU. 3452/2024.",
+      },
+      {
+        q: "Esiste un principio di simmetria tra domanda di mediazione e domanda giudiziale?",
+        a: "Sì. Trib. Milano 390/2026 ha affermato il principio di simmetria: la domanda di mediazione deve essere sostanzialmente corrispondente, quanto a parti e oggetto, alla domanda giudiziale poi proposta. La mancata simmetria comporta improcedibilità: se il giudizio è introdotto da o contro soggetti non convocati in mediazione, o per oggetti diversi, la condizione di procedibilità non è soddisfatta. Implicazione pratica: l’istanza di mediazione va redatta con cura per anticipare tutte le posizioni soggettive che saranno parte del successivo giudizio.",
+      },
+      {
+        q: "Il generatore procura del sito tiene conto di questi orientamenti?",
+        a: "Sì. Il generatore procura disponibile su calcolomediazione.it è aggiornato all’orientamento più recente della Cassazione, in particolare Cass. 10978/2026 e Cass. 9608/2026. Produce un modello di procura speciale sostanziale conforme alle indicazioni della giurisprudenza, separato dalla procura alle liti, con clausole specifiche per i poteri dispositivi e una nota di richiamo agli arresti di legittimità. È possibile scaricare il documento in formato PDF o DOCX e personalizzarlo. Il database giurisprudenziale del sito contiene attualmente 95 pronunce, di cui le ultime sulla procura sostanziale (ids 91-95) sono consultabili nella sezione Giurisprudenza.",
+      },
+    ],
+  },
+  {
     icon: Brain,
     title: "Analisi AI",
     questions: [
@@ -273,7 +308,7 @@ export default function FAQ() {
     <div className="min-h-screen py-12 px-4">
       <SeoHead
         title="FAQ Mediazione Civile — Domande Frequenti D.M. 150/2023 e D.Lgs. 28/2010"
-        description="Le risposte alle domande più frequenti sulla mediazione civile: indennità, primo incontro, materie obbligatorie, agevolazioni fiscali art. 17, credito d’imposta, art. 5-quater (mediazione demandata)."
+        description="Le risposte alle domande più frequenti sulla mediazione civile: indennità, primo incontro, materie obbligatorie, procura sostanziale (Cass. 10978/2026 e 9608/2026), agevolazioni fiscali art. 17, credito d’imposta, art. 5-quater."
         canonical="https://calcolomediazione.it/faq"
       />
       <div className="max-w-4xl mx-auto">
