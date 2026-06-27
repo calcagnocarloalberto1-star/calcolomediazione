@@ -213,6 +213,7 @@
 
         <div class="row-btns">
           <button class="btn-primary" onclick="genera()">Genera i modelli</button>
+          <button class="btn-ghost" onclick="moduliBianco()">🖨️ Moduli in bianco (stampa)</button>
           <button class="btn-ghost" onclick="window.print()">Stampa tutto</button>
           <button class="btn-ghost" onclick="scaricaTutto()">Scarica (.html)</button>
           <button class="btn-ghost" onclick="reset()">Azzera</button>
@@ -449,6 +450,45 @@
   }
   function copyMot(){ const el=$("motText"); if(el) navigator.clipboard.writeText(el.innerText).then(()=>toast("Bozza copiata")); }
   buildTriggers();
+
+  // ---------- Moduli in bianco da stampare ----------
+  function moduliBianco(){
+    const fld = (l) => '<tr><td style="width:40%;background:#f4f1ee;border:1px solid #ddd6d1;padding:8px 10px;font-size:13px">'+l+'</td><td style="border:1px solid #ddd6d1;padding:8px 10px;height:30px"></td></tr>';
+    const tbl = (fields) => '<table style="width:100%;border-collapse:collapse;margin:6px 0">'+fields.map(fld).join('')+'</table>';
+    const chk = (opts) => '<div style="font-size:13px;margin:6px 0">'+opts.map(o=>'☐ '+o).join('&nbsp;&nbsp;&nbsp;')+'</div>';
+    const ck = (x) => '<div style="font-size:13px;margin:4px 0">☐ '+x+'</div>';
+    const line = '<div style="border-bottom:1px solid #aaa;height:18px;margin:8px 0"></div>';
+    const title = (t,s) => '<div style="background:#13161b;color:#fff;padding:9px 12px;font-weight:700;border-bottom:3px solid #a03317;margin-top:20px">'+t+(s?'<div style="font-weight:400;font-size:12px;color:#d9d9d9;margin-top:2px">'+s+'</div>':'')+'</div>';
+    const sign = '<p style="font-size:13px;margin-top:14px">Luogo e data __________________________     Firma __________________________________</p>';
+    let h = '';
+    h += title('MODULO 1 — Identificazione e adeguata verifica','artt. 17-19 D.Lgs. 231/2007 — una scheda per ciascuna parte');
+    h += chk(['Persona fisica','Persona giuridica']);
+    h += tbl(['Organismo / N. procedura','Mediatore designato','Data del primo incontro','Parte (cognome e nome / denominazione)','Luogo e data di nascita / sede','Codice fiscale / P. IVA','Residenza / sede legale','Tipo e n. documento d’identità','Ente di rilascio e scadenza','Esecutore / rappresentante e poteri','Scopo e natura dell’operazione']);
+    h += sign;
+    h += title('MODULO 2 — Dichiarazione sul titolare effettivo','artt. 18, 20, 22 — persone giuridiche');
+    h += tbl(['Parte (denominazione)','Codice fiscale / P. IVA','Legale rappresentante dichiarante','Titolare effettivo (cognome e nome)','Luogo e data di nascita','Codice fiscale']);
+    h += chk(['quota > 25%','controllo con altri mezzi','poteri di amministrazione/direzione']);
+    h += '<p style="font-size:11px;color:#555">Avvertenza art. 55, c. 3 D.Lgs. 231/2007: dati falsi puniti con reclusione da 6 mesi a 3 anni e multa da € 10.000 a € 30.000.</p>'+sign;
+    h += title('MODULO 3 — Scheda di valutazione del rischio','art. 15 — da compilare anche per il rischio basso');
+    h += tbl(['N. procedura / parti','Natura e scopo dell’operazione','Importo e modalità di pagamento','Oggetto della controversia','Indicatori UIF rilevati (n.)']);
+    h += '<div style="font-size:13px;margin:6px 0"><b>Fattori di rischio:</b> ☐ Paesi a rischio&nbsp;&nbsp;☐ PEP&nbsp;&nbsp;☐ Struttura opaca/trust&nbsp;&nbsp;☐ Contante/frazionamento&nbsp;&nbsp;☐ Incongruenza importo&nbsp;&nbsp;☐ Reticenza</div>';
+    h += '<div style="font-size:13px;margin:6px 0"><b>Livello di rischio:</b> ☐ Basso&nbsp;&nbsp;☐ Medio&nbsp;&nbsp;☐ Alto</div>';
+    h += sign;
+    h += title('MODULO 4 — Dichiarazione del cliente','art. 22');
+    h += tbl(['Dichiarante (parte / esecutore)','Procedura n.']);
+    h += '<p style="font-size:13px">Il/La sottoscritto/a, sotto la propria responsabilità, dichiara che i dati e le informazioni forniti ai fini degli obblighi di adeguata verifica sono completi, veritieri e aggiornati, e si impegna a comunicare tempestivamente ogni variazione.</p>'+sign;
+    h += title('MODULO SI-AML/01 — Segnalazione interna anomalia','RISERVATO — conservazione a cura del RAR');
+    h += tbl(['Procedura / parti','Mediatore segnalante','Data e ora di redazione']);
+    h += '<div style="font-size:13px;margin:6px 0"><b>Trigger attivato:</b> ☐ T1&nbsp;&nbsp;☐ T2&nbsp;&nbsp;☐ T3&nbsp;&nbsp;☐ T4&nbsp;&nbsp;☐ T5&nbsp;&nbsp;☐ T6&nbsp;&nbsp;☐ T7</div>';
+    h += '<p style="font-size:13px;margin-bottom:0"><b>Descrizione sintetica dell’anomalia:</b></p>'+line+line+line+line;
+    h += '<p style="font-size:11px;color:#555">Segnalazione resa in buona fede (artt. 35 e 39 D.Lgs. 231/2007; artt. 9-10 D.Lgs. 28/2010); non costituisce SOS, la cui decisione spetta al RAR.</p>'+sign;
+    h += title('CHECKLIST — Contenuto minimo del fascicolo riservato');
+    ['Copia documento d’identità di ciascuna parte e dell’esecutore','Dichiarazione titolare effettivo per le persone giuridiche','Scheda di adeguata verifica datata e sottoscritta','Scheda di rischio (anche se basso) sottoscritta','Dichiarazione del cliente ex art. 22','Tracciabilità dei pagamenti (rispetto art. 49)','Eventuale Modulo SI-AML/01 e prova della SOS (separati e riservati)','Attestati di formazione aggiornati','Conservazione decennale, separata dal fascicolo ordinario'].forEach(x => h += ck(x));
+    const css = '<style>body{font-family:Segoe UI,Arial,sans-serif;color:#13161b;max-width:780px;margin:20px auto;padding:0 14px}h1{color:#a03317;font-size:18px;margin-bottom:4px}button{font-size:14px;padding:8px 14px;border:1px solid #a03317;background:#a03317;color:#fff;border-radius:8px;cursor:pointer}@media print{.np{display:none}}</style>';
+    const w = window.open('','_blank');
+    w.document.write('<!doctype html><html lang="it"><head><meta charset="utf-8"><title>Moduli antiriciclaggio in bianco</title>'+css+'</head><body><h1>Moduli antiriciclaggio in bianco</h1><p style="font-size:12px;color:#555">Da stampare e compilare a mano. Inserire nel fascicolo riservato dell’Organismo (conservazione 10 anni, art. 31 D.Lgs. 231/2007).</p>'+h+'<div class="np" style="margin:20px 0"><button onclick="window.print()">🖨️ Stampa</button></div></body></html>');
+    w.document.close(); w.focus();
+  }
 </script>
 </body>
 </html>
