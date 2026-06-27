@@ -24,6 +24,7 @@ import GeneratoreProcura from "@/pages/GeneratoreProcura";
 import Giurisprudenza from "@/pages/Giurisprudenza";
 import CreditoImposta from "@/pages/CreditoImposta";
 import Antiriciclaggio from "@/pages/Antiriciclaggio";
+import AntiriciclaggioGuida from "@/pages/AntiriciclaggioGuida";
 import NotFound from "@/pages/not-found";
 import Admin from "@/pages/Admin";
 import StrategieNegoziazione from "@/pages/StrategieNegoziazione";
@@ -86,6 +87,7 @@ function AppRouter() {
           <Antiriciclaggio />
         </Boundary>
       </Route>
+      <Route path="/antiriciclaggio-guida" component={AntiriciclaggioGuida} />
       <Route path="/admin" component={Admin} />
       <Route component={NotFound} />
     </Switch>
