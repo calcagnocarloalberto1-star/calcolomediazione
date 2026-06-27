@@ -23,16 +23,15 @@ import Glossario from "@/pages/Glossario";
 import GeneratoreProcura from "@/pages/GeneratoreProcura";
 import Giurisprudenza from "@/pages/Giurisprudenza";
 import CreditoImposta from "@/pages/CreditoImposta";
+import Antiriciclaggio from "@/pages/Antiriciclaggio";
 import NotFound from "@/pages/not-found";
 import Admin from "@/pages/Admin";
 import StrategieNegoziazione from "@/pages/StrategieNegoziazione";
 import { usePageTracker } from "@/hooks/use-page-tracker";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { installGlobalErrorHandlers } from "@/lib/error-logger";
-
 // Installa handler globali una sola volta all'avvio del modulo.
 installGlobalErrorHandlers();
-
 // Helper: avvolge una pagina in ErrorBoundary con un tag identificativo.
 function Boundary({ tag, section, children }: { tag: string; section: string; children: ReactNode }) {
   return (
@@ -41,7 +40,6 @@ function Boundary({ tag, section, children }: { tag: string; section: string; ch
     </ErrorBoundary>
   );
 }
-
 function AppRouter() {
   usePageTracker();
   return (
@@ -83,12 +81,16 @@ function AppRouter() {
       <Route path="/giurisprudenza" component={Giurisprudenza} />
       <Route path="/credito-imposta" component={CreditoImposta} />
       <Route path="/strategie-negoziazione" component={StrategieNegoziazione} />
+      <Route path="/antiriciclaggio">
+        <Boundary tag="antiriciclaggio" section="lo strumento antiriciclaggio">
+          <Antiriciclaggio />
+        </Boundary>
+      </Route>
       <Route path="/admin" component={Admin} />
       <Route component={NotFound} />
     </Switch>
   );
 }
-
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
@@ -107,7 +109,6 @@ function App() {
         >
           Vai al contenuto principale
         </a>
-
         <div className="min-h-screen flex flex-col bg-background">
           <Header />
           <main
@@ -124,5 +125,4 @@ function App() {
     </QueryClientProvider>
   );
 }
-
 export default App;
