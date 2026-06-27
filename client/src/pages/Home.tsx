@@ -25,7 +25,6 @@ import {
 } from "lucide-react";
 import { PartnerCards } from "@/components/PartnerCards";
 import { SeoHead } from "@/components/SeoHead";
-
 const features = [
   {
     icon: Brain,
@@ -84,6 +83,14 @@ const features = [
     active: true,
   },
   {
+    icon: Shield,
+    title: "Antiriciclaggio",
+    description: "Obblighi antiriciclaggio (D.Lgs. 231/2007) in mediazione e compilazione automatica dei modelli del fascicolo: adeguata verifica, titolare effettivo, scheda rischio, dichiarazione cliente e SOS.",
+    href: "/antiriciclaggio",
+    active: true,
+    isNew: true,
+  },
+  {
     icon: Scale,
     title: "Calcolo Assegni",
     description: "Strumento per la stima orientativa dell'assegno di mantenimento del coniuge, dell'assegno divorzile (Cass. SU 18287/2018) e del contributo per i figli (art. 337-ter c.c.). Esportazione PDF.",
@@ -93,7 +100,6 @@ const features = [
     external: true,
   },
 ];
-
 const steps = [
   {
     icon: Upload,
@@ -114,15 +120,12 @@ const steps = [
     description: "Scarica il prospetto completo in PDF con tutti i dettagli del calcolo.",
   },
 ];
-
 function DeadlineBanner() {
   // Show banner only until March 31, 2026
   const deadline = new Date('2026-03-31T23:59:59');
   const now = new Date();
   if (now > deadline) return null;
-
   const daysLeft = Math.ceil((deadline.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
-
   return (
     <Link href="/credito-imposta">
       <div className="bg-amber-50 dark:bg-amber-950/40 border-b-2 border-amber-400 dark:border-amber-600 px-4 py-3 cursor-pointer hover:bg-amber-100 dark:hover:bg-amber-950/60 transition-colors" data-testid="banner-scadenza">
@@ -141,12 +144,10 @@ function DeadlineBanner() {
     </Link>
   );
 }
-
 export default function Home() {
   const scrollToFeatures = () => {
     document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' });
   };
-
   return (
     <div className="min-h-screen">
       <SeoHead
@@ -174,10 +175,8 @@ export default function Home() {
           },
         ]}
       />
-
       {/* Deadline Banner */}
       <DeadlineBanner />
-
       {/* Hero Section */}
       <section className="py-16 sm:py-24 px-4" data-testid="section-hero">
         <div className="max-w-5xl mx-auto text-center">
@@ -188,7 +187,6 @@ export default function Home() {
             <Sparkles className="w-4 h-4" />
             PIATTAFORMA PROFESSIONALE MEDIATORI
           </Badge>
-
           <h1
             className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-6 leading-tight"
             style={{ fontFamily: "'Space Grotesk', sans-serif" }}
@@ -197,12 +195,10 @@ export default function Home() {
             Mediazione e negoziazione{" "}
             <span className="text-primary">con AI</span>
           </h1>
-
           <p className="text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto mb-10 leading-relaxed">
             Piattaforma completa per la mediazione civile ai sensi del{" "}
             <strong className="text-foreground">D.M. 150/2023</strong>. Analisi AI del caso, confronto economico su tre gradi di giudizio, calcolatore indennità e generatore documenti.
           </p>
-
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12">
             <Link href="/analisi-caso-ai">
               <Button
@@ -222,7 +218,6 @@ export default function Home() {
               </Button>
             </Link>
           </div>
-
           {/* Trust badges */}
           <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-6">
             <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground" data-testid="badge-conforme">
@@ -246,7 +241,6 @@ export default function Home() {
           </div>
         </div>
       </section>
-
       {/* Features Section */}
       <section id="features" className="py-16 px-4" data-testid="section-features">
         <div className="max-w-7xl mx-auto">
@@ -261,7 +255,6 @@ export default function Home() {
               Una suite completa di strumenti per gestire ogni aspetto della mediazione civile e commerciale.
             </p>
           </div>
-
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {features.map((feature) => {
               const cardContent = (
@@ -294,7 +287,6 @@ export default function Home() {
                   </CardContent>
                 </Card>
               );
-
               return feature.active ? (
                 feature.external ? (
                   <a key={feature.title} href={feature.href} data-testid={`link-feature-${feature.title.toLowerCase().replace(/\s+/g, "-")}`}>
@@ -314,10 +306,8 @@ export default function Home() {
           </div>
         </div>
       </section>
-
       {/* Partner Cards — Olismo Integrato */}
       <PartnerCards />
-
       {/* How it works */}
       <section className="py-16 px-4 bg-muted/50" data-testid="section-come-funziona">
         <div className="max-w-5xl mx-auto">
@@ -332,7 +322,6 @@ export default function Home() {
               Tre semplici passaggi per ottenere il calcolo delle indennità.
             </p>
           </div>
-
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {steps.map((step) => (
               <div key={step.step} className="text-center">
@@ -355,7 +344,6 @@ export default function Home() {
           </div>
         </div>
       </section>
-
       {/* CTA Section */}
       <section className="py-16 px-4 bg-primary" data-testid="section-cta">
         <div className="max-w-3xl mx-auto text-center">
