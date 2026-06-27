@@ -1,0 +1,375 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Antiriciclaggio in mediazione — calcolomediazione.it</title>
+<style>
+  :root{
+    --navy:#13161b; --blue:#a03317; --light:#ffe5d7; --line:#ddd6d1;
+    --ink:#13161b; --muted:#373b40; --ok:#2e7d32; --warn:#e0a800; --bad:#b00020;
+    --bg:#f4f1ee; --card:#fcfcfc; --radius:14px; --accentDark:#861600;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;color:var(--ink);background:var(--bg);line-height:1.5}
+  .wrap{max-width:920px;margin:0 auto;padding:18px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:0 4px 18px rgba(31,56,100,.06);overflow:hidden}
+  .head{background:linear-gradient(135deg,var(--navy),var(--blue));color:#fff;padding:22px 24px}
+  .brand{font-size:13px;letter-spacing:.12em;text-transform:uppercase;opacity:.85}
+  .head h1{margin:6px 0 4px;font-size:23px;line-height:1.25}
+  .head p{margin:0;opacity:.92;font-size:14px}
+  .body{padding:20px 24px}
+  h2{font-size:18px;color:var(--navy);margin:26px 0 10px;border-bottom:2px solid var(--blue);padding-bottom:6px}
+  h2:first-child{margin-top:6px}
+  .sub{color:var(--muted);font-size:13px;margin:-4px 0 12px}
+  details{border:1px solid var(--line);border-radius:10px;margin:8px 0;background:#fcfdff;overflow:hidden}
+  summary{cursor:pointer;padding:12px 14px;font-weight:600;color:var(--navy);list-style:none;display:flex;align-items:center;gap:10px}
+  summary::-webkit-details-marker{display:none}
+  summary .chev{margin-left:auto;transition:.2s;color:var(--blue)}
+  details[open] summary .chev{transform:rotate(90deg)}
+  details .inner{padding:0 14px 14px;font-size:14px;color:#2b3440}
+  details .inner b{color:var(--navy)}
+  .pill{display:inline-block;font-size:11px;font-weight:700;padding:2px 8px;border-radius:999px;background:var(--light);color:var(--navy);vertical-align:middle}
+  .note{background:#fff8e1;border:1px solid var(--warn);border-left:5px solid var(--warn);border-radius:10px;padding:12px 14px;font-size:13.5px;margin:12px 0}
+  .note b{color:#8a6d00}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px 16px}
+  .grid.three{grid-template-columns:1fr 1fr 1fr}
+  @media(max-width:640px){.grid,.grid.three{grid-template-columns:1fr}}
+  label{display:block;font-size:12.5px;font-weight:600;color:var(--muted);margin:0 0 4px}
+  input,select,textarea{width:100%;padding:9px 10px;border:1px solid var(--line);border-radius:8px;font-size:14px;font-family:inherit;background:#fff;color:var(--ink)}
+  input:focus,select:focus,textarea:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px rgba(160,51,23,.15)}
+  .field{margin-bottom:2px}
+  .roles{display:flex;flex-wrap:wrap;gap:10px;margin:4px 0 6px}
+  .role{flex:1;min-width:180px;border:1px solid var(--line);border-radius:10px;padding:10px 12px;cursor:pointer;font-size:13.5px;background:#fff;transition:.15s}
+  .role.active{border-color:var(--blue);background:var(--light);box-shadow:0 0 0 2px rgba(160,51,23,.18)}
+  .role b{display:block;color:var(--navy)}
+  .role small{color:var(--muted)}
+  .row-btns{display:flex;flex-wrap:wrap;gap:10px;margin-top:16px}
+  button{font-family:inherit;font-size:14px;font-weight:600;border-radius:9px;border:1px solid transparent;padding:11px 16px;cursor:pointer;transition:.15s}
+  .btn-primary{background:var(--blue);color:#fff}
+  .btn-primary:hover{background:var(--accentDark)}
+  .btn-ghost{background:#fff;color:var(--navy);border-color:var(--line)}
+  .btn-ghost:hover{border-color:var(--blue)}
+  .riskbar{display:flex;align-items:center;gap:10px;margin-top:8px;font-size:13.5px}
+  .badge{font-weight:700;padding:3px 12px;border-radius:999px;color:#fff}
+  .b-basso{background:var(--ok)} .b-medio{background:var(--warn);color:#3a2e00} .b-alto{background:var(--bad)}
+  .out{margin-top:14px;display:none}
+  .doc{border:1px solid var(--line);border-radius:12px;background:#fff;padding:0;margin:14px 0;overflow:hidden}
+  .doc .dh{display:flex;align-items:center;gap:10px;background:var(--navy);color:#fff;padding:10px 14px;font-weight:700;font-size:14px}
+  .doc .dh .acts{margin-left:auto;display:flex;gap:8px}
+  .doc .dh button{padding:6px 10px;font-size:12.5px}
+  .doc .dh .btn-ghost{background:rgba(255,255,255,.12);color:#fff;border-color:rgba(255,255,255,.3)}
+  .doc .dc{padding:14px 16px;font-size:13.5px}
+  .doc .dc table{width:100%;border-collapse:collapse}
+  .doc .dc td{padding:6px 8px;border-bottom:1px solid #eef2f8;vertical-align:top}
+  .doc .dc td.k{width:42%;color:var(--muted);font-weight:600}
+  .doc .dc p{margin:8px 0}
+  .sign{display:flex;justify-content:space-between;margin-top:18px;font-size:13px;color:var(--muted)}
+  .foot{padding:14px 24px;border-top:1px solid var(--line);color:var(--muted);font-size:12px;background:#fbfcfe}
+  .legalref{font-size:11.5px;color:var(--muted)}
+  @media print{
+    body{background:#fff}
+    .wrap{max-width:none;padding:0}
+    .no-print,.head .brand{display:none!important}
+    .card{border:none;box-shadow:none}
+    .doc{break-inside:avoid;page-break-inside:avoid;border:1px solid #999;margin:0 0 18px}
+    .doc .dh .acts{display:none}
+    .doc .dh{color:#000;background:#e9eef6}
+    h2,details:not([data-print]){display:none}
+    #infoSection{display:none}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="card">
+    <div class="head">
+      <div class="brand">calcolomediazione.it · strumenti per la mediazione</div>
+      <h1>Antiriciclaggio in mediazione</h1>
+      <p>Guida agli obblighi e compilazione automatica dei modelli del fascicolo (D.Lgs. 231/2007)</p>
+    </div>
+
+    <div class="body">
+      <!-- ===================== PARTE INFORMATIVA ===================== -->
+      <div id="infoSection">
+      <h2>Chi è obbligato e a che titolo</h2>
+      <p class="sub">Nella mediazione gli obblighi antiriciclaggio non gravano su tutti allo stesso modo. Seleziona il tuo ruolo per orientarti.</p>
+
+      <details open>
+        <summary>Organismo di mediazione (ODM) <span class="pill">soggetto obbligato</span><span class="chev">›</span></summary>
+        <div class="inner">
+          È il soggetto obbligato “principale”: ai sensi dell’<b>art. 3, c. 5, lett. g) D.Lgs. 231/2007</b> ricade nella disciplina; il rapporto contrattuale intercorre con le parti e il fascicolo è custodito dall’ODM (<b>art. 11 D.Lgs. 28/2010</b>). Co-obbligato è il legale rappresentante. Deve dotarsi di documento di autovalutazione, modulistica, formazione e responsabile della conservazione.
+        </div>
+      </details>
+
+      <details>
+        <summary>Mediatore designato <span class="pill">posizione controversa</span><span class="chev">›</span></summary>
+        <div class="inner">
+          La Guardia di Finanza, nelle verifiche 2025-2026, lo considera soggetto obbligato ex art. 3, c. 5, lett. g). Il CNF e parte della dottrina ritengono invece obbligato l’Organismo, qualificando il mediatore come <b>ausiliario</b> (art. 2049 c.c.). In ogni caso opera l’esonero della <b>Regola Tecnica n. 2 CNF</b> (avallata dal Comitato di Sicurezza Finanziaria–MEF) e l’obbligo più compatibile resta la sola segnalazione di operazioni sospette.
+        </div>
+      </details>
+
+      <details>
+        <summary>Avvocato che assiste una parte in mediazione <span class="pill">esente</span><span class="chev">›</span></summary>
+        <div class="inner">
+          L’attività di assistenza e difesa in mediazione è <b>esclusa</b> dagli obblighi antiriciclaggio professionali (Regola Tecnica n. 2 CNF; art. 3 c. 4 lett. c). Restano fermi i soli obblighi deontologici (art. 62 C.D.F.). Gli obblighi possono però sorgere se l’incarico sfocia in un’operazione tipica dell’art. 3 c. 4 lett. c) (es. trasferimento immobiliare): in tal caso usa comunque i modelli sottostanti.
+        </div>
+      </details>
+
+      <h2>I sei obblighi in sintesi</h2>
+      <details><summary>1 · Adeguata verifica della clientela <span class="chev">›</span></summary><div class="inner">Identificazione delle parti e degli esecutori, verifica dell’identità e del titolare effettivo (artt. 17-19). Soglia per le operazioni occasionali: <b>15.000 €</b>; in caso di sospetto, a prescindere da ogni soglia.</div></details>
+      <details><summary>2 · Titolare effettivo <span class="chev">›</span></summary><div class="inner">Per le parti diverse da persona fisica: individuazione della persona fisica che detiene oltre il <b>25%</b> o che esercita il controllo (artt. 18, 20, 22).</div></details>
+      <details><summary>3 · Conservazione <span class="chev">›</span></summary><div class="inner">Fascicolo riservato conservato per <b>10 anni</b> (artt. 31-32), separato dal fascicolo ordinario della procedura.</div></details>
+      <details><summary>4 · Segnalazione di operazioni sospette (SOS) <span class="chev">›</span></summary><div class="inner">Invio alla <b>UIF</b> tramite portale INFOSTAT-UIF quando si “sa, sospetta o ha motivi ragionevoli per sospettare” (artt. 35-41), in forma riservata e senza informativa alle parti (divieto di tipping-off).</div></details>
+      <details><summary>5 · Autovalutazione e scheda di rischio <span class="chev">›</span></summary><div class="inner">Documento di autovalutazione generale (art. 15) e scheda di rischio per ogni pratica, anche nei casi di rischio basso.</div></details>
+      <details><summary>6 · Formazione e presidi interni <span class="chev">›</span></summary><div class="inner">Formazione periodica, procedure scritte, designazione del responsabile antiriciclaggio. Il registro/archivio è stato <b>abolito</b> (art. 69).</div></details>
+
+      <div class="note"><b>Avvertenza.</b> Strumento informativo e di supporto operativo: non sostituisce un parere legale. Stante l’incertezza interpretativa in atto, ogni scelta difensiva va valutata caso per caso. I dati inseriti restano nel tuo browser e non sono trasmessi ad alcun server.</div>
+      </div>
+
+      <!-- ===================== COMPILATORE ===================== -->
+      <h2 class="no-print">Compila e genera i modelli</h2>
+      <p class="sub no-print">Inserisci i dati una sola volta: i modelli del fascicolo vengono compilati automaticamente.</p>
+
+      <div class="no-print">
+        <label>Soggetto che compila</label>
+        <div class="roles" id="roles">
+          <div class="role active" data-role="odm"><b>Organismo di mediazione</b><small>compila per la procedura</small></div>
+          <div class="role" data-role="mediatore"><b>Mediatore designato</b><small>per conto dell’ODM</small></div>
+          <div class="role" data-role="avvocato"><b>Avvocato di parte</b><small>solo se operazione ex art. 3 c.4 c)</small></div>
+        </div>
+
+        <h3 style="color:var(--navy);font-size:15px;margin:18px 0 8px">Dati dell’Organismo e della procedura</h3>
+        <div class="grid">
+          <div class="field"><label>Denominazione Organismo</label><input id="odm_nome" placeholder="Organismo di Mediazione ..."></div>
+          <div class="field"><label>N. iscrizione registro Min. Giustizia</label><input id="odm_iscr" placeholder="n. ..."></div>
+          <div class="field"><label>Sede</label><input id="odm_sede" placeholder="Via ..., Città"></div>
+          <div class="field"><label>Legale rappresentante</label><input id="odm_lr" placeholder="Nome Cognome"></div>
+          <div class="field"><label>N. procedura / R.G. mediazione</label><input id="proc_n" placeholder="n. .../20.."></div>
+          <div class="field"><label>Data primo incontro</label><input id="proc_data" type="date"></div>
+          <div class="field"><label>Mediatore designato</label><input id="proc_med" placeholder="Nome Cognome"></div>
+          <div class="field"><label>Oggetto della controversia</label><input id="proc_ogg" placeholder="es. contratto di appalto"></div>
+        </div>
+
+        <h3 style="color:var(--navy);font-size:15px;margin:18px 0 8px">Parte da identificare</h3>
+        <div class="grid">
+          <div class="field"><label>Tipo</label><select id="p_tipo"><option value="pf">Persona fisica</option><option value="pg">Persona giuridica</option></select></div>
+          <div class="field"><label>Cognome e nome / Denominazione</label><input id="p_nome" placeholder="..."></div>
+          <div class="field"><label>Luogo e data di nascita / sede</label><input id="p_nascita" placeholder="..."></div>
+          <div class="field"><label>Codice fiscale / P. IVA</label><input id="p_cf" placeholder="..."></div>
+          <div class="field"><label>Residenza / sede legale</label><input id="p_res" placeholder="..."></div>
+          <div class="field"><label>Documento d’identità (tipo e n.)</label><input id="p_doc" placeholder="es. CI n. AX..."></div>
+          <div class="field"><label>Ente di rilascio e scadenza</label><input id="p_docente" placeholder="es. Comune di ..., 2030"></div>
+          <div class="field"><label>Esecutore / rappresentante e poteri</label><input id="p_exec" placeholder="(eventuale)"></div>
+        </div>
+
+        <div id="teBlock" style="display:none">
+          <h3 style="color:var(--navy);font-size:15px;margin:18px 0 8px">Titolare effettivo (persona giuridica)</h3>
+          <div class="grid">
+            <div class="field"><label>Cognome e nome</label><input id="te_nome"></div>
+            <div class="field"><label>Luogo e data di nascita</label><input id="te_nascita"></div>
+            <div class="field"><label>Codice fiscale</label><input id="te_cf"></div>
+            <div class="field"><label>Criterio</label><select id="te_crit"><option>quota superiore al 25%</option><option>controllo con altri mezzi</option><option>poteri di amministrazione/direzione</option></select></div>
+          </div>
+        </div>
+
+        <h3 style="color:var(--navy);font-size:15px;margin:18px 0 8px">Operazione e valutazione del rischio</h3>
+        <div class="grid">
+          <div class="field"><label>Scopo e natura dell’operazione</label><input id="op_scopo" placeholder="es. accordo transattivo"></div>
+          <div class="field"><label>Importo previsto (€)</label><input id="op_importo" placeholder="es. 20.000"></div>
+          <div class="field"><label>Modalità di pagamento</label><select id="op_pag"><option>bonifico bancario</option><option>assegno</option><option>contante (entro limiti art. 49)</option><option>compensazione</option><option>non previsto</option></select></div>
+          <div class="field"><label>Coinvolgimento di Paesi a rischio</label><select id="r_paese"><option value="0">No</option><option value="1">Sì</option></select></div>
+        </div>
+        <div class="grid three">
+          <div class="field"><label>Persona politicamente esposta (PEP)</label><select id="r_pep"><option value="0">No</option><option value="1">Sì</option></select></div>
+          <div class="field"><label>Struttura societaria opaca / trust</label><select id="r_opaca"><option value="0">No</option><option value="1">Sì</option></select></div>
+          <div class="field"><label>Pagamenti in contante / frazionati</label><select id="r_cash"><option value="0">No</option><option value="1">Sì</option></select></div>
+        </div>
+        <div class="grid three">
+          <div class="field"><label>Incongruenza importo / profilo parti</label><select id="r_incongr"><option value="0">No</option><option value="1">Sì</option></select></div>
+          <div class="field"><label>Reticenza nel fornire informazioni</label><select id="r_retic"><option value="0">No</option><option value="1">Sì</option></select></div>
+          <div class="field"><label>Operazione coerente e trasparente</label><select id="r_coerente"><option value="0">Sì</option><option value="1">No</option></select></div>
+        </div>
+        <div class="riskbar">Livello di rischio stimato: <span id="riskBadge" class="badge b-basso">BASSO</span><span class="legalref" id="riskNote">(monitoraggio ordinario)</span></div>
+
+        <div class="row-btns">
+          <button class="btn-primary" onclick="genera()">Genera i modelli</button>
+          <button class="btn-ghost" onclick="window.print()">Stampa tutto</button>
+          <button class="btn-ghost" onclick="scaricaTutto()">Scarica (.html)</button>
+          <button class="btn-ghost" onclick="reset()">Azzera</button>
+        </div>
+      </div>
+
+      <!-- ===================== OUTPUT ===================== -->
+      <div class="out" id="out"></div>
+    </div>
+
+    <div class="foot">
+      © calcolomediazione.it · I modelli generati sono fac-simile da adattare al documento di autovalutazione dell’Organismo. Conservazione del fascicolo riservato: 10 anni (art. 31 D.Lgs. 231/2007). Dati elaborati solo localmente nel browser dell’utente.
+    </div>
+  </div>
+</div>
+
+<script>
+  // ---------- utils ----------
+  const $ = id => document.getElementById(id);
+  const v = id => ($(id) ? ($(id).value || "").trim() : "");
+  const esc = s => (s||"").replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]));
+  const blank = "____________________";
+  const val = id => esc(v(id)) || ('<span style="color:#9aa6b6">'+blank+'</span>');
+  const today = () => new Date().toLocaleDateString("it-IT");
+
+  // ---------- role ----------
+  let role = "odm";
+  document.querySelectorAll(".role").forEach(el=>el.addEventListener("click",()=>{
+    document.querySelectorAll(".role").forEach(r=>r.classList.remove("active"));
+    el.classList.add("active"); role = el.dataset.role;
+  }));
+
+  // ---------- PG -> titolare effettivo ----------
+  $("p_tipo").addEventListener("change",()=>{ $("teBlock").style.display = $("p_tipo").value==="pg" ? "block":"none"; });
+
+  // ---------- rischio ----------
+  const riskIds = ["r_paese","r_pep","r_opaca","r_cash","r_incongr","r_retic","r_coerente"];
+  function calcRisk(){
+    let s = 0; riskIds.forEach(id=> s += parseInt(v(id)||"0",10));
+    let lvl, cls, note;
+    if(s===0){lvl="BASSO";cls="b-basso";note="(monitoraggio ordinario; conservazione della scheda)";}
+    else if(s<=2){lvl="MEDIO";cls="b-medio";note="(intensificazione delle verifiche e monitoraggio)";}
+    else {lvl="ALTO";cls="b-alto";note="(misure rafforzate; valutare la segnalazione SOS alla UIF)";}
+    const b=$("riskBadge"); b.textContent=lvl; b.className="badge "+cls; $("riskNote").textContent=note;
+    return lvl;
+  }
+  riskIds.forEach(id=>$(id).addEventListener("change",calcRisk));
+  calcRisk();
+
+  // ---------- document builders ----------
+  function docBlock(id,title,inner){
+    return '<div class="doc" id="'+id+'"><div class="dh">'+title+
+      '<div class="acts"><button class="btn-ghost" onclick="printOne(\''+id+'\')">Stampa</button>'+
+      '<button class="btn-ghost" onclick="copyOne(\''+id+'\')">Copia</button></div></div>'+
+      '<div class="dc">'+inner+'</div></div>';
+  }
+  const kv = rows => '<table>'+rows.map(r=>'<tr><td class="k">'+r[0]+'</td><td>'+r[1]+'</td></tr>').join('')+'</table>';
+  const sign = '<div class="sign"><div>Luogo e data: '+blank+'</div><div>Firma: '+blank+'</div></div>';
+
+  function modAdeguata(){
+    return docBlock("m1","MODULO 1 — Identificazione e adeguata verifica (artt. 17-19 D.Lgs. 231/2007)",
+      kv([
+        ["Organismo di mediazione", val("odm_nome")],
+        ["N. procedura / R.G.", val("proc_n")],
+        ["Mediatore designato", val("proc_med")],
+        ["Data primo incontro", esc(v("proc_data")? new Date(v("proc_data")).toLocaleDateString("it-IT"):"")||blank],
+        ["Parte (nome / denominazione)", val("p_nome")],
+        ["Tipo", v("p_tipo")==="pg"?"Persona giuridica":"Persona fisica"],
+        ["Luogo e data nascita / sede", val("p_nascita")],
+        ["Codice fiscale / P. IVA", val("p_cf")],
+        ["Residenza / sede legale", val("p_res")],
+        ["Documento d’identità", val("p_doc")],
+        ["Ente di rilascio e scadenza", val("p_docente")],
+        ["Esecutore / rappresentante", val("p_exec")],
+        ["Scopo e natura dell’operazione", val("op_scopo")],
+        ["Esito della verifica", "verifica eseguita / documentazione acquisita"]
+      ])+sign);
+  }
+  function modTE(){
+    if(v("p_tipo")!=="pg") return "";
+    return docBlock("m2","MODULO 2 — Dichiarazione sul titolare effettivo (artt. 18, 20, 22)",
+      kv([
+        ["Parte (denominazione)", val("p_nome")],
+        ["Codice fiscale / P. IVA", val("p_cf")],
+        ["Legale rappresentante dichiarante", val("p_exec")],
+        ["Titolare effettivo", val("te_nome")],
+        ["Luogo e data di nascita", val("te_nascita")],
+        ["Codice fiscale", val("te_cf")],
+        ["Criterio", val("te_crit")]
+      ])+
+      '<p class="legalref"><b>Avvertenza ex art. 55, c. 3 D.Lgs. 231/2007:</b> chi fornisce dati o informazioni false è punito con la reclusione da sei mesi a tre anni e con la multa da € 10.000 a € 30.000.</p>'+sign);
+  }
+  function modRischio(){
+    const lvl = calcRisk();
+    const fattori = [
+      ["Paesi a rischio","r_paese"],["PEP","r_pep"],["Struttura opaca/trust","r_opaca"],
+      ["Contante/frazionamento","r_cash"],["Incongruenza importo/profilo","r_incongr"],
+      ["Reticenza informazioni","r_retic"]
+    ].filter(f=>v(f[1])==="1").map(f=>f[0]);
+    return docBlock("m3","MODULO 3 — Scheda di valutazione del rischio (art. 15)",
+      kv([
+        ["N. procedura / parti", val("proc_n")+" — "+val("p_nome")],
+        ["Natura e scopo dell’operazione", val("op_scopo")],
+        ["Importo e modalità di pagamento", (val("op_importo"))+" € — "+val("op_pag")],
+        ["Oggetto della controversia", val("proc_ogg")],
+        ["Fattori di rischio rilevati", fattori.length?esc(fattori.join("; ")):"nessuno"],
+        ["Livello di rischio attribuito", "<b>"+lvl+"</b>"],
+        ["Misure conseguenti", lvl==="ALTO"?"misure rafforzate; valutazione SOS alla UIF":(lvl==="MEDIO"?"verifica intensificata e monitoraggio":"verifica ordinaria")]
+      ])+
+      '<p class="legalref">La scheda va compilata e conservata anche nei casi di rischio basso: la sua assenza è di per sé contestabile in sede ispettiva.</p>'+sign);
+  }
+  function modDich(){
+    return docBlock("m4","MODULO 4 — Dichiarazione del cliente (art. 22 D.Lgs. 231/2007)",
+      '<p>Il/La sottoscritto/a <b>'+val("p_nome")+'</b> (C.F./P.IVA '+val("p_cf")+'), in relazione alla procedura di mediazione n. '+val("proc_n")+' presso '+val("odm_nome")+', sotto la propria responsabilità <b>dichiara</b> che i dati e le informazioni forniti ai fini degli obblighi di adeguata verifica sono completi, veritieri e aggiornati, e si impegna a comunicare tempestivamente ogni variazione.</p>'+
+      '<p class="legalref">Resa ai sensi dell’art. 22 D.Lgs. 231/2007. Le dichiarazioni false sono punite ex art. 55, c. 3 del medesimo decreto.</p>'+sign);
+  }
+  function modSOS(){
+    const lvl = calcRisk();
+    if(lvl!=="ALTO") return "";
+    return docBlock("m5","MODULO 5 — Promemoria interno per la SOS (artt. 35-41) — RISERVATO",
+      kv([
+        ["Procedura / parti", val("proc_n")+" — "+val("p_nome")],
+        ["Elemento di sospetto", "<i>(descrivere)</i> "+blank],
+        ["Indicatori UIF di riferimento", blank],
+        ["Data della rilevazione", today()],
+        ["Data invio SOS e protocollo INFOSTAT-UIF", blank]
+      ])+
+      '<p class="legalref"><b>Riservatezza:</b> la SOS è inviata esclusivamente alla UIF per via telematica, senza informativa alle parti (divieto di tipping-off, art. 39). Tenere separato e riservato.</p>');
+  }
+
+  function genera(){
+    const out = $("out");
+    let html = "";
+    if(role==="avvocato"){
+      html += '<div class="note no-print"><b>Nota.</b> L’assistenza in mediazione è di regola esente (Regola Tecnica n. 2 CNF). I modelli sotto vanno usati solo se l’incarico comporta un’operazione dell’art. 3 c. 4 lett. c).</div>';
+    }
+    html += modAdeguata() + modTE() + modRischio() + modDich() + modSOS();
+    html += '<div class="note no-print" data-print><b>Conservazione.</b> Stampa o salva questi modelli e inseriscili nel fascicolo riservato dell’Organismo, separato dal fascicolo ordinario, per 10 anni (art. 31 D.Lgs. 231/2007).</div>';
+    out.innerHTML = html;
+    out.style.display = "block";
+    out.scrollIntoView({behavior:"smooth"});
+  }
+
+  function printOne(id){
+    const node = $(id).cloneNode(true);
+    node.querySelectorAll(".acts").forEach(a=>a.remove());
+    const w = window.open("","_blank");
+    w.document.write('<html><head><title>'+id+'</title><style>body{font-family:Segoe UI,Arial,sans-serif;color:#13161b;padding:24px}table{width:100%;border-collapse:collapse}td{padding:6px 8px;border-bottom:1px solid #eee;vertical-align:top}.k{width:42%;color:#373b40;font-weight:600}.dh{background:#13161b;color:#fff;padding:10px 14px;font-weight:700;border-radius:8px 8px 0 0;border-bottom:3px solid #a03317}.dc{border:1px solid #ddd6d1;border-top:none;padding:14px}.legalref{font-size:12px;color:#373b40}.sign{display:flex;justify-content:space-between;margin-top:18px;color:#373b40;font-size:13px}</style></head><body>'+node.outerHTML+'</body></html>');
+    w.document.close(); w.focus(); setTimeout(()=>w.print(),250);
+  }
+  function copyOne(id){
+    const t = $(id).innerText.replace(/Stampa|Copia/g,"").trim();
+    navigator.clipboard.writeText(t).then(()=>toast("Modello copiato negli appunti"));
+  }
+  function scaricaTutto(){
+    if(!$("out").innerHTML) genera();
+    const css = '<style>body{font-family:Segoe UI,Arial,sans-serif;color:#13161b;max-width:820px;margin:24px auto;padding:0 16px;background:#f4f1ee}.doc{border:1px solid #ddd6d1;border-radius:10px;margin:0 0 18px;overflow:hidden;background:#fff}.dh{background:#13161b;color:#fff;padding:10px 14px;font-weight:700;border-bottom:3px solid #a03317}.acts{display:none}.dc{padding:14px}table{width:100%;border-collapse:collapse}td{padding:6px 8px;border-bottom:1px solid #eee;vertical-align:top}.k{width:42%;color:#373b40;font-weight:600}.legalref{font-size:12px;color:#373b40}.sign{display:flex;justify-content:space-between;margin-top:18px;color:#373b40;font-size:13px}h1{color:#a03317;font-size:18px}</style>';
+    const body = $("out").cloneNode(true);
+    body.querySelectorAll(".acts,.no-print").forEach(a=>a.remove());
+    const html = '<!doctype html><html lang="it"><head><meta charset="utf-8"><title>Modelli antiriciclaggio — '+(v("proc_n")||"procedura")+'</title>'+css+'</head><body><h1>Modelli antiriciclaggio — fascicolo riservato</h1><p style="color:#5b6675;font-size:13px">'+esc(v("odm_nome"))+' · procedura '+esc(v("proc_n"))+' · generato il '+today()+'</p>'+body.innerHTML+'</body></html>';
+    const blob = new Blob([html],{type:"text/html"});
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "modelli_antiriciclaggio_"+(v("proc_n").replace(/[^\w]/g,"_")||"procedura")+".html";
+    a.click(); URL.revokeObjectURL(a.href);
+  }
+  function reset(){
+    document.querySelectorAll("input,select,textarea").forEach(el=>{ if(el.tagName==="SELECT"){el.selectedIndex=0;} else el.value=""; });
+    $("teBlock").style.display="none"; $("out").style.display="none"; $("out").innerHTML=""; calcRisk();
+  }
+  function toast(msg){
+    const t=document.createElement("div");
+    t.textContent=msg;
+    t.style.cssText="position:fixed;bottom:22px;left:50%;transform:translateX(-50%);background:#13161b;color:#fff;padding:10px 18px;border-radius:999px;font-size:13px;z-index:9999;box-shadow:0 6px 20px rgba(0,0,0,.2)";
+    document.body.appendChild(t); setTimeout(()=>t.remove(),1800);
+  }
+</script>
+</body>
+</html>
