@@ -124,8 +124,25 @@
       <details><summary>5 · Autovalutazione e scheda di rischio <span class="chev">›</span></summary><div class="inner">Documento di autovalutazione generale (art. 15) e scheda di rischio per ogni pratica, anche nei casi di rischio basso.</div></details>
       <details><summary>6 · Formazione e presidi interni <span class="chev">›</span></summary><div class="inner">Formazione periodica, procedure scritte, designazione del responsabile antiriciclaggio. Il registro/archivio è stato <b>abolito</b> (art. 69).</div></details>
 
+      <h2>Cosa mettere a verbale, fase per fase</h2>
+      <p class="sub">Il verbale di mediazione è coperto da riservatezza e inutilizzabilità (artt. 9-10 D.Lgs. 28/2010): in ottica antiriciclaggio <b>non</b> deve contenere valutazioni di rischio né riferimenti a segnalazioni. Annota solo clausole neutre; le valutazioni AML restano nel fascicolo riservato.</p>
+      <details><summary>Verbale iniziale (primo incontro) <span class="chev">›</span></summary><div class="inner">Dare atto, in forma neutra, dell’avvenuta <b>identificazione delle parti e degli esecutori</b> presenti e, per le persone giuridiche, dell’acquisizione della <b>dichiarazione sul titolare effettivo</b> (conservata nel fascicolo dell’Organismo). Esempio: «Le parti sono state identificate sulla base di documento d’identità in corso di validità; per le parti diverse da persona fisica è stata acquisita la dichiarazione sul titolare effettivo.» Nessun livello di rischio.</div></details>
+      <details><summary>Verbale di prosecuzione <span class="chev">›</span></summary><div class="inner">Dare atto, in modo neutro, di eventuali <b>aggiornamenti rilevanti</b> (ingresso di nuovi soggetti, modifica delle modalità di pagamento, nuovi trasferimenti). Se occorre rinviare per un’anomalia, usare formule neutre: «necessità di approfondimento», «supplemento di riflessione delle parti». Mai accennare a sospetti o all’antiriciclaggio.</div></details>
+      <details><summary>Verbale finale (accordo) <span class="chev">›</span></summary><div class="inner">Inserire la <b>clausola di tracciabilità dei pagamenti</b>: «Le parti danno atto che i pagamenti previsti dal presente accordo saranno eseguiti con strumenti tracciabili, nel rispetto dei limiti all’uso del contante di cui all’art. 49 del D.Lgs. 231/2007.» Confermare l’identificazione. Nessun riferimento a valutazioni di rischio o a segnalazioni.</div></details>
+      <div class="note"><b>Da non scrivere MAI a verbale:</b> il livello di rischio, gli indicatori di anomalia, l’esistenza o l’invio di una segnalazione (SOS) o di una segnalazione interna al RAR. Violerebbe la riservatezza (artt. 9-10 D.Lgs. 28/2010) e il divieto di tipping-off (art. 39 D.Lgs. 231/2007). Tutto ciò va nel fascicolo AML riservato.</div>
+
       <div class="note"><b>Avvertenza.</b> Strumento informativo e di supporto operativo: non sostituisce un parere legale. Stante l’incertezza interpretativa in atto, ogni scelta difensiva va valutata caso per caso. I dati inseriti restano nel tuo browser e non sono trasmessi ad alcun server.</div>
       </div>
+
+      <!-- ===================== MOTORE TRIGGER UIF ===================== -->
+      <h2 class="no-print">Motore trigger UIF — intervista al mediatore</h2>
+      <p class="sub no-print">Rispondi sui sette segnali T1–T7 percepiti al tavolo. Il motore li mappa sugli indicatori del Provvedimento UIF 12 maggio 2023, segnala le combinazioni che integrano il “dubbio ragionevole” e prepara una bozza di motivazione per il Responsabile Antiriciclaggio (RAR).</p>
+      <div class="no-print" id="trigBox"></div>
+      <div class="row-btns no-print">
+        <button class="btn-primary" onclick="analizzaTrigger()">Analizza i trigger</button>
+        <button class="btn-ghost" onclick="resetTrigger()">Azzera intervista</button>
+      </div>
+      <div class="out no-print" id="trigOut"></div>
 
       <!-- ===================== COMPILATORE ===================== -->
       <h2 class="no-print">Compila e genera i modelli</h2>
@@ -370,6 +387,66 @@
     t.style.cssText="position:fixed;bottom:22px;left:50%;transform:translateX(-50%);background:#13161b;color:#fff;padding:10px 18px;border-radius:999px;font-size:13px;z-index:9999;box-shadow:0 6px 20px rgba(0,0,0,.2)";
     document.body.appendChild(t); setTimeout(()=>t.remove(),1800);
   }
+
+  // ---------- Motore trigger UIF (T1-T7) ----------
+  const TRIGGERS = [
+    {id:"T1", t:"Fatto nuovo al tavolo", ex:"Compare un soggetto o un bene non risultante dalla domanda.", ind:"Indicatori UIF 1, 2, 4 (sub 1.1, 2.x, 4.x)", forza:"Media — necessita combinazione", mot:"Al primo incontro è emersa la circostanza […] non risultante dalla scheda AML iniziale né dalla documentazione protocollata; la discrasia integra gli indicatori UIF nn. 1 e/o 2."},
+    {id:"T2", t:"Incoerenza lite / accordo (sproporzione)", ex:"Lite da 5.000 € con accordo di trasferimento da 300.000 €.", ind:"Indicatori UIF 9, 10, 11 (sub 10.6 dedicato alla mediazione)", forza:"Alta — sub-indice 10.6", mot:"L’accordo prospettato prevede un trasferimento di valore € […] manifestamente sproporzionato rispetto al thema decidendum; la fattispecie integra l’indicatore UIF n. 11 e il sub-indice 10.6."},
+    {id:"T3", t:"Anomalia nei mezzi di pagamento", ex:"«Regoliamo in contanti», cessione di crediti, paga un terzo non in causa.", ind:"Indicatori UIF 10, 11 (contante, frazionamento, terzi)", forza:"Alta — spesso autosufficiente", mot:"Le parti hanno prospettato il regolamento di € […] mediante [contante/cessione/terzo/valuta estera], modalità incoerente con la prassi e priva di giustificazione documentata; si applicano gli indicatori UIF nn. 10 e 11. Verificare anche la soglia ex art. 49 (comunicazione MEF dovuta)."},
+    {id:"T4", t:"Reticenza qualificata", ex:"«Non posso dirle l’origine dei fondi»; alla richiesta cambia oggetto.", ind:"Indicatori UIF 1, 2 (sub 1.1)", forza:"Media-alta — combinata", mot:"A fronte della richiesta di chiarimenti su [origine fondi/titolare effettivo] la parte ha [rifiutato/fornito informazioni elusive/modificato l’oggetto]; la condotta integra l’indicatore UIF n. 1 e il sub-indice 1.1."},
+    {id:"T5", t:"Terzi opachi", ex:"Accompagnatore non qualificato che orienta le modalità dell’accordo.", ind:"Indicatori UIF 4, 9, 10 + trust/fiduciarie", forza:"Alta — se incide sul titolare effettivo", mot:"Al tavolo è comparso un soggetto non parte e non difensore, con interesse diretto alle modalità di esecuzione; si applica l’indicatore UIF n. 4 (interposizione di terzi privi di collegamento qualificato). Verificare se sia il titolare effettivo non dichiarato."},
+    {id:"T6", t:"Indicatore UIF specifico", ex:"PEP, paese non cooperativo, trust estero, crypto-asset, money transfer.", ind:"Indicatori UIF 5, 8, PEP, sezioni settoriali", forza:"Variabile — può bastare da solo", mot:"È emerso [PEP / residenza in paese non cooperativo / trust in giurisdizione non equivalente / crypto-asset / cessione di crediti fiscali]; si applica il relativo indicatore UIF. Per i PEP attivare l’adeguata verifica rafforzata (art. 24)."},
+    {id:"T7", t:"Uso strumentale della mediazione", ex:"Domanda generica + accordo predeterminato e patrimonialmente rilevante.", ind:"Indicatori UIF 10, 11 (sub 10.1, 10.5, 10.6)", forza:"Alta — motivazione qualitativa", mot:"L’andamento del procedimento e il contenuto dell’accordo inducono a ritenere un uso strumentale della mediazione; si applicano l’indicatore UIF n. 10 (sub 10.1, 10.6) e l’indicatore 11. Illustrare la divergenza tra causa tipica e funzione concreta."}
+  ];
+  let trigState = {};
+  function buildTriggers(){
+    const box = $("trigBox"); if(!box) return;
+    box.innerHTML = TRIGGERS.map(tr =>
+      '<div style="border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin:8px 0;background:#fff">'+
+        '<div style="display:flex;align-items:flex-start;gap:10px">'+
+          '<button type="button" id="tg_'+tr.id+'" onclick="toggleTrig(\''+tr.id+'\')" style="flex:0 0 auto;border:1px solid var(--line);background:#fff;color:var(--muted);border-radius:8px;padding:6px 12px;font-weight:700;min-width:52px;cursor:pointer">No</button>'+
+          '<div style="flex:1"><b style="color:var(--navy)">'+tr.id+' · '+tr.t+'</b>'+
+          '<div style="font-size:12.5px;color:var(--muted);margin-top:2px">'+tr.ex+'</div>'+
+          '<input id="tn_'+tr.id+'" placeholder="dettaglio (facoltativo): cosa è emerso al tavolo" style="margin-top:8px;display:none">'+
+          '</div></div></div>'
+    ).join('');
+  }
+  function toggleTrig(id){
+    trigState[id] = !trigState[id];
+    const b=$("tg_"+id), n=$("tn_"+id);
+    if(trigState[id]){ b.textContent="Sì"; b.style.background="var(--blue)"; b.style.color="#fff"; b.style.borderColor="var(--blue)"; n.style.display="block"; }
+    else { b.textContent="No"; b.style.background="#fff"; b.style.color="var(--muted)"; b.style.borderColor="var(--line)"; n.style.display="none"; }
+  }
+  function resetTrigger(){ trigState={}; buildTriggers(); $("trigOut").style.display="none"; $("trigOut").innerHTML=""; }
+  function analizzaTrigger(){
+    const fired = TRIGGERS.filter(t=>trigState[t.id]);
+    const ids = fired.map(t=>t.id); const has = x=>ids.includes(x);
+    const combos = [];
+    if(has("T1")&&has("T4")) combos.push("T1+T4 (fatto nuovo + reticenza)");
+    if(has("T2")&&has("T3")) combos.push("T2+T3 (sproporzione + pagamento anomalo)");
+    if(has("T5")&&has("T7")) combos.push("T5+T7 (terzo opaco + uso strumentale)");
+    let level, cls, verdict;
+    if(combos.length){ level="DUBBIO RAGIONEVOLE"; cls="b-alto"; verdict="Le combinazioni rilevate integrano il dubbio ragionevole: trasmetti senza ritardo il Modulo SI-AML/01 al RAR."; }
+    else if(has("T6")){ level="POSSIBILE SEGNALAZIONE"; cls="b-medio"; verdict="L’indicatore specifico (T6) può essere autosufficiente (PEP, paese non cooperativo, trust opaco): trasmetti al RAR per la valutazione."; }
+    else if(has("T3")){ level="SEGNALE FORTE"; cls="b-medio"; verdict="L’anomalia nei pagamenti è spesso autosufficiente: trasmetti al RAR. Verifica anche la soglia contante (art. 49)."; }
+    else if(fired.length>=2){ level="PIÙ SEGNALI"; cls="b-medio"; verdict="Più segnali concomitanti: trasmetti il Modulo SI-AML/01 al RAR."; }
+    else if(fired.length===1){ level="UN SEGNALE"; cls="b-medio"; verdict="Un segnale isolato: annotalo e trasmettilo comunque al RAR (la decisione sulla SOS spetta al RAR, non al mediatore)."; }
+    else { level="NESSUN TRIGGER"; cls="b-basso"; verdict="Nessun segnale rilevato: monitoraggio ordinario. Se subentrano elementi nuovi, rivaluta."; }
+    let html = '<div class="riskbar" style="margin-top:4px">Esito intervista: <span class="badge '+cls+'">'+level+'</span></div>';
+    html += '<p style="font-size:14px;margin:8px 0">'+verdict+'</p>';
+    if(combos.length) html += '<p style="font-size:13px;color:var(--bad)"><b>Combinazioni:</b> '+esc(combos.join("; "))+'</p>';
+    if(fired.length){
+      html += '<div class="doc"><div class="dh">Trigger rilevati e mappatura UIF</div><div class="dc"><table>'+
+        fired.map(t=>'<tr><td class="k">'+t.id+' · '+esc(t.t)+'</td><td>'+esc(t.ind)+'<br><span style="color:#9aa6b6">'+esc(t.forza)+'</span></td></tr>').join('')+'</table></div></div>';
+      let mot = fired.map(t=>{ const note=esc(v("tn_"+t.id)); return '• '+(note? '['+note+'] ' : '')+t.mot; }).join('\n');
+      html += '<div class="doc"><div class="dh">Bozza di motivazione tecnica per il RAR (da personalizzare)<div class="acts"><button class="btn-ghost" onclick="copyMot()">Copia</button></div></div><div class="dc"><p id="motText" style="white-space:pre-wrap;font-size:13px">'+mot+'</p>'+
+        '<p class="legalref">Testo orientativo basato sulle “motivazioni tipo” dell’Appendice UIF. La valutazione e l’eventuale SOS alla UIF spettano al RAR. Non comunicare alle parti (divieto di tipping-off, art. 39 D.Lgs. 231/2007).</p></div></div>';
+      html += '<div class="note no-print"><b>Prossimo passo.</b> Sospendi la stesura dell’accordo se l’operazione sospetta sta per perfezionarsi (formula neutra: “necessità di approfondimento”), compila il Modulo SI-AML/01 subito dopo la sessione e trasmettilo al RAR sul canale riservato.</div>';
+    }
+    const o=$("trigOut"); o.innerHTML=html; o.style.display="block"; o.scrollIntoView({behavior:"smooth"});
+  }
+  function copyMot(){ const el=$("motText"); if(el) navigator.clipboard.writeText(el.innerText).then(()=>toast("Bozza copiata")); }
+  buildTriggers();
 </script>
 </body>
 </html>
