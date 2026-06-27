@@ -91,6 +91,14 @@ const features = [
     isNew: true,
   },
   {
+    icon: BookOpen,
+    title: "Antiriciclaggio · Guida",
+    description: "Guida in linguaggio semplice agli obblighi antiriciclaggio in mediazione: chi è obbligato, ispezioni della GdF, cosa fare e cosa mettere a verbale. In domande e risposte.",
+    href: "/antiriciclaggio-guida",
+    active: true,
+    isNew: true,
+  },
+  {
     icon: Scale,
     title: "Calcolo Assegni",
     description: "Strumento per la stima orientativa dell'assegno di mantenimento del coniuge, dell'assegno divorzile (Cass. SU 18287/2018) e del contributo per i figli (art. 337-ter c.c.). Esportazione PDF.",
