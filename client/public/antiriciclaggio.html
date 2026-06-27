@@ -118,6 +118,34 @@
         </div>
       </details>
 
+      <details>
+        <summary>Negoziazione assistita (avvocato) <span class="pill">esente</span><span class="chev">›</span></summary>
+        <div class="inner">
+          La convenzione di negoziazione assistita (D.L. 132/2014) è attività di difesa e assistenza: è <b>esclusa</b> dalle operazioni dell’art. 3, c. 4, lett. c) (Regola Tecnica n. 2 CNF) e gode dell’esonero dalla segnalazione per le informazioni acquisite «anche tramite convenzione di negoziazione assistita» (<b>art. 35, c. 5</b>; già art. 12). Gli obblighi possono riattivarsi solo se l’avvocato compie o assiste un’<b>operazione economica autonoma</b> (es. trasferimento immobiliare nella negoziazione familiare).
+        </div>
+      </details>
+
+      <details>
+        <summary>OCC e gestore della crisi da sovraindebitamento <span class="pill">regime distinto</span><span class="chev">›</span></summary>
+        <div class="inner">
+          Vanno distinti i due obblighi. <b>Adeguata verifica e conservazione:</b> secondo il <b>CNDCEC</b> l’OCC come organismo non è incluso tra i soggetti obbligati e il gestore non vi è tenuto quando l’incarico è conferito dal referente dell’OCC (e non da un cliente). <b>Segnalazione (SOS):</b> il gestore resta invece <b>tenuto a segnalare</b> alla UIF quando sa o sospetta operazioni di riciclaggio o di finanziamento del terrorismo. In sintesi: <b>esonero da adeguata verifica, ma non da SOS</b>. Posizione fondata su prassi/pareri, in materia interpretativa.
+        </div>
+      </details>
+
+      <details>
+        <summary>Raffronto rapido: mediazione · negoziazione assistita · OCC <span class="chev">›</span></summary>
+        <div class="inner">
+          <table style="width:100%;border-collapse:collapse;font-size:13px">
+            <tr style="background:#13161b;color:#fff"><td style="padding:6px 8px">Procedura / ruolo</td><td style="padding:6px 8px">Adeguata verifica</td><td style="padding:6px 8px">SOS</td></tr>
+            <tr><td style="padding:6px 8px;border-bottom:1px solid #eee">Mediazione — difensore della parte</td><td style="padding:6px 8px;border-bottom:1px solid #eee">esclusa (attività difensiva)</td><td style="padding:6px 8px;border-bottom:1px solid #eee">esonero (art. 35 c.5)</td></tr>
+            <tr><td style="padding:6px 8px;border-bottom:1px solid #eee">Mediazione — mediatore / Organismo</td><td style="padding:6px 8px;border-bottom:1px solid #eee">obbligo sull’Organismo (art. 3 c.5 g)</td><td style="padding:6px 8px;border-bottom:1px solid #eee">a cura Organismo/RAR</td></tr>
+            <tr><td style="padding:6px 8px;border-bottom:1px solid #eee">Negoziazione assistita — avvocato</td><td style="padding:6px 8px;border-bottom:1px solid #eee">esclusa (salvo operazione economica)</td><td style="padding:6px 8px;border-bottom:1px solid #eee">esonero (art. 35 c.5)</td></tr>
+            <tr><td style="padding:6px 8px;border-bottom:1px solid #eee">OCC — organismo</td><td style="padding:6px 8px;border-bottom:1px solid #eee">non obbligato (CNDCEC)</td><td style="padding:6px 8px;border-bottom:1px solid #eee">via gestori</td></tr>
+            <tr><td style="padding:6px 8px">OCC — gestore della crisi</td><td style="padding:6px 8px">no AV se incarico da referente OCC</td><td style="padding:6px 8px"><b>obbligato</b> se sa/sospetta</td></tr>
+          </table>
+        </div>
+      </details>
+
       <h2>I sei obblighi in sintesi</h2>
       <details><summary>1 · Adeguata verifica della clientela <span class="chev">›</span></summary><div class="inner">Identificazione delle parti e degli esecutori, verifica dell’identità e del titolare effettivo (artt. 17-19). Soglia per le operazioni occasionali: <b>15.000 €</b>; in caso di sospetto, a prescindere da ogni soglia.</div></details>
       <details><summary>2 · Titolare effettivo <span class="chev">›</span></summary><div class="inner">Per le parti diverse da persona fisica: individuazione della persona fisica che detiene oltre il <b>25%</b> o che esercita il controllo (artt. 18, 20, 22).</div></details>
@@ -344,13 +372,56 @@
       '<p class="legalref"><b>Riservatezza:</b> la SOS è inviata esclusivamente alla UIF per via telematica, senza informativa alle parti (divieto di tipping-off, art. 39). Tenere separato e riservato.</p>');
   }
 
+  function modInformativa(){
+    return docBlock("m0","MODULO 0 — Informativa antiriciclaggio e privacy (art. 13 GDPR; artt. 17-22, 31 D.Lgs. 231/2007)",
+      kv([
+        ["Titolare del trattamento", val("odm_nome")],
+        ["N. procedura", val("proc_n")],
+        ["Parte destinataria", val("p_nome")],
+        ["Data di consegna", today()]
+      ])+
+      '<p><b>Finalità:</b> adempimento degli obblighi di adeguata verifica, conservazione ed eventuale segnalazione (D.Lgs. 231/2007). <b>Base giuridica:</b> obbligo legale (art. 6.1.c GDPR); il conferimento è necessario, il rifiuto impedisce la procedura. <b>Dati:</b> identificativi, documento d’identità, titolare effettivo, dati sull’operazione. <b>Conservazione:</b> 10 anni dalla conclusione (art. 31). <b>Comunicazione:</b> a UIF e Autorità nei soli casi di legge. <b>Diritti:</b> accesso e rettifica; cancellazione/opposizione limitate dall’obbligo di conservazione; reclamo al Garante.</p>'+
+      '<p class="legalref"><b>Riservatezza:</b> vietato comunicare all’interessato l’eventuale inoltro di una segnalazione (divieto di tipping-off, art. 39). Non è un consenso: il trattamento si fonda su un obbligo di legge. Far sottoscrivere per presa visione.</p>'+
+      '<div class="sign"><div>La parte (presa visione): '+blank+'</div><div>Data: '+blank+'</div></div>');
+  }
+  function modAnnotazione(){
+    const lvl = calcRisk();
+    const esito = lvl==="ALTO" ? "anomalia rilevata → redatto Modulo SI-AML/01 e trasmesso al RAR" : "nessuna anomalia rilevata";
+    return docBlock("m6","FOGLIO DI ANNOTAZIONE AML — allegato riservato al fascicolo (NON inserire nel verbale)",
+      kv([
+        ["N. procedura / parti", val("proc_n")+" — "+val("p_nome")],
+        ["Mediatore", val("proc_med")],
+        ["Sessione / data", today()],
+        ["Adempimenti svolti", "informativa consegnata; identificazione e adeguata verifica eseguite; "+(v("p_tipo")==="pg"?"titolare effettivo acquisito; ":"")+"dichiarazione del cliente acquisita; scheda di rischio compilata"],
+        ["Esito complessivo", "<b>"+esito+"</b>"]
+      ])+
+      '<p class="legalref">Nel verbale di mediazione non vanno riportati rischio, anomalie o segnalazioni (artt. 9-10 D.Lgs. 28/2010; art. 39 D.Lgs. 231/2007). Questo foglio resta interno e si conserva nel fascicolo riservato.</p>'+sign);
+  }
+  function modChecklist(){
+    const te = v("p_tipo")==="pg";
+    const items = [
+      "Informativa AML/privacy consegnata e sottoscritta",
+      "Copia documento d’identità della parte e dell’esecutore",
+      te?"Dichiarazione titolare effettivo (persona giuridica)":null,
+      "Scheda di adeguata verifica datata e sottoscritta",
+      "Scheda di rischio (anche se basso) sottoscritta",
+      "Dichiarazione del cliente ex art. 22",
+      "Foglio di annotazione AML allegato",
+      "Tracciabilità dei pagamenti (art. 49)",
+      "Eventuale SI-AML/01 e prova della SOS (separati e riservati)",
+      "Conservazione decennale, separata dal fascicolo ordinario"
+    ].filter(Boolean);
+    return docBlock("m7","CHECKLIST — Contenuto minimo del fascicolo riservato",
+      '<div style="line-height:1.9">'+items.map(x=>'☐ '+x).join('<br>')+'</div>');
+  }
+
   function genera(){
     const out = $("out");
     let html = "";
     if(role==="avvocato"){
       html += '<div class="note no-print"><b>Nota.</b> L’assistenza in mediazione è di regola esente (Regola Tecnica n. 2 CNF). I modelli sotto vanno usati solo se l’incarico comporta un’operazione dell’art. 3 c. 4 lett. c).</div>';
     }
-    html += modAdeguata() + modTE() + modRischio() + modDich() + modSOS();
+    html += modInformativa() + modAdeguata() + modTE() + modRischio() + modDich() + modSOS() + modAnnotazione() + modChecklist();
     html += '<div class="note no-print" data-print><b>Conservazione.</b> Stampa o salva questi modelli e inseriscili nel fascicolo riservato dell’Organismo, separato dal fascicolo ordinario, per 10 anni (art. 31 D.Lgs. 231/2007).</div>';
     out.innerHTML = html;
     out.style.display = "block";
