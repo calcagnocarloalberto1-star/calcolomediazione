@@ -1,19 +1,16 @@
 import { useState } from "react";
 import { Link, useLocation } from "wouter";
-import { Scale, Menu, X, Brain, Calculator, ChevronDown, BarChart3, FileText, BookOpen, TrendingUp } from "lucide-react";
+import { Scale, Menu, X, Brain, Calculator, ChevronDown, BarChart3, FileText, BookOpen, TrendingUp, Shield } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-
 export default function Header() {
   const [location] = useLocation();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [strumentiOpen, setStrumentiOpen] = useState(false);
-
   return (
     <header className="sticky top-0 z-50 w-full border-b-[3px] border-foreground bg-card" data-testid="header">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
-
           {/* Logo */}
           <Link href="/" data-testid="link-home" aria-label="CalcoloMediazione — torna alla home">
             <div className="flex items-center gap-2 cursor-pointer">
@@ -25,10 +22,8 @@ export default function Header() {
               </span>
             </div>
           </Link>
-
           {/* Desktop nav — FIX: aria-label per identificare la navigazione */}
           <nav className="hidden md:flex items-center gap-1" aria-label="Navigazione principale" data-testid="nav-desktop">
-
             {/* Dropdown Strumenti — FIX: aria-expanded + aria-haspopup */}
             <div
               className="relative"
@@ -45,7 +40,6 @@ export default function Header() {
                 Strumenti
                 <ChevronDown className="w-4 h-4" aria-hidden="true" />
               </button>
-
               {strumentiOpen && (
                 <div
                   id="dropdown-strumenti"
@@ -98,11 +92,32 @@ export default function Header() {
                     </div>
                   </Link>
                   <Link href="/credito-imposta" onClick={() => setStrumentiOpen(false)}>
-                    <div role="menuitem" className="flex items-center gap-3 px-4 py-3 hover:bg-muted transition-colors duration-150 cursor-pointer" data-testid="nav-credito-imposta">
+                    <div role="menuitem" className="flex items-center gap-3 px-4 py-3 hover:bg-muted transition-colors duration-150 cursor-pointer border-b border-muted" data-testid="nav-credito-imposta">
                       <TrendingUp className="w-4 h-4 text-primary" aria-hidden="true" />
                       <div>
                         <div className="text-sm font-semibold">Credito d'Imposta</div>
                         <div className="text-xs text-muted-foreground">Art. 20, D.Lgs. 28/2010</div>
+                      </div>
+                    </div>
+                  </Link>
+                  <Link href="/antiriciclaggio" onClick={() => setStrumentiOpen(false)}>
+                    <div role="menuitem" className="flex items-center gap-3 px-4 py-3 hover:bg-muted transition-colors duration-150 cursor-pointer border-b border-muted" data-testid="nav-antiriciclaggio">
+                      <Shield className="w-4 h-4 text-primary" aria-hidden="true" />
+                      <div>
+                        <div className="text-sm font-semibold flex items-center gap-2">
+                          Antiriciclaggio
+                          <span className="text-[10px] font-bold bg-primary text-primary-foreground px-1.5 py-0.5 rounded">NUOVO</span>
+                        </div>
+                        <div className="text-xs text-muted-foreground">Modelli + motore trigger UIF</div>
+                      </div>
+                    </div>
+                  </Link>
+                  <Link href="/antiriciclaggio-guida" onClick={() => setStrumentiOpen(false)}>
+                    <div role="menuitem" className="flex items-center gap-3 px-4 py-3 hover:bg-muted transition-colors duration-150 cursor-pointer border-b border-muted" data-testid="nav-antiriciclaggio-guida">
+                      <BookOpen className="w-4 h-4 text-primary" aria-hidden="true" />
+                      <div>
+                        <div className="text-sm font-semibold">Antiriciclaggio · Guida</div>
+                        <div className="text-xs text-muted-foreground">Spiegazione in linguaggio semplice</div>
                       </div>
                     </div>
                   </Link>
@@ -121,7 +136,6 @@ export default function Header() {
                 </div>
               )}
             </div>
-
             <Link href="/guida-dm-150">
               <span className="px-3 py-2 text-sm font-medium hover:bg-muted transition-colors duration-150">Guide</span>
             </Link>
@@ -137,7 +151,6 @@ export default function Header() {
               </span>
             </Link>
           </nav>
-
           {/* Mobile menu */}
           <div className="md:hidden">
             <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
@@ -208,6 +221,21 @@ export default function Header() {
                           <span className="font-medium">Credito d'Imposta</span>
                         </div>
                       </Link>
+                      <Link href="/antiriciclaggio" onClick={() => setMobileOpen(false)}>
+                        <div className="flex items-center gap-3 px-4 py-3 hover:bg-muted transition-colors duration-150 cursor-pointer" data-testid="mobile-nav-antiriciclaggio">
+                          <Shield className="w-5 h-5 text-primary" aria-hidden="true" />
+                          <span className="font-medium flex items-center gap-2">
+                            Antiriciclaggio
+                            <span className="text-[10px] font-bold bg-primary text-primary-foreground px-1.5 py-0.5 rounded">NUOVO</span>
+                          </span>
+                        </div>
+                      </Link>
+                      <Link href="/antiriciclaggio-guida" onClick={() => setMobileOpen(false)}>
+                        <div className="flex items-center gap-3 px-4 py-3 hover:bg-muted transition-colors duration-150 cursor-pointer" data-testid="mobile-nav-antiriciclaggio-guida">
+                          <BookOpen className="w-5 h-5 text-primary" aria-hidden="true" />
+                          <span className="font-medium">Antiriciclaggio · Guida</span>
+                        </div>
+                      </Link>
                       <a href="/calcolo-assegni/" onClick={() => setMobileOpen(false)} data-testid="mobile-nav-calcolo-assegni">
                         <div className="flex items-center gap-3 px-4 py-3 hover:bg-muted transition-colors duration-150 cursor-pointer">
                           <Scale className="w-5 h-5 text-primary" aria-hidden="true" />
@@ -239,7 +267,6 @@ export default function Header() {
               </SheetContent>
             </Sheet>
           </div>
-
         </div>
       </div>
     </header>
