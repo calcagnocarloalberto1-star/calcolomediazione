@@ -15,6 +15,9 @@ import { callLLM } from "./ai/llm.js";
 import { generateAnalisiPdf } from "./pdf-export.js";
 import { stats } from "./stats.js";
 import { registerClientErrorRoute } from "./client-errors.js";
+import { sentenze, ORGANI_GIUDIZIARI } from "../client/src/data/giurisprudenza-db.js";
+import { generaSlugSentenza, trovaSentenzaPerSlug, urlSentenza } from "../shared/sentenza-slug.js";
+import { buildSentenzaHtml, buildGiurisprudenzaSitemap } from "./sentenza-bot-html.js";
 
 const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 20 * 1024 * 1024 } });
 
@@ -355,12 +358,32 @@ export async function registerRoutes(
       path.startsWith("/api/") ||
       path.includes(".") ||
       path === "/sitemap.xml" ||
+      path === "/sitemap-giurisprudenza.xml" ||
       path === "/robots.txt"
     ) {
       return next();
     }
 
     const siteUrl = getSiteUrl(req);
+
+    // ── Pagine dedicate sentenze: /giurisprudenza/<slug> ────────────────
+    const sentenzaMatch = path.match(/^\/giurisprudenza\/([a-z0-9-]+)$/);
+    if (sentenzaMatch) {
+      const slug = sentenzaMatch[1];
+      const html = buildSentenzaHtml(slug, siteUrl);
+      if (html) {
+        res.setHeader("Content-Type", "text/html; charset=utf-8");
+        res.setHeader("X-Robots-Tag", "index, follow");
+        return res.send(html);
+      }
+      // Slug ignoto: 404 esplicito con noindex
+      res.setHeader("Content-Type", "text/html; charset=utf-8");
+      res.setHeader("X-Robots-Tag", "noindex, follow");
+      return res.status(404).send(
+        `<!DOCTYPE html><html lang="it"><head><meta charset="utf-8"><title>Sentenza non trovata | CalcoloMediazione</title><meta name="robots" content="noindex, follow"></head><body><h1>Sentenza non trovata</h1><p><a href="/giurisprudenza">Torna al database giurisprudenza</a></p></body></html>`
+      );
+    }
+
     const page = PAGES.find(p => p.path === path) || {
       path,
       title: "CalcoloMediazione - Mediazione Civile",
@@ -700,7 +723,21 @@ export async function registerRoutes(
     }
     // Sezione statica esterna (calcolo assegni)
     xml += `  <url>\n    <loc>${siteUrl}/calcolo-assegni/</loc>\n    <xhtml:link rel="alternate" hreflang="it-IT" href="${siteUrl}/calcolo-assegni/"/>\n    <changefreq>monthly</changefreq>\n    <priority>0.8</priority>\n  </url>\n`;
+    // Pagine dedicate sentenze (tutte le pronunce)
+    for (const s of sentenze) {
+      const url = `${siteUrl}${urlSentenza(s)}`;
+      xml += `  <url>\n    <loc>${url}</loc>\n    <xhtml:link rel="alternate" hreflang="it-IT" href="${url}"/>\n    <lastmod>${today}</lastmod>\n    <changefreq>yearly</changefreq>\n    <priority>0.6</priority>\n  </url>\n`;
+    }
     xml += `</urlset>`;
+    res.setHeader("Content-Type", "application/xml");
+    res.setHeader("Cache-Control", "public, max-age=3600");
+    res.send(xml);
+  });
+
+  // Sitemap dedicata giurisprudenza (per submit separato in GSC)
+  app.get("/sitemap-giurisprudenza.xml", (req, res) => {
+    const siteUrl = getSiteUrl(req);
+    const xml = buildGiurisprudenzaSitemap(siteUrl);
     res.setHeader("Content-Type", "application/xml");
     res.setHeader("Cache-Control", "public, max-age=3600");
     res.send(xml);
@@ -760,6 +797,7 @@ User-agent: ClaudeBot
 Allow: /
 
 Sitemap: ${siteUrl}/sitemap.xml
+Sitemap: ${siteUrl}/sitemap-giurisprudenza.xml
 `;
     res.setHeader("Content-Type", "text/plain");
     res.setHeader("Cache-Control", "public, max-age=3600");

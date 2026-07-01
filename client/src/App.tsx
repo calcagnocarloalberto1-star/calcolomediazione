@@ -22,6 +22,7 @@ import Contatti from "@/pages/Contatti";
 import Glossario from "@/pages/Glossario";
 import GeneratoreProcura from "@/pages/GeneratoreProcura";
 import Giurisprudenza from "@/pages/Giurisprudenza";
+import SentenzaDetail from "@/pages/SentenzaDetail";
 import CreditoImposta from "@/pages/CreditoImposta";
 import Antiriciclaggio from "@/pages/Antiriciclaggio";
 import AntiriciclaggioGuida from "@/pages/AntiriciclaggioGuida";
@@ -80,6 +81,7 @@ function AppRouter() {
         </Boundary>
       </Route>
       <Route path="/giurisprudenza" component={Giurisprudenza} />
+      <Route path="/giurisprudenza/:slug" component={SentenzaDetail} />
       <Route path="/credito-imposta" component={CreditoImposta} />
       <Route path="/strategie-negoziazione" component={StrategieNegoziazione} />
       <Route path="/antiriciclaggio">
