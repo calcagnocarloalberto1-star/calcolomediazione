@@ -1,5 +1,7 @@
 import { useState, useMemo } from "react";
-import { Search, Scale, Filter, ChevronDown, ChevronUp, ExternalLink, BookOpen, X, Calendar, Building2, Tag, Hash } from "lucide-react";
+import { Search, Scale, Filter, ChevronDown, ChevronUp, ExternalLink, BookOpen, X, Calendar, Building2, Tag, Hash, Link2 } from "lucide-react";
+import { Link } from "wouter";
+import { urlSentenza } from "@shared/sentenza-slug";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -149,19 +151,29 @@ function SentenzaCard({ sentenza, isExpanded, onToggle }: { sentenza: Sentenza; 
               </div>
             </div>
 
-            {/* Fonte URL */}
-            {sentenza.fonteUrl && (
-              <a
-                href={sentenza.fonteUrl}
-                target="_blank"
-                rel="noopener noreferrer"
+            {/* Fonte URL + Link a pagina dedicata */}
+            <div className="flex flex-wrap items-center gap-4">
+              <Link
+                href={urlSentenza(sentenza)}
                 className="inline-flex items-center gap-1.5 text-sm text-primary hover:underline underline-offset-2 font-medium"
-                data-testid={`link-fonte-${sentenza.id}`}
+                data-testid={`link-dedicata-${sentenza.id}`}
               >
-                <ExternalLink className="w-3.5 h-3.5" />
-                Leggi il testo integrale
-              </a>
-            )}
+                <Link2 className="w-3.5 h-3.5" />
+                Apri pagina dedicata
+              </Link>
+              {sentenza.fonteUrl && (
+                <a
+                  href={sentenza.fonteUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 text-sm text-primary hover:underline underline-offset-2 font-medium"
+                  data-testid={`link-fonte-${sentenza.id}`}
+                >
+                  <ExternalLink className="w-3.5 h-3.5" />
+                  Leggi il testo integrale
+                </a>
+              )}
+            </div>
           </div>
         )}
       </CardContent>
