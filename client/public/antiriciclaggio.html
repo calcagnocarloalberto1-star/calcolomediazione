@@ -809,6 +809,10 @@
       else if(el.type==="checkbox"){ el.checked=false; }
       else { el.value=""; }
     });
+    role = "odm";
+    document.querySelectorAll(".role").forEach(r=>r.classList.remove("active"));
+    const odmCard = document.querySelector('.role[data-role="odm"]');
+    if(odmCard) odmCard.classList.add("active");
     riskLivelloManual = false; avTipoManual = false;
     syncToggles();
     $("out").style.display="none"; $("out").innerHTML="";
