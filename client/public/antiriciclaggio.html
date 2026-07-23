@@ -67,6 +67,25 @@
   .sign{display:flex;justify-content:space-between;margin-top:18px;font-size:13px;color:var(--muted)}
   .foot{padding:14px 24px;border-top:1px solid var(--line);color:var(--muted);font-size:12px;background:#fbfcfe}
   .legalref{font-size:11.5px;color:var(--muted)}
+  .hint{font-size:11.5px;color:#6b7280;margin:1px 0 5px;line-height:1.35}
+  .grouph{color:var(--navy);font-size:15px;margin:20px 0 4px;padding-top:10px;border-top:1px dashed var(--line)}
+  .grouph:first-of-type{border-top:none;padding-top:0}
+  .checklist{margin:6px 0 10px}
+  .cbwrap{display:flex;flex-wrap:wrap;gap:6px 16px;align-items:center;background:#fff;border:1px solid var(--line);border-radius:8px;padding:10px 12px}
+  .cbrow{display:flex;align-items:center;gap:6px;font-size:13px;font-weight:400;color:var(--ink);cursor:pointer;min-width:auto}
+  .cbrow input{width:auto}
+  .cbother{flex:1 1 160px;min-width:140px;padding:5px 8px;font-size:12.5px}
+  .legend-box{background:#eef3ff;border:1px solid #c7d6f5;border-radius:10px;padding:10px 14px;font-size:12.5px;color:#243559;margin:8px 0}
+  .legend-box table{width:100%;border-collapse:collapse;font-size:12px;margin-top:6px}
+  .legend-box td{padding:4px 6px;border-bottom:1px solid #d7e1f5;vertical-align:top}
+  .risktable{width:100%;border-collapse:collapse;margin:8px 0;font-size:13px}
+  .risktable th{background:var(--navy);color:#fff;padding:7px 8px;font-size:12px;text-align:left}
+  .risktable td{padding:6px 8px;border-bottom:1px solid #eef2f8}
+  .risktable td.elname{font-weight:600;color:var(--navy);width:34%}
+  .risktable select{padding:6px 6px;font-size:12.5px}
+  .subblock{border-left:3px solid var(--blue);padding-left:12px;margin:10px 0 14px;background:#fffaf7;border-radius:0 8px 8px 0;padding-top:8px;padding-bottom:2px}
+  .yninline{display:flex;gap:14px;flex-wrap:wrap}
+
   @media print{
     body{background:#fff}
     .wrap{max-width:none;padding:0}
@@ -287,66 +306,34 @@
       <p class="sub no-print">Inserisci i dati una sola volta: i modelli del fascicolo vengono compilati automaticamente.</p>
 
       <div class="no-print">
-        <label>Soggetto che compila</label>
+
         <div class="roles" id="roles">
           <div class="role active" data-role="odm"><b>Organismo di mediazione</b><small>compila per la procedura</small></div>
-          <div class="role" data-role="mediatore"><b>Mediatore designato</b><small>per conto dell’ODM</small></div>
+          <div class="role" data-role="mediatore"><b>Mediatore designato</b><small>per conto dell'ODM</small></div>
           <div class="role" data-role="avvocato"><b>Avvocato di parte</b><small>solo se operazione ex art. 3 c.4 c)</small></div>
         </div>
-
-        <h3 style="color:var(--navy);font-size:15px;margin:18px 0 8px">Dati dell’Organismo e della procedura</h3>
-        <div class="grid">
-          <div class="field"><label>Denominazione Organismo</label><input id="odm_nome" placeholder="Organismo di Mediazione ..."></div>
-          <div class="field"><label>N. iscrizione registro Min. Giustizia</label><input id="odm_iscr" placeholder="n. ..."></div>
-          <div class="field"><label>Sede</label><input id="odm_sede" placeholder="Via ..., Città"></div>
-          <div class="field"><label>Legale rappresentante</label><input id="odm_lr" placeholder="Nome Cognome"></div>
-          <div class="field"><label>N. procedura / R.G. mediazione</label><input id="proc_n" placeholder="n. .../20.."></div>
-          <div class="field"><label>Data primo incontro</label><input id="proc_data" type="date"></div>
-          <div class="field"><label>Mediatore designato</label><input id="proc_med" placeholder="Nome Cognome"></div>
-          <div class="field"><label>Oggetto della controversia</label><input id="proc_ogg" placeholder="es. contratto di appalto"></div>
-        </div>
-
-        <h3 style="color:var(--navy);font-size:15px;margin:18px 0 8px">Parte da identificare</h3>
-        <div class="grid">
-          <div class="field"><label>Tipo</label><select id="p_tipo"><option value="pf">Persona fisica</option><option value="pg">Persona giuridica</option></select></div>
-          <div class="field"><label>Cognome e nome / Denominazione</label><input id="p_nome" placeholder="..."></div>
-          <div class="field"><label>Luogo e data di nascita / sede</label><input id="p_nascita" placeholder="..."></div>
-          <div class="field"><label>Codice fiscale / P. IVA</label><input id="p_cf" placeholder="..."></div>
-          <div class="field"><label>Residenza / sede legale</label><input id="p_res" placeholder="..."></div>
-          <div class="field"><label>Documento d’identità (tipo e n.)</label><input id="p_doc" placeholder="es. CI n. AX..."></div>
-          <div class="field"><label>Ente di rilascio e scadenza</label><input id="p_docente" placeholder="es. Comune di ..., 2030"></div>
-          <div class="field"><label>Esecutore / rappresentante e poteri</label><input id="p_exec" placeholder="(eventuale)"></div>
-        </div>
-
-        <div id="teBlock" style="display:none">
-          <h3 style="color:var(--navy);font-size:15px;margin:18px 0 8px">Titolare effettivo (persona giuridica)</h3>
-          <div class="grid">
-            <div class="field"><label>Cognome e nome</label><input id="te_nome"></div>
-            <div class="field"><label>Luogo e data di nascita</label><input id="te_nascita"></div>
-            <div class="field"><label>Codice fiscale</label><input id="te_cf"></div>
-            <div class="field"><label>Criterio</label><select id="te_crit"><option>quota superiore al 25%</option><option>controllo con altri mezzi</option><option>poteri di amministrazione/direzione</option></select></div>
-          </div>
-        </div>
-
-        <h3 style="color:var(--navy);font-size:15px;margin:18px 0 8px">Operazione e valutazione del rischio</h3>
-        <div class="grid">
-          <div class="field"><label>Scopo e natura dell’operazione</label><input id="op_scopo" placeholder="es. accordo transattivo"></div>
-          <div class="field"><label>Importo previsto (€)</label><input id="op_importo" placeholder="es. 20.000"></div>
-          <div class="field"><label>Modalità di pagamento</label><select id="op_pag"><option>bonifico bancario</option><option>assegno</option><option>contante (entro limiti art. 49)</option><option>compensazione</option><option>non previsto</option></select></div>
-          <div class="field"><label>Coinvolgimento di Paesi a rischio</label><select id="r_paese"><option value="0">No</option><option value="1">Sì</option></select></div>
-        </div>
-        <div class="grid three">
-          <div class="field"><label>Persona politicamente esposta (PEP)</label><select id="r_pep"><option value="0">No</option><option value="1">Sì</option></select></div>
-          <div class="field"><label>Struttura societaria opaca / trust</label><select id="r_opaca"><option value="0">No</option><option value="1">Sì</option></select></div>
-          <div class="field"><label>Pagamenti in contante / frazionati</label><select id="r_cash"><option value="0">No</option><option value="1">Sì</option></select></div>
-        </div>
-        <div class="grid three">
-          <div class="field"><label>Incongruenza importo / profilo parti</label><select id="r_incongr"><option value="0">No</option><option value="1">Sì</option></select></div>
-          <div class="field"><label>Reticenza nel fornire informazioni</label><select id="r_retic"><option value="0">No</option><option value="1">Sì</option></select></div>
-          <div class="field"><label>Operazione coerente e trasparente</label><select id="r_coerente"><option value="0">Sì</option><option value="1">No</option></select></div>
-        </div>
-        <div class="riskbar">Livello di rischio stimato: <span id="riskBadge" class="badge b-basso">BASSO</span><span class="legalref" id="riskNote">(monitoraggio ordinario)</span></div>
-
+<h3 class="grouph">1 — Dati del procedimento</h3><div class="grid"><div class="field"><label>Denominazione Organismo</label><div class="hint">Nome dell'Organismo di mediazione (ODM) presso cui pende la procedura.</div><input id="odm_nome" type="text" placeholder="Organismo di Mediazione ..." ></div><div class="field"><label>N. iscrizione registro Min. Giustizia</label><div class="hint">Numero di iscrizione dell'ODM nel registro tenuto dal Ministero della Giustizia.</div><input id="odm_iscr" type="text" placeholder="n. ..." ></div><div class="field"><label>Sede</label><div class="hint">Indirizzo della sede dell'Organismo.</div><input id="odm_sede" type="text" placeholder="Via ..., Città" ></div><div class="field"><label>Legale rappresentante</label><div class="hint">Nome e cognome del legale rappresentante dell'Organismo.</div><input id="odm_lr" type="text" placeholder="Nome Cognome" ></div><div class="field"><label>N. procedura / R.G. mediazione</label><div class="hint">Numero identificativo della procedura assegnato dall'Organismo.</div><input id="proc_n" type="text" placeholder="n. .../20.." ></div><div class="field"><label>Data deposito istanza</label><div class="hint">Data in cui l'istante ha depositato la domanda di mediazione.</div><input id="proc_data_dep_istanza" type="date" placeholder="" ></div><div class="field"><label>Data deposito adesione</label><div class="hint">Data in cui la parte aderente ha depositato l'adesione (se presente).</div><input id="proc_data_dep_adesione" type="date" placeholder="" ></div><div class="field"><label>Data primo incontro</label><div class="hint">Data del primo incontro tra le parti e il mediatore.</div><input id="proc_data" type="date" placeholder="" ></div><div class="field"><label>Mediatore designato</label><div class="hint">Nome e cognome del mediatore incaricato della procedura.</div><input id="proc_med" type="text" placeholder="Nome Cognome" ></div><div class="field"><label>Scheda compilata da</label><div class="hint">Nome di chi compila materialmente la scheda (mediatore o segreteria).</div><input id="scheda_compilata_da" type="text" placeholder="Nome Cognome" ></div><div class="field"><label>Qualifica</label><div class="hint">Qualifica di chi compila (es. mediatore, segreteria, RAR).</div><input id="scheda_qualifica" type="text" placeholder="es. Mediatore" ></div><div class="field"><label>Data della valutazione iniziale</label><div class="hint">Data in cui è stata svolta la prima valutazione del rischio.</div><input id="scheda_data_val_iniziale" type="date" placeholder="" ></div><div class="field"><label>Data dell'ultimo aggiornamento</label><div class="hint">Da compilare solo in caso di aggiornamento successivo della scheda.</div><input id="scheda_data_ultimo_agg" type="date" placeholder="" ></div><div class="field"><label>Motivo dell'aggiornamento</label><div class="hint">Perché la scheda è stata aggiornata (es. nuovi elementi, variazione dati).</div><input id="scheda_motivo_agg" type="text" placeholder="es. emersi nuovi elementi" ></div></div><h3 class="grouph">2 — Ruolo e tipologia della parte</h3><div class="grid"><div class="field"><label>Ruolo nella procedura</label><div class="hint">Il ruolo che la parte da identificare riveste nella mediazione.</div><select id="p_ruolo" ><option value="istante">Istante</option><option value="aderente">Aderente</option><option value="terzo">Terzo chiamato</option><option value="altro">Altro</option></select></div><div class="field"><label>Se «Altro», specificare</label><div class="hint">Solo se il ruolo non rientra tra istante/aderente/terzo chiamato.</div><input id="p_ruolo_altro" type="text" placeholder="specificare" ></div><div class="field"><label>Tipologia della parte</label><div class="hint">Se la parte è una persona fisica o un ente/società (persona giuridica). Determina quali campi anagrafici compilare più sotto.</div><select id="p_tipo" ><option value="pf">Persona fisica</option><option value="pg">Persona giuridica</option></select></div><div class="field"><label>Natura giuridica</label><div class="hint">Forma giuridica della parte, utile anche per la valutazione del rischio (v. tabella più sotto).</div><select id="p_natgiur" ><option value="pf">Persona fisica</option><option value="sp">Società di persone</option><option value="srl">Società a responsabilità limitata</option><option value="spa">Società per azioni</option><option value="coop">Società cooperativa</option><option value="trust">Trust, fondazioni e altri enti</option><option value="estera">Società straniera</option><option value="asd">Associazione sportiva - ASD</option><option value="altro">Altro</option></select></div></div><div class="field"><label>Se «Altro», specificare la natura giuridica</label><div class="hint">Solo se la natura giuridica non rientra tra quelle elencate.</div><input id="p_natgiur_altro" type="text" placeholder="specificare" ></div><h3 class="grouph">3 — Area geografica e modalità di identificazione</h3><div class="grid"><div class="field"><label>Area geografica della parte</label><div class="hint">Da dove opera/risiede la parte: incide sulla valutazione del rischio geografico.</div><select id="p_area" ><option value="italia">Italia</option><option value="ue">Stato membro UE</option><option value="extraue">Stato extra UE</option><option value="altorischio">Paese ad alto rischio</option></select></div><div class="field"><label>Specificare lo Stato (per UE ed Extra UE)</label><div class="hint">Nome dello Stato, se diverso dall'Italia.</div><input id="p_area_stato" type="text" placeholder="es. Francia" ></div><div class="field"><label>Modalità di identificazione</label><div class="hint">Come è stata verificata l'identità della parte.</div><select id="p_ident_modalita" ><option value="presenza">In presenza fisica</option><option value="video">Mediante videocollegamento con esibizione e verifica del documento</option><option value="digitale">Mediante firma digitale, CIE, SPID o altro sistema di identificazione idoneo</option><option value="terzo">Mediante soggetto terzo ammesso ai sensi degli artt. 26 e ss. D.Lgs. 231/2007</option><option value="altro">Altro</option></select></div><div class="field"><label>Se «Altro», specificare la modalità</label><div class="hint">Solo se la modalità di identificazione non rientra tra quelle elencate.</div><input id="p_ident_modalita_altro" type="text" placeholder="specificare" ></div><div class="field"><label>Identificazione effettuata da</label><div class="hint">Nome di chi ha materialmente effettuato l'identificazione (di norma il mediatore).</div><input id="p_ident_da" type="text" placeholder="Nome Cognome" ></div><div class="field"><label>Data identificazione</label><div class="hint">Data in cui è avvenuta l'identificazione.</div><input id="p_ident_data" type="date" placeholder="" ></div><div class="field"><label>Documento verificato e in corso di validità</label><div class="hint">Conferma che il documento esibito è stato controllato e non è scaduto.</div><select id="p_doc_valido" ><option value="si">Sì</option><option value="no">No</option></select></div></div><div class="field checklist"><label>Fonte o modalità di riscontro</label><div class="hint">Come è stata riscontrata l'identità (più opzioni possibili).</div><div class="cbwrap"><label class="cbrow"><input type="checkbox" id="cb_identfonte_originale"> Documento originale</label><label class="cbrow"><input type="checkbox" id="cb_identfonte_cie"> CIE</label><label class="cbrow"><input type="checkbox" id="cb_identfonte_spid"> SPID</label><label class="cbrow"><input type="checkbox" id="cb_identfonte_firmadig"> Firma digitale</label><label class="cbrow"><input type="checkbox" id="cb_identfonte_registro"> Registro Imprese</label><label class="cbrow cbother-row"><input type="checkbox" id="cb_identfonte_altro"> Altro:</label><input id="identfonte_altro_txt" class="cbother" placeholder="specificare"></div></div><h3 class="grouph">4 — Dati della parte</h3><div class="grid"><div class="field"><label>Cognome e nome / Denominazione</label><div class="hint">Nome e cognome se persona fisica; ragione sociale/denominazione se società o ente.</div><input id="p_nome" type="text" placeholder="..." ></div><div class="field"><label>Luogo e data di nascita / Sede</label><div class="hint">Luogo e data di nascita (persona fisica) oppure sede legale con indirizzo (persona giuridica).</div><input id="p_nascita" type="text" placeholder="..." ></div><div class="field"><label>Codice fiscale / P. IVA</label><div class="hint">Codice fiscale della persona fisica oppure P. IVA/CF dell'ente.</div><input id="p_cf" type="text" placeholder="..." ></div><div class="field"><label>Residenza / Sede legale</label><div class="hint">Indirizzo di residenza (persona fisica) o sede legale (persona giuridica), se diverso dal campo sopra.</div><input id="p_res" type="text" placeholder="..." ></div><div class="field"><label>Cittadinanza</label><div class="hint">Solo per persona fisica.</div><input id="p_cittadinanza" type="text" placeholder="es. italiana" ></div><div class="field"><label>Forma giuridica</label><div class="hint">Solo per persona giuridica (es. S.r.l., S.p.A., associazione...).</div><input id="p_forma_giuridica" type="text" placeholder="es. S.r.l." ></div><div class="field"><label>Capitale sociale (ove applicabile)</label><div class="hint">Solo per persona giuridica, se pertinente.</div><input id="p_capitale_sociale" type="text" placeholder="es. € 10.000" ></div><div class="field"><label>Telefono</label><div class="hint">Recapito telefonico della parte.</div><input id="p_tel" type="text" placeholder="..." ></div><div class="field"><label>PEC</label><div class="hint">Indirizzo di posta elettronica certificata, se disponibile.</div><input id="p_pec" type="text" placeholder="..." ></div><div class="field"><label>E-mail</label><div class="hint">Indirizzo e-mail ordinario.</div><input id="p_email" type="text" placeholder="..." ></div><div class="field"><label>Documento di identità (tipo e n.)</label><div class="hint">Es. carta d'identità n. AX1234567; per gli enti indicare il documento del legale rappresentante.</div><input id="p_doc" type="text" placeholder="es. CI n. AX..." ></div><div class="field"><label>Rilasciato da (autorità/Comune)</label><div class="hint">Ente che ha rilasciato il documento.</div><input id="p_doc_rilasciato_da" type="text" placeholder="es. Comune di ..." ></div><div class="field"><label>Rilasciato il</label><div class="hint">Data di rilascio del documento.</div><input id="p_doc_rilasciato_il" type="date" placeholder="" ></div><div class="field"><label>Scadenza</label><div class="hint">Data di scadenza del documento.</div><input id="p_doc_scadenza" type="date" placeholder="" ></div><div class="field"><label>Professione o attività economica prevalente</label><div class="hint">Attività lavorativa/economica principale della parte.</div><input id="p_prof" type="text" placeholder="..." ></div><div class="field"><label>Settore di attività (ove applicabile)</label><div class="hint">Settore merceologico/professionale, utile per la valutazione del rischio.</div><input id="p_settore" type="text" placeholder="..." ></div></div><h3 class="grouph">5 — Rappresentante o soggetto autorizzato ad agire per la parte</h3><div class="grid"><div class="field"><label>Titolo di intervento</label><div class="hint">Compilare solo se la parte non agisce personalmente: chi interviene e a quale titolo.</div><select id="rappr_ruolo" ><option value="nessuno">Nessuno — la parte agisce personalmente</option><option value="legale_rapp">Legale rappresentante della società o dell'ente</option><option value="difensore">Difensore</option><option value="procuratore">Procuratore speciale per la partecipazione alla mediazione</option><option value="esecutore">Esecutore ai sensi dell'art. 1, c. 2, lett. p), D.Lgs. 231/2007</option><option value="altro">Altro</option></select></div><div class="field"><label>Se «Altro», specificare</label><div class="hint">Solo se il titolo di intervento non rientra tra quelli elencati.</div><input id="rappr_ruolo_altro" type="text" placeholder="specificare" ></div></div><div class="subblock" id="rapprBlock" style="display:none"><div class="grid"><div class="field"><label>Cognome e nome</label><div class="hint">Nome e cognome del rappresentante/soggetto autorizzato.</div><input id="rappr_nome" type="text" placeholder="..." ></div><div class="field"><label>Luogo e data di nascita</label><div class="hint">Luogo e data di nascita del rappresentante/soggetto autorizzato.</div><input id="rappr_nascita" type="text" placeholder="..." ></div><div class="field"><label>Codice fiscale</label><div class="hint">Codice fiscale del rappresentante/soggetto autorizzato.</div><input id="rappr_cf" type="text" placeholder="..." ></div><div class="field"><label>Residenza</label><div class="hint">Indirizzo di residenza del rappresentante/soggetto autorizzato.</div><input id="rappr_res" type="text" placeholder="..." ></div><div class="field"><label>Cittadinanza</label><div class="hint">Cittadinanza del rappresentante/soggetto autorizzato.</div><input id="rappr_cittadinanza" type="text" placeholder="..." ></div><div class="field"><label>Telefono</label><div class="hint">Recapito telefonico del rappresentante/soggetto autorizzato.</div><input id="rappr_tel" type="text" placeholder="..." ></div><div class="field"><label>PEC</label><div class="hint">Indirizzo PEC del rappresentante/soggetto autorizzato, se disponibile.</div><input id="rappr_pec" type="text" placeholder="..." ></div><div class="field"><label>E-mail</label><div class="hint">Indirizzo e-mail ordinario del rappresentante/soggetto autorizzato.</div><input id="rappr_email" type="text" placeholder="..." ></div><div class="field"><label>Documento di identità (tipo e n.)</label><div class="hint">Es. carta d'identità n. AX1234567, del rappresentante/soggetto autorizzato.</div><input id="rappr_doc" type="text" placeholder="..." ></div><div class="field"><label>Rilasciato da (autorità/Comune)</label><div class="hint">Ente che ha rilasciato il documento del rappresentante.</div><input id="rappr_doc_da" type="text" placeholder="..." ></div><div class="field"><label>Rilasciato il</label><div class="hint">Data di rilascio del documento del rappresentante.</div><input id="rappr_doc_il" type="date" placeholder="" ></div><div class="field"><label>Scadenza</label><div class="hint">Data di scadenza del documento del rappresentante.</div><input id="rappr_doc_scadenza" type="date" placeholder="" ></div><div class="field"><label>Professione o attività economica prevalente</label><div class="hint">Attività lavorativa/economica principale del rappresentante.</div><input id="rappr_prof" type="text" placeholder="..." ></div><div class="field"><label>Settore di attività</label><div class="hint">Settore merceologico/professionale del rappresentante, se pertinente.</div><input id="rappr_settore" type="text" placeholder="..." ></div><div class="field"><label>Legame con la parte/con l'ente</label><div class="hint">Es. dipendente, socio, familiare, procuratore esterno.</div><input id="rappr_legame" type="text" placeholder="..." ></div></div><div class="field checklist"><label>Titolo in forza del quale il soggetto agisce</label><div class="hint">Il documento che attribuisce il potere di rappresentanza (più opzioni possibili).</div><div class="cbwrap"><label class="cbrow"><input type="checkbox" id="cb_rappr_titolo_statuto"> Statuto</label><label class="cbrow"><input type="checkbox" id="cb_rappr_titolo_visura"> Visura camerale</label><label class="cbrow"><input type="checkbox" id="cb_rappr_titolo_procnot"> Procura notarile</label><label class="cbrow"><input type="checkbox" id="cb_rappr_titolo_procsp"> Procura speciale per la mediazione</label><label class="cbrow cbother-row"><input type="checkbox" id="cb_rappr_titolo_altro"> Altro:</label><input id="rappr_titolo_altro_txt" class="cbother" placeholder="specificare"></div></div><div class="field checklist"><label>Poteri conferiti</label><div class="hint">I poteri che il rappresentante può esercitare in mediazione (più opzioni possibili).</div><div class="cbwrap"><label class="cbrow"><input type="checkbox" id="cb_rappr_poteri_rappresentare"> Rappresentare la parte nella procedura di mediazione</label><label class="cbrow"><input type="checkbox" id="cb_rappr_poteri_proposte"> Formulare e ricevere proposte conciliative</label><label class="cbrow"><input type="checkbox" id="cb_rappr_poteri_disporre"> Disporre del diritto controverso</label><label class="cbrow"><input type="checkbox" id="cb_rappr_poteri_sottoscrivere"> Sottoscrivere l'accordo di conciliazione</label><label class="cbrow cbother-row"><input type="checkbox" id="cb_rappr_poteri_altro"> Altro:</label><input id="rappr_poteri_altro_txt" class="cbother" placeholder="specificare"></div></div></div><h3 class="grouph">6 — Persona politicamente esposta (PEP)</h3><div class="grid"><div class="field"><label>La parte è PEP?</label><div class="hint">PEP = persona che occupa o ha occupato di recente importanti cariche pubbliche (v. legenda in fondo alla pagina), o suo familiare/stretto collaboratore.</div><select id="pep_parte" ><option value="no">Non PEP</option><option value="pep">Essere PEP</option><option value="familiare">Essere familiare di PEP</option><option value="collegato">Essere soggetto strettamente collegato a una PEP</option></select></div><div class="field"><label>Il titolare effettivo è PEP?</label><div class="hint">Non applicabile quando la parte è persona fisica che agisce personalmente e non vi è rappresentante.</div><select id="pep_te" ><option value="na">Non applicabile</option><option value="no">No</option><option value="si">Sì</option></select></div><div class="field"><label>Il rappresentante è PEP?</label><div class="hint">Idem, riferito al soggetto indicato nella sezione 5.</div><select id="pep_rappr" ><option value="na">Non applicabile</option><option value="no">No</option><option value="si">Sì</option></select></div><div class="field"><label>Esito della verifica PEP</label><div class="hint">La conclusione della verifica svolta.</div><select id="pep_esito" ><option value="nessuna">Nessuna qualifica PEP rilevata</option><option value="presenza">Presenza di PEP</option><option value="rafforzate">Applicate misure rafforzate di adeguata verifica</option></select></div></div><div class="subblock"><div class="grid"><div class="field"><label>Carica pubblica ricoperta</label><div class="hint">Da compilare solo in caso di risposta affermativa sopra.</div><input id="pep_carica" type="text" placeholder="es. Sindaco, Consigliere regionale..." ></div><div class="field"><label>Stato, ente od organizzazione presso cui è stata ricoperta</label><div class="hint">Lo Stato, l'ente o l'organizzazione presso cui la carica pubblica è stata ricoperta.</div><input id="pep_stato_ente" type="text" placeholder="..." ></div><div class="field"><label>Data di cessazione della carica (se cessata)</label><div class="hint">La qualifica PEP permane per un anno dalla cessazione della carica.</div><input id="pep_cessazione" type="date" placeholder="" ></div><div class="field"><label>Se familiare/soggetto collegato, specificare il rapporto</label><div class="hint">Es. coniuge, figlio, socio in affari.</div><input id="pep_rapporto" type="text" placeholder="..." ></div></div><div class="field checklist"><label>Verifica effettuata mediante</label><div class="hint">Come è stata verificata la qualifica PEP (più opzioni possibili).</div><div class="cbwrap"><label class="cbrow"><input type="checkbox" id="cb_pep_dichparte"> Dichiarazione della parte</label><label class="cbrow"><input type="checkbox" id="cb_pep_banca"> Banca dati PEP</label><label class="cbrow cbother-row"><input type="checkbox" id="cb_pep_altro"> Altro:</label><input id="pep_altro_txt" class="cbother" placeholder="specificare"></div></div><div class="field"><label>Motivazione della valutazione</label><div class="hint">Breve nota su come si è giunti all'esito indicato sopra.</div><textarea id="pep_motivazione" rows="2" placeholder="" ></textarea></div></div>
+<details style="margin-top:10px">
+<summary>Chi è una persona politicamente esposta (PEP) — elenco di legge <span class="chev">&rsaquo;</span></summary>
+<div class="inner">
+<p>Ai sensi dell'art. 1, co. 2, lett. dd) D.Lgs. 231/2007, sono PEP le persone fisiche che occupano o hanno cessato di occupare da meno di un anno importanti cariche pubbliche, i loro familiari e chi con esse intrattiene notoriamente stretti legami:</p>
+<p><b>1) Cariche pubbliche</b> — tra le altre: Presidente della Repubblica, Presidente del Consiglio, Ministro, Vice-Ministro, Sottosegretario, Presidente di Regione, assessore regionale, Sindaco di capoluogo di provincia/città metropolitana o di comune con almeno 15.000 abitanti (e cariche estere equivalenti); deputato, senatore, parlamentare europeo, consigliere regionale; membri degli organi direttivi centrali di partiti politici; giudici costituzionali, magistrati di Cassazione o Corte dei conti, consiglieri di Stato; membri degli organi direttivi di banche centrali e autorità indipendenti; ambasciatori, incaricati d'affari, ufficiali apicali delle forze armate; componenti di organi di amministrazione/direzione/controllo di imprese controllate o partecipate in misura prevalente da Stato, Regioni o grandi comuni; direttori generali di ASL e aziende ospedaliere; direttori/vicedirettori di organizzazioni internazionali.</p>
+<p><b>2) Familiari</b> — genitori, coniuge o persona legata in unione civile/convivenza di fatto, figli e i loro coniugi o persone legate in unione civile/convivenza di fatto.</p>
+<p><b>3) Soggetti con stretti legami notori</b> — chi detiene congiuntamente alla PEP la titolarità effettiva di enti o trust, o intrattiene con essa stretti rapporti d'affari; chi detiene solo formalmente il controllo totalitario di un'entità di fatto costituita nell'interesse della PEP.</p>
+</div>
+</details>
+<h3 class="grouph">7 — Titolare effettivo</h3><div class="hint" style="margin-bottom:8px">La persona fisica, diversa dalla parte, nel cui interesse ultimo la prestazione è resa o l'operazione eseguita (art. 1, co. 2, lett. pp, D.Lgs. 231/2007).</div><div id="tePfOptionWrap"><div class="field"><label>Se la parte è persona fisica</label><div class="hint">Indicare se agisce per sé oppure per conto di un terzo titolare effettivo.</div><select id="te_pf_opzione" ><option value="proprio">Agisce nel proprio esclusivo interesse — nessun titolare effettivo diverso dalla parte</option><option value="terzo">Agisce nell'interesse o per conto di un soggetto terzo</option></select></div></div><div class="subblock" id="teTerzoBlock" style="display:none"><div class="grid"><div class="field"><label>Cognome e nome del titolare effettivo</label><div class="hint">Nome e cognome del terzo nel cui interesse la parte agisce.</div><input id="te3_nome" type="text" placeholder="..." ></div><div class="field"><label>Luogo e data di nascita</label><div class="hint">Luogo e data di nascita del titolare effettivo terzo.</div><input id="te3_nascita" type="text" placeholder="..." ></div><div class="field"><label>Codice fiscale</label><div class="hint">Codice fiscale del titolare effettivo terzo.</div><input id="te3_cf" type="text" placeholder="..." ></div><div class="field"><label>Residenza</label><div class="hint">Indirizzo di residenza del titolare effettivo terzo.</div><input id="te3_res" type="text" placeholder="..." ></div><div class="field"><label>Cittadinanza</label><div class="hint">Cittadinanza del titolare effettivo terzo.</div><input id="te3_cittadinanza" type="text" placeholder="..." ></div><div class="field"><label>Documento di identità (tipo e n.)</label><div class="hint">Documento del titolare effettivo terzo, se disponibile.</div><input id="te3_doc" type="text" placeholder="..." ></div></div></div><div class="subblock" id="tePgBlock" style="display:none"><div class="hint">Se la parte è persona giuridica: individuazione del titolare effettivo ai sensi dell'art. 20 D.Lgs. 231/2007.</div><div class="field checklist"><label>Criterio di individuazione</label><div class="hint">Come è stato individuato il titolare effettivo (più opzioni possibili).</div><div class="cbwrap"><label class="cbrow"><input type="checkbox" id="cb_tecrit_propdiretta"> Proprietà diretta</label><label class="cbrow"><input type="checkbox" id="cb_tecrit_propindiretta"> Proprietà indiretta</label><label class="cbrow"><input type="checkbox" id="cb_tecrit_controllo"> Controllo</label><label class="cbrow"><input type="checkbox" id="cb_tecrit_poteri"> Poteri di amministrazione o direzione</label><label class="cbrow cbother-row"><input type="checkbox" id="cb_tecrit_altro"> Altro:</label><input id="tecrit_altro_txt" class="cbother" placeholder="specificare"></div></div><div class="grid"><div class="field"><label>% di partecipazione</label><div class="hint">Da indicare se il criterio è la percentuale di partecipazione al capitale.</div><input id="te_percentuale" type="text" placeholder="es. 30%" ></div><div class="field"><label>Cognome e nome del titolare effettivo</label><div class="hint">Persona fisica individuata come titolare effettivo della società/ente.</div><input id="te_nome" type="text" placeholder="..." ></div><div class="field"><label>Luogo e data di nascita</label><div class="hint">Luogo e data di nascita del titolare effettivo.</div><input id="te_nascita" type="text" placeholder="..." ></div><div class="field"><label>Codice fiscale</label><div class="hint">Codice fiscale del titolare effettivo.</div><input id="te_cf" type="text" placeholder="..." ></div><div class="field"><label>Numero dei titolari effettivi individuati</label><div class="hint">Indicare il numero complessivo, se più di uno (aggiungere una sezione per ciascuno).</div><input id="te_numero" type="number" placeholder="es. 1" ></div><div class="field"><label>Esito della verifica</label><div class="hint">La conclusione della verifica sul titolare effettivo.</div><select id="te_esito" ><option value="completata">Verifica completata</option><option value="integrare">Documentazione da integrare</option><option value="approfondimento">Necessario approfondimento</option></select></div></div><div class="field checklist"><label>Fonte documentale utilizzata</label><div class="hint">Da dove provengono le informazioni sul titolare effettivo (più opzioni possibili).</div><div class="cbwrap"><label class="cbrow"><input type="checkbox" id="cb_tefonte_visura"> Visura camerale</label><label class="cbrow"><input type="checkbox" id="cb_tefonte_statuto"> Statuto</label><label class="cbrow"><input type="checkbox" id="cb_tefonte_libro"> Libro soci</label><label class="cbrow"><input type="checkbox" id="cb_tefonte_assetto"> Assetto proprietario dichiarato</label><label class="cbrow"><input type="checkbox" id="cb_tefonte_docsoc"> Documentazione societaria</label><label class="cbrow"><input type="checkbox" id="cb_tefonte_dichparte"> Dichiarazione della parte</label><label class="cbrow cbother-row"><input type="checkbox" id="cb_tefonte_altro"> Altro:</label><input id="tefonte_altro_txt" class="cbother" placeholder="specificare"></div></div><div class="field"><label>Motivazione della valutazione</label><div class="hint">Sintesi delle ragioni dell'esito indicato (utile in caso di verifica da integrare/approfondire).</div><textarea id="te_motivazione" rows="2" placeholder="" ></textarea></div></div><h3 class="grouph">8 — Prestazione: oggetto, valore e fondi</h3><div class="grid"><div class="field"><label>Oggetto della mediazione</label><div class="hint">Sintesi dell'oggetto della controversia (es. contratto di appalto, locazione, divisione ereditaria).</div><input id="proc_ogg" type="text" placeholder="es. contratto di appalto" ></div><div class="field"><label>Materia</label><div class="hint">Materia della controversia (es. condominio, diritti reali, famiglia, contratti bancari).</div><input id="op_materia" type="text" placeholder="..." ></div><div class="field"><label>Valore della controversia</label><div class="hint">Valore economico della lite, come indicato nella domanda.</div><input id="op_valore" type="text" placeholder="es. € 50.000" ></div><div class="field"><label>Importo previsto per l'esecuzione dell'accordo (€)</label><div class="hint">Importo che verrà effettivamente movimentato in caso di accordo, se noto.</div><input id="op_importo" type="text" placeholder="es. 20.000" ></div></div><div class="field"><label>Breve descrizione</label><div class="hint">Sintesi della vertenza e delle richieste presentate al mediatore.</div><textarea id="op_descrizione" rows="3" placeholder="" ></textarea></div><div class="field checklist"><label>L'eventuale accordo potrà prevedere</label><div class="hint">Una o più delle seguenti conseguenze patrimoniali (più opzioni possibili).</div><div class="cbwrap"><label class="cbrow"><input type="checkbox" id="cb_accordo_nessuntrasf"> Nessun trasferimento patrimoniale</label><label class="cbrow"><input type="checkbox" id="cb_accordo_pagamento"> Pagamento di somme di denaro</label><label class="cbrow"><input type="checkbox" id="cb_accordo_immobile"> Trasferimento di beni immobili</label><label class="cbrow"><input type="checkbox" id="cb_accordo_quote"> Trasferimento di quote societarie</label><label class="cbrow"><input type="checkbox" id="cb_accordo_azienda"> Trasferimento di aziende</label><label class="cbrow"><input type="checkbox" id="cb_accordo_dirittireali"> Costituzione o trasferimento di diritti reali</label><label class="cbrow"><input type="checkbox" id="cb_accordo_farenonfare"> Obblighi di fare o non fare</label><label class="cbrow cbother-row"><input type="checkbox" id="cb_accordo_altro"> Altro:</label><input id="accordo_altro_txt" class="cbother" placeholder="specificare"></div></div><div class="field checklist"><label>Provenienza delle somme o delle risorse economiche</label><div class="hint">Da dove derivano i fondi destinati all'esecuzione dell'accordo (più opzioni possibili).</div><div class="cbwrap"><label class="cbrow"><input type="checkbox" id="cb_provenienza_redditolav"> Reddito da lavoro dipendente</label><label class="cbrow"><input type="checkbox" id="cb_provenienza_redditoauton"> Reddito da lavoro autonomo</label><label class="cbrow"><input type="checkbox" id="cb_provenienza_redditoimpresa"> Reddito d'impresa</label><label class="cbrow"><input type="checkbox" id="cb_provenienza_disponente"> Disponibilità dell'ente/società</label><label class="cbrow"><input type="checkbox" id="cb_provenienza_finanziamento"> Finanziamento bancario</label><label class="cbrow"><input type="checkbox" id="cb_provenienza_mutuo"> Mutuo</label><label class="cbrow"><input type="checkbox" id="cb_provenienza_donazione"> Donazione</label><label class="cbrow"><input type="checkbox" id="cb_provenienza_eredita"> Eredità</label><label class="cbrow"><input type="checkbox" id="cb_provenienza_venditabeni"> Vendita di beni</label><label class="cbrow"><input type="checkbox" id="cb_provenienza_investimenti"> Investimenti</label><label class="cbrow"><input type="checkbox" id="cb_provenienza_risparmi"> Risparmi</label><label class="cbrow cbother-row"><input type="checkbox" id="cb_provenienza_altro"> Altro:</label><input id="provenienza_altro_txt" class="cbother" placeholder="specificare"></div></div><div class="field checklist"><label>Modalità di pagamento previste</label><div class="hint">Come verranno eseguiti i pagamenti dell'eventuale accordo (più opzioni possibili).</div><div class="cbwrap"><label class="cbrow"><input type="checkbox" id="cb_pagamento_bonifico"> Bonifico bancario</label><label class="cbrow"><input type="checkbox" id="cb_pagamento_assegnocirc"> Assegno circolare</label><label class="cbrow"><input type="checkbox" id="cb_pagamento_assegnobanc"> Assegno bancario</label><label class="cbrow cbother-row"><input type="checkbox" id="cb_pagamento_altro"> Altro:</label><input id="pagamento_altro_txt" class="cbother" placeholder="specificare"></div></div><h3 class="grouph">9 — Valutazione del rischio della parte</h3>
+<div class="legend-box"><b>Come classificare basso / medio / alto (criteri orientativi)</b>
+<table>
+<tr><td><b>Natura giuridica</b></td><td>Basso: persona fisica o ente con assetto semplice e trasparente. Medio: società con struttura ordinaria. Alto: trust, società estera o struttura articolata e non immediatamente trasparente.</td></tr>
+<tr><td><b>Area geografica</b></td><td>Basso: Italia o Stato UE privo di fattori di rischio. Medio: Stato terzo con presìdi equivalenti. Alto: Paese ad alto rischio o soggetto a misure restrittive.</td></tr>
+<tr><td><b>Titolarità effettiva</b></td><td>Basso: immediatamente individuabile e verificata. Medio: partecipazioni indirette ma ricostruibili. Alto: assetto opaco, fiduciario o ingiustificatamente complesso.</td></tr>
+<tr><td><b>PEP</b></td><td>Basso: nessuna qualifica PEP. Medio: elementi che richiedono approfondimento. Alto: PEP, familiare o soggetto collegato con ulteriori fattori di rischio.</td></tr>
+<tr><td><b>Operazione</b></td><td>Basso: coerente con la controversia e il profilo della parte. Medio: non ordinaria ma giustificata. Alto: sproporzionata, opaca o priva di apparente giustificazione.</td></tr>
+</table>
+<p style="margin:6px 0 0">L'opzione «non applicabile» (dove prevista) è riservata agli elementi che non ricorrono nella concreta procedura.</p>
+</div>
+<table class="risktable"><tr><th>Elemento</th><th>Livello attribuito</th></tr><tr><td class="elname">Natura giuridica</td><td><select id="rp_naturagiur"><option value="basso">Basso</option><option value="medio">Medio</option><option value="alto">Alto</option></select></td></tr><tr><td class="elname">Attività svolta</td><td><select id="rp_attivita"><option value="basso">Basso</option><option value="medio">Medio</option><option value="alto">Alto</option></select></td></tr><tr><td class="elname">Coerenza delle dichiarazioni con la documentazione acquisita</td><td><select id="rp_coerenza"><option value="basso">Basso</option><option value="medio">Medio</option><option value="alto">Alto</option></select></td></tr><tr><td class="elname">Area geografica</td><td><select id="rp_areageo"><option value="basso">Basso</option><option value="medio">Medio</option><option value="alto">Alto</option></select></td></tr><tr><td class="elname">Trasparenza titolare effettivo</td><td><select id="rp_trasparenza_te"><option value="basso">Basso</option><option value="medio">Medio</option><option value="alto">Alto</option></select></td></tr><tr><td class="elname">Qualifica PEP</td><td><select id="rp_pep"><option value="basso">Basso</option><option value="medio">Medio</option><option value="alto">Alto</option></select></td></tr></table><h3 class="grouph">10 — Valutazione della prestazione</h3><div class="hint" style="margin-bottom:6px">Stessi criteri della tabella precedente, riferiti però all'operazione/controversia. È prevista anche l'opzione «non applicabile».</div><table class="risktable"><tr><th>Elemento</th><th>Livello attribuito</th></tr><tr><td class="elname">Tipologia della controversia</td><td><select id="vp_tipologia"><option value="basso">Basso</option><option value="medio">Medio</option><option value="alto">Alto</option><option value="na">Non applicabile</option></select></td></tr><tr><td class="elname">Valore economico</td><td><select id="vp_valore"><option value="basso">Basso</option><option value="medio">Medio</option><option value="alto">Alto</option><option value="na">Non applicabile</option></select></td></tr><tr><td class="elname">Modalità operative</td><td><select id="vp_modalita"><option value="basso">Basso</option><option value="medio">Medio</option><option value="alto">Alto</option><option value="na">Non applicabile</option></select></td></tr><tr><td class="elname">Coerenza della controversia/operazione con il profilo economico/attività della parte</td><td><select id="vp_coerenza"><option value="basso">Basso</option><option value="medio">Medio</option><option value="alto">Alto</option><option value="na">Non applicabile</option></select></td></tr><tr><td class="elname">Complessità dell'operazione</td><td><select id="vp_complessita"><option value="basso">Basso</option><option value="medio">Medio</option><option value="alto">Alto</option><option value="na">Non applicabile</option></select></td></tr></table><h3 class="grouph">11 — Esame delle anomalie</h3><div class="grid"><div class="field"><label>Sono emersi indicatori di anomalia?</label><div class="hint">Domanda di sintesi: se «Sì», selezionare sotto quali indicatori ricorrono.</div><select id="anomalie_presenti" ><option value="no">No</option><option value="si">Sì</option></select></div><div class="field"><label>Le anomalie hanno ricevuto una spiegazione ragionevole e documentata?</label><div class="hint">Da compilare solo se sopra è stato indicato «Sì».</div><select id="anomalie_spiegate" ><option value="na">Non applicabile</option><option value="si">Sì</option><option value="no">No</option></select></div></div><div class="field checklist"><label>In caso affermativo, indicatori rilevati</label><div class="hint">Selezionare tutti gli indicatori riscontrati (Provvedimento UIF 12 maggio 2023).</div><div class="cbwrap"><label class="cbrow"><input type="checkbox" id="cb_an_1"> Informazioni contraddittorie o incoerenti</label><label class="cbrow"><input type="checkbox" id="cb_an_2"> Documentazione incompleta o incoerente rispetto alle dichiarazioni rese</label><label class="cbrow"><input type="checkbox" id="cb_an_3"> Rifiuto di fornire i dati o la documentazione necessari per l'adeguata verifica</label><label class="cbrow"><input type="checkbox" id="cb_an_4"> Utilizzo di soggetti interposti o di strutture societarie non adeguatamente trasparenti</label><label class="cbrow"><input type="checkbox" id="cb_an_5"> Movimentazioni economiche non coerenti con il valore della controversia o con il profilo economico della parte</label><label class="cbrow"><input type="checkbox" id="cb_an_6"> Reticenza o ingiustificato rifiuto di fornire informazioni rilevanti ai fini dell'adeguata verifica</label><label class="cbrow"><input type="checkbox" id="cb_an_7"> Controversia apparentemente artificiosa o priva di reale contrapposizione</label><label class="cbrow"><input type="checkbox" id="cb_an_8"> Accordo manifestamente sproporzionato rispetto all'oggetto della controversia</label><label class="cbrow"><input type="checkbox" id="cb_an_9"> Pagamento o trasferimento a favore di un soggetto estraneo alla controversia</label><label class="cbrow"><input type="checkbox" id="cb_an_10"> Pagamento effettuato da un terzo privo di apparente collegamento con la procedura</label><label class="cbrow"><input type="checkbox" id="cb_an_11"> Modifiche frequenti e non giustificate del beneficiario o delle modalità di pagamento</label><label class="cbrow"><input type="checkbox" id="cb_an_12"> Trasferimento di immobili, aziende o partecipazioni a valori apparentemente incongrui</label><label class="cbrow"><input type="checkbox" id="cb_an_13"> Utilizzo ingiustificato di contanti, conti esteri, cripto-attività o strumenti non ordinari</label><label class="cbrow"><input type="checkbox" id="cb_an_14"> Utilizzo di società, trust o soggetti interposti non coerente con la controversia</label><label class="cbrow"><input type="checkbox" id="cb_an_15"> Ripetute procedure di mediazione tra soggetti collegati</label><label class="cbrow"><input type="checkbox" id="cb_an_16"> Rifiuto di chiarire la titolarità effettiva o la provenienza dei fondi</label><label class="cbrow"><input type="checkbox" id="cb_an_17"> Richieste anomale e ingiustificate di occultamento dell'identità dei soggetti coinvolti, del beneficiario, della provenienza dei fondi o delle condizioni economiche dell'accordo</label><label class="cbrow cbother-row"><input type="checkbox" id="cb_an_altro"> Altro:</label><input id="an_altro_txt" class="cbother" placeholder="specificare"></div></div><div class="grid"><div class="field"><label>Approfondimenti svolti</label><div class="hint">Cosa è stato fatto per chiarire l'anomalia (es. richiesta di documenti integrativi).</div><textarea id="anomalie_approfondimenti" rows="2" placeholder="" ></textarea></div><div class="field"><label>Documentazione acquisita a giustificazione</label><div class="hint">Quali documenti sono stati raccolti per giustificare l'anomalia.</div><textarea id="anomalie_documentazione" rows="2" placeholder="" ></textarea></div></div><h3 class="grouph">12 — Valutazione complessiva del rischio</h3><div class="riskbar" id="autoRiskRow">Indicatore automatico orientativo: <span id="riskBadge" class="badge b-basso">BASSO</span><span class="legalref" id="riskNote">(monitoraggio ordinario)</span></div><div class="hint" style="margin:6px 0 10px">Calcolato in automatico dalle risposte date sopra (area geografica, PEP, titolare effettivo, anomalie). È solo un suggerimento: la classificazione finale, qui sotto, resta una valutazione professionale del mediatore/Organismo.</div><div class="grid"><div class="field"><label>Livello di rischio attribuito</label><div class="hint">La classificazione finale della parte/procedura, anche sulla base della tabella al punto 9-10.</div><select id="risk_livello" ><option value="basso">Basso</option><option value="medio">Medio</option><option value="alto">Alto</option></select></div></div><div class="field"><label>Motivazione</label><div class="hint">Le ragioni della classificazione attribuita.</div><textarea id="risk_motivazione" rows="2" placeholder="" ></textarea></div><h3 class="grouph">13 — Misure di adeguata verifica</h3><div class="grid"><div class="field"><label>Tipo di adeguata verifica applicata</label><div class="hint">Semplificata (rischio basso / PA, enti pubblici, quotati, vigilati); ordinaria (livello standard); rafforzata (rischio alto, PEP, Paesi a rischio, operazioni complesse o a distanza).</div><select id="av_tipo" ><option value="semplificata">Adeguata verifica semplificata (art. 23 D.Lgs. 231/2007)</option><option value="ordinaria">Adeguata verifica ordinaria (art. 18 D.Lgs. 231/2007)</option><option value="rafforzata">Adeguata verifica rafforzata (artt. 24-25 D.Lgs. 231/2007)</option></select></div></div><div class="field checklist"><label>Misure rafforzate adottate</label><div class="hint">Da compilare solo se è stata applicata l'adeguata verifica rafforzata (più opzioni possibili).</div><div class="cbwrap"><label class="cbrow"><input type="checkbox" id="cb_avmis_docint"> Acquisizione di ulteriore documentazione</label><label class="cbrow"><input type="checkbox" id="cb_avmis_approftit"> Approfondimento sul titolare effettivo</label><label class="cbrow"><input type="checkbox" id="cb_avmis_provfondi"> Verifica della provenienza dei fondi</label><label class="cbrow"><input type="checkbox" id="cb_avmis_benef"> Verifica del beneficiario dell'operazione</label><label class="cbrow"><input type="checkbox" id="cb_avmis_terzi"> Verifica di eventuali soggetti terzi coinvolti</label><label class="cbrow cbother-row"><input type="checkbox" id="cb_avmis_altro"> Altro:</label><input id="avmis_altro_txt" class="cbother" placeholder="specificare"></div></div><h3 class="grouph">14 — Documentazione acquisita</h3><div class="field checklist"><label>Documenti raccolti agli atti</label><div class="hint">Selezionare tutti i documenti effettivamente acquisiti (più opzioni possibili).</div><div class="cbwrap"><label class="cbrow"><input type="checkbox" id="cb_docacq_identita"> Documento di identità (parte, esecutore e titolare effettivo)</label><label class="cbrow"><input type="checkbox" id="cb_docacq_cf"> Codice fiscale</label><label class="cbrow"><input type="checkbox" id="cb_docacq_visura"> Visura camerale</label><label class="cbrow"><input type="checkbox" id="cb_docacq_statuto"> Statuto</label><label class="cbrow"><input type="checkbox" id="cb_docacq_attocost"> Atto costitutivo</label><label class="cbrow"><input type="checkbox" id="cb_docacq_procalliti"> Procura alle liti</label><label class="cbrow"><input type="checkbox" id="cb_docacq_procspec"> Procura speciale o sostanziale per la partecipazione alla mediazione e l'eventuale disposizione del diritto</label><label class="cbrow"><input type="checkbox" id="cb_docacq_procnot"> Procura notarile</label><label class="cbrow"><input type="checkbox" id="cb_docacq_modulomav"> Modulo di Adeguata Verifica</label><label class="cbrow cbother-row"><input type="checkbox" id="cb_docacq_altro"> Altro:</label><input id="docacq_altro_txt" class="cbother" placeholder="specificare"></div></div><h3 class="grouph">15 — Esito complessivo sulla parte e determinazioni finali</h3><div class="field checklist"><label>Determinazioni finali</label><div class="hint">La/e conclusione/i operativa/e (più opzioni possibili).</div><div class="cbwrap"><label class="cbrow"><input type="checkbox" id="cb_esito_nessuno"> Nessun elemento di anomalia</label><label class="cbrow"><input type="checkbox" id="cb_esito_monitoraggio"> Monitoraggio nel corso della procedura</label><label class="cbrow"><input type="checkbox" id="cb_esito_rafforzata"> Adeguata verifica rafforzata</label><label class="cbrow"><input type="checkbox" id="cb_esito_ulteriori"> Valutazione di eventuali ulteriori adempimenti previsti dalla normativa</label></div></div><div class="field"><label>Osservazioni finali</label><div class="hint">Eventuali note di sintesi ad uso del fascicolo riservato.</div><textarea id="esito_osservazioni" rows="2" placeholder="" ></textarea></div><h3 class="grouph">16 — Trasmissione interna</h3><div class="hint" style="margin-bottom:6px">Trasmissione della scheda al Responsabile antiriciclaggio (RAR) o al Referente SOS, se ritenuta necessaria.</div><div class="grid"><div class="field"><label>Trasmissione al Responsabile antiriciclaggio / Referente SOS</label><div class="hint">Se la trasmissione interna è stata ritenuta necessaria.</div><select id="trasm_tipo" ><option value="non_necessaria">Non necessaria</option><option value="effettuata">Effettuata</option></select></div><div class="field"><label>Data di trasmissione</label><div class="hint">Da compilare se sopra è stato indicato «Effettuata».</div><input id="trasm_data" type="date" placeholder="" ></div><div class="field"><label>Destinatario</label><div class="hint">A chi è stata inviata la trasmissione (es. RAR).</div><input id="trasm_destinatario" type="text" placeholder="..." ></div><div class="field"><label>Motivo della trasmissione</label><div class="hint">Perché si è ritenuto necessario trasmettere la scheda.</div><input id="trasm_motivo" type="text" placeholder="..." ></div></div><div class="field"><label>Annotazioni riservate</label><div class="hint">Note riservate ad uso interno, da non riportare nel verbale di mediazione.</div><textarea id="trasm_annotazioni" rows="2" placeholder="" ></textarea></div><h3 class="grouph">17 — Dichiarazioni della parte</h3><div class="hint" style="margin-bottom:6px">Le dichiarazioni che la parte (o il legale rappresentante) rende sottoscrivendo il Modulo di Adeguata Verifica.</div><div class="cbwrap" style="flex-direction:column;align-items:flex-start;gap:8px"><label class="cbrow"><input type="checkbox" id="cb_dich_veritieri"> Che i dati forniti sono veritieri, completi e aggiornati</label><label class="cbrow"><input type="checkbox" id="cb_dich_impegno"> Di impegnarsi a comunicare all'Organismo eventuali variazioni rilevanti intervenute nel corso della procedura, entro 30 giorni dal loro verificarsi</label><label class="cbrow"><input type="checkbox" id="cb_dich_privacy"> Di aver ricevuto e preso visione dell'informativa sul trattamento dei dati personali (artt. 13-14 Reg. UE 2016/679)</label></div><div class="field"><label>Carichi pendenti per reati economici/tributari/societari</label><div class="hint">A carico del cliente e/o del/dei titolare/i effettivo/i.</div><select id="dich_carichi" ><option value="nessuno">Nessun carico pendente</option><option value="presenti">Sussistono carichi pendenti (specificare sotto)</option></select></div><div class="field"><label>Se presenti, specificare</label><div class="hint">Dettaglio dei carichi pendenti dichiarati.</div><textarea id="dich_carichi_dettaglio" rows="2" placeholder="" ></textarea></div><h3 class="grouph">18 — Verifica del Responsabile dell'Organismo / RAR</h3><div class="hint" style="margin-bottom:6px">Riservato al controllo di secondo livello svolto dal Responsabile Antiriciclaggio (facoltativo in fase di compilazione al tavolo).</div><div class="grid"><div class="field"><label>Data della verifica</label><div class="hint">Data in cui il Responsabile Antiriciclaggio (RAR) ha svolto il controllo.</div><input id="resp_data" type="date" placeholder="" ></div><div class="field"><label>Esito</label><div class="hint">La valutazione del RAR sulla scheda ricevuta.</div><select id="resp_esito" ><option value="conforme">Conforme</option><option value="integrare">Da integrare</option><option value="approfondimenti">Necessari ulteriori approfondimenti</option></select></div></div><div class="field"><label>Note</label><div class="hint">Osservazioni del Responsabile.</div><textarea id="resp_note" rows="2" placeholder="" ></textarea></div>
         <div class="row-btns">
           <button class="btn-primary" onclick="genera()">Genera i modelli</button>
           <button class="btn-ghost" onclick="moduliBianco()">🖨️ Moduli in bianco (stampa)</button>
@@ -366,8 +353,7 @@
   </div>
 </div>
 
-<script>
-  // ---------- utils ----------
+<script>  // ---------- utils ----------
   const $ = id => document.getElementById(id);
   const v = id => ($(id) ? ($(id).value || "").trim() : "");
   const esc = s => (s||"").replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]));
@@ -382,23 +368,59 @@
     el.classList.add("active"); role = el.dataset.role;
   }));
 
-  // ---------- PG -> titolare effettivo ----------
-  $("p_tipo").addEventListener("change",()=>{ $("teBlock").style.display = $("p_tipo").value==="pg" ? "block":"none"; });
 
-  // ---------- rischio ----------
-  const riskIds = ["r_paese","r_pep","r_opaca","r_cash","r_incongr","r_retic","r_coerente"];
-  function calcRisk(){
-    let s = 0; riskIds.forEach(id=> s += parseInt(v(id)||"0",10));
-    let lvl, cls, note;
-    if(s===0){lvl="BASSO";cls="b-basso";note="(monitoraggio ordinario; conservazione della scheda)";}
-    else if(s<=2){lvl="MEDIO";cls="b-medio";note="(intensificazione delle verifiche e monitoraggio)";}
-    else {lvl="ALTO";cls="b-alto";note="(misure rafforzate; valutare la segnalazione SOS alla UIF)";}
-    const b=$("riskBadge"); b.textContent=lvl; b.className="badge "+cls; $("riskNote").textContent=note;
-    return lvl;
+  // ---------- toggle blocchi condizionali ----------
+  function syncToggles(){
+    const isPG = v("p_tipo")==="pg";
+    $("tePfOptionWrap").style.display = isPG ? "none" : "block";
+    $("tePgBlock").style.display = isPG ? "block" : "none";
+    $("teTerzoBlock").style.display = (!isPG && v("te_pf_opzione")==="terzo") ? "block" : "none";
+    $("rapprBlock").style.display = (v("rappr_ruolo")!=="" && v("rappr_ruolo")!=="nessuno") ? "block" : "none";
   }
-  riskIds.forEach(id=>$(id).addEventListener("change",calcRisk));
-  calcRisk();
+  ["p_tipo","te_pf_opzione","rappr_ruolo"].forEach(id=>$(id).addEventListener("change",syncToggles));
+  syncToggles();
 
+  // ---------- rischio (suggerimento automatico orientativo) ----------
+  let riskLivelloManual = false;
+  let avTipoManual = false;
+  $("risk_livello").addEventListener("change",()=>{ riskLivelloManual = true; });
+  $("av_tipo").addEventListener("change",()=>{ avTipoManual = true; });
+
+  function countAnomalie(){
+    return document.querySelectorAll('[id^="cb_an_"]:checked').length;
+  }
+  function calcRisk(){
+    let s = 0;
+    const area = v("p_area");
+    if(area==="extraue") s += 1;
+    if(area==="altorischio") s += 2;
+    const pepFlag = (v("pep_parte")!=="no" && v("pep_parte")!=="") || v("pep_te")==="si" || v("pep_rappr")==="si" || v("pep_esito")==="presenza" || v("pep_esito")==="rafforzate";
+    if(pepFlag) s += 2;
+    if(v("te_esito")==="approfondimento") s += 2;
+    else if(v("te_esito")==="integrare") s += 1;
+    const nAn = countAnomalie();
+    if(nAn>0) s += 1;
+    if(nAn>=3) s += 1;
+    if(v("anomalie_presenti")==="si" && v("anomalie_spiegate")==="no") s += 2;
+    if(["trust","estera"].includes(v("p_natgiur"))) s += 1;
+
+    let lvl, cls, note;
+    if(s===0){lvl="basso";cls="b-basso";note="(monitoraggio ordinario; conservazione della scheda)";}
+    else if(s<=2){lvl="medio";cls="b-medio";note="(intensificazione delle verifiche e monitoraggio)";}
+    else {lvl="alto";cls="b-alto";note="(misure rafforzate; valutare la segnalazione SOS alla UIF)";}
+    const b=$("riskBadge"); b.textContent=lvl.toUpperCase(); b.className="badge "+cls; $("riskNote").textContent=note;
+
+    if(!riskLivelloManual) $("risk_livello").value = lvl;
+    if(!avTipoManual){
+      const rl = v("risk_livello");
+      $("av_tipo").value = rl==="basso" ? "semplificata" : (rl==="alto" ? "rafforzata" : "ordinaria");
+    }
+    return v("risk_livello").toUpperCase();
+  }
+  ["p_area","pep_parte","pep_te","pep_rappr","pep_esito","te_esito","anomalie_presenti","anomalie_spiegate","p_natgiur","risk_livello"]
+    .forEach(id=>$(id).addEventListener("change",calcRisk));
+  document.querySelectorAll('[id^="cb_an_"]').forEach(cb=>cb.addEventListener("change",calcRisk));
+  calcRisk();
   // ---------- document builders ----------
   function docBlock(id,title,inner){
     return '<div class="doc" id="'+id+'"><div class="dh">'+title+
@@ -409,67 +431,312 @@
   const kv = rows => '<table>'+rows.map(r=>'<tr><td class="k">'+r[0]+'</td><td>'+r[1]+'</td></tr>').join('')+'</table>';
   const sign = '<div class="sign"><div>Luogo e data: '+blank+'</div><div>Firma: '+blank+'</div></div>';
 
-  function modAdeguata(){
-    return docBlock("m1","MODULO 1 — Identificazione e adeguata verifica (artt. 17-19 D.Lgs. 231/2007)",
-      kv([
-        ["Organismo di mediazione", val("odm_nome")],
-        ["N. procedura / R.G.", val("proc_n")],
-        ["Mediatore designato", val("proc_med")],
-        ["Data primo incontro", esc(v("proc_data")? new Date(v("proc_data")).toLocaleDateString("it-IT"):"")||blank],
-        ["Parte (nome / denominazione)", val("p_nome")],
-        ["Tipo", v("p_tipo")==="pg"?"Persona giuridica":"Persona fisica"],
-        ["Luogo e data nascita / sede", val("p_nascita")],
-        ["Codice fiscale / P. IVA", val("p_cf")],
-        ["Residenza / sede legale", val("p_res")],
-        ["Documento d’identità", val("p_doc")],
-        ["Ente di rilascio e scadenza", val("p_docente")],
-        ["Esecutore / rappresentante", val("p_exec")],
-        ["Scopo e natura dell’operazione", val("op_scopo")],
-        ["Esito della verifica", "verifica eseguita / documentazione acquisita"]
-      ])+sign);
+// ---------- helper: checklist -> testo leggibile ----------
+  function cbList(prefix, labels){
+    // labels: {suffix: "Etichetta leggibile"}
+    const picked = [];
+    Object.keys(labels).forEach(suf=>{
+      const cb = $("cb_"+prefix+"_"+suf);
+      if(cb && cb.checked) picked.push(labels[suf]);
+    });
+    const altroCb = $("cb_"+prefix+"_altro");
+    if(altroCb && altroCb.checked){
+      const t = v(prefix+"_altro_txt");
+      picked.push("Altro"+(t?": "+esc(t):""));
+    }
+    return picked.length ? picked.join("; ") : "<i style=\"color:#9aa6b6\">nessuna selezione</i>";
   }
-  function modTE(){
-    if(v("p_tipo")!=="pg") return "";
-    return docBlock("m2","MODULO 2 — Dichiarazione sul titolare effettivo (artt. 18, 20, 22)",
-      kv([
-        ["Parte (denominazione)", val("p_nome")],
-        ["Codice fiscale / P. IVA", val("p_cf")],
-        ["Legale rappresentante dichiarante", val("p_exec")],
-        ["Titolare effettivo", val("te_nome")],
+  function yn(id){ const x=v(id); if(x==="si"||x==="1") return "Sì"; if(x==="no"||x==="0") return "No"; if(x==="na") return "Non applicabile"; return x?esc(x):blank; }
+  function optText(sel,val_){ const el=$(sel); if(!el) return val_; const o=[...el.options].find(o=>o.value===val_); return o?o.textContent:val_; }
+  function selText(id){ const el=$(id); if(!el) return ""; return el.options[el.selectedIndex] ? el.options[el.selectedIndex].textContent : ""; }
+  function dateIt(id){ const x=v(id); return x? new Date(x).toLocaleDateString("it-IT") : ""; }
+
+  function modAV(){
+    const isPG = v("p_tipo")==="pg";
+    let inner = "";
+    inner += '<p class="legalref" style="margin-top:0"><b>SEZIONE A — Tipo di parte</b></p>';
+    inner += kv([
+      ["Ruolo", selText("p_ruolo")],
+      ["Natura giuridica", (selText("p_natgiur"))+(v("p_natgiur")==="altro"?" — "+val("p_natgiur_altro"):"")]
+    ]);
+    inner += '<p class="legalref"><b>SEZIONE B — Dati della parte</b></p>';
+    if(isPG){
+      inner += kv([
+        ["Denominazione", val("p_nome")],
+        ["Forma giuridica", val("p_forma_giuridica")],
+        ["Sede legale", val("p_nascita")],
+        ["Capitale sociale (ove applicabile)", val("p_capitale_sociale")],
+        ["C.F./P. IVA", val("p_cf")],
+        ["PEC", val("p_pec")],
+        ["E-mail", val("p_email")]
+      ]);
+    } else {
+      inner += kv([
+        ["Nome e cognome", val("p_nome")],
+        ["Luogo e data di nascita", val("p_nascita")],
+        ["Codice fiscale", val("p_cf")],
+        ["Residenza", val("p_res")],
+        ["Cittadinanza", val("p_cittadinanza")],
+        ["Telefono", val("p_tel")],
+        ["PEC", val("p_pec")],
+        ["E-mail", val("p_email")],
+        ["Documento di identità", val("p_doc")],
+        ["Rilasciato da / il", val("p_doc_rilasciato_da")+" — "+esc(v("p_doc_rilasciato_il")?dateIt("p_doc_rilasciato_il"):"")],
+        ["Scadenza", esc(v("p_doc_scadenza")?dateIt("p_doc_scadenza"):"")||blank],
+        ["Professione o attività economica prevalente", val("p_prof")],
+        ["Settore di attività", val("p_settore")]
+      ]);
+    }
+    inner += '<p class="legalref">Area geografica: <b>'+selText("p_area")+'</b>'+(v("p_area_stato")?" — "+val("p_area_stato"):"")+'. Modalità di identificazione: <b>'+selText("p_ident_modalita")+'</b>'+(v("p_ident_modalita")==="altro"?" — "+val("p_ident_modalita_altro"):"")+', effettuata da '+val("p_ident_da")+' in data '+esc(v("p_ident_data")?dateIt("p_ident_data"):"")+'. Documento verificato e in corso di validità: <b>'+yn("p_doc_valido")+'</b>. Fonte/modalità di riscontro: '+cbList("identfonte",{originale:"Documento originale",cie:"CIE",spid:"SPID",firmadig:"Firma digitale",registro:"Registro Imprese"})+'.</p>';
+
+    const rappr = v("rappr_ruolo");
+    inner += '<p class="legalref"><b>SEZIONE C — Rappresentante o soggetto autorizzato</b></p>';
+    if(rappr && rappr!=="nessuno"){
+      inner += kv([
+        ["Titolo di intervento", optText("rappr_ruolo",rappr)+(rappr==="altro"?" — "+val("rappr_ruolo_altro"):"")],
+        ["Nome e cognome", val("rappr_nome")],
+        ["Luogo e data di nascita", val("rappr_nascita")],
+        ["Codice fiscale", val("rappr_cf")],
+        ["Residenza", val("rappr_res")],
+        ["Cittadinanza", val("rappr_cittadinanza")],
+        ["Documento di identità", val("rappr_doc")],
+        ["Professione o attività prevalente", val("rappr_prof")],
+        ["Legame con la parte/con l’ente", val("rappr_legame")],
+        ["Titolo in forza del quale agisce", cbList("rappr_titolo",{statuto:"Statuto",visura:"Visura camerale",procnot:"Procura notarile",procsp:"Procura speciale per la mediazione"})],
+        ["Poteri conferiti", cbList("rappr_poteri",{rappresentare:"Rappresentare la parte nella procedura",proposte:"Formulare e ricevere proposte conciliative",disporre:"Disporre del diritto controverso",sottoscrivere:"Sottoscrivere l’accordo di conciliazione"})]
+      ]);
+    } else {
+      inner += '<p>La parte agisce personalmente; non risulta alcun rappresentante o soggetto autorizzato.</p>';
+    }
+
+    inner += '<p class="legalref"><b>SEZIONE D — Persona politicamente esposta (PEP)</b></p>';
+    inner += kv([
+      ["Dichiarazione della parte", optText("pep_parte", v("pep_parte"))],
+      ["Il titolare effettivo è PEP?", optText("pep_te", v("pep_te"))],
+      ["Il rappresentante è PEP?", optText("pep_rappr", v("pep_rappr"))],
+      ["Carica pubblica ricoperta", val("pep_carica")],
+      ["Stato/ente/organizzazione", val("pep_stato_ente")],
+      ["Data di cessazione della carica", esc(v("pep_cessazione")?dateIt("pep_cessazione"):"")||blank],
+      ["Rapporto (se familiare/collegato)", val("pep_rapporto")],
+      ["Verifica effettuata mediante", cbList("pep",{dichparte:"Dichiarazione della parte",banca:"Banca dati PEP"})],
+      ["Esito", "<b>"+optText("pep_esito", v("pep_esito"))+"</b>"]
+    ]);
+
+    inner += '<p class="legalref"><b>SEZIONE E — Titolare effettivo</b></p>';
+    if(!isPG){
+      if(v("te_pf_opzione")==="terzo"){
+        inner += kv([
+          ["La parte agisce", "nell’interesse o per conto di un soggetto terzo"],
+          ["Nome e cognome del titolare effettivo", val("te3_nome")],
+          ["Luogo e data di nascita", val("te3_nascita")],
+          ["Codice fiscale", val("te3_cf")],
+          ["Residenza", val("te3_res")],
+          ["Cittadinanza", val("te3_cittadinanza")],
+          ["Documento di identità", val("te3_doc")]
+        ]);
+      } else {
+        inner += '<p>Il dichiarante afferma di agire nel proprio esclusivo interesse: non è individuabile un titolare effettivo diverso dalla parte medesima.</p>';
+      }
+    } else {
+      inner += kv([
+        ["Criterio di individuazione", cbList("tecrit",{propdiretta:"Proprietà diretta",propindiretta:"Proprietà indiretta",controllo:"Controllo",poteri:"Poteri di amministrazione o direzione"})+(v("te_percentuale")?"; % partecipazione: "+val("te_percentuale"):"")],
+        ["Nome e cognome", val("te_nome")],
         ["Luogo e data di nascita", val("te_nascita")],
         ["Codice fiscale", val("te_cf")],
-        ["Criterio", val("te_crit")]
-      ])+
-      '<p class="legalref"><b>Avvertenza ex art. 55, c. 3 D.Lgs. 231/2007:</b> chi fornisce dati o informazioni false è punito con la reclusione da sei mesi a tre anni e con la multa da € 10.000 a € 30.000.</p>'+sign);
+        ["Numero titolari effettivi individuati", val("te_numero")],
+        ["Fonte documentale utilizzata", cbList("tefonte",{visura:"Visura camerale",statuto:"Statuto",libro:"Libro soci",assetto:"Assetto proprietario dichiarato",docsoc:"Documentazione societaria",dichparte:"Dichiarazione della parte"})],
+        ["Esito della verifica", "<b>"+optText("te_esito", v("te_esito"))+"</b>"]
+      ]);
+    }
+    if(v("te_motivazione")) inner += '<p style="font-size:13px">'+val("te_motivazione")+'</p>';
+    inner += '<p class="legalref"><b>Avvertenza ex art. 55, c. 3 D.Lgs. 231/2007:</b> chi fornisce dati o informazioni false è punito con la reclusione da sei mesi a tre anni e con la multa da € 10.000 a € 30.000.</p>';
+
+    inner += '<p class="legalref"><b>SEZIONE F — Natura, valore e fondi della prestazione</b></p>';
+    inner += kv([
+      ["Oggetto della mediazione", val("proc_ogg")],
+      ["Materia", val("op_materia")],
+      ["Valore della controversia", val("op_valore")],
+      ["Importo previsto per l’esecuzione dell’accordo", val("op_importo")],
+      ["Breve descrizione", val("op_descrizione")],
+      ["L’eventuale accordo potrà prevedere", cbList("accordo",{nessuntrasf:"Nessun trasferimento patrimoniale",pagamento:"Pagamento di somme di denaro",immobile:"Trasferimento di beni immobili",quote:"Trasferimento di quote societarie",azienda:"Trasferimento di aziende",dirittireali:"Costituzione o trasferimento di diritti reali",farenonfare:"Obblighi di fare o non fare"})],
+      ["Provenienza delle somme/risorse", cbList("provenienza",{redditolav:"Reddito da lavoro dipendente",redditoauton:"Reddito da lavoro autonomo",redditoimpresa:"Reddito d’impresa",disponente:"Disponibilità dell’ente/società",finanziamento:"Finanziamento bancario",mutuo:"Mutuo",donazione:"Donazione",eredita:"Eredità",venditabeni:"Vendita di beni",investimenti:"Investimenti",risparmi:"Risparmi"})],
+      ["Modalità di pagamento previste", cbList("pagamento",{bonifico:"Bonifico bancario",assegnocirc:"Assegno circolare",assegnobanc:"Assegno bancario"})]
+    ]);
+
+    inner += '<p class="legalref"><b>SEZIONE G — Dichiarazioni</b></p>';
+    const dichItems = [];
+    if($("cb_dich_veritieri").checked) dichItems.push("Che i dati forniti sono veritieri, completi e aggiornati");
+    if($("cb_dich_impegno").checked) dichItems.push("Di impegnarsi a comunicare eventuali variazioni rilevanti entro 30 giorni");
+    if($("cb_dich_privacy").checked) dichItems.push("Di aver ricevuto e preso visione dell’informativa privacy (artt. 13-14 Reg. UE 2016/679)");
+    inner += '<p>Il dichiarante attesta: '+(dichItems.length?esc(dichItems.join("; ")):'<i style="color:#9aa6b6">nessuna dichiarazione selezionata</i>')+'.</p>';
+    inner += '<p>Carichi pendenti per reati economici/tributari/societari: <b>'+optText("dich_carichi", v("dich_carichi"))+'</b>'+(v("dich_carichi")==="presenti"?" — "+val("dich_carichi_dettaglio"):"")+'</p>';
+
+    inner += '<p class="legalref"><b>SEZIONE H — Documenti allegati</b></p>';
+    inner += '<p>'+cbList("docacq",{identita:"Documento di identità",cf:"Codice fiscale",visura:"Visura camerale",statuto:"Statuto",attocost:"Atto costitutivo",procalliti:"Procura alle liti",procspec:"Procura speciale o sostanziale",procnot:"Procura notarile",modulomav:"Modulo di Adeguata Verifica"})+'</p>';
+
+    inner += '<div class="sign"><div>Luogo e data: '+blank+'</div><div>Firma della parte / del legale rappresentante: '+blank+'</div></div>';
+    inner += '<div class="sign" style="margin-top:6px"><div>&nbsp;</div><div>Firma del procuratore o esecutore: '+blank+'</div></div>';
+
+    return docBlock("mAV","MODULO DI ADEGUATA VERIFICA — Dichiarazioni per l’adeguata verifica della parte in mediazione (D.Lgs. 231/2007)", inner);
   }
-  function modRischio(){
+
+  function modSchedaRischio(){
     const lvl = calcRisk();
-    const fattori = [
-      ["Paesi a rischio","r_paese"],["PEP","r_pep"],["Struttura opaca/trust","r_opaca"],
-      ["Contante/frazionamento","r_cash"],["Incongruenza importo/profilo","r_incongr"],
-      ["Reticenza informazioni","r_retic"]
-    ].filter(f=>v(f[1])==="1").map(f=>f[0]);
-    return docBlock("m3","MODULO 3 — Scheda di valutazione del rischio (art. 15)",
-      kv([
-        ["N. procedura / parti", val("proc_n")+" — "+val("p_nome")],
-        ["Natura e scopo dell’operazione", val("op_scopo")],
-        ["Importo e modalità di pagamento", (val("op_importo"))+" € — "+val("op_pag")],
-        ["Oggetto della controversia", val("proc_ogg")],
-        ["Fattori di rischio rilevati", fattori.length?esc(fattori.join("; ")):"nessuno"],
-        ["Livello di rischio attribuito", "<b>"+lvl+"</b>"],
-        ["Misure conseguenti", lvl==="ALTO"?"misure rafforzate; valutazione SOS alla UIF":(lvl==="MEDIO"?"verifica intensificata e monitoraggio":"verifica ordinaria")]
-      ])+
-      '<p class="legalref">La scheda va compilata e conservata anche nei casi di rischio basso: la sua assenza è di per sé contestabile in sede ispettiva.</p>'+sign);
+    let inner = "";
+    inner += '<p class="legalref" style="margin-top:0"><b>1 — Dati del procedimento</b></p>';
+    inner += kv([
+      ["N. procedimento", val("proc_n")],
+      ["Data deposito istanza", esc(v("proc_data_dep_istanza")?dateIt("proc_data_dep_istanza"):"")||blank],
+      ["Data deposito adesione", esc(v("proc_data_dep_adesione")?dateIt("proc_data_dep_adesione"):"")||blank],
+      ["Data primo incontro", esc(v("proc_data")?dateIt("proc_data"):"")||blank],
+      ["Mediatore incaricato", val("proc_med")],
+      ["Scheda compilata da", val("scheda_compilata_da")+(v("scheda_qualifica")?" — "+val("scheda_qualifica"):"")],
+      ["Data della valutazione iniziale", esc(v("scheda_data_val_iniziale")?dateIt("scheda_data_val_iniziale"):today())],
+      ["Data dell’ultimo aggiornamento", esc(v("scheda_data_ultimo_agg")?dateIt("scheda_data_ultimo_agg"):"")||blank],
+      ["Motivo dell’aggiornamento", val("scheda_motivo_agg")]
+    ]);
+
+    inner += '<p class="legalref"><b>2 — Dati della parte</b></p>';
+    inner += kv([
+      ["Ruolo nella procedura", selText("p_ruolo")+(v("p_ruolo")==="altro"?" — "+val("p_ruolo_altro"):"")],
+      ["Tipologia", v("p_tipo")==="pg"?"Persona giuridica":"Persona fisica"],
+      ["Natura giuridica", selText("p_natgiur")+(v("p_natgiur")==="altro"?" — "+val("p_natgiur_altro"):"")],
+      ["Professione o attività economica prevalente", val("p_prof")],
+      ["Settore di attività", val("p_settore")],
+      ["Area geografica", selText("p_area")+(v("p_area_stato")?" — "+val("p_area_stato"):"")],
+      ["Modalità di identificazione", selText("p_ident_modalita")+(v("p_ident_modalita")==="altro"?" — "+val("p_ident_modalita_altro"):"")],
+      ["Identificazione effettuata da / data", val("p_ident_da")+" — "+esc(v("p_ident_data")?dateIt("p_ident_data"):"")],
+      ["Documento verificato e in corso di validità", yn("p_doc_valido")],
+      ["Fonte o modalità di riscontro", cbList("identfonte",{originale:"Documento originale",cie:"CIE",spid:"SPID",firmadig:"Firma digitale",registro:"Registro Imprese"})]
+    ]);
+
+    inner += '<p class="legalref"><b>3 — Titolare effettivo</b></p>';
+    const isPG = v("p_tipo")==="pg";
+    inner += kv([
+      ["Situazione", isPG ? "Persona giuridica o ente con titolare effettivo individuato" : (v("te_pf_opzione")==="terzo" ? "Persona fisica che agisce per conto di un terzo" : "Persona fisica che agisce nel proprio interesse")],
+      ["Fonti utilizzate per la verifica", isPG ? cbList("tefonte",{visura:"Visura camerale",statuto:"Statuto",libro:"Libro soci",assetto:"Assetto proprietario dichiarato",docsoc:"Documentazione societaria",dichparte:"Dichiarazione della parte"}) : "—"],
+      ["Numero dei titolari effettivi individuati", val("te_numero")],
+      ["Motivazione della valutazione", val("te_motivazione")],
+      ["Esito", isPG||v("te_pf_opzione")==="terzo" ? "<b>"+optText("te_esito", v("te_esito"))+"</b>" : "Non applicabile"]
+    ]);
+
+    inner += '<p class="legalref"><b>4 — Persona politicamente esposta (PEP)</b></p>';
+    inner += kv([
+      ["La parte è PEP?", optText("pep_parte", v("pep_parte"))],
+      ["Il titolare effettivo è PEP?", optText("pep_te", v("pep_te"))],
+      ["Il rappresentante è PEP?", optText("pep_rappr", v("pep_rappr"))],
+      ["Verifica effettuata mediante", cbList("pep",{dichparte:"Dichiarazione della parte",banca:"Banca dati PEP"})],
+      ["Esito", "<b>"+optText("pep_esito", v("pep_esito"))+"</b>"],
+      ["Motivazione della valutazione", val("pep_motivazione")]
+    ]);
+
+    inner += '<p class="legalref"><b>5 — Prestazione</b></p>';
+    inner += kv([
+      ["Oggetto della mediazione", val("proc_ogg")],
+      ["Materia", val("op_materia")],
+      ["Valore della controversia", val("op_valore")],
+      ["L’eventuale accordo potrà prevedere", cbList("accordo",{nessuntrasf:"Nessun trasferimento patrimoniale",pagamento:"Pagamento di somme di denaro",immobile:"Trasferimento di beni immobili",quote:"Trasferimento di quote societarie",azienda:"Trasferimento di aziende",dirittireali:"Costituzione o trasferimento di diritti reali",farenonfare:"Obblighi di fare o non fare"})],
+      ["Provenienza delle somme", cbList("provenienza",{redditolav:"Reddito da lavoro dipendente",redditoauton:"Reddito da lavoro autonomo",redditoimpresa:"Reddito d’impresa",disponente:"Disponibilità dell’ente/società",finanziamento:"Finanziamento bancario",mutuo:"Mutuo",donazione:"Donazione",eredita:"Eredità",venditabeni:"Vendita di beni",investimenti:"Investimenti",risparmi:"Risparmi"})],
+      ["Modalità di pagamento previste", cbList("pagamento",{bonifico:"Bonifico bancario",assegnocirc:"Assegno circolare",assegnobanc:"Assegno bancario"})],
+      ["Osservazioni del Mediatore", val("op_descrizione")]
+    ]);
+
+    inner += '<p class="legalref"><b>6 — Valutazione del rischio della parte</b></p>';
+    inner += kv([
+      ["Natura giuridica", selText("rp_naturagiur")],
+      ["Attività svolta", selText("rp_attivita")],
+      ["Coerenza dichiarazioni/documentazione", selText("rp_coerenza")],
+      ["Area geografica", selText("rp_areageo")],
+      ["Trasparenza titolare effettivo", selText("rp_trasparenza_te")],
+      ["Qualifica PEP", selText("rp_pep")]
+    ]);
+
+    inner += '<p class="legalref"><b>7 — Valutazione della prestazione</b></p>';
+    inner += kv([
+      ["Tipologia della controversia", selText("vp_tipologia")],
+      ["Valore economico", selText("vp_valore")],
+      ["Modalità operative", selText("vp_modalita")],
+      ["Coerenza controversia/operazione con il profilo della parte", selText("vp_coerenza")],
+      ["Complessità dell’operazione", selText("vp_complessita")]
+    ]);
+
+    inner += '<p class="legalref"><b>8 — Esame delle anomalie</b></p>';
+    const anLabels = {
+      1:"Informazioni contraddittorie o incoerenti",
+      2:"Documentazione incompleta o incoerente rispetto alle dichiarazioni rese",
+      3:"Rifiuto di fornire i dati o la documentazione necessari per l\'adeguata verifica",
+      4:"Utilizzo di soggetti interposti o di strutture societarie non adeguatamente trasparenti",
+      5:"Movimentazioni economiche non coerenti con il valore della controversia o con il profilo economico della parte",
+      6:"Reticenza o ingiustificato rifiuto di fornire informazioni rilevanti ai fini dell\'adeguata verifica",
+      7:"Controversia apparentemente artificiosa o priva di reale contrapposizione",
+      8:"Accordo manifestamente sproporzionato rispetto all\'oggetto della controversia",
+      9:"Pagamento o trasferimento a favore di un soggetto estraneo alla controversia",
+      10:"Pagamento effettuato da un terzo privo di apparente collegamento con la procedura",
+      11:"Modifiche frequenti e non giustificate del beneficiario o delle modalità di pagamento",
+      12:"Trasferimento di immobili, aziende o partecipazioni a valori apparentemente incongrui",
+      13:"Utilizzo ingiustificato di contanti, conti esteri, cripto-attività o strumenti non ordinari",
+      14:"Utilizzo di società, trust o soggetti interposti non coerente con la controversia",
+      15:"Ripetute procedure di mediazione tra soggetti collegati",
+      16:"Rifiuto di chiarire la titolarità effettiva o la provenienza dei fondi",
+      17:"Richieste anomale e ingiustificate di occultamento dell\'identità dei soggetti coinvolti, del beneficiario, della provenienza dei fondi o delle condizioni economiche dell\'accordo"
+    };
+    inner += kv([
+      ["Sono emersi indicatori di anomalia?", optText("anomalie_presenti", v("anomalie_presenti"))],
+      ["Indicatori rilevati", cbList("an", anLabels)],
+      ["Le anomalie hanno ricevuto una spiegazione ragionevole e documentata?", optText("anomalie_spiegate", v("anomalie_spiegate"))],
+      ["Approfondimenti svolti", val("anomalie_approfondimenti")],
+      ["Documentazione acquisita a giustificazione", val("anomalie_documentazione")]
+    ]);
+
+    inner += '<p class="legalref"><b>9 — Valutazione complessiva del rischio</b></p>';
+    inner += kv([
+      ["Livello di rischio", "<b>"+esc(lvl)+"</b>"],
+      ["Motivazione", val("risk_motivazione")]
+    ]);
+
+    inner += '<p class="legalref"><b>10 — Misure di adeguata verifica</b></p>';
+    inner += kv([
+      ["Tipo di adeguata verifica applicata", selText("av_tipo")],
+      ["Misure rafforzate adottate", cbList("avmis",{docint:"Acquisizione di ulteriore documentazione",approftit:"Approfondimento sul titolare effettivo",provfondi:"Verifica della provenienza dei fondi",benef:"Verifica del beneficiario dell’operazione",terzi:"Verifica di soggetti terzi coinvolti"})]
+    ]);
+
+    inner += '<p class="legalref"><b>11 — Documentazione acquisita</b></p>';
+    inner += '<p>'+cbList("docacq",{identita:"Documento di identità",cf:"Codice fiscale",visura:"Visura camerale",statuto:"Statuto",attocost:"Atto costitutivo",procalliti:"Procura alle liti",procspec:"Procura speciale o sostanziale",procnot:"Procura notarile",modulomav:"Modulo di Adeguata Verifica"})+'</p>';
+
+    inner += '<p class="legalref"><b>12 — Esito complessivo sulla parte e determinazioni finali</b></p>';
+    inner += '<p>'+cbList("esito",{nessuno:"Nessun elemento di anomalia",monitoraggio:"Monitoraggio nel corso della procedura",rafforzata:"Adeguata verifica rafforzata",ulteriori:"Valutazione di eventuali ulteriori adempimenti"})+'</p>';
+    if(v("esito_osservazioni")) inner += '<p style="font-size:13px">'+val("esito_osservazioni")+'</p>';
+
+    inner += '<p class="legalref"><b>13 — Trasmissione interna</b></p>';
+    inner += kv([
+      ["Trasmissione al Responsabile antiriciclaggio / Referente SOS", optText("trasm_tipo", v("trasm_tipo"))],
+      ["Data", esc(v("trasm_data")?dateIt("trasm_data"):"")||blank],
+      ["Destinatario", val("trasm_destinatario")],
+      ["Motivo della trasmissione", val("trasm_motivo")],
+      ["Annotazioni riservate", val("trasm_annotazioni")]
+    ]);
+
+    inner += '<div class="sign"><div>Luogo e data: '+blank+'</div><div>Il Mediatore: '+blank+'</div></div>';
+    inner += '<p class="legalref" style="margin-top:14px"><b>Verifica del Responsabile dell\'Organismo / RAR</b></p>';
+    inner += kv([
+      ["Data", esc(v("resp_data")?dateIt("resp_data"):"")||blank],
+      ["Esito", optText("resp_esito", v("resp_esito"))],
+      ["Note", val("resp_note")]
+    ]);
+    inner += '<div class="sign"><div>&nbsp;</div><div>Firma: '+blank+'</div></div>';
+
+    return docBlock("mSVR","SCHEDA DI VALUTAZIONE DEL RISCHIO ANTIRICICLAGGIO (artt. 17, 20 e ss. D.Lgs. 231/2007)", inner);
   }
+
   function modDich(){
-    return docBlock("m4","MODULO 4 — Dichiarazione del cliente (art. 22 D.Lgs. 231/2007)",
-      '<p>Il/La sottoscritto/a <b>'+val("p_nome")+'</b> (C.F./P.IVA '+val("p_cf")+'), in relazione alla procedura di mediazione n. '+val("proc_n")+' presso '+val("odm_nome")+', sotto la propria responsabilità <b>dichiara</b> che i dati e le informazioni forniti ai fini degli obblighi di adeguata verifica sono completi, veritieri e aggiornati, e si impegna a comunicare tempestivamente ogni variazione.</p>'+
-      '<p class="legalref">Resa ai sensi dell’art. 22 D.Lgs. 231/2007. Le dichiarazioni false sono punite ex art. 55, c. 3 del medesimo decreto.</p>'+sign);
+    return docBlock("m4","MODULO — Dichiarazione del cliente (art. 22 D.Lgs. 231/2007)",
+      '<p>Il/La sottoscritto/a <b>'+val("p_nome")+'</b> (C.F./P.IVA '+val("p_cf")+'), in relazione alla procedura di mediazione n. '+val("proc_n")+' presso '+val("odm_nome")+', sotto la propria responsabilità <b>dichiara</b> che i dati e le informazioni forniti ai fini degli obblighi di adeguata verifica sono completi, veritieri e aggiornati, e si impegna a comunicare tempestivamente ogni variazione entro 30 giorni dal suo verificarsi.</p>'+
+      '<p class="legalref">Resa ai sensi dell'+String.fromCharCode(8217)+'art. 22 D.Lgs. 231/2007. Le dichiarazioni false sono punite ex art. 55, c. 3 del medesimo decreto.</p>'+sign);
   }
   function modSOS(){
     const lvl = calcRisk();
     if(lvl!=="ALTO") return "";
-    return docBlock("m5","MODULO 5 — Promemoria interno per la SOS (artt. 35-41) — RISERVATO",
+    return docBlock("m5","MODULO — Promemoria interno per la SOS (artt. 35-41) — RISERVATO",
       kv([
         ["Procedura / parti", val("proc_n")+" — "+val("p_nome")],
         ["Elemento di sospetto", "<i>(descrivere)</i> "+blank],
@@ -481,7 +748,7 @@
   }
 
   function modInformativa(){
-    return docBlock("m0","MODULO 0 — Informativa antiriciclaggio e privacy (art. 13 GDPR; artt. 17-22, 31 D.Lgs. 231/2007)",
+    return docBlock("m0","MODULO — Informativa antiriciclaggio e privacy (art. 13 GDPR; artt. 17-22, 31 D.Lgs. 231/2007)",
       kv([
         ["Titolare del trattamento", val("odm_nome")],
         ["N. procedura", val("proc_n")],
@@ -489,7 +756,7 @@
         ["Data di consegna", today()]
       ])+
       '<p><b>Finalità:</b> adempimento degli obblighi di adeguata verifica, conservazione ed eventuale segnalazione (D.Lgs. 231/2007). <b>Base giuridica:</b> obbligo legale (art. 6.1.c GDPR); il conferimento è necessario, il rifiuto impedisce la procedura. <b>Dati:</b> identificativi, documento d’identità, titolare effettivo, dati sull’operazione. <b>Conservazione:</b> 10 anni dalla conclusione (art. 31). <b>Comunicazione:</b> a UIF e Autorità nei soli casi di legge. <b>Diritti:</b> accesso e rettifica; cancellazione/opposizione limitate dall’obbligo di conservazione; reclamo al Garante.</p>'+
-      '<p class="legalref"><b>Riservatezza:</b> vietato comunicare all’interessato l’eventuale inoltro di una segnalazione (divieto di tipping-off, art. 39). Non è un consenso: il trattamento si fonda su un obbligo di legge. Far sottoscrivere per presa visione.</p>'+
+      '<p class="legalref"><b>Riservatezza:</b> vietato comunicare all'+String.fromCharCode(8217)+'interessato l'+String.fromCharCode(8217)+'eventuale inoltro di una segnalazione (divieto di tipping-off, art. 39). Non è un consenso: il trattamento si fonda su un obbligo di legge. Far sottoscrivere per presa visione.</p>'+
       '<div class="sign"><div>La parte (presa visione): '+blank+'</div><div>Data: '+blank+'</div></div>');
   }
   function modAnnotazione(){
@@ -511,8 +778,8 @@
       "Informativa AML/privacy consegnata e sottoscritta",
       "Copia documento d’identità della parte e dell’esecutore",
       te?"Dichiarazione titolare effettivo (persona giuridica)":null,
-      "Scheda di adeguata verifica datata e sottoscritta",
-      "Scheda di rischio (anche se basso) sottoscritta",
+      "Modulo di Adeguata Verifica compilato e sottoscritto (Sez. A-H)",
+      "Scheda di valutazione del rischio compilata (anche se basso)",
       "Dichiarazione del cliente ex art. 22",
       "Foglio di annotazione AML allegato",
       "Tracciabilità dei pagamenti (art. 49)",
@@ -527,15 +794,26 @@
     const out = $("out");
     let html = "";
     if(role==="avvocato"){
-      html += '<div class="note no-print"><b>Nota.</b> L’assistenza in mediazione è di regola esente (Regola Tecnica n. 2 CNF). I modelli sotto vanno usati solo se l’incarico comporta un’operazione dell’art. 3 c. 4 lett. c).</div>';
+      html += '<div class="note no-print"><b>Nota.</b> L\'assistenza in mediazione è di regola esente (Regola Tecnica n. 2 CNF). I modelli sotto vanno usati solo se l\'incarico comporta un\'operazione dell\'art. 3 c. 4 lett. c).</div>';
     }
-    html += modInformativa() + modAdeguata() + modTE() + modRischio() + modDich() + modSOS() + modAnnotazione() + modChecklist();
-    html += '<div class="note no-print" data-print><b>Conservazione.</b> Stampa o salva questi modelli e inseriscili nel fascicolo riservato dell’Organismo, separato dal fascicolo ordinario, per 10 anni (art. 31 D.Lgs. 231/2007).</div>';
+    html += modInformativa() + modAV() + modSchedaRischio() + modDich() + modSOS() + modAnnotazione() + modChecklist();
+    html += '<div class="note no-print" data-print><b>Conservazione.</b> Stampa o salva questi modelli e inseriscili nel fascicolo riservato dell\'Organismo, separato dal fascicolo ordinario, per 10 anni (art. 31 D.Lgs. 231/2007).</div>';
     out.innerHTML = html;
     out.style.display = "block";
     out.scrollIntoView({behavior:"smooth"});
   }
 
+  function reset(){
+    document.querySelectorAll("input,select,textarea").forEach(el=>{
+      if(el.tagName==="SELECT"){ el.selectedIndex=0; }
+      else if(el.type==="checkbox"){ el.checked=false; }
+      else { el.value=""; }
+    });
+    riskLivelloManual = false; avTipoManual = false;
+    syncToggles();
+    $("out").style.display="none"; $("out").innerHTML="";
+    calcRisk();
+  }
   function printOne(id){
     const node = $(id).cloneNode(true);
     node.querySelectorAll(".acts").forEach(a=>a.remove());
@@ -558,10 +836,6 @@
     a.href = URL.createObjectURL(blob);
     a.download = "modelli_antiriciclaggio_"+(v("proc_n").replace(/[^\w]/g,"_")||"procedura")+".html";
     a.click(); URL.revokeObjectURL(a.href);
-  }
-  function reset(){
-    document.querySelectorAll("input,select,textarea").forEach(el=>{ if(el.tagName==="SELECT"){el.selectedIndex=0;} else el.value=""; });
-    $("teBlock").style.display="none"; $("out").style.display="none"; $("out").innerHTML=""; calcRisk();
   }
   function toast(msg){
     const t=document.createElement("div");
@@ -630,7 +904,7 @@
   function copyMot(){ const el=$("motText"); if(el) navigator.clipboard.writeText(el.innerText).then(()=>toast("Bozza copiata")); }
   buildTriggers();
 
-  // ---------- Moduli in bianco da stampare ----------
+
   function moduliBianco(){
     const fld = (l) => '<tr><td style="width:40%;background:#f4f1ee;border:1px solid #ddd6d1;padding:8px 10px;font-size:13px">'+l+'</td><td style="border:1px solid #ddd6d1;padding:8px 10px;height:30px"></td></tr>';
     const tbl = (fields) => '<table style="width:100%;border-collapse:collapse;margin:6px 0">'+fields.map(fld).join('')+'</table>';
@@ -641,45 +915,146 @@
     const sign = '<p style="font-size:13px;margin-top:14px">Luogo e data __________________________     Firma __________________________________</p>';
     let h = '';
     h += title('MODULO 0 — Informativa antiriciclaggio e privacy','art. 13 GDPR e artt. 17-22, 31 D.Lgs. 231/2007 — da consegnare e far firmare alle parti PRIMA di raccogliere i dati');
-    h += '<p style="font-size:12px;color:#555">Primo modulo da usare al tavolo. Non è un consenso (il trattamento si fonda su un obbligo di legge): è un’informativa, da far sottoscrivere per presa visione e conservare nel fascicolo.</p>';
+    h += '<p style="font-size:12px;color:#555">Primo modulo da usare al tavolo. Non è un consenso (il trattamento si fonda su un obbligo di legge): è un\'informativa, da far sottoscrivere per presa visione e conservare nel fascicolo.</p>';
     h += tbl(['Titolare del trattamento (Organismo)','N. procedura','Parte destinataria','Data di consegna']);
-    h += '<p style="font-size:12.5px;margin:6px 0"><b>Finalità:</b> adempimento degli obblighi di adeguata verifica, conservazione ed eventuale segnalazione (D.Lgs. 231/2007). <b>Base giuridica:</b> obbligo legale (art. 6.1.c GDPR); il conferimento è necessario, il rifiuto impedisce la procedura. <b>Dati:</b> identificativi, documento d’identità, titolare effettivo, dati sull’operazione. <b>Conservazione:</b> 10 anni dalla conclusione (art. 31). <b>Comunicazione:</b> a UIF e Autorità nei soli casi di legge. <b>Diritti:</b> accesso e rettifica; cancellazione/opposizione limitate dall’obbligo di conservazione; reclamo al Garante.</p>';
-    h += '<p style="font-size:11px;color:#555">Riservatezza: è vietato comunicare all’interessato l’eventuale inoltro di una segnalazione (divieto di tipping-off, art. 39).</p>';
+    h += '<p style="font-size:12.5px;margin:6px 0"><b>Finalità:</b> adempimento degli obblighi di adeguata verifica, conservazione ed eventuale segnalazione (D.Lgs. 231/2007). <b>Base giuridica:</b> obbligo legale (art. 6.1.c GDPR); il conferimento è necessario, il rifiuto impedisce la procedura. <b>Dati:</b> identificativi, documento d\'identità, titolare effettivo, dati sull\'operazione. <b>Conservazione:</b> 10 anni dalla conclusione (art. 31). <b>Comunicazione:</b> a UIF e Autorità nei soli casi di legge. <b>Diritti:</b> accesso e rettifica; cancellazione/opposizione limitate dall\'obbligo di conservazione; reclamo al Garante.</p>';
+    h += '<p style="font-size:11px;color:#555">Riservatezza: è vietato comunicare all\'interessato l\'eventuale inoltro di una segnalazione (divieto di tipping-off, art. 39).</p>';
     h += '<p style="font-size:13px;margin-bottom:0"><b>La parte dichiara di aver ricevuto e preso visione della presente informativa.</b></p>'+sign;
-    h += title('MODULO 1 — Identificazione e adeguata verifica','artt. 17-19 D.Lgs. 231/2007 — una scheda per ciascuna parte');
-    h += chk(['Persona fisica','Persona giuridica']);
-    h += tbl(['Organismo / N. procedura','Mediatore designato','Data del primo incontro','Parte (cognome e nome / denominazione)','Luogo e data di nascita / sede','Codice fiscale / P. IVA','Residenza / sede legale','Tipo e n. documento d’identità','Ente di rilascio e scadenza','Esecutore / rappresentante e poteri','Scopo e natura dell’operazione']);
+
+    h += title('MODULO DI ADEGUATA VERIFICA (Modulo AV) — Dichiarazioni per l\'adeguata verifica della parte in mediazione','ai sensi del D.Lgs. n. 231/2007 — una copia per ciascuna parte/esecutore');
+    h += '<p style="font-size:12px;color:#555">Il/la sottoscritto/a ______________________________, in qualità di ______________________ della società/dell\'ente ______________________________ (CF/P.IVA ____________________), fornisce i seguenti dati ai fini dell\'adeguata verifica antiriciclaggio.</p>';
+
+    h += '<p style="font-size:13px;margin:10px 0 2px"><b>SEZIONE A — Tipo di parte</b></p>';
+    h += chk(['Istante','Aderente']);
+    h += '<p style="font-size:12.5px;margin:4px 0"><b>Natura giuridica:</b></p>';
+    h += chk(['Persona fisica','Società di persone','S.r.l.','S.p.A.','Società cooperativa','Trust/fondazioni/enti','Società straniera','Associazione sportiva - ASD','Altro: ___________']);
+
+    h += '<p style="font-size:13px;margin:10px 0 2px"><b>SEZIONE B — Dati della parte</b></p>';
+    h += '<p style="font-size:12px;color:#555">Persona fisica:</p>';
+    h += tbl(['Nome e cognome','Luogo e data di nascita','Codice fiscale','Residenza','Cittadinanza','Telefono','PEC','E-mail','Documento di identità','Rilasciato da / il','Scadenza','Professione o attività economica prevalente','Settore di attività']);
+    h += '<p style="font-size:12px;color:#555;margin-top:8px">Persona giuridica:</p>';
+    h += tbl(['Denominazione','Forma giuridica','Sede legale','Capitale sociale (ove applicabile)','C.F./P. IVA','PEC','E-mail']);
+
+    h += '<p style="font-size:13px;margin:10px 0 2px"><b>SEZIONE C — Rappresentante o soggetto autorizzato</b></p>';
+    h += chk(['Legale rappresentante','Difensore','Procuratore speciale per la mediazione','Esecutore art. 1 c.2 lett. p)','Altro: ___________']);
+    h += tbl(['Nome e cognome','Luogo e data di nascita','Codice fiscale','Residenza','Documento di identità','Legame con la parte/con l\'ente']);
+    h += '<p style="font-size:12.5px;margin:4px 0"><b>Titolo:</b></p>'+chk(['Statuto','Visura camerale','Procura notarile','Procura speciale per la mediazione','Altro']);
+    h += '<p style="font-size:12.5px;margin:4px 0"><b>Poteri conferiti:</b></p>'+chk(['Rappresentare la parte','Formulare/ricevere proposte','Disporre del diritto controverso','Sottoscrivere l\'accordo','Altro']);
+
+    h += '<p style="font-size:13px;margin:10px 0 2px"><b>SEZIONE D — Persona politicamente esposta (PEP)</b></p>';
+    h += chk(['Non essere PEP','Essere PEP','Essere familiare di PEP','Essere soggetto collegato a una PEP']);
+    h += tbl(['Carica pubblica ricoperta','Stato/ente/organizzazione','Data di cessazione della carica (se cessata)','Se familiare/collegato, specificare il rapporto']);
+
+    h += '<p style="font-size:13px;margin:10px 0 2px"><b>SEZIONE E — Titolare effettivo</b></p>';
+    h += '<p style="font-size:12px;color:#555">Se persona fisica:</p>'+chk(['Agisce nel proprio esclusivo interesse','Agisce per conto di un soggetto terzo (compilare dati sotto)']);
+    h += tbl(['Nome e cognome del titolare effettivo','Luogo e data di nascita','Codice fiscale','Residenza']);
+    h += '<p style="font-size:12px;color:#555;margin-top:6px">Se persona giuridica — criterio:</p>'+chk(['Proprietà diretta','Proprietà indiretta','Controllo','Poteri di amministrazione/direzione','% partecipazione: _______','Altro']);
+    h += '<p style="font-size:12px;color:#555;margin-top:6px">Fonte documentale:</p>'+chk(['Visura camerale','Statuto','Libro soci','Assetto proprietario dichiarato','Documentazione societaria','Altro']);
+    h += '<p style="font-size:11px;color:#555">Avvertenza art. 55, c. 3 D.Lgs. 231/2007: dati falsi puniti con reclusione da 6 mesi a 3 anni e multa da € 10.000 a € 30.000.</p>';
+
+    h += '<p style="font-size:13px;margin:10px 0 2px"><b>SEZIONE F — Natura, valore e fondi della prestazione</b></p>';
+    h += tbl(['Oggetto della mediazione','Materia','Valore della controversia']);
+    h += '<p style="font-size:13px">Breve descrizione (sintesi vertenza e richieste):</p>'+line+line;
+    h += '<p style="font-size:12.5px;margin:4px 0"><b>L\'eventuale accordo potrà prevedere:</b></p>'+chk(['Nessun trasferimento patrimoniale','Pagamento di somme','Trasferimento immobile','Trasferimento quote societarie','Trasferimento azienda','Diritti reali','Obblighi fare/non fare','Altro']);
+    h += '<p style="font-size:12.5px;margin:4px 0"><b>Provenienza delle somme:</b></p>'+chk(['Redditi lavoro dipendente','Redditi lavoro autonomo','Reddito d\'impresa','Disponibilità ente/società','Finanziamento bancario','Mutuo','Donazione','Eredità','Vendita beni','Investimenti','Risparmi','Altro']);
+    h += '<p style="font-size:12.5px;margin:4px 0"><b>Modalità di pagamento:</b></p>'+chk(['Bonifico bancario','Assegno circolare','Assegno bancario','Altro']);
+
+    h += '<p style="font-size:13px;margin:10px 0 2px"><b>SEZIONE G — Dichiarazioni</b></p>';
+    h += chk(['Dati veritieri, completi e aggiornati','Impegno a comunicare variazioni entro 30gg','Presa visione informativa privacy']);
+    h += '<p style="font-size:12.5px;margin:4px 0">Carichi pendenti reati economici/tributari/societari: ☐ Nessuno&nbsp;&nbsp;☐ Presenti (specificare) ______________________</p>';
+
+    h += '<p style="font-size:13px;margin:10px 0 2px"><b>SEZIONE H — Documenti allegati</b></p>';
+    h += chk(['Documento identità','Codice fiscale','Visura camerale','Procura alle liti','Procura sostanziale','Procura notarile','Statuto','Atto costitutivo','Altro']);
+    h += '<div class="sign" style="margin-top:10px">'+sign+'</div>';
+
+    h += title('SCHEDA DI VALUTAZIONE DEL RISCHIO ANTIRICICLAGGIO','artt. 17, 20 e ss. D.Lgs. 231/2007 — una scheda per ciascuna parte, sempre, anche a rischio basso');
+    h += '<p style="font-size:13px;margin:10px 0 2px"><b>1 — Dati del procedimento</b></p>';
+    h += tbl(['N. procedimento','Data deposito istanza','Data deposito adesione','Data primo incontro','Mediatore incaricato','Scheda compilata da / qualifica','Data della valutazione iniziale','Data dell\'ultimo aggiornamento','Motivo dell\'aggiornamento']);
+    h += '<p style="font-size:13px;margin:10px 0 2px"><b>2 — Dati della parte</b></p>';
+    h += chk(['Istante','Aderente','Terzo chiamato','Altro']);
+    h += tbl(['Natura giuridica','Professione/attività economica prevalente','Settore di attività']);
+    h += '<p style="font-size:12.5px;margin:4px 0"><b>Area geografica:</b></p>'+chk(['Italia','Stato UE','Stato extra UE','Paese alto rischio'])+tbl(['Specificare lo Stato (per UE/Extra UE)']);
+    h += '<p style="font-size:12.5px;margin:4px 0"><b>Modalità di identificazione:</b></p>'+chk(['In presenza fisica','Videocollegamento','Firma digitale/CIE/SPID','Soggetto terzo art. 26','Altro']);
+    h += tbl(['Identificazione effettuata da','Data']);
+    h += '<p style="font-size:12.5px;margin:4px 0">Documento verificato e in corso di validità: ☐ Sì&nbsp;&nbsp;☐ No</p>';
+    h += '<p style="font-size:12.5px;margin:4px 0"><b>Fonte o modalità di riscontro:</b></p>'+chk(['Documento originale','CIE','SPID','Firma digitale','Registro Imprese','Altro']);
+
+    h += '<p style="font-size:13px;margin:10px 0 2px"><b>3 — Titolare effettivo</b></p>';
+    h += chk(['Persona fisica che agisce nel proprio interesse','Persona giuridica con titolare effettivo individuato','Non applicabile']);
+    h += tbl(['Numero titolari effettivi individuati','Motivazione della valutazione']);
+    h += '<p style="font-size:12.5px;margin:4px 0">Esito: ☐ Verifica completata&nbsp;&nbsp;☐ Documentazione da integrare&nbsp;&nbsp;☐ Necessario approfondimento</p>';
+
+    h += '<p style="font-size:13px;margin:10px 0 2px"><b>4 — Persona politicamente esposta (PEP)</b></p>';
+    h += '<p style="font-size:12.5px;margin:4px 0">La parte è PEP: ☐ No&nbsp;&nbsp;☐ Sì &nbsp;&nbsp; Titolare effettivo PEP: ☐ N/A&nbsp;&nbsp;☐ No&nbsp;&nbsp;☐ Sì &nbsp;&nbsp; Rappresentante PEP: ☐ N/A&nbsp;&nbsp;☐ No&nbsp;&nbsp;☐ Sì</p>';
+    h += tbl(['Motivazione della valutazione']);
+
+    h += '<p style="font-size:13px;margin:10px 0 2px"><b>5 — Prestazione</b></p>';
+    h += tbl(['Oggetto della mediazione','Materia','Valore della controversia']);
+
+    h += '<p style="font-size:13px;margin:10px 0 2px"><b>6 — Valutazione del rischio della parte</b></p>';
+    h += '<table style="width:100%;border-collapse:collapse;margin:6px 0;font-size:12.5px">'+
+      '<tr style="background:#13161b;color:#fff"><td style="padding:5px 7px">Elemento</td><td style="padding:5px 7px">Basso</td><td style="padding:5px 7px">Medio</td><td style="padding:5px 7px">Alto</td></tr>'+
+      ['Natura giuridica','Attività svolta','Coerenza dichiarazioni/documentazione','Area geografica','Trasparenza titolare effettivo','Qualifica PEP']
+        .map(e=>'<tr><td style="padding:5px 7px;border-bottom:1px solid #eee">'+e+'</td><td style="padding:5px 7px;border-bottom:1px solid #eee">☐</td><td style="padding:5px 7px;border-bottom:1px solid #eee">☐</td><td style="padding:5px 7px;border-bottom:1px solid #eee">☐</td></tr>').join('')+
+      '</table>';
+
+    h += '<p style="font-size:13px;margin:10px 0 2px"><b>7 — Valutazione della prestazione</b></p>';
+    h += '<table style="width:100%;border-collapse:collapse;margin:6px 0;font-size:12.5px">'+
+      '<tr style="background:#13161b;color:#fff"><td style="padding:5px 7px">Elemento</td><td style="padding:5px 7px">Basso</td><td style="padding:5px 7px">Medio</td><td style="padding:5px 7px">Alto</td><td style="padding:5px 7px">N/A</td></tr>'+
+      ['Tipologia della controversia','Valore economico','Modalità operative','Coerenza con il profilo della parte','Complessità dell\'operazione']
+        .map(e=>'<tr><td style="padding:5px 7px;border-bottom:1px solid #eee">'+e+'</td><td style="padding:5px 7px;border-bottom:1px solid #eee">☐</td><td style="padding:5px 7px;border-bottom:1px solid #eee">☐</td><td style="padding:5px 7px;border-bottom:1px solid #eee">☐</td><td style="padding:5px 7px;border-bottom:1px solid #eee">☐</td></tr>').join('')+
+      '</table>';
+
+    h += '<p style="font-size:13px;margin:10px 0 2px"><b>8 — Esame delle anomalie</b></p>';
+    h += '<p style="font-size:12.5px;margin:4px 0">Sono emersi indicatori di anomalia: ☐ No&nbsp;&nbsp;☐ Sì</p>';
+    h += chk(['Informazioni contraddittorie o incoerenti','Documentazione incompleta o incoerente rispetto alle dichiarazioni rese','Rifiuto di fornire i dati o la documentazione necessari per l\'adeguata verifica','Utilizzo di soggetti interposti o di strutture societarie non adeguatamente trasparenti','Movimentazioni economiche non coerenti con il valore della controversia o con il profilo economico della parte','Reticenza o ingiustificato rifiuto di fornire informazioni rilevanti ai fini dell\'adeguata verifica','Controversia apparentemente artificiosa o priva di reale contrapposizione','Accordo manifestamente sproporzionato rispetto all\'oggetto della controversia','Pagamento o trasferimento a favore di un soggetto estraneo alla controversia','Pagamento effettuato da un terzo privo di apparente collegamento con la procedura','Modifiche frequenti e non giustificate del beneficiario o delle modalità di pagamento','Trasferimento di immobili, aziende o partecipazioni a valori apparentemente incongrui','Utilizzo ingiustificato di contanti, conti esteri, cripto-attività o strumenti non ordinari','Utilizzo di società, trust o soggetti interposti non coerente con la controversia','Ripetute procedure di mediazione tra soggetti collegati','Rifiuto di chiarire la titolarità effettiva o la provenienza dei fondi','Richieste anomale e ingiustificate di occultamento dell\'identità dei soggetti coinvolti, del beneficiario, della provenienza dei fondi o delle condizioni economiche dell\'accordo']);
+    h += '<p style="font-size:12.5px;margin:4px 0">Le anomalie hanno ricevuto una spiegazione ragionevole e documentata: ☐ Sì&nbsp;&nbsp;☐ No</p>';
+    h += '<p style="font-size:13px">Approfondimenti svolti:</p>'+line+'<p style="font-size:13px">Documentazione acquisita a giustificazione:</p>'+line;
+
+    h += '<p style="font-size:13px;margin:10px 0 2px"><b>9 — Valutazione complessiva del rischio</b></p>';
+    h += '<p style="font-size:12.5px;margin:4px 0">☐ Basso&nbsp;&nbsp;☐ Medio&nbsp;&nbsp;☐ Alto</p>'+tbl(['Motivazione']);
+
+    h += '<p style="font-size:13px;margin:10px 0 2px"><b>10 — Misure di adeguata verifica</b></p>';
+    h += chk(['Adeguata verifica semplificata (art. 23)','Adeguata verifica ordinaria (art. 18)','Adeguata verifica rafforzata (artt. 24-25)']);
+    h += '<p style="font-size:12.5px;margin:4px 0"><b>Misure rafforzate adottate:</b></p>'+chk(['Ulteriore documentazione','Approfondimento titolare effettivo','Verifica provenienza fondi','Verifica beneficiario','Verifica soggetti terzi','Altro']);
+
+    h += '<p style="font-size:13px;margin:10px 0 2px"><b>11 — Documentazione acquisita</b></p>';
+    h += chk(['Documento identità','Codice fiscale','Visura camerale','Statuto','Procura speciale/sostanziale','Procura notarile','Modulo di Adeguata Verifica','Altro']);
+
+    h += '<p style="font-size:13px;margin:10px 0 2px"><b>12 — Esito complessivo sulla parte e determinazioni finali</b></p>';
+    h += chk(['Nessun elemento di anomalia','Monitoraggio nel corso della procedura','Adeguata verifica rafforzata','Valutazione ulteriori adempimenti']);
+    h += '<p style="font-size:13px">Osservazioni finali:</p>'+line+line;
+
+    h += '<p style="font-size:13px;margin:10px 0 2px"><b>13 — Trasmissione interna</b></p>';
+    h += '<p style="font-size:12.5px;margin:4px 0">☐ Non necessaria&nbsp;&nbsp;☐ Effettuata in data ___________</p>';
+    h += tbl(['Destinatario','Motivo della trasmissione','Annotazioni riservate']);
     h += sign;
-    h += title('MODULO 2 — Dichiarazione sul titolare effettivo','artt. 18, 20, 22 — persone giuridiche');
-    h += tbl(['Parte (denominazione)','Codice fiscale / P. IVA','Legale rappresentante dichiarante','Titolare effettivo (cognome e nome)','Luogo e data di nascita','Codice fiscale']);
-    h += chk(['quota > 25%','controllo con altri mezzi','poteri di amministrazione/direzione']);
-    h += '<p style="font-size:11px;color:#555">Avvertenza art. 55, c. 3 D.Lgs. 231/2007: dati falsi puniti con reclusione da 6 mesi a 3 anni e multa da € 10.000 a € 30.000.</p>'+sign;
-    h += title('MODULO 3 — Scheda di valutazione del rischio','art. 15 — da compilare anche per il rischio basso');
-    h += tbl(['N. procedura / parti','Natura e scopo dell’operazione','Importo e modalità di pagamento','Oggetto della controversia','Indicatori UIF rilevati (n.)']);
-    h += '<div style="font-size:13px;margin:6px 0"><b>Fattori di rischio:</b> ☐ Paesi a rischio&nbsp;&nbsp;☐ PEP&nbsp;&nbsp;☐ Struttura opaca/trust&nbsp;&nbsp;☐ Contante/frazionamento&nbsp;&nbsp;☐ Incongruenza importo&nbsp;&nbsp;☐ Reticenza</div>';
-    h += '<div style="font-size:13px;margin:6px 0"><b>Livello di rischio:</b> ☐ Basso&nbsp;&nbsp;☐ Medio&nbsp;&nbsp;☐ Alto</div>';
-    h += sign;
-    h += title('MODULO 4 — Dichiarazione del cliente','art. 22');
+    h += '<p style="font-size:13px;margin:10px 0 2px"><b>Verifica del Responsabile dell\'Organismo / RAR</b></p>';
+    h += tbl(['Data']);
+    h += '<p style="font-size:12.5px;margin:4px 0">Esito: ☐ Conforme&nbsp;&nbsp;☐ Da integrare&nbsp;&nbsp;☐ Necessari ulteriori approfondimenti</p>';
+    h += tbl(['Note'])+sign;
+
+    h += title('MODULO — Dichiarazione del cliente','art. 22');
     h += tbl(['Dichiarante (parte / esecutore)','Procedura n.']);
     h += '<p style="font-size:13px">Il/La sottoscritto/a, sotto la propria responsabilità, dichiara che i dati e le informazioni forniti ai fini degli obblighi di adeguata verifica sono completi, veritieri e aggiornati, e si impegna a comunicare tempestivamente ogni variazione.</p>'+sign;
     h += title('MODULO SI-AML/01 — Segnalazione interna anomalia','RISERVATO — conservazione a cura del RAR');
     h += tbl(['Procedura / parti','Mediatore segnalante','Data e ora di redazione']);
-    h += '<div style="font-size:13px;margin:6px 0"><b>Trigger attivato:</b> ☐ T1&nbsp;&nbsp;☐ T2&nbsp;&nbsp;☐ T3&nbsp;&nbsp;☐ T4&nbsp;&nbsp;☐ T5&nbsp;&nbsp;☐ T6&nbsp;&nbsp;☐ T7</div>';
-    h += '<p style="font-size:13px;margin-bottom:0"><b>Descrizione sintetica dell’anomalia:</b></p>'+line+line+line+line;
+    h += '<p style="font-size:13px;margin-bottom:0"><b>Descrizione sintetica dell\'anomalia:</b></p>'+line+line+line+line;
     h += '<p style="font-size:11px;color:#555">Segnalazione resa in buona fede (artt. 35 e 39 D.Lgs. 231/2007; artt. 9-10 D.Lgs. 28/2010); non costituisce SOS, la cui decisione spetta al RAR.</p>'+sign;
     h += title('FOGLIO DI ANNOTAZIONE AML — da allegare (riservato) al fascicolo','da NON inserire nel verbale: tiene fuori dal verbale i contenuti antiriciclaggio');
-    h += '<p style="font-size:12px;color:#555">Attesta gli adempimenti svolti senza disvelarli alle parti. Nel verbale di mediazione non si riportano né il rischio, né le anomalie, né l’eventuale segnalazione (artt. 9-10 D.Lgs. 28/2010; art. 39 D.Lgs. 231/2007).</p>';
+    h += '<p style="font-size:12px;color:#555">Attesta gli adempimenti svolti senza disvelarli alle parti. Nel verbale di mediazione non si riportano né il rischio, né le anomalie, né l\'eventuale segnalazione (artt. 9-10 D.Lgs. 28/2010; art. 39 D.Lgs. 231/2007).</p>';
     h += tbl(['N. procedura / parti','Mediatore','Sessione / data','Esito (accordo / mancato accordo)']);
     ['Informativa AML/privacy consegnata e sottoscritta','Identificazione e adeguata verifica eseguite per tutte le parti','Titolare effettivo acquisito per le persone giuridiche','Dichiarazione del cliente acquisita','Scheda di rischio compilata (anche se basso)'].forEach(x => h += ck(x));
     h += '<div style="font-size:13px;margin:6px 0"><b>Esito complessivo:</b> ☐ nessuna anomalia&nbsp;&nbsp;☐ anomalia rilevata → redatto SI-AML/01 e trasmesso al RAR</div>';
     h += '<p style="font-size:13px;margin-bottom:0"><b>Annotazioni neutre (senza contenuti coperti dal segreto):</b></p>'+line+line+line+sign;
     h += title('CHECKLIST — Contenuto minimo del fascicolo riservato');
-    ['Informativa AML/privacy consegnata e sottoscritta','Copia documento d’identità di ciascuna parte e dell’esecutore','Dichiarazione titolare effettivo per le persone giuridiche','Scheda di adeguata verifica datata e sottoscritta','Scheda di rischio (anche se basso) sottoscritta','Dichiarazione del cliente ex art. 22','Foglio di annotazione AML allegato al fascicolo','Tracciabilità dei pagamenti (rispetto art. 49)','Eventuale Modulo SI-AML/01 e prova della SOS (separati e riservati)','Attestati di formazione aggiornati','Conservazione decennale, separata dal fascicolo ordinario'].forEach(x => h += ck(x));
+    ['Informativa AML/privacy consegnata e sottoscritta','Copia documento d\'identità di ciascuna parte e dell\'esecutore','Dichiarazione titolare effettivo per le persone giuridiche','Modulo di Adeguata Verifica (Sez. A-H) datato e sottoscritto','Scheda di valutazione del rischio (anche se basso) sottoscritta','Dichiarazione del cliente ex art. 22','Foglio di annotazione AML allegato al fascicolo','Tracciabilità dei pagamenti (rispetto art. 49)','Eventuale Modulo SI-AML/01 e prova della SOS (separati e riservati)','Attestati di formazione aggiornati','Conservazione decennale, separata dal fascicolo ordinario'].forEach(x => h += ck(x));
     const css = '<style>body{font-family:Segoe UI,Arial,sans-serif;color:#13161b;max-width:780px;margin:20px auto;padding:0 14px}h1{color:#a03317;font-size:18px;margin-bottom:4px}button{font-size:14px;padding:8px 14px;border:1px solid #a03317;background:#a03317;color:#fff;border-radius:8px;cursor:pointer}@media print{.np{display:none}}</style>';
     const w = window.open('','_blank');
-    w.document.write('<!doctype html><html lang="it"><head><meta charset="utf-8"><title>Moduli antiriciclaggio in bianco</title>'+css+'</head><body><h1>Moduli antiriciclaggio in bianco</h1><p style="font-size:12px;color:#555">Da stampare e compilare a mano. Inserire nel fascicolo riservato dell’Organismo (conservazione 10 anni, art. 31 D.Lgs. 231/2007).</p>'+h+'<div class="np" style="margin:20px 0"><button onclick="window.print()">🖨️ Stampa</button></div></body></html>');
+    w.document.write('<!doctype html><html lang="it"><head><meta charset="utf-8"><title>Moduli antiriciclaggio in bianco</title>'+css+'</head><body><h1>Moduli antiriciclaggio in bianco</h1><p style="font-size:12px;color:#555">Da stampare e compilare a mano. Inserire nel fascicolo riservato dell\'Organismo (conservazione 10 anni, art. 31 D.Lgs. 231/2007).</p>'+h+'<div class="np" style="margin:20px 0"><button onclick="window.print()">🖨️ Stampa</button></div></body></html>');
     w.document.close(); w.focus();
   }
+
 </script>
 </body>
 </html>
