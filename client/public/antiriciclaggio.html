@@ -324,12 +324,22 @@
           <div class="role" data-role="avvocato"><b>Avvocato di parte</b><small>solo se operazione ex art. 3 c.4 c)</small></div>
         </div>
 <h3 class="grouph">1 — Dati del procedimento</h3><div class="grid"><div class="field"><label>Denominazione Organismo</label><div class="hint">Nome dell'Organismo di mediazione (ODM) presso cui pende la procedura.</div><input id="odm_nome" type="text" placeholder="Organismo di Mediazione ..." ></div><div class="field"><label>N. iscrizione registro Min. Giustizia</label><div class="hint">Numero di iscrizione dell'ODM nel registro tenuto dal Ministero della Giustizia.</div><input id="odm_iscr" type="text" placeholder="n. ..." ></div><div class="field"><label>Sede</label><div class="hint">Indirizzo della sede dell'Organismo.</div><input id="odm_sede" type="text" placeholder="Via ..., Città" ></div><div class="field"><label>Legale rappresentante</label><div class="hint">Nome e cognome del legale rappresentante dell'Organismo.</div><input id="odm_lr" type="text" placeholder="Nome Cognome" ></div><div class="field"><label>N. procedura / R.G. mediazione</label><div class="hint">Numero identificativo della procedura assegnato dall'Organismo.</div><input id="proc_n" type="text" placeholder="n. .../20.." ></div><div class="field"><label>Data deposito istanza</label><div class="hint">Data in cui l'istante ha depositato la domanda di mediazione.</div><input id="proc_data_dep_istanza" type="date" placeholder="" ></div><div class="field"><label>Data deposito adesione</label><div class="hint">Data in cui la parte aderente ha depositato l'adesione (se presente).</div><input id="proc_data_dep_adesione" type="date" placeholder="" ></div><div class="field"><label>Data primo incontro</label><div class="hint">Data del primo incontro tra le parti e il mediatore.</div><input id="proc_data" type="date" placeholder="" ></div><div class="field"><label>Mediatore designato</label><div class="hint">Nome e cognome del mediatore incaricato della procedura.</div><input id="proc_med" type="text" placeholder="Nome Cognome" ></div><div class="field"><label>Scheda compilata da</label><div class="hint">Nome di chi compila materialmente la scheda (mediatore o segreteria).</div><input id="scheda_compilata_da" type="text" placeholder="Nome Cognome" ></div><div class="field"><label>Qualifica</label><div class="hint">Qualifica di chi compila (es. mediatore, segreteria, RAR).</div><input id="scheda_qualifica" type="text" placeholder="es. Mediatore" ></div><div class="field"><label>Data della valutazione iniziale</label><div class="hint">Data in cui è stata svolta la prima valutazione del rischio.</div><input id="scheda_data_val_iniziale" type="date" placeholder="" ></div><div class="field"><label>Data dell'ultimo aggiornamento</label><div class="hint">Da compilare solo in caso di aggiornamento successivo della scheda.</div><input id="scheda_data_ultimo_agg" type="date" placeholder="" ></div><div class="field"><label>Motivo dell'aggiornamento</label><div class="hint">Perché la scheda è stata aggiornata (es. nuovi elementi, variazione dati).</div><input id="scheda_motivo_agg" type="text" placeholder="es. emersi nuovi elementi" ></div></div>
-<div class="ocrbox" id="ocrbox">
+<div class="ocrbox" id="aggBox">
+<h3 class="grouph">Comunicazioni e aggiornamenti del mediatore in corso di procedura</h3>
+<p class="sub">La mediazione si sviluppa spesso su più sessioni: registra qui ogni comunicazione del mediatore (rinvii, nuovi elementi, variazioni) man mano che arriva. La cronologia resta in questa pagina, viene riportata nella Scheda di valutazione del rischio generata qui sotto e aggiorna automaticamente la data dell'ultimo aggiornamento della scheda.</p>
+<div class="grid">
+<div class="field"><label>Data della comunicazione</label><input id="agg_data" type="date"></div>
+<div class="field"><label>Comunicazione ricevuta dal mediatore</label><textarea id="agg_testo" rows="2" placeholder="es. il mediatore comunica il rinvio del secondo incontro al ..."></textarea></div>
+</div>
+<button type="button" class="btn-ghost" onclick="aggiungiAggiornamento()">+ Aggiungi alla cronologia</button>
+<div id="agg_lista" style="margin-top:10px"></div>
+</div>
+<div class="ocrbox" id="ocrbox"
 <h3 class="grouph">Compilazione automatica da documenti (facoltativo)</h3><p class="sub">Carica una foto o una scansione di un documento e il sistema prova a leggerne il testo e a proporre la compilazione dei campi corrispondenti qui sotto. <b>Il riconoscimento avviene interamente nel browser</b>: i file caricati non vengono inviati a calcolomediazione.it né a server esterni (solo le librerie di riconoscimento vengono scaricate da un CDN pubblico). Il risultato va sempre controllato: l'OCR può sbagliare, soprattutto su scansioni di scarsa qualità, documenti stranieri o formati non standard — nulla viene scritto nei campi finché non lo confermi tu.</p>
   <div class="grid">
     <div class="field">
       <label>A chi si riferisce il documento</label>
-      <div class="hint" id="ocr_target_hint">La persona o sezione del modulo in cui inserire i dati riconosciuti. Non si applica ai tipi «Istanza/domanda di mediazione» e «Comunicazione di avvio»: in quei casi i dati vengono distribuiti automaticamente tra le sezioni del procedimento, la parte istante e il rappresentante legale.</div>
+      <div class="hint" id="ocr_target_hint">La persona o sezione del modulo in cui inserire i dati riconosciuti. Non si applica ai tipi «Istanza/domanda di mediazione», «Comunicazione di avvio», «Procura alle liti / mandato a conciliare» e «Ricevuta di pagamento spese di mediazione»: in quei casi i dati vengono distribuiti automaticamente tra le sezioni del procedimento, la parte istante, il rappresentante/difensore e le modalità di pagamento dell'operazione.</div>
       <select id="ocr_target">
         <option value="parte">Parte</option>
         <option value="rappr">Rappresentante / difensore / procuratore della parte</option>
@@ -346,6 +356,8 @@
         <option value="avvocato">Tessera professionale avvocato</option>
         <option value="istanza">Istanza / domanda di mediazione (o di adesione)</option>
         <option value="avviso">Comunicazione di avvio (mediatore designato e data incontro)</option>
+        <option value="procura">Procura alle liti / mandato a conciliare</option>
+        <option value="bonifico">Ricevuta di pagamento spese di mediazione (bonifico)</option>
       </select>
     </div>
   </div>
@@ -396,6 +408,7 @@
           <button class="btn-ghost" onclick="moduliBianco()">🖨️ Moduli in bianco (stampa)</button>
           <button class="btn-ghost" onclick="window.print()">Stampa tutto</button>
           <button class="btn-ghost" onclick="scaricaTutto()">Scarica (.html)</button>
+          <button class="btn-ghost" onclick="scaricaWord()">📄 Scarica (apri in Word)</button>
           <button class="btn-ghost" onclick="reset()">Azzera</button>
         </div>
       </div>
@@ -420,6 +433,11 @@
 
   // ---------- role ----------
   let role = "odm";
+  // Cronologia delle comunicazioni/aggiornamenti ricevuti dal mediatore in corso di procedura
+  // (es. rinvii, nuovi elementi, variazioni comunicate in una sessione successiva alla prima).
+  // Resta in memoria per la sola sessione del browser, come il resto del modulo, e viene riportata
+  // nella Scheda di valutazione del rischio generata e scaricabile.
+  let mediatoreLog = [];
   document.querySelectorAll(".role").forEach(el=>el.addEventListener("click",()=>{
     document.querySelectorAll(".role").forEach(r=>r.classList.remove("active"));
     el.classList.add("active"); role = el.dataset.role;
@@ -478,6 +496,7 @@
     .forEach(id=>$(id).addEventListener("change",calcRisk));
   document.querySelectorAll('[id^="cb_an_"]').forEach(cb=>cb.addEventListener("change",calcRisk));
   calcRisk();
+  if(typeof renderAggiornamenti === "function") renderAggiornamenti();
   // ---------- document builders ----------
   function docBlock(id,title,inner){
     return '<div class="doc" id="'+id+'"><div class="dh">'+title+
@@ -652,6 +671,14 @@
       ["Data dell’ultimo aggiornamento", esc(v("scheda_data_ultimo_agg")?dateIt("scheda_data_ultimo_agg"):"")||blank],
       ["Motivo dell’aggiornamento", val("scheda_motivo_agg")]
     ]);
+
+    if(mediatoreLog.length){
+      inner += '<p class="legalref"><b>Cronologia degli aggiornamenti comunicati dal mediatore</b></p>';
+      inner += kv(mediatoreLog.map(e => [
+        e.data ? new Date(e.data).toLocaleDateString("it-IT") : blank,
+        esc(e.testo).replace(/\n/g,"<br>")
+      ]));
+    }
 
     inner += '<p class="legalref"><b>2 — Dati della parte</b></p>';
     inner += kv([
@@ -875,6 +902,45 @@
     $("out").style.display="none"; $("out").innerHTML="";
     calcRisk();
     if(typeof ocrReset === "function") ocrReset();
+    mediatoreLog = [];
+    if(typeof renderAggiornamenti === "function") renderAggiornamenti();
+  }
+
+  // ---------- Comunicazioni e aggiornamenti del mediatore ----------
+  function aggiungiAggiornamento(){
+    const dataEl = $("agg_data"), testoEl = $("agg_testo");
+    const testo = ((testoEl && testoEl.value) || "").trim();
+    if(!testo){ toast("Scrivi il contenuto della comunicazione prima di aggiungerla."); return; }
+    const data = dataEl ? dataEl.value : "";
+    mediatoreLog.push({data: data, testo: testo});
+    if(data){
+      const ult = $("scheda_data_ultimo_agg");
+      if(ult && (!ult.value || data >= ult.value)){ ult.value = data; ult.dispatchEvent(new Event("change",{bubbles:true})); }
+    }
+    if(testoEl) testoEl.value = "";
+    renderAggiornamenti();
+    toast("Aggiornamento aggiunto alla cronologia.");
+  }
+
+  function rimuoviAggiornamento(idx){
+    mediatoreLog.splice(idx,1);
+    renderAggiornamenti();
+  }
+
+  function renderAggiornamenti(){
+    const box = $("agg_lista");
+    if(!box) return;
+    if(!mediatoreLog.length){
+      box.innerHTML = '<p class="hint">Nessuna comunicazione del mediatore registrata finora in questa sessione.</p>';
+      return;
+    }
+    box.innerHTML = mediatoreLog.map((e,i)=>
+      '<div style="border:1px solid #ddd6d1;border-radius:8px;padding:8px 10px;margin-bottom:6px;font-size:13px;background:#fff">'
+      + '<div style="display:flex;justify-content:space-between;gap:8px;align-items:baseline">'
+      + '<b>'+esc(e.data ? new Date(e.data).toLocaleDateString("it-IT") : "(senza data)")+'</b>'
+      + '<a href="#" onclick="rimuoviAggiornamento('+i+');return false;" style="color:#a03317;font-size:12px;text-decoration:none">Rimuovi</a>'
+      + '</div><div style="margin-top:3px;white-space:pre-wrap">'+esc(e.testo)+'</div></div>'
+    ).join("");
   }
 
   // ---------- OCR: compilazione automatica da documenti ----------
@@ -1251,14 +1317,52 @@
   // il nome del mediatore designato e la data (ed ora) del primo incontro.
   function ocrParseAvviso(text){
     const rows = [];
-    const med = text.match(/Mediatore designato(?:\s+è)?\s*(?:l['’]\s*)?(?:Avv\.?\s*)?([A-ZÀ-Ü][A-Za-zÀ-ÿ'.\s]{3,60}?)\s+e\s+(?:il|l['’])/i)
-      || text.match(/Mediatore designato\s*:?\s*(?:Avv\.?\s*)?([A-ZÀ-Ü][A-Za-zÀ-ÿ'.\s]{3,60})/i);
+    // Copre sia la formula "Il Mediatore designato è l'Avv. NOME e il primo incontro..." (comunicazione
+    // alla parte istante) sia "...davanti al Mediatore designato, l'Avv. NOME, presso..." (comunicazione
+    // alla parte chiamata), oltre alla forma sintetica "Mediatore designato: Avv. NOME".
+    const med = text.match(/Mediatore designato[,:]?\s*(?:è\s*)?(?:l['’]\s*)?(?:Avv\.?\s*)?([A-ZÀ-Ü][A-Za-zÀ-ÿ'.\s]{3,60}?)(?=\s*(?:,|\.|;|\s+e\s+|\s+presso\b|\s+del\b|\n\s*\n|$))/i);
     if(med) rows.push({id:"proc_med", label:"Mediatore designato (da comunicazione di avvio)", value: med[1].trim().replace(/\s+/g," ")});
 
     const dt = text.match(/fissato per il giorno\s+(\d{1,2}[\/.\-]\d{1,2}[\/.\-]\d{2,4})/i)
       || text.match(/primo incontro[^.\n]{0,40}?(\d{1,2}[\/.\-]\d{1,2}[\/.\-]\d{2,4})/i);
     if(dt){ const iso = ocrToISODate(dt[1]); if(iso) rows.push({id:"proc_data", label:"Data primo incontro (da comunicazione di avvio)", value: iso}); }
 
+    return rows;
+  }
+
+  // Procura alle liti / mandato a conciliare: individua l'avvocato nominato difensore (e, se presente,
+  // il relativo codice fiscale) e segnala che il documento risulta acquisito nel fascicolo (sezione
+  // "Documenti acquisiti").
+  function ocrParseProcura(text){
+    const rows = [];
+    const m = text.match(/[Ll]['’]\s*[Aa]vv\.?\s*([A-ZÀ-Ü][A-Za-zÀ-ÿ'’]+(?:\s+[A-ZÀ-Ü][A-Za-zÀ-ÿ'’]+){0,3})\s*\(?\s*C\.?\s*F\.?\s*:?\s*([A-Z0-9]{11,20})/i);
+    if(m){
+      rows.push({id:"rappr_nome", label:"Nominativo del difensore nominato (da procura/mandato)", value: m[1].trim(),
+        alsoSet:[{id:"rappr_ruolo", value:"difensore"}]});
+      rows.push({id:"rappr_cf", label:"Codice fiscale del difensore (da procura/mandato)", value: m[2].toUpperCase()});
+    } else {
+      const m2 = text.match(/difensore[\s\S]{0,150}?[Aa]vv\.?\s*([A-ZÀ-Ü][A-Za-zÀ-ÿ'’]+(?:\s+[A-ZÀ-Ü][A-Za-zÀ-ÿ'’]+){0,3})/i);
+      if(m2) rows.push({id:"rappr_nome", label:"Nominativo del difensore nominato (da procura/mandato)", value: m2[1].trim(),
+        alsoSet:[{id:"rappr_ruolo", value:"difensore"}]});
+    }
+    if(rows.length) rows.push({id:"cb_docacq_procalliti", label:"Documento acquisito: Procura alle liti (rilevato dal file caricato)", value:"Sì"});
+    return rows;
+  }
+
+  // Ricevuta di bonifico per il pagamento delle spese di mediazione: se il beneficiario è
+  // l'Organismo di mediazione, segnala la modalità di pagamento (bonifico bancario) e, se indicato
+  // l'ordinante, la provenienza dei fondi dalla disponibilità della parte/ente.
+  function ocrParseBonifico(text){
+    const rows = [];
+    const lines = ocrLines(text);
+    const beneficiario = ocrFindAfterLabel(lines, [/^Beneficiario\s*:?/i]);
+    const ordinante = ocrFindAfterLabel(lines, [/^Ordinante\s*:?/i]);
+    const isMediazione = /organismo|mediazione|ordine\s+degli\s+avvocati|consiglio\s+dell['’]?ordine/i.test(beneficiario||"")
+      || /spese di (avvio|mediazione)|organismo di mediazione/i.test(text);
+    if(!isMediazione) return rows;
+
+    rows.push({id:"cb_pagamento_bonifico", label:"Modalità di pagamento dell'operazione: bonifico bancario (da ricevuta di bonifico spese di mediazione)", value:"Sì"});
+    if(ordinante) rows.push({id:"cb_provenienza_disponente", label:"Provenienza dei fondi: disponibilità dell'ente/società — bonifico ordinato da «"+ordinante+"»", value:"Sì"});
     return rows;
   }
 
@@ -1284,8 +1388,10 @@
     ocrRecognized.forEach((row,i)=>{
       const div = document.createElement("div");
       div.className = "ocr-field-row";
+      const targetEl = $(row.id);
+      const isTargetCheckbox = targetEl && targetEl.type === "checkbox";
       div.innerHTML = '<label><input type="checkbox" data-ocridx="'+i+'" checked> '+esc(row.label)+'</label>'
-        + '<input type="text" data-ocrval="'+i+'" value="'+esc(row.value)+'">';
+        + (isTargetCheckbox ? '' : '<input type="text" data-ocrval="'+i+'" value="'+esc(row.value)+'">');
       container.appendChild(div);
     });
     container.querySelectorAll("[data-ocrval]").forEach(inp=>{
@@ -1334,7 +1440,9 @@
       else if(doctype==="visura") parsed = ocrParseVisura(ocrRawText);
       else if(doctype==="avvocato") parsed = ocrParseTesseraAvvocato(ocrRawText);
       else if(doctype==="istanza") parsed = ocrParseIstanza(ocrRawText);
-      else parsed = ocrParseAvviso(ocrRawText);
+      else if(doctype==="avviso") parsed = ocrParseAvviso(ocrRawText);
+      else if(doctype==="procura") parsed = ocrParseProcura(ocrRawText);
+      else parsed = ocrParseBonifico(ocrRawText);
       ocrRenderReview(parsed);
       ocrSetStatus(parsed.length
         ? "Riconoscimento completato: controlla i dati sotto prima di applicarli."
@@ -1353,14 +1461,21 @@
       if(!row.checked) return;
       const el = $(row.id);
       if(!el) return;
-      el.value = row.value;
-      el.dispatchEvent(new Event("input", {bubbles:true}));
+      if(el.type === "checkbox"){
+        el.checked = true;
+      } else {
+        el.value = row.value;
+        el.dispatchEvent(new Event("input", {bubbles:true}));
+      }
       el.dispatchEvent(new Event("change", {bubbles:true}));
       applied++;
       if(row.alsoSet && row.alsoSet.length && row.id.indexOf("rappr_")===0){
         row.alsoSet.forEach(as=>{
           const t = $(as.id);
-          if(t){ t.value = as.value; t.dispatchEvent(new Event("change",{bubbles:true})); }
+          if(!t) return;
+          if(t.type === "checkbox"){ t.checked = (as.value !== false); }
+          else { t.value = as.value; }
+          t.dispatchEvent(new Event("change",{bubbles:true}));
         });
       }
     });
@@ -1417,7 +1532,25 @@
     a.download = "modelli_antiriciclaggio_"+(v("proc_n").replace(/[^\w]/g,"_")||"procedura")+".html";
     a.click(); URL.revokeObjectURL(a.href);
   }
-  function toast(msg){
+  // Esporta gli stessi modelli in un file .doc apribile direttamente in Microsoft Word: il contenuto
+  // resta HTML (nessuna dipendenza aggiuntiva), ma i namespace "mso" e l'estensione .doc fanno sì che
+  // Word lo apra e lo tratti come un documento Word, mantenendo titoli, tabelle e testo. Utile perché il
+  // fascicolo, comprese le eventuali comunicazioni del mediatore registrate qui sopra, deve restare
+  // comunque scaricabile e modificabile in Word e non solo consultabile a schermo.
+  function scaricaWord(){
+    if(!$("out").innerHTML) genera();
+    const css = '<style>body{font-family:Segoe UI,Arial,sans-serif;color:#13161b;max-width:820px;margin:24px auto;padding:0 16px;background:#f4f1ee}.doc{border:1px solid #ddd6d1;border-radius:10px;margin:0 0 18px;overflow:hidden;background:#fff}.dh{background:#13161b;color:#fff;padding:10px 14px;font-weight:700;border-bottom:3px solid #a03317}.acts{display:none}.dc{padding:14px}table{width:100%;border-collapse:collapse}td{padding:6px 8px;border-bottom:1px solid #eee;vertical-align:top}.k{width:42%;color:#373b40;font-weight:600}.legalref{font-size:12px;color:#373b40}.sign{display:flex;justify-content:space-between;margin-top:18px;color:#373b40;font-size:13px}h1{color:#a03317;font-size:18px}</style>';
+    const mso = '<!--[if gte mso 9]><xml><w:WordDocument><w:View>Print</w:View><w:Zoom>100</w:Zoom><w:DoNotOptimizeForBrowser/></w:WordDocument></xml><![endif]-->';
+    const body = $("out").cloneNode(true);
+    body.querySelectorAll(".acts,.no-print").forEach(a=>a.remove());
+    const html = '<!doctype html><html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40" lang="it"><head><meta charset="utf-8"><title>Modelli antiriciclaggio — '+(v("proc_n")||"procedura")+'</title>'+mso+css+'</head><body><h1>Modelli antiriciclaggio — fascicolo riservato</h1><p style="color:#5b6675;font-size:13px">'+esc(v("odm_nome"))+' · procedura '+esc(v("proc_n"))+' · generato il '+today()+'</p>'+body.innerHTML+'</body></html>';
+    const blob = new Blob(['﻿'+html],{type:"application/msword"});
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "modelli_antiriciclaggio_"+(v("proc_n").replace(/[^\w]/g,"_")||"procedura")+".doc";
+    a.click(); URL.revokeObjectURL(a.href);
+  }
+function toast(msg){
     const t=document.createElement("div");
     t.textContent=msg;
     t.style.cssText="position:fixed;bottom:22px;left:50%;transform:translateX(-50%);background:#13161b;color:#fff;padding:10px 18px;border-radius:999px;font-size:13px;z-index:9999;box-shadow:0 6px 20px rgba(0,0,0,.2)";
