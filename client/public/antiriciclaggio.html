@@ -329,7 +329,7 @@
   <div class="grid">
     <div class="field">
       <label>A chi si riferisce il documento</label>
-      <div class="hint">La persona o sezione del modulo in cui inserire i dati riconosciuti.</div>
+      <div class="hint" id="ocr_target_hint">La persona o sezione del modulo in cui inserire i dati riconosciuti. Non si applica ai tipi «Istanza/domanda di mediazione» e «Comunicazione di avvio»: in quei casi i dati vengono distribuiti automaticamente tra le sezioni del procedimento, la parte istante e il rappresentante legale.</div>
       <select id="ocr_target">
         <option value="parte">Parte</option>
         <option value="rappr">Rappresentante / difensore / procuratore della parte</option>
@@ -344,6 +344,8 @@
         <option value="id">Documento d'identità (carta d'identità, patente, passaporto)</option>
         <option value="visura">Visura camerale (persona giuridica)</option>
         <option value="avvocato">Tessera professionale avvocato</option>
+        <option value="istanza">Istanza / domanda di mediazione (o di adesione)</option>
+        <option value="avviso">Comunicazione di avvio (mediatore designato e data incontro)</option>
       </select>
     </div>
   </div>
@@ -973,7 +975,22 @@
       for(let p=1; p<=pdf.numPages; p++){
         const page = await pdf.getPage(p);
         const txtContent = await page.getTextContent();
-        const txt = txtContent.items.map(it=>it.str).join(" ").trim();
+        // Ricostruisce gli "a capo" in base allo spostamento verticale fra un elemento e il
+        // successivo: pdf.js non inserisce \n di suo, e molti parser (incluse le nuove funzioni
+        // per istanza/comunicazione di avvio) lavorano riga per riga.
+        let txt = ""; let lastY = null;
+        for(const it of txtContent.items){
+          const y = (it.transform && it.transform.length>5) ? it.transform[5] : null;
+          if(!it.str){ continue; }
+          if(lastY !== null && y !== null && Math.abs(y - lastY) > 2){
+            txt += "\n";
+          } else if(txt && !/[\n\s]$/.test(txt)){
+            txt += " ";
+          }
+          txt += it.str;
+          if(y !== null) lastY = y;
+        }
+        txt = txt.trim();
         if(txt.length > 40){
           pages.push({text: txt});
         } else {
@@ -1147,6 +1164,104 @@
     return rows;
   }
 
+  // Istanza/domanda di mediazione (o modulo di adesione): documento "denso", contiene di solito
+  // in un colpo solo i dati del procedimento, della parte istante e del suo rappresentante legale.
+  // Per questo le righe restituite usano quasi sempre un id esplicito (invece della coppia
+  // target/key) così da poter scrivere contemporaneamente in sezioni diverse del modulo.
+  let ocrIstanzaFormaGiuridica = "";
+  function ocrParseIstanza(text){
+    const lines = ocrLines(text);
+    const rows = [];
+    const push = (id, label, value) => { if(value) rows.push({id: id, label: label, value: value}); };
+    ocrIstanzaFormaGiuridica = "";
+
+    // Organismo di mediazione (intestazione / riga "Spett.le")
+    const spettIdx = lines.findIndex(l => /^Spett\.?le$/i.test(l));
+    let odm = "";
+    if(spettIdx >= 0){
+      odm = [lines[spettIdx+1], lines[spettIdx+2]].filter(Boolean)
+        .filter(l => !/^(via|piazza|corso|c\.so|p\.zza)\b/i.test(l)).join(" ").trim();
+    }
+    if(!odm){
+      const l = lines.find(l => /Organismo di Mediazione/i.test(l) && !/ISTANZA|DOMANDA|ADESIONE/i.test(l));
+      if(l) odm = l.trim();
+    }
+    push("odm_nome", "Denominazione Organismo (da istanza)", odm);
+
+    // N. procedura (riferimento assegnato dal portale al momento del deposito)
+    const nProc = text.match(/N\.\s*(MED-[\w-]+)/i);
+    if(nProc) push("proc_n", "N. procedura (rif. da istanza)", nProc[1]);
+
+    // Data di deposito/creazione
+    const dDep = text.match(/creata\s+on-?line\s+il\s+(\d{1,2}[\/.\-]\d{1,2}[\/.\-]\d{2,4})/i)
+      || text.match(/(?:depositata|presentata)\s+(?:in data|il)\s+(\d{1,2}[\/.\-]\d{1,2}[\/.\-]\d{2,4})/i);
+    if(dDep){ const iso = ocrToISODate(dDep[1]); if(iso) push("proc_data_dep_istanza", "Data deposito istanza", iso); }
+
+    // Materia e valore della controversia
+    const materia = ocrFindAfterLabel(lines, [/^MATERIA DELLA CONTROVERSIA\s*:?/i]);
+    if(materia){
+      push("op_materia", "Materia (da istanza)", materia);
+      push("proc_ogg", "Oggetto della mediazione (da istanza)", materia);
+    }
+    const valore = ocrFindAfterLabel(lines, [/^VALORE (INDICATIVO )?DELLA CONTROVERSIA[^:]*:?/i]);
+    if(valore) push("op_valore", "Valore della controversia (da istanza)", valore);
+
+    // Parte istante: nome/denominazione, CF/P.IVA, recapito, PEC, telefono
+    const idxIstante = lines.findIndex(l => /^Parte Istante\b/i.test(l));
+    if(idxIstante >= 0){
+      const nomeIstante = (lines[idxIstante+1]||"").replace(/^[-–]\s*/,"").trim();
+      const blockText = lines.slice(idxIstante, idxIstante+14).join(" \n ");
+      if(nomeIstante && !/^Cod\.?\s*fisc/i.test(nomeIstante)){
+        push("p_nome", "Denominazione/nome parte istante", nomeIstante);
+
+        const FORME = [[/S\.?\s?R\.?\s?L\.?\b/i,"srl"], [/S\.?\s?P\.?\s?A\.?\b/i,"spa"],
+          [/S\.?\s?N\.?\s?C\.?\b/i,"sp"], [/S\.?\s?A\.?\s?S\.?\b/i,"sp"], [/SOCIET[AÀ] COOPERATIVA/i,"coop"]];
+        const forma = FORME.find(f => f[0].test(nomeIstante));
+        if(forma || /RAPPRESENTANTE LEGALE/i.test(text)) ocrIstanzaFormaGiuridica = forma ? forma[1] : "altro";
+      }
+
+      const cf = blockText.match(/Cod\.?\s*fisc\.?\s*([A-Z0-9]{11,16})/i);
+      if(cf) push("p_cf", "Codice fiscale / P. IVA parte istante", cf[1]);
+
+      const recapito = blockText.match(/Recapito:\s*([^\n]+)/i);
+      if(recapito) push("p_res", "Sede/Residenza parte istante (da istanza)", recapito[1].trim());
+
+      const pecIstante = blockText.match(/PEC:?\s*([\w.\-]+@[\w.\-]+)/i);
+      if(pecIstante) push("p_pec", "PEC parte istante", pecIstante[1]);
+
+      const telIstante = blockText.match(/Tel\.?\s+([\d\s\/]{6,20})/i);
+      if(telIstante) push("p_tel", "Telefono parte istante", telIstante[1].trim());
+    }
+
+    // Rappresentante legale della parte istante
+    const idxRappr = lines.findIndex(l => /^RAPPRESENTANTE LEGALE\b/i.test(l));
+    if(idxRappr >= 0){
+      const nomeRappr = (lines[idxRappr+1]||"").replace(/^[-–]\s*(SIG\.?\s*(RA)?\.?\s*)?/i,"").trim();
+      if(nomeRappr) rows.push({id:"rappr_nome", label:"Nome legale rappresentante (da istanza)", value: nomeRappr,
+        alsoSet:[{id:"rappr_ruolo", value:"legale_rapp"}]});
+      const blockR = lines.slice(idxRappr, idxRappr+4).join(" ");
+      const nasc = blockR.match(/Dati di nascita:?\s*(\d{1,2}[\/.\-]\d{1,2}[\/.\-]\d{2,4})\s+([A-ZÀ-Üa-zà-ü''()\s]+?)(?:\s+ITALIA)?\s+sesso/i);
+      if(nasc) push("rappr_nascita", "Luogo e data di nascita rappresentante (da istanza)", nasc[2].trim()+", "+nasc[1]);
+    }
+
+    return rows;
+  }
+
+  // Comunicazione di avvio/convocazione inviata dalla segreteria dell'Organismo: contiene tipicamente
+  // il nome del mediatore designato e la data (ed ora) del primo incontro.
+  function ocrParseAvviso(text){
+    const rows = [];
+    const med = text.match(/Mediatore designato(?:\s+è)?\s*(?:l['’]\s*)?(?:Avv\.?\s*)?([A-ZÀ-Ü][A-Za-zÀ-ÿ'.\s]{3,60}?)\s+e\s+(?:il|l['’])/i)
+      || text.match(/Mediatore designato\s*:?\s*(?:Avv\.?\s*)?([A-ZÀ-Ü][A-Za-zÀ-ÿ'.\s]{3,60})/i);
+    if(med) rows.push({id:"proc_med", label:"Mediatore designato (da comunicazione di avvio)", value: med[1].trim().replace(/\s+/g," ")});
+
+    const dt = text.match(/fissato per il giorno\s+(\d{1,2}[\/.\-]\d{1,2}[\/.\-]\d{2,4})/i)
+      || text.match(/primo incontro[^.\n]{0,40}?(\d{1,2}[\/.\-]\d{1,2}[\/.\-]\d{2,4})/i);
+    if(dt){ const iso = ocrToISODate(dt[1]); if(iso) rows.push({id:"proc_data", label:"Data primo incontro (da comunicazione di avvio)", value: iso}); }
+
+    return rows;
+  }
+
   function ocrRenderReview(rows){
     const target = v("ocr_target");
     ocrRecognized = [];
@@ -1217,7 +1332,9 @@
       let parsed = [];
       if(doctype==="id") parsed = ocrParseDocumentoIdentita(ocrRawText);
       else if(doctype==="visura") parsed = ocrParseVisura(ocrRawText);
-      else parsed = ocrParseTesseraAvvocato(ocrRawText);
+      else if(doctype==="avvocato") parsed = ocrParseTesseraAvvocato(ocrRawText);
+      else if(doctype==="istanza") parsed = ocrParseIstanza(ocrRawText);
+      else parsed = ocrParseAvviso(ocrRawText);
       ocrRenderReview(parsed);
       ocrSetStatus(parsed.length
         ? "Riconoscimento completato: controlla i dati sotto prima di applicarli."
@@ -1251,6 +1368,12 @@
       const pt = $("p_tipo");
       if(pt){ pt.value = "pg"; pt.dispatchEvent(new Event("change",{bubbles:true})); }
     }
+    if(ocrLastDoctype==="istanza" && ocrIstanzaFormaGiuridica && v("p_tipo")!=="pg" && ocrRecognized.some(r=>r.id==="p_nome" && r.checked)){
+      const pt = $("p_tipo");
+      if(pt){ pt.value = "pg"; pt.dispatchEvent(new Event("change",{bubbles:true})); }
+      const ng = $("p_natgiur");
+      if(ng){ ng.value = ocrIstanzaFormaGiuridica; ng.dispatchEvent(new Event("change",{bubbles:true})); }
+    }
     syncToggles();
     calcRisk();
     toast(applied>0 ? "Dati applicati a "+applied+" camp"+(applied===1?"o":"i")+"." : "Nessun campo selezionato da applicare.");
@@ -1269,6 +1392,7 @@
     ocrSetStatus("");
     ocrRecognized = [];
     ocrRawText = "";
+    ocrIstanzaFormaGiuridica = "";
   }
   function printOne(id){
     const node = $(id).cloneNode(true);
