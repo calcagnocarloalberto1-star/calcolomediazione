@@ -6,211 +6,213 @@
 <title>Antiriciclaggio in mediazione — Guida in linguaggio semplice | calcolomediazione.it</title>
 <meta name="description" content="Guida in linguaggio semplice agli obblighi antiriciclaggio nella mediazione civile: chi è obbligato, ispezioni della Guardia di Finanza, cosa fare e cosa mettere a verbale. Per avvocati e organismi di mediazione.">
 <style>
-  :root{
-    --navy:#13161b; --blue:#a03317; --accentDark:#861600; --light:#ffe5d7; --line:#ddd6d1;
-    --ink:#13161b; --muted:#5b6066; --ok:#2e7d32; --warn:#b26a00; --bad:#b00020;
-    --bg:#f4f1ee; --card:#fcfcfc; --radius:14px;
-  }
-  *{box-sizing:border-box}
-  body{margin:0;font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;color:var(--ink);background:var(--bg);line-height:1.62}
-  .wrap{max-width:880px;margin:0 auto;padding:18px}
-  .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:0 4px 18px rgba(19,22,27,.06);overflow:hidden}
-  .head{background:linear-gradient(135deg,var(--navy),var(--blue));color:#fff;padding:22px 26px}
-  .brand{font-size:13px;letter-spacing:.12em;text-transform:uppercase;opacity:.85}
-  .head h1{margin:6px 0 4px;font-size:24px;line-height:1.25}
-  .head p{margin:0;opacity:.92;font-size:14px}
-  .body{padding:14px 26px 26px}
-  .toolbar{display:flex;flex-wrap:wrap;gap:10px;margin:14px 0 6px}
-  a.btn{display:inline-block;text-decoration:none;font-size:14px;font-weight:600;border-radius:9px;padding:9px 14px;border:1px solid var(--line);color:var(--navy);background:#fff}
-  a.btn.primary{background:var(--blue);color:#fff;border-color:var(--blue)}
-  a.btn:hover{border-color:var(--blue)}
-  h2{font-size:19px;color:var(--navy);margin:26px 0 8px;border-bottom:2px solid var(--blue);padding-bottom:6px}
-  p{margin:8px 0}
-  b{color:var(--navy)}
-  .lead{color:var(--muted);font-size:14.5px}
-  table{width:100%;border-collapse:collapse;margin:10px 0;font-size:14px}
-  th{background:var(--navy);color:#fff;text-align:left;padding:8px 10px;font-weight:600}
-  td{border:1px solid var(--line);padding:8px 10px;vertical-align:top}
-  tr:nth-child(even) td{background:#f7f3f0}
-  .box{border:1px solid var(--line);border-left:5px solid var(--blue);border-radius:10px;padding:12px 14px;margin:12px 0;background:#fbf6f3;font-size:14.5px}
-  .box.ok{border-left-color:var(--ok);background:#eef6ef}
-  .box.warn{border-left-color:var(--warn);background:#fbf3e3}
-  .box .t{font-weight:700;color:var(--blue);font-size:13px;display:block;margin-bottom:4px}
-  .box.ok .t{color:var(--ok)} .box.warn .t{color:var(--warn)}
-  ol,ul{margin:8px 0 8px 4px;padding-left:22px}
-  li{margin:5px 0}
-  .pill{display:inline-block;font-size:11px;font-weight:700;padding:2px 8px;border-radius:999px;background:var(--light);color:var(--accentDark)}
-  .foot{padding:14px 26px;border-top:1px solid var(--line);color:var(--muted);font-size:12px;background:#fbfaf8}
-  .num td:first-child{font-weight:700;color:var(--blue);width:48px;text-align:center}
+:root{
+--navy:#13161b; --blue:#a03317; --accentDark:#861600; --light:#ffe5d7; --line:#ddd6d1;
+--ink:#13161b; --muted:#5b6066; --ok:#2e7d32; --warn:#b26a00; --bad:#b00020;
+--bg:#f4f1ee; --card:#fcfcfc; --radius:14px;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;color:var(--ink);background:var(--bg);line-height:1.62}
+.wrap{max-width:880px;margin:0 auto;padding:18px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:0 4px 18px rgba(19,22,27,.06);overflow:hidden}
+.head{background:linear-gradient(135deg,var(--navy),var(--blue));color:#fff;padding:22px 26px}
+.brand{font-size:13px;letter-spacing:.12em;text-transform:uppercase;opacity:.85}
+.head h1{margin:6px 0 4px;font-size:24px;line-height:1.25}
+.head p{margin:0;opacity:.92;font-size:14px}
+.body{padding:14px 26px 26px}
+.toolbar{display:flex;flex-wrap:wrap;gap:10px;margin:14px 0 6px}
+a.btn{display:inline-block;text-decoration:none;font-size:14px;font-weight:600;border-radius:9px;padding:9px 14px;border:1px solid var(--line);color:var(--navy);background:#fff}
+a.btn.primary{background:var(--blue);color:#fff;border-color:var(--blue)}
+a.btn:hover{border-color:var(--blue)}
+h2{font-size:19px;color:var(--navy);margin:26px 0 8px;border-bottom:2px solid var(--blue);padding-bottom:6px}
+p{margin:8px 0}
+b{color:var(--navy)}
+.lead{color:var(--muted);font-size:14.5px}
+table{width:100%;border-collapse:collapse;margin:10px 0;font-size:14px}
+th{background:var(--navy);color:#fff;text-align:left;padding:8px 10px;font-weight:600}
+td{border:1px solid var(--line);padding:8px 10px;vertical-align:top}
+tr:nth-child(even) td{background:#f7f3f0}
+.box{border:1px solid var(--line);border-left:5px solid var(--blue);border-radius:10px;padding:12px 14px;margin:12px 0;background:#fbf6f3;font-size:14.5px}
+.box.ok{border-left-color:var(--ok);background:#eef6ef}
+.box.warn{border-left-color:var(--warn);background:#fbf3e3}
+.box .t{font-weight:700;color:var(--blue);font-size:13px;display:block;margin-bottom:4px}
+.box.ok .t{color:var(--ok)} .box.warn .t{color:var(--warn)}
+ol,ul{margin:8px 0 8px 4px;padding-left:22px}
+li{margin:5px 0}
+.pill{display:inline-block;font-size:11px;font-weight:700;padding:2px 8px;border-radius:999px;background:var(--light);color:var(--accentDark)}
+.foot{padding:14px 26px;border-top:1px solid var(--line);color:var(--muted);font-size:12px;background:#fbfaf8}
+.num td:first-child{font-weight:700;color:var(--blue);width:48px;text-align:center}
 </style>
 </head>
 <body>
 <div class="wrap">
-  <div class="card">
-    <div class="head">
-      <div class="brand">calcolomediazione.it · strumenti per la mediazione</div>
-      <h1>Antiriciclaggio in mediazione — guida in linguaggio semplice</h1>
-      <p>Le risposte chiare alle domande sugli obblighi, senza giri di parole</p>
-    </div>
-    <div class="body">
-      <div class="toolbar">
-        <a class="btn primary" href="/antiriciclaggio.html">↩ Vai allo strumento (modelli + motore UIF)</a>
-        <a class="btn" href="/">Tutti gli strumenti</a>
-      </div>
-      <p class="lead">Questa guida spiega in modo semplice gli stessi contenuti del dossier tecnico. Ogni paragrafo è una domanda con una risposta diretta. I riferimenti alle norme restano tra parentesi, ma puoi anche ignorarli: il senso si capisce comunque.</p>
+<div class="card">
+<div class="head">
+<div class="brand">calcolomediazione.it · strumenti per la mediazione</div>
+<h1>Antiriciclaggio in mediazione — guida in linguaggio semplice</h1>
+<p>Le risposte chiare alle domande sugli obblighi, senza giri di parole</p>
+</div>
+<div class="body">
+<div class="toolbar">
+<a class="btn primary" href="/antiriciclaggio.html">↩ Vai allo strumento (modelli + motore UIF)</a>
+<a class="btn" href="/antiriciclaggio-compilazione.html">📝 Guida alla compilazione (Organismo, Mediatore, Avvocato)</a>
+<a class="btn" href="/">Tutti gli strumenti</a>
+</div>
+<p class="lead">Questa guida spiega in modo semplice gli stessi contenuti del dossier tecnico. Ogni paragrafo è una domanda con una risposta diretta. I riferimenti alle norme restano tra parentesi, ma puoi anche ignorarli: il senso si capisce comunque.</p>
 
-      <h2>1. Di che cosa stiamo parlando?</h2>
-      <p>L’antiriciclaggio è l’insieme delle regole che servono a impedire che il denaro “sporco” (proveniente da reati) venga ripulito usando attività lecite. La legge principale è il <b>D.Lgs. 231/2007</b>. Anche la mediazione civile può, in teoria, essere usata per far passare operazioni sospette: per questo la legge la inserisce tra le attività da tenere d’occhio.</p>
+<h2>1. Di che cosa stiamo parlando?</h2>
+<p>L'antiriciclaggio è l'insieme delle regole che servono a impedire che il denaro "sporco" (proveniente da reati) venga ripulito usando attività lecite. La legge principale è il <b>D.Lgs. 231/2007</b>. Anche la mediazione civile può, in teoria, essere usata per far passare operazioni sospette: per questo la legge la inserisce tra le attività da tenere d'occhio.</p>
 
-      <h2>2. L’avvocato deve fare gli adempimenti antiriciclaggio?</h2>
-      <p>Dipende dal “cappello” che indossa in quel momento. Tre situazioni diverse:</p>
-      <table>
-        <tr><th>L’avvocato sta…</th><th>Obbligato?</th><th>In parole semplici</th></tr>
-        <tr><td>…difendendo o assistendo una parte (anche in mediazione)</td><td><b>NO</b></td><td>L’attività di difesa è esente (Regola Tecnica n. 2 del CNF; art. 35, co. 5, D.Lgs. 231/2007). Restano solo i doveri deontologici.</td></tr>
-        <tr><td>…seguendo un’operazione economica (es. vendita di un immobile, gestione di denaro)</td><td><b>SÌ</b></td><td>Qui scattano gli obblighi pieni (art. 3, c. 4, lett. c).</td></tr>
-        <tr><td>…facendo il mediatore</td><td><b>CONTROVERSO</b></td><td>È il punto caldo: vedi il punto 3.</td></tr>
-      </table>
+<h2>2. L'avvocato deve fare gli adempimenti antiriciclaggio?</h2>
+<p>Dipende dal "cappello" che indossa in quel momento. Tre situazioni diverse:</p>
+<table>
+<tr><th>L'avvocato sta…</th><th>Obbligato?</th><th>In parole semplici</th></tr>
+<tr><td>…difendendo o assistendo una parte (anche in mediazione)</td><td><b>NO</b></td><td>L'attività di difesa è esente (Regola Tecnica n. 2 del CNF; art. 35, co. 5, D.Lgs. 231/2007). Restano solo i doveri deontologici.</td></tr>
+<tr><td>…seguendo un'operazione economica (es. vendita di un immobile, gestione di denaro)</td><td><b>SÌ</b></td><td>Qui scattano gli obblighi pieni (art. 3, c. 4, lett. c).</td></tr>
+<tr><td>…facendo il mediatore</td><td><b>CONTROVERSO</b></td><td>È il punto caldo: vedi il punto 3.</td></tr>
+</table>
 
-      <h2>3. Nella mediazione, chi è il vero obbligato: l’Organismo o il mediatore?</h2>
-      <p>È il cuore della questione, e su questo ci sono <b>due tesi opposte</b>:</p>
-      <ul>
-        <li>Per il <b>CNF e gran parte degli avvocati</b>: l’obbligato è l’<b>Organismo di mediazione</b>. Il mediatore è solo un “ausiliario”, e il fascicolo lo tiene l’Organismo, non lui.</li>
-        <li>Per la <b>Guardia di Finanza</b>: è obbligato anche il <b>singolo mediatore</b>, perché la legge cita “i soggetti che esercitano attività di mediazione civile” (art. 3, c. 5, lett. g).</li>
-      </ul>
-      <div class="box"><span class="t">In pratica</span>Da questo disaccordo nascono le ispezioni: la GdF tratta il mediatore come obbligato; il mondo forense risponde che l’obbligo è dell’Organismo.</div>
+<h2>3. Nella mediazione, chi è il vero obbligato: l'Organismo o il mediatore?</h2>
+<p>È il cuore della questione, e su questo ci sono <b>due tesi opposte</b>:</p>
+<ul>
+<li>Per il <b>CNF e gran parte degli avvocati</b>: l'obbligato è l'<b>Organismo di mediazione</b>. Il mediatore è solo un "ausiliario", e il fascicolo lo tiene l'Organismo, non lui.</li>
+<li>Per la <b>Guardia di Finanza</b>: è obbligato anche il <b>singolo mediatore</b>, perché la legge cita "i soggetti che esercitano attività di mediazione civile" (art. 3, c. 5, lett. g).</li>
+</ul>
+<div class="box"><span class="t">In pratica</span>Da questo disaccordo nascono le ispezioni: la GdF tratta il mediatore come obbligato; il mondo forense risponde che l'obbligo è dell'Organismo.</div>
 
-      <h2>4. Esiste davvero un “accordo CNF-MEF” che salva i mediatori?</h2>
-      <p>Un <b>accordo formale</b> tra CNF e Ministero dell’Economia <b>non esiste</b>. Esiste però una cosa simile e utile alla difesa: le Regole Tecniche del CNF (quelle che escludono il mediatore dagli obblighi) sono state approvate <b>con il via libera del Comitato di Sicurezza Finanziaria, che opera presso il MEF</b>. Questo dà a quelle regole un valore ufficiale.</p>
-      <p>Attenzione però: quel via libera riguarda l’avvocato “professionista” (art. 3 c. 4 lett. c). La Guardia di Finanza contesta su una norma diversa (art. 3 c. 5 lett. g). Perciò è un argomento <b>forte ma non decisivo</b>: aiuta a difendersi, ma non chiude la partita.</p>
+<h2>4. Esiste davvero un "accordo CNF-MEF" che salva i mediatori?</h2>
+<p>Un <b>accordo formale</b> tra CNF e Ministero dell'Economia <b>non esiste</b>. Esiste però una cosa simile e utile alla difesa: le Regole Tecniche del CNF (quelle che escludono il mediatore dagli obblighi) sono state approvate <b>con il via libera del Comitato di Sicurezza Finanziaria, che opera presso il MEF</b>. Questo dà a quelle regole un valore ufficiale.</p>
+<p>Attenzione però: quel via libera riguarda l'avvocato "professionista" (art. 3 c. 4 lett. c). La Guardia di Finanza contesta su una norma diversa (art. 3 c. 5 lett. g). Perciò è un argomento <b>forte ma non decisivo</b>: aiuta a difendersi, ma non chiude la partita.</p>
 
-      <h2>5. Perché la Guardia di Finanza sta facendo le ispezioni?</h2>
-      <p>Perché, dal 2025-2026, ha deciso di considerare i mediatori civili come soggetti obbligati e di controllarli. Contesta soprattutto due cose: di <b>non aver identificato bene le parti</b> (adeguata verifica) e di <b>non aver conservato la documentazione</b>. I procedimenti sono poi gestiti dal MEF.</p>
-      <p><b>Su che cosa si basa, in concreto:</b></p>
-      <ul>
-        <li>una legge che le dà il potere di controllare chi non è vigilato da altre autorità (art. 9 D.Lgs. 231/2007);</li>
-        <li>l’idea che il mediatore sia un “soggetto obbligato” (art. 3, c. 5, lett. g);</li>
-        <li>una lista ufficiale di “campanelli d’allarme” (gli indicatori UIF del 12 maggio 2023, validi dal 2024);</li>
-        <li>la possibilità di guardare indietro nel tempo (fino a 5 anni, con favore per il reo sui fatti più vecchi).</li>
-      </ul>
-      <p><b>La tua risposta:</b> l’obbligo è soprattutto dell’Organismo, che tiene i fascicoli (art. 11 D.Lgs. 28/2010); tu come difensore sei esente e, come mediatore, la questione è discussa.</p>
-      <p>Sullo sfondo c’è un problema riconosciuto da tutti: l’Italia ha incluso la mediazione tra i soggetti obbligati anche se l’Europa non lo chiedeva, e senza spiegare <i>come</i> il mediatore debba fare. La questione è arrivata persino in Parlamento (interrogazione n. 4/07948).</p>
+<h2>5. Perché la Guardia di Finanza sta facendo le ispezioni?</h2>
+<p>Perché, dal 2025-2026, ha deciso di considerare i mediatori civili come soggetti obbligati e di controllarli. Contesta soprattutto due cose: di <b>non aver identificato bene le parti</b> (adeguata verifica) e di <b>non aver conservato la documentazione</b>. I procedimenti sono poi gestiti dal MEF.</p>
+<p><b>Su che cosa si basa, in concreto:</b></p>
+<ul>
+<li>una legge che le dà il potere di controllare chi non è vigilato da altre autorità (art. 9 D.Lgs. 231/2007);</li>
+<li>l'idea che il mediatore sia un "soggetto obbligato" (art. 3, c. 5, lett. g);</li>
+<li>una lista ufficiale di "campanelli d'allarme" (gli indicatori UIF del 12 maggio 2023, validi dal 2024);</li>
+<li>la possibilità di guardare indietro nel tempo (fino a 5 anni, con favore per il reo sui fatti più vecchi).</li>
+</ul>
+<p><b>La tua risposta:</b> l'obbligo è soprattutto dell'Organismo, che tiene i fascicoli (art. 11 D.Lgs. 28/2010); tu come difensore sei esente e, come mediatore, la questione è discussa.</p>
+<p>Sullo sfondo c'è un problema riconosciuto da tutti: l'Italia ha incluso la mediazione tra i soggetti obbligati anche se l'Europa non lo chiedeva, e senza spiegare <i>come</i> il mediatore debba fare. La questione è arrivata persino in Parlamento (interrogazione n. 4/07948).</p>
 
-      <h2>6. Che cosa è cambiato nel 2023?</h2>
-      <p>La regola di fondo (il mediatore è soggetto obbligato) <b>non è cambiata</b>. Sono però arrivate due novità:</p>
-      <ul>
-        <li>Nuovi <b>indicatori di anomalia UIF</b> (maggio 2023, validi dal 1° gennaio 2024): l’elenco dei “campanelli d’allarme”.</li>
-        <li>La <b>Riforma Cartabia</b> della mediazione (più trasparenza, più dati pubblici): non tocca gli obblighi, ma rende più facile alla GdF programmare i controlli.</li>
-      </ul>
+<h2>6. Che cosa è cambiato nel 2023?</h2>
+<p>La regola di fondo (il mediatore è soggetto obbligato) <b>non è cambiata</b>. Sono però arrivate due novità:</p>
+<ul>
+<li>Nuovi <b>indicatori di anomalia UIF</b> (maggio 2023, validi dal 1° gennaio 2024): l'elenco dei "campanelli d'allarme".</li>
+<li>La <b>Riforma Cartabia</b> della mediazione (più trasparenza, più dati pubblici): non tocca gli obblighi, ma rende più facile alla GdF programmare i controlli.</li>
+</ul>
 
-      <h2>7. Possono contestare anche il passato o solo il presente?</h2>
-      <p>Anche il <b>passato</b>. L’ispezione guarda indietro, perché i fascicoli vanno conservati 10 anni. C’è però un limite: la violazione si <b>prescrive in 5 anni</b> (di regola non vanno più indietro). E per i fatti più vecchi (prima del 2017) si applica la legge più favorevole: ad esempio il vecchio “registro”, oggi abolito, non è più sanzionabile.</p>
+<h2>7. Possono contestare anche il passato o solo il presente?</h2>
+<p>Anche il <b>passato</b>. L'ispezione guarda indietro, perché i fascicoli vanno conservati 10 anni. C'è però un limite: la violazione si <b>prescrive in 5 anni</b> (di regola non vanno più indietro). E per i fatti più vecchi (prima del 2017) si applica la legge più favorevole: ad esempio il vecchio "registro", oggi abolito, non è più sanzionabile.</p>
 
-      <h2>8. Arriva la Guardia di Finanza in studio: cosa faccio?</h2>
-      <p>La cosa più importante: di solito <b>non hai nulla da esibire</b>, perché i fascicoli non sono in studio tuo ma <b>presso l’Organismo</b> (art. 11 D.Lgs. 28/2010). Vale come “non ce l’ho qui”, non come “ho sbagliato a non averlo”. In ordine:</p>
-      <ol>
-        <li>Identifica i verificatori e fatti dare copia dell’atto di accesso (ordine di servizio con indicazione di indagine antiriciclaggio).</li>
-        <li>Dichiara subito che i fascicoli sono custoditi dall’Organismo (nome, sede, legale rappresentante). Formula: <i>«Io non ho il possesso giuridico né materiale dei fascicoli di mediazione; gli stessi sono depositati e custoditi presso la sede dell’Organismo di Mediazione sito a Palazzo di Giustizia – Piazza Portoria, 1 – 16121 Genova.»</i></li>
-        <li>Fai mettere a verbale le tue eccezioni: l’obbligo è dell’Organismo; l’esonero della Regola Tecnica n. 2 e dell’art. 35, co. 5; l’incertezza della normativa. Formula: <i>«Ai sensi del D.Lgs. 28/2010 e del D.M. 150/2023, l’obbligo di detenzione e custodia della documentazione grava sull’Organismo di mediazione; il destinatario degli obblighi in materia di antiriciclaggio è, pertanto, l’Organismo e non il singolo mediatore. Inoltre, la Regola Tecnica n. 2 del CNF esclude che l’incarico di mediatore civile e commerciale rientri tra le operazioni di cui all’art. 3, comma 4, lett. c), del D.Lgs. 231/2007. Si evidenzia, infine, l’incertezza interpretativa del quadro normativo vigente.»</i></li>
-        <li>Non riconoscere mai una violazione; se puoi, chiama il difensore (il Responsabile e un consigliere del COA).</li>
-        <li>Chiedi copia del verbale e firma “con riserva”. Formula: <i>«Mi riservo di presentare memorie e osservazioni difensive nel termine di 60 giorni dalla data di consegna o notifica del presente verbale.»</i></li>
-      </ol>
-      <div class="box ok"><span class="t">Da ricordare</span>Collabora sempre, ma fai scrivere tutto a verbale. Quello che non è messo a verbale, dopo, è come non detto.</div>
+<h2>8. Arriva la Guardia di Finanza in studio: cosa faccio?</h2>
+<p>La cosa più importante: di solito <b>non hai nulla da esibire</b>, perché i fascicoli non sono in studio tuo ma <b>presso l'Organismo</b> (art. 11 D.Lgs. 28/2010). Vale come "non ce l'ho qui", non come "ho sbagliato a non averlo". In ordine:</p>
+<ol>
+<li>Identifica i verificatori e fatti dare copia dell'atto di accesso (ordine di servizio con indicazione di indagine antiriciclaggio).</li>
+<li>Dichiara subito che i fascicoli sono custoditi dall'Organismo (nome, sede, legale rappresentante). Formula: <i>«Io non ho il possesso giuridico né materiale dei fascicoli di mediazione; gli stessi sono depositati e custoditi presso la sede dell'Organismo di Mediazione sito a Palazzo di Giustizia – Piazza Portoria, 1 – 16121 Genova.»</i></li>
+<li>Fai mettere a verbale le tue eccezioni: l'obbligo è dell'Organismo; l'esonero della Regola Tecnica n. 2 e dell'art. 35, co. 5; l'incertezza della normativa. Formula: <i>«Ai sensi del D.Lgs. 28/2010 e del D.M. 150/2023, l'obbligo di detenzione e custodia della documentazione grava sull'Organismo di mediazione; il destinatario degli obblighi in materia di antiriciclaggio è, pertanto, l'Organismo e non il singolo mediatore. Inoltre, la Regola Tecnica n. 2 del CNF esclude che l'incarico di mediatore civile e commerciale rientri tra le operazioni di cui all'art. 3, comma 4, lett. c), del D.Lgs. 231/2007. Si evidenzia, infine, l'incertezza interpretativa del quadro normativo vigente.»</i></li>
+<li>Non riconoscere mai una violazione; se puoi, chiama il difensore (il Responsabile e un consigliere del COA).</li>
+<li>Chiedi copia del verbale e firma "con riserva". Formula: <i>«Mi riservo di presentare memorie e osservazioni difensive nel termine di 60 giorni dalla data di consegna o notifica del presente verbale.»</i></li>
+</ol>
+<div class="box ok"><span class="t">Da ricordare</span>Collabora sempre, ma fai scrivere tutto a verbale. Quello che non è messo a verbale, dopo, è come non detto.</div>
 
-      <p><b>E se la Guardia di Finanza va all’Organismo, non da te?</b> Può succedere: l’Organismo è il soggetto obbligato e tiene i fascicoli. Lì non si dice “non ho nulla”, ma si <b>mostra che tutto è in ordine</b> (regolamento, responsabile, fascicoli, formazione) e si sollevano comunque gli stessi argomenti di diritto: l’obbligo è dell’Organismo, l’attività difensiva è esente, la materia è incerta. Cambia chi risponde e che cosa si esibisce, non la sostanza della difesa.</p>
+<p><b>E se la Guardia di Finanza va all'Organismo, non da te?</b> Può succedere: l'Organismo è il soggetto obbligato e tiene i fascicoli. Lì non si dice "non ho nulla", ma si <b>mostra che tutto è in ordine</b> (regolamento, responsabile, fascicoli, formazione) e si sollevano comunque gli stessi argomenti di diritto: l'obbligo è dell'Organismo, l'attività difensiva è esente, la materia è incerta. Cambia chi risponde e che cosa si esibisce, non la sostanza della difesa.</p>
 
-      <h2>9. Cosa scrivo (e cosa NON scrivo) a verbale?</h2>
-      <p>Il verbale di mediazione è riservato (artt. 9-10 D.Lgs. 28/2010). Le valutazioni antiriciclaggio <b>non ci vanno</b>. Regola pratica:</p>
-      <table>
-        <tr><th>Nel verbale SÌ (clausole neutre)</th><th>Nel verbale MAI</th></tr>
-        <tr><td>“Le parti sono state identificate con documento d’identità.”</td><td>Il livello di rischio (basso/medio/alto).</td></tr>
-        <tr><td>“I pagamenti avverranno con strumenti tracciabili (art. 49).”</td><td>Gli indicatori di anomalia o i sospetti.</td></tr>
-        <tr><td>“Acquisita la dichiarazione sul titolare effettivo.”</td><td>L’esistenza o l’invio di una segnalazione (SOS).</td></tr>
-      </table>
-      <p>Tutte le valutazioni di rischio e le segnalazioni stanno nel <b>fascicolo riservato antiriciclaggio</b>, non nel verbale.</p>
+<h2>9. Cosa scrivo (e cosa NON scrivo) a verbale?</h2>
+<p>Il verbale di mediazione è riservato (artt. 9-10 D.Lgs. 28/2010). Le valutazioni antiriciclaggio <b>non ci vanno</b>. Regola pratica:</p>
+<table>
+<tr><th>Nel verbale SÌ (clausole neutre)</th><th>Nel verbale MAI</th></tr>
+<tr><td>"Le parti sono state identificate con documento d'identità."</td><td>Il livello di rischio (basso/medio/alto).</td></tr>
+<tr><td>"I pagamenti avverranno con strumenti tracciabili (art. 49)."</td><td>Gli indicatori di anomalia o i sospetti.</td></tr>
+<tr><td>"Acquisita la dichiarazione sul titolare effettivo."</td><td>L'esistenza o l'invio di una segnalazione (SOS).</td></tr>
+</table>
+<p>Tutte le valutazioni di rischio e le segnalazioni stanno nel <b>fascicolo riservato antiriciclaggio</b>, non nel verbale.</p>
 
-      <h2>10. In concreto: chi fa che cosa, e quando?</h2>
-      <p>L’<b>Organismo</b> mette in piedi il sistema: nomina un Responsabile Antiriciclaggio (RAR), prepara la modulistica, conserva i fascicoli, fa formazione. Il <b>mediatore</b>, fase per fase:</p>
-      <ul>
-        <li><b>Primo incontro</b>: identifica le parti, compila la scheda di rischio iniziale, osserva se la soluzione economica è coerente con la lite.</li>
-        <li><b>Durante</b>: se entrano nuovi soggetti, cambiano i pagamenti o spuntano trasferimenti nuovi, aggiorna la valutazione del rischio.</li>
-        <li><b>Incontro finale</b>: controlla che tutto sia coerente; se c’è un sospetto, lo gira al RAR (la decisione sulla segnalazione è del RAR, non del mediatore).</li>
-      </ul>
-      <p><b>E i documenti delle parti (carta d’identità, visure)?</b> Conviene che il mediatore <b>controlli comunque</b> che nel fascicolo ci siano, anche se l’ha già fatto l’Organismo: la diligenza è personale e, secondo i giudici, non ci si può fidare ciecamente del lavoro altrui. Se manca qualcosa, la integra lui.</p>
-      <p><b>Come si chiede alle parti di completare il fascicolo (al tavolo).</b> Con frasi neutre, senza accennare a rischio o sospetti. Esempio: «Prima di proseguire devo completare alcuni adempimenti di identificazione previsti dalla normativa: vi chiedo di confermare i dati e, se manca qualcosa (un documento d’identità, la dichiarazione sul titolare effettivo per le società, la dichiarazione del cliente), di integrarlo ora o tramite la segreteria.» Quello che riguarda la custodia e la conservazione del fascicolo <b>non lo sistemi tu al tavolo</b>: lo annoti sul foglio di annotazione e lo chiedi alla segreteria.</p>
-      <p><b>E allo sportello, al deposito della domanda?</b> Buona parte degli adempimenti li fa già la <b>segreteria</b>: apre il fascicolo riservato, consegna e fa firmare l’informativa privacy/AML, raccoglie i documenti d’identità (e, per le società, visura e titolare effettivo) e i dati dell’operazione, poi passa la scheda al mediatore per la valutazione del rischio. Anche qui: nessun accenno a rischio o segnalazioni allo sportello.</p>
+<h2>10. In concreto: chi fa che cosa, e quando?</h2>
+<p>L'<b>Organismo</b> mette in piedi il sistema: nomina un Responsabile Antiriciclaggio (RAR), prepara la modulistica, conserva i fascicoli, fa formazione. Il <b>mediatore</b>, fase per fase:</p>
+<ul>
+<li><b>Primo incontro</b>: identifica le parti, compila la scheda di rischio iniziale, osserva se la soluzione economica è coerente con la lite.</li>
+<li><b>Durante</b>: se entrano nuovi soggetti, cambiano i pagamenti o spuntano trasferimenti nuovi, aggiorna la valutazione del rischio.</li>
+<li><b>Incontro finale</b>: controlla che tutto sia coerente; se c'è un sospetto, lo gira al RAR (la decisione sulla segnalazione è del RAR, non del mediatore).</li>
+</ul>
+<p><b>E i documenti delle parti (carta d'identità, visure)?</b> Conviene che il mediatore <b>controlli comunque</b> che nel fascicolo ci siano, anche se l'ha già fatto l'Organismo: la diligenza è personale e, secondo i giudici, non ci si può fidare ciecamente del lavoro altrui. Se manca qualcosa, la integra lui.</p>
+<p><b>Come si chiede alle parti di completare il fascicolo (al tavolo).</b> Con frasi neutre, senza accennare a rischio o sospetti. Esempio: «Prima di proseguire devo completare alcuni adempimenti di identificazione previsti dalla normativa: vi chiedo di confermare i dati e, se manca qualcosa (un documento d'identità, la dichiarazione sul titolare effettivo per le società, la dichiarazione del cliente), di integrarlo ora o tramite la segreteria.» Quello che riguarda la custodia e la conservazione del fascicolo <b>non lo sistemi tu al tavolo</b>: lo annoti sul foglio di annotazione e lo chiedi alla segreteria.</p>
+<p><b>E allo sportello, al deposito della domanda?</b> Buona parte degli adempimenti li fa già la <b>segreteria</b>: apre il fascicolo riservato, consegna e fa firmare l'informativa privacy/AML, raccoglie i documenti d'identità (e, per le società, visura e titolare effettivo) e i dati dell'operazione, poi passa la scheda al mediatore per la valutazione del rischio. Anche qui: nessun accenno a rischio o segnalazioni allo sportello.</p>
 
-      <p><b>In uno schema, chi fa cosa:</b></p>
-      <figure style="margin:14px 0;text-align:center">
-        <img src="organigramma.png" alt="Organigramma della funzione antiriciclaggio" style="max-width:100%;height:auto;border:1px solid #ddd6d1;border-radius:8px">
-        <figcaption style="font-size:12.5px;color:#5b6675;font-style:italic;margin-top:6px">Linee continue: la struttura interna. Tratteggiate: i rapporti con l’esterno (UIF per la segnalazione, Guardia di Finanza per i controlli, professionista di supporto in ispezione).</figcaption>
-      </figure>
+<p><b>In uno schema, chi fa cosa:</b></p>
+<figure style="margin:14px 0;text-align:center">
+<img src="organigramma.png" alt="Organigramma della funzione antiriciclaggio" style="max-width:100%;height:auto;border:1px solid #ddd6d1;border-radius:8px">
+<figcaption style="font-size:12.5px;color:#5b6675;font-style:italic;margin-top:6px">Linee continue: la struttura interna. Tratteggiate: i rapporti con l'esterno (UIF per la segnalazione, Guardia di Finanza per i controlli, professionista di supporto in ispezione).</figcaption>
+</figure>
 
-      <p><b>Quali moduli trovi già e quali compili tu.</b> Quando ti siedi al tavolo, nel fascicolo dovresti già trovare (preparati dalla segreteria al deposito): la copertina (L.1), l’informativa firmata (L.13), l’adeguata verifica con i documenti (L.3), il titolare effettivo per le società (L.4) e la dichiarazione del cliente (L.5). Tu compili: la scheda di rischio (L.6, sempre), il foglio di annotazione (L.14) e — solo se c’è un’anomalia — il modulo SI-AML/01 per il responsabile (L.7). In breve: <b>L.1</b> è il “frontespizio” del fascicolo; <b>L.3/L.4/L.5</b> servono a sapere con chi hai a che fare; <b>L.13</b> informa le parti; <b>L.6</b> misura il rischio; <b>L.14</b> mette nero su bianco cosa hai fatto; <b>L.7</b> è il campanello che giri al RAR.</p>
-      <p><b>Cosa dire alle parti (in presenza), prima di ciascun modulo:</b> per l’informativa (L.13) «le consegno l’informativa antiriciclaggio e sulla privacy, da firmare per presa visione»; per l’identificazione (L.3) «devo identificarla: mi mostra un documento d’identità?»; per il titolare effettivo (L.4) «per la società, mi indichi chi detiene oltre il 25% o ne ha il controllo»; per la dichiarazione del cliente (L.5) «mi firma questa dichiarazione che i dati sono completi e veritieri». La scheda di rischio (L.6), il foglio di annotazione (L.14) e il SI-AML/01 (L.7) si compilano senza dire nulla alle parti.</p>
+<p><b>Quali moduli trovi già e quali compili tu.</b> Quando ti siedi al tavolo, nel fascicolo dovresti già trovare (preparati dalla segreteria al deposito): la copertina (L.1), l'informativa firmata (L.13), l'adeguata verifica con i documenti (L.3), il titolare effettivo per le società (L.4) e la dichiarazione del cliente (L.5). Tu compili: la scheda di rischio (L.6, sempre), il foglio di annotazione (L.14) e — solo se c'è un'anomalia — il modulo SI-AML/01 per il responsabile (L.7). In breve: <b>L.1</b> è il "frontespizio" del fascicolo; <b>L.3/L.4/L.5</b> servono a sapere con chi hai a che fare; <b>L.13</b> informa le parti; <b>L.6</b> misura il rischio; <b>L.14</b> mette nero su bianco cosa hai fatto; <b>L.7</b> è il campanello che giri al RAR.</p>
+<p><b>Cosa dire alle parti (in presenza), prima di ciascun modulo:</b> per l'informativa (L.13) «le consegno l'informativa antiriciclaggio e sulla privacy, da firmare per presa visione»; per l'identificazione (L.3) «devo identificarla: mi mostra un documento d'identità?»; per il titolare effettivo (L.4) «per la società, mi indichi chi detiene oltre il 25% o ne ha il controllo»; per la dichiarazione del cliente (L.5) «mi firma questa dichiarazione che i dati sono completi e veritieri». La scheda di rischio (L.6), il foglio di annotazione (L.14) e il SI-AML/01 (L.7) si compilano senza dire nulla alle parti.</p>
 
-      <h2>11. I 7 segnali da riconoscere al tavolo</h2>
-      <p>Sono i “campanelli” che, soli o combinati, fanno scattare l’allerta da girare al RAR. Il <b>motore interattivo</b> che li valuta è nello <a href="/antiriciclaggio.html" style="color:var(--blue)">strumento</a>.</p>
-      <table class="num">
-        <tr><th>#</th><th>Segnale</th><th>Esempio</th></tr>
-        <tr><td>T1</td><td>Fatto nuovo</td><td>Spunta un soggetto o un bene che non era nella domanda.</td></tr>
-        <tr><td>T2</td><td>Sproporzione</td><td>Lite da 5.000 €, ma accordo che sposta un immobile da 300.000 €.</td></tr>
-        <tr><td>T3</td><td>Pagamento anomalo</td><td>“Regoliamo in contanti”, paga un terzo non in causa, cessione di crediti.</td></tr>
-        <tr><td>T4</td><td>Reticenza</td><td>“Non posso dirle da dove vengono i soldi.”</td></tr>
-        <tr><td>T5</td><td>Terzo opaco</td><td>Un accompagnatore senza ruolo chiaro guida l’accordo.</td></tr>
-        <tr><td>T6</td><td>Indicatore UIF</td><td>PEP, paese a rischio, trust estero, cripto-valute.</td></tr>
-        <tr><td>T7</td><td>Uso strumentale</td><td>Lite finta, accordo già deciso e di forte valore patrimoniale.</td></tr>
-      </table>
-      <div class="box warn"><span class="t">Combinazioni da non sottovalutare</span>T1+T4, T2+T3, T5+T7 di solito fanno scattare il dubbio ragionevole. Il segnale T6 può bastare da solo (es. PEP o paese non cooperativo).</div>
+<h2>11. I 7 segnali da riconoscere al tavolo</h2>
+<p>Sono i "campanelli" che, soli o combinati, fanno scattare l'allerta da girare al RAR. Il <b>motore interattivo</b> che li valuta è nello <a href="/antiriciclaggio.html" style="color:var(--blue)">strumento</a>.</p>
+<table class="num">
+<tr><th>#</th><th>Segnale</th><th>Esempio</th></tr>
+<tr><td>T1</td><td>Fatto nuovo</td><td>Spunta un soggetto o un bene che non era nella domanda.</td></tr>
+<tr><td>T2</td><td>Sproporzione</td><td>Lite da 5.000 €, ma accordo che sposta un immobile da 300.000 €.</td></tr>
+<tr><td>T3</td><td>Pagamento anomalo</td><td>"Regoliamo in contanti", paga un terzo non in causa, cessione di crediti.</td></tr>
+<tr><td>T4</td><td>Reticenza</td><td>"Non posso dirle da dove vengono i soldi."</td></tr>
+<tr><td>T5</td><td>Terzo opaco</td><td>Un accompagnatore senza ruolo chiaro guida l'accordo.</td></tr>
+<tr><td>T6</td><td>Indicatore UIF</td><td>PEP, paese a rischio, trust estero, cripto-valute.</td></tr>
+<tr><td>T7</td><td>Uso strumentale</td><td>Lite finta, accordo già deciso e di forte valore patrimoniale.</td></tr>
+</table>
+<div class="box warn"><span class="t">Combinazioni da non sottovalutare</span>T1+T4, T2+T3, T5+T7 di solito fanno scattare il dubbio ragionevole. Il segnale T6 può bastare da solo (es. PEP o paese non cooperativo).</div>
 
-      <h2>12. Lo strumento online: come usare la card</h2>
-      <p>Su <b>calcolomediazione.it/antiriciclaggio</b> c’è uno strumento gratuito che aiuta a compilare i modelli e a riconoscere i segnali. I dati che inserisci <b>restano nel tuo browser</b> e non vengono inviati da nessuna parte.</p>
-      <p><b>Se sei l’Organismo (o la segreteria):</b></p>
-      <ol>
-        <li>Scegli il ruolo “Organismo di mediazione”.</li>
-        <li>Inserisci una volta sola i dati (organismo, procedura, parti, operazione) e rispondi al breve questionario di rischio.</li>
-        <li>Premi “Genera i modelli”: ottieni adeguata verifica, titolare effettivo, scheda di rischio, dichiarazione del cliente ed eventuale promemoria SOS. Stampa o scarica e metti tutto nel fascicolo riservato.</li>
-      </ol>
-      <p><b>Se sei il mediatore (al tavolo):</b></p>
-      <ol>
-        <li>Vai al “Motore trigger UIF” e segna i segnali T1-T7 che noti.</li>
-        <li>Premi “Analizza i trigger”: la card ti dice se c’è un “dubbio ragionevole” e prepara una bozza di motivazione per il RAR, che puoi copiare.</li>
-      </ol>
-      <div class="box ok"><span class="t">Ricorda</span>La card non invia nulla e non decide la segnalazione: la decisione è sempre del RAR. È un aiuto, non un parere legale.</div>
-      <p><b>Preferisci la carta?</b> Nel dossier completo (Allegato L) trovi tutti i moduli del fascicolo già pronti da <b>stampare e compilare a mano</b>: copertina del fascicolo, scheda di adeguata verifica, dichiarazione del titolare effettivo, scheda di rischio, dichiarazione del cliente (art. 22), Modulo SI-AML/01, registri delle valutazioni e della formazione, verbale dei controlli e checklist del contenuto minimo.</p>
+<h2>12. Lo strumento online: come usare la card</h2>
+<p>Su <b>calcolomediazione.it/antiriciclaggio</b> c'è uno strumento gratuito che aiuta a compilare i modelli e a riconoscere i segnali. I dati che inserisci <b>restano nel tuo browser</b> e non vengono inviati da nessuna parte. Per la spiegazione dettagliata, campo per campo e ruolo per ruolo (Organismo, Mediatore, Avvocato), incluse le funzioni di riconoscimento automatico dei documenti, gestione di più parti e salvataggio, vedi la <a href="/antiriciclaggio-compilazione.html">guida alla compilazione</a>. In sintesi:</p>
+<p><b>Se sei l'Organismo (o la segreteria):</b></p>
+<ol>
+<li>Scegli il ruolo "Organismo di mediazione".</li>
+<li>Inserisci una volta sola i dati (organismo, procedura, parti, operazione) e rispondi al breve questionario di rischio.</li>
+<li>Premi "Genera i modelli": ottieni adeguata verifica, titolare effettivo, scheda di rischio, dichiarazione del cliente ed eventuale promemoria SOS. Stampa o scarica e metti tutto nel fascicolo riservato.</li>
+</ol>
+<p><b>Se sei il mediatore (al tavolo):</b></p>
+<ol>
+<li>Vai al "Motore trigger UIF" e segna i segnali T1-T7 che noti.</li>
+<li>Premi "Analizza i trigger": la card ti dice se c'è un "dubbio ragionevole" e prepara una bozza di motivazione per il RAR, che puoi copiare.</li>
+</ol>
+<div class="box ok"><span class="t">Ricorda</span>La card non invia nulla e non decide la segnalazione: la decisione è sempre del RAR. È un aiuto, non un parere legale.</div>
+<p><b>Preferisci la carta?</b> Nel dossier completo (Allegato L) trovi tutti i moduli del fascicolo già pronti da <b>stampare e compilare a mano</b>: copertina del fascicolo, scheda di adeguata verifica, dichiarazione del titolare effettivo, scheda di rischio, dichiarazione del cliente (art. 22), Modulo SI-AML/01, registri delle valutazioni e della formazione, verbale dei controlli e checklist del contenuto minimo.</p>
 
-      <h2>13. Due esempi concreti (casi di fantasia)</h2>
-      <p>Per fissare le idee, ecco due procedure inventate: una che fila liscia e una con un campanello d’allarme.</p>
-      <p><b>Caso A — tutto in regola.</b> Il sig. Rossi contro la Beta S.r.l., lite su una fornitura da 85.000 €, pagamento con bonifico.</p>
-      <ul>
-        <li>Il mediatore consegna l’informativa, identifica le due parti e, per la società, annota il titolare effettivo (chi ha più del 25%).</li>
-        <li>Compila la scheda di rischio: esce “medio”, nessun campanello. A fine procedura riempie il foglio di annotazione con “nessuna anomalia”.</li>
-        <li>Nel verbale mette solo la clausola neutra sui pagamenti tracciabili. Fascicolo completo, nessuna segnalazione.</li>
-      </ul>
-      <p><b>Caso B — scatta un campanello.</b> La sig.ra Verdi contro la Gamma S.r.l.: lite dichiarata da 6.000 €, ma sul tavolo arriva un accordo che sposta 220.000 €, con richiesta di pagarne una parte in contanti e una parte che non dice da dove vengano i soldi.</p>
-      <ul>
-        <li>Tre segnali insieme (T2 sproporzione, T3 pagamento anomalo, T4 reticenza).</li>
-        <li>Il mediatore non blocca tutto bruscamente: aggiorna la seduta con una formula neutra (“supplemento di riflessione delle parti”), compila il Modulo SI-AML/01 e lo gira al RAR, che valuterà la segnalazione alla UIF.</li>
-        <li>Nel verbale resta solo il rinvio neutro: nessun accenno al rischio o al sospetto.</li>
-      </ul>
-      <div class="box ok"><span class="t">La morale</span>La differenza non sta nell’avere o no un sospetto, ma nel sapere <b>cosa scrivere e dove</b>: gli adempimenti e le anomalie restano nel fascicolo riservato (foglio di annotazione, SI-AML/01); il verbale resta pulito.</div>
-      <p><b>E per negoziazione assistita e OCC?</b> La negoziazione assistita segue le stesse regole della difesa: niente obblighi “pieni”, salvo che si concluda una vera operazione economica (es. un trasferimento immobiliare). Nell’OCC, invece, il gestore della crisi — secondo il CNDCEC — non fa l’adeguata verifica se è nominato dal referente dell’organismo, ma resta comunque tenuto a segnalare alla UIF quando sospetta un’operazione sospetta.</p>
+<h2>13. Due esempi concreti (casi di fantasia)</h2>
+<p>Per fissare le idee, ecco due procedure inventate: una che fila liscia e una con un campanello d'allarme.</p>
+<p><b>Caso A — tutto in regola.</b> Il sig. Rossi contro la Beta S.r.l., lite su una fornitura da 85.000 €, pagamento con bonifico.</p>
+<ul>
+<li>Il mediatore consegna l'informativa, identifica le due parti e, per la società, annota il titolare effettivo (chi ha più del 25%).</li>
+<li>Compila la scheda di rischio: esce "medio", nessun campanello. A fine procedura riempie il foglio di annotazione con "nessuna anomalia".</li>
+<li>Nel verbale mette solo la clausola neutra sui pagamenti tracciabili. Fascicolo completo, nessuna segnalazione.</li>
+</ul>
+<p><b>Caso B — scatta un campanello.</b> La sig.ra Verdi contro la Gamma S.r.l.: lite dichiarata da 6.000 €, ma sul tavolo arriva un accordo che sposta 220.000 €, con richiesta di pagarne una parte in contanti e una parte che non dice da dove vengano i soldi.</p>
+<ul>
+<li>Tre segnali insieme (T2 sproporzione, T3 pagamento anomalo, T4 reticenza).</li>
+<li>Il mediatore non blocca tutto bruscamente: aggiorna la seduta con una formula neutra ("supplemento di riflessione delle parti"), compila il Modulo SI-AML/01 e lo gira al RAR, che valuterà la segnalazione alla UIF.</li>
+<li>Nel verbale resta solo il rinvio neutro: nessun accenno al rischio o al sospetto.</li>
+</ul>
+<div class="box ok"><span class="t">La morale</span>La differenza non sta nell'avere o no un sospetto, ma nel sapere <b>cosa scrivere e dove</b>: gli adempimenti e le anomalie restano nel fascicolo riservato (foglio di annotazione, SI-AML/01); il verbale resta pulito.</div>
+<p><b>E per negoziazione assistita e OCC?</b> La negoziazione assistita segue le stesse regole della difesa: niente obblighi "pieni", salvo che si concluda una vera operazione economica (es. un trasferimento immobiliare). Nell'OCC, invece, il gestore della crisi — secondo il CNDCEC — non fa l'adeguata verifica se è nominato dal referente dell'organismo, ma resta comunque tenuto a segnalare alla UIF quando sospetta un'operazione sospetta.</p>
 
-      <h2>14. Le 5 cose da ricordare</h2>
-      <ol>
-        <li>Come difensore o assistente in mediazione sei esente; come mediatore la tua posizione è discussa, ma l’obbligo è soprattutto dell’Organismo.</li>
-        <li>Se arriva la GdF: i fascicoli sono dell’Organismo, non hai nulla da esibire; fai verbalizzare tutto e non ammettere violazioni.</li>
-        <li>A verbale solo clausole neutre; rischio e segnalazioni restano nel fascicolo riservato.</li>
-        <li>Possono contestare il passato, ma non oltre 5 anni (con favore per il reo sui fatti più vecchi).</li>
-        <li>Impara a riconoscere i 7 segnali e, in caso di dubbio, gira tutto al Responsabile Antiriciclaggio: la segnalazione è una sua decisione.</li>
-      </ol>
+<h2>14. Le 5 cose da ricordare</h2>
+<ol>
+<li>Come difensore o assistente in mediazione sei esente; come mediatore la tua posizione è discussa, ma l'obbligo è soprattutto dell'Organismo.</li>
+<li>Se arriva la GdF: i fascicoli sono dell'Organismo, non hai nulla da esibire; fai verbalizzare tutto e non ammettere violazioni.</li>
+<li>A verbale solo clausole neutre; rischio e segnalazioni restano nel fascicolo riservato.</li>
+<li>Possono contestare il passato, ma non oltre 5 anni (con favore per il reo sui fatti più vecchi).</li>
+<li>Impara a riconoscere i 7 segnali e, in caso di dubbio, gira tutto al Responsabile Antiriciclaggio: la segnalazione è una sua decisione.</li>
+</ol>
 
-      <div class="toolbar">
-        <a class="btn primary" href="/antiriciclaggio.html">↩ Vai allo strumento (modelli + motore UIF)</a>
-        <a class="btn" href="/">Tutti gli strumenti</a>
-      </div>
-    </div>
-    <div class="foot">© calcolomediazione.it · Guida informativa che semplifica volutamente: non sostituisce un parere legale sul caso concreto. Per i testi di legge e gli approfondimenti, vedi il dossier completo.</div>
-  </div>
+<div class="toolbar">
+<a class="btn primary" href="/antiriciclaggio.html">↩ Vai allo strumento (modelli + motore UIF)</a>
+<a class="btn" href="/antiriciclaggio-compilazione.html">📝 Guida alla compilazione (Organismo, Mediatore, Avvocato)</a>
+<a class="btn" href="/">Tutti gli strumenti</a>
+</div>
+</div>
+<div class="foot">© calcolomediazione.it · Guida informativa che semplifica volutamente: non sostituisce un parere legale sul caso concreto. Per i testi di legge e gli approfondimenti, vedi il dossier completo.</div>
+</div>
 </div>
 </body>
 </html>

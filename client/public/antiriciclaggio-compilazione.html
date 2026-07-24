@@ -1,0 +1,219 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Antiriciclaggio in mediazione — Guida alla compilazione | calcolomediazione.it</title>
+<meta name="description" content="Guida pratica passo per passo alla compilazione dello strumento antiriciclaggio di calcolomediazione.it: cosa fa l'Organismo, cosa fa il Mediatore, cosa fa l'Avvocato, sezione per sezione, con OCR, gestione multi-parte, salvataggio automatico ed esportazione Word.">
+<style>
+:root{
+--navy:#13161b; --blue:#a03317; --accentDark:#861600; --light:#ffe5d7; --line:#ddd6d1;
+--ink:#13161b; --muted:#5b6066; --ok:#2e7d32; --warn:#b26a00; --bad:#b00020;
+--bg:#f4f1ee; --card:#fcfcfc; --radius:14px;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;color:var(--ink);background:var(--bg);line-height:1.62}
+.wrap{max-width:920px;margin:0 auto;padding:18px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:0 4px 18px rgba(19,22,27,.06);overflow:hidden}
+.head{background:linear-gradient(135deg,var(--navy),var(--blue));color:#fff;padding:22px 26px}
+.brand{font-size:13px;letter-spacing:.12em;text-transform:uppercase;opacity:.85}
+.head h1{margin:6px 0 4px;font-size:24px;line-height:1.25}
+.head p{margin:0;opacity:.92;font-size:14px}
+.body{padding:14px 26px 26px}
+.toolbar{display:flex;flex-wrap:wrap;gap:10px;margin:14px 0 6px}
+a.btn{display:inline-block;text-decoration:none;font-size:14px;font-weight:600;border-radius:9px;padding:9px 14px;border:1px solid var(--line);color:var(--navy);background:#fff}
+a.btn.primary{background:var(--blue);color:#fff;border-color:var(--blue)}
+a.btn:hover{border-color:var(--blue)}
+h2{font-size:19px;color:var(--navy);margin:28px 0 8px;border-bottom:2px solid var(--blue);padding-bottom:6px}
+h3{font-size:15.5px;color:var(--accentDark);margin:18px 0 6px}
+p{margin:8px 0}
+b{color:var(--navy)}
+.lead{color:var(--muted);font-size:14.5px}
+table{width:100%;border-collapse:collapse;margin:10px 0;font-size:13.5px}
+th{background:var(--navy);color:#fff;text-align:left;padding:8px 9px;font-weight:600}
+td{border:1px solid var(--line);padding:7px 9px;vertical-align:top}
+tr:nth-child(even) td{background:#f7f3f0}
+td.who{width:23%;font-weight:600;color:var(--accentDark)}
+td.n{width:34px;text-align:center;font-weight:700;color:var(--blue)}
+.box{border:1px solid var(--line);border-left:5px solid var(--blue);border-radius:10px;padding:12px 14px;margin:12px 0;background:#fbf6f3;font-size:14.5px}
+.box.ok{border-left-color:var(--ok);background:#eef6ef}
+.box.warn{border-left-color:var(--warn);background:#fbf3e3}
+.box .t{font-weight:700;color:var(--blue);font-size:13px;display:block;margin-bottom:4px}
+.box.ok .t{color:var(--ok)} .box.warn .t{color:var(--warn)}
+ol,ul{margin:8px 0 8px 4px;padding-left:22px}
+li{margin:5px 0}
+.pill{display:inline-block;font-size:11px;font-weight:700;padding:2px 8px;border-radius:999px;background:var(--light);color:var(--accentDark)}
+.foot{padding:14px 26px;border-top:1px solid var(--line);color:var(--muted);font-size:12px;background:#fbfaf8}
+.toc{background:#eef3ff;border:1px solid #c7d6f5;border-radius:10px;padding:12px 16px;font-size:13.5px;margin:14px 0}
+.toc a{color:#243559;text-decoration:none}
+.toc a:hover{text-decoration:underline}
+.toc ol{margin:6px 0 0;padding-left:20px}
+.rolecard{border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin:8px 0;background:#fff}
+.rolecard b{display:block;color:var(--navy);font-size:14.5px;margin-bottom:2px}
+</style>
+</head>
+<body>
+<div class="wrap">
+<div class="card">
+<div class="head">
+<div class="brand">calcolomediazione.it · strumenti per la mediazione</div>
+<h1>Antiriciclaggio in mediazione — guida alla compilazione</h1>
+<p>Come usare lo strumento passo per passo: cosa fa l'Organismo, cosa fa il Mediatore, cosa fa l'Avvocato</p>
+</div>
+<div class="body">
+
+<div class="toolbar">
+<a class="btn primary" href="/antiriciclaggio.html">↩ Vai allo strumento (modelli + motore UIF)</a>
+<a class="btn" href="/antiriciclaggio-guida.html">📖 Guida agli obblighi di legge (linguaggio semplice)</a>
+<a class="btn" href="/">Tutti gli strumenti</a>
+</div>
+
+<p class="lead">Questa guida non spiega la normativa (per quello c'è la <a href="/antiriciclaggio-guida.html">guida in linguaggio semplice</a>): spiega <b>come si compila</b> lo strumento, campo per campo e ruolo per ruolo, comprese le funzioni più recenti — gestione di più parti nella stessa procedura, riconoscimento automatico dei documenti (OCR), salvataggio e ripresa del lavoro, cronologia delle comunicazioni del mediatore, esportazione e download in Word.</p>
+
+<div class="toc">
+<b>In questa pagina:</b>
+<ol>
+<li><a href="#logica">La logica dello strumento: una procedura, più parti</a></li>
+<li><a href="#organismo">Cosa compila l'Organismo di mediazione (o la segreteria)</a></li>
+<li><a href="#mediatore">Cosa compila il Mediatore designato</a></li>
+<li><a href="#avvocato">Cosa compila l'Avvocato di parte</a></li>
+<li><a href="#sezioni">Le 18 sezioni del modulo, una per una</a></li>
+<li><a href="#funzioni">Le funzioni trasversali (OCR, multi-parte, salvataggio, export, Word)</a></li>
+<li><a href="#faq">Domande frequenti</a></li>
+</ol>
+</div>
+
+<h2 id="logica">1. La logica dello strumento: una procedura, più parti</h2>
+<p>Una mediazione coinvolge sempre almeno due soggetti — l'istante e l'invitato/aderente, a volte anche più di due. Lo strumento riflette questa realtà: i dati che riguardano <b>la procedura nel suo complesso</b> (Organismo, numero di procedura, date, mediatore designato, oggetto della controversia) si inseriscono <b>una sola volta</b>; i dati che riguardano <b>ciascuna parte</b> (identificazione, rischio, adeguata verifica) si compilano <b>separatamente per ognuna</b>, usando il pulsante <b>"+ Nuova parte per questa procedura"</b> per passare dall'una all'altra senza perdere quanto già inserito.</p>
+<p>In alto trovi tre schede di ruolo — <b>Organismo di mediazione</b>, <b>Mediatore designato</b>, <b>Avvocato di parte</b> — che non bloccano nessun campo, ma servono a marcare da chi provengono i dati inseriti e a orientarti su cosa compilare, secondo le sezioni seguenti. Alla fine, premendo <b>"Genera i modelli"</b>, lo strumento produce automaticamente sei documenti per la parte corrente: <i>Informativa AML/privacy, Modulo di adeguata verifica, Scheda di valutazione del rischio, Dichiarazione del cliente, Foglio di annotazione, Checklist</i> — e, se il rischio risulta <b>alto</b>, anche un <i>Promemoria SOS riservato</i> per il Responsabile Antiriciclaggio (RAR).</p>
+<div class="box ok"><span class="t">Da ricordare sempre</span>Tutti i dati restano <b>solo nel browser</b> di chi compila: nulla viene inviato a calcolomediazione.it né ad alcun server. Questo significa anche che i dati non si spostano da soli tra un computer e l'altro: per condividerli tra postazioni diverse (es. segreteria e mediatore) usa l'esportazione in .json descritta al punto 6, oppure scarica e trasmetti il fascicolo generato.</div>
+
+<h2 id="organismo">2. Cosa compila l'Organismo di mediazione (o la segreteria)</h2>
+<div class="rolecard"><b>Scheda di ruolo da selezionare: "Organismo di mediazione"</b> — è quella attiva per default all'apertura della pagina.</div>
+<p><b>Quando interviene:</b> al deposito della domanda e dell'eventuale adesione, prima del primo incontro con il mediatore.</p>
+<p><b>Cosa compila di norma:</b></p>
+<ul>
+<li><b>Sezione 1 — Dati del procedimento:</b> denominazione e sede dell'Organismo, numero di iscrizione al registro del Ministero della Giustizia, legale rappresentante, numero di procedura, date di deposito dell'istanza e dell'adesione. Questi campi sono <b>comuni a tutte le parti</b> della stessa procedura: si inseriscono una volta sola.</li>
+<li><b>Sezioni 2-4 e 14</b>, in tutto o in parte, se allo sportello vengono già raccolti i dati anagrafici della parte e la documentazione (carta d'identità, visura camerale, dichiarazione sul titolare effettivo): in questo caso conviene compilarle subito, così il mediatore le trova pronte al tavolo e deve solo verificarle.</li>
+<li><b>Sezione 8</b>, limitatamente a oggetto e valore della controversia, se già risultano dalla domanda depositata.</li>
+</ul>
+<p><b>Documenti da caricare via OCR (facoltativo, v. punto 6.2):</b> documento d'identità, visura camerale, procura alle liti/mandato a conciliare, ricevuta di pagamento delle spese di mediazione. Lo strumento prova a leggerli e a proporre la compilazione dei campi corrispondenti.</p>
+<p><b>Altre azioni tipiche dell'Organismo:</b></p>
+<ul>
+<li>Usare <b>"🖨️ Moduli in bianco (stampa)"</b> per stampare i moduli cartacei da far compilare a mano, se preferito.</li>
+<li>Inserire il numero di procedura per attivare il salvataggio automatico, così il lavoro fatto allo sportello resta disponibile quando il mediatore riprende la scheda.</li>
+<li>Usare <b>"+ Nuova parte per questa procedura"</b> quando si apre la posizione della seconda parte (es. all'adesione dell'invitato).</li>
+<li>Dopo la generazione dei modelli, scaricare il fascicolo (<b>Word</b> o HTML) e conservarlo nel fascicolo riservato per 10 anni (art. 31 D.Lgs. 231/2007).</li>
+<li>La <b>Sezione 18 — Verifica del Responsabile dell'Organismo/RAR</b> è riservata al controllo di secondo livello: la compila il Responsabile Antiriciclaggio, non il mediatore al tavolo.</li>
+</ul>
+
+<h2 id="mediatore">3. Cosa compila il Mediatore designato</h2>
+<div class="rolecard"><b>Scheda di ruolo da selezionare: "Mediatore designato"</b></div>
+<p><b>Quando interviene:</b> dal primo incontro fino alla chiusura della procedura, con eventuali aggiornamenti nelle sessioni successive.</p>
+<p><b>Cosa compila di norma:</b> tutto ciò che richiede una valutazione o una verifica personale al tavolo — in pratica le <b>sezioni dalla 2 alla 18</b> (v. tabella al punto 5), a partire dai dati già inseriti dall'Organismo, che va sempre <b>controllato e integrato</b> se necessario (la diligenza richiesta è personale: non ci si può limitare a fidarsi di quanto fatto da altri). In particolare:</p>
+<ul>
+<li>Identifica la parte e verifica documento, titolare effettivo e qualifica PEP (sezioni 3, 4, 6, 7).</li>
+<li>Compila la scheda di rischio e la valutazione della prestazione (sezioni 9-10), l'esame delle anomalie (sezione 11) e la valutazione complessiva (sezione 12) — anche quando il rischio è basso, questa scheda va comunque prodotta.</li>
+<li>Usa il <b>motore trigger UIF</b> (in alto nella pagina, sopra il compilatore) per l'intervista sui sette segnali T1-T7: rispondendo, lo strumento segnala le combinazioni che integrano un "dubbio ragionevole" e prepara una bozza di motivazione da girare al RAR.</li>
+<li>Se emergono anomalie, valuta la trasmissione al Responsabile Antiriciclaggio (sezione 16) e raccoglie le dichiarazioni sottoscritte dalla parte (sezione 17).</li>
+<li>Registra <b>ogni comunicazione ricevuta in corso di procedura</b> (rinvii, nuovi elementi, variazioni) nel box "Comunicazioni e aggiornamenti del mediatore": la cronologia resta visibile nella pagina, compare nella Scheda di valutazione del rischio generata e aggiorna da sola la data dell'ultimo aggiornamento della scheda. Questa cronologia è <b>condivisa per l'intera procedura</b>, non per singola parte, perché riguarda lo svolgimento del procedimento nel suo complesso.</li>
+<li>Passa alla parte successiva con <b>"+ Nuova parte per questa procedura"</b> ogni volta che deve compilare la posizione di un altro soggetto (istante, aderente, terzo chiamato), ripetendo le sezioni dalla 2 in poi.</li>
+<li>Alla fine di ciascuna sessione o all'emergere di elementi nuovi, preme <b>"Genera i modelli"</b>: ogni generazione resta in cronologia (v. punto 6.3), così si vede quando e quante volte i modelli sono stati prodotti per quella parte.</li>
+</ul>
+<div class="box warn"><span class="t">Attenzione</span>Il livello di rischio, gli indicatori di anomalia e l'esistenza di una segnalazione non vanno mai riportati nel verbale di mediazione (che è riservato ma leggibile dalle parti): restano solo nel fascicolo AML e nei modelli generati da questo strumento.</div>
+
+<h2 id="avvocato">4. Cosa compila l'Avvocato di parte</h2>
+<div class="rolecard"><b>Scheda di ruolo da selezionare: "Avvocato di parte"</b> — <i>solo se opera un'operazione ex art. 3, c. 4, lett. c) D.Lgs. 231/2007</i></div>
+<p>Nella generalità dei casi l'avvocato che assiste o difende una parte in mediazione <b>non ha obblighi antiriciclaggio</b>: l'attività difensiva è esclusa (Regola Tecnica n. 2 CNF; art. 35, c. 5, D.Lgs. 231/2007) e non c'è nulla da compilare in questa scheda — per il quadro completo v. la <a href="/antiriciclaggio-guida.html">guida agli obblighi di legge</a>, punto 2.</p>
+<p>Gli obblighi si riattivano solo se l'incarico dell'avvocato sfocia in un'<b>operazione economica autonoma tipica dell'art. 3, c. 4, lett. c)</b> — ad esempio un trasferimento immobiliare collegato all'accordo. In quel caso, per la parte che assiste:</p>
+<ul>
+<li>Compila i propri dati nella <b>Sezione 5 — Rappresentante o soggetto autorizzato ad agire per la parte</b>, indicando come titolo di intervento "Difensore" o "Procuratore speciale", con i propri riferimenti anagrafici, i poteri conferiti (rappresentare, formulare proposte, disporre del diritto, sottoscrivere l'accordo) e il documento da cui derivano (procura alle liti, procura speciale/notarile).</li>
+<li>Può caricare via OCR la propria <b>tessera professionale</b> o la <b>procura alle liti/mandato a conciliare</b> per precompilare automaticamente questi campi (v. punto 6.2).</li>
+</ul>
+<p>Le sezioni relative alla valutazione del rischio, alle anomalie e alla trasmissione al RAR (9-16) restano di norma di competenza del mediatore/Organismo, non dell'avvocato, anche quando quest'ultimo interviene per un'operazione dell'art. 3 c. 4 lett. c).</p>
+
+<h2 id="sezioni">5. Le 18 sezioni del modulo, una per una</h2>
+<p>Ordine, contenuto in breve e responsabilità tipica di ciascuna sezione. "Comune alla procedura" indica i campi che si inseriscono una sola volta; tutte le altre sezioni sono specifiche della parte corrente e vanno ripetute con "+ Nuova parte" per ogni soggetto.</p>
+<table>
+<tr><th class="n">#</th><th>Sezione</th><th>Contenuto in breve</th><th class="who">Chi compila di norma</th></tr>
+<tr><td class="n">1</td><td>Dati del procedimento</td><td>Organismo, iscrizione, sede, legale rappresentante, numero procedura, date, mediatore designato — <i>comune alla procedura</i></td><td class="who">Organismo / segreteria</td></tr>
+<tr><td class="n">2</td><td>Ruolo e tipologia della parte</td><td>Istante/aderente/terzo chiamato; persona fisica o giuridica; natura giuridica</td><td class="who">Organismo (al deposito) o Mediatore</td></tr>
+<tr><td class="n">3</td><td>Area geografica e identificazione</td><td>Provenienza della parte, modalità e data dell'identificazione, documento verificato</td><td class="who">Mediatore (esegue) / segreteria (raccoglie)</td></tr>
+<tr><td class="n">4</td><td>Dati della parte</td><td>Anagrafica completa, contatti, documento d'identità, professione/attività</td><td class="who">Segreteria (raccoglie) → Mediatore (verifica)</td></tr>
+<tr><td class="n">5</td><td>Rappresentante o soggetto autorizzato</td><td>Legale rappresentante, difensore, procuratore, esecutore: dati e poteri</td><td class="who">Mediatore; Avvocato per i propri dati come difensore</td></tr>
+<tr><td class="n">6</td><td>Persona politicamente esposta (PEP)</td><td>Verifica su parte, titolare effettivo e rappresentante</td><td class="who">Mediatore</td></tr>
+<tr><td class="n">7</td><td>Titolare effettivo</td><td>Persona fisica nel cui interesse ultimo agisce la parte</td><td class="who">Mediatore</td></tr>
+<tr><td class="n">8</td><td>Prestazione: oggetto, valore e fondi</td><td>Oggetto e valore della controversia, provenienza dei fondi, modalità di pagamento</td><td class="who">Organismo (oggetto/valore da domanda) + Mediatore (fondi/pagamento)</td></tr>
+<tr><td class="n">9</td><td>Valutazione del rischio della parte</td><td>Natura giuridica, area geografica, titolarità effettiva, PEP</td><td class="who">Mediatore</td></tr>
+<tr><td class="n">10</td><td>Valutazione della prestazione</td><td>Tipologia, valore, modalità, coerenza, complessità dell'operazione</td><td class="who">Mediatore</td></tr>
+<tr><td class="n">11</td><td>Esame delle anomalie</td><td>Indicatori UIF rilevati, approfondimenti svolti</td><td class="who">Mediatore (anche con il motore trigger T1-T7)</td></tr>
+<tr><td class="n">12</td><td>Valutazione complessiva del rischio</td><td>Indicatore automatico orientativo + livello finale motivato</td><td class="who">Mediatore</td></tr>
+<tr><td class="n">13</td><td>Misure di adeguata verifica</td><td>Semplificata / ordinaria / rafforzata, con eventuali misure aggiuntive</td><td class="who">Mediatore</td></tr>
+<tr><td class="n">14</td><td>Documentazione acquisita</td><td>Elenco dei documenti effettivamente raccolti agli atti</td><td class="who">Segreteria (raccoglie) + Mediatore (integra)</td></tr>
+<tr><td class="n">15</td><td>Esito complessivo e determinazioni finali</td><td>Conclusioni operative sulla parte</td><td class="who">Mediatore</td></tr>
+<tr><td class="n">16</td><td>Trasmissione interna</td><td>Invio della scheda al RAR/Referente SOS, se necessario</td><td class="who">Mediatore</td></tr>
+<tr><td class="n">17</td><td>Dichiarazioni della parte</td><td>Veridicità dei dati, impegno ad aggiornare, presa visione privacy</td><td class="who">Mediatore (raccoglie la sottoscrizione)</td></tr>
+<tr><td class="n">18</td><td>Verifica del Responsabile dell'Organismo/RAR</td><td>Controllo di secondo livello, facoltativo in fase di compilazione al tavolo</td><td class="who">Responsabile Antiriciclaggio (Organismo)</td></tr>
+</table>
+
+<h2 id="funzioni">6. Le funzioni trasversali</h2>
+
+<h3>6.1 Più parti nella stessa procedura</h3>
+<p>Il pulsante <b>"+ Nuova parte per questa procedura"</b> (sotto il numero di procedura) mantiene i dati comuni — Organismo, numero, date, mediatore, oggetto — e azzera solo i campi specifici della parte, in modo da poter compilare separatamente il Modulo di adeguata verifica e la Scheda di valutazione del rischio per ciascun soggetto. Il box <b>"Procedure con dati salvati su questo browser"</b>, in cima al compilatore, elenca tutte le procedure già trattate su quel browser con le rispettive parti annidate: da lì si riapre in un clic qualunque combinazione procedura/parte con il link <b>"Apri ›"</b>.</p>
+
+<h3>6.2 Compilazione automatica da documenti (OCR)</h3>
+<p>Nel box "Compilazione automatica da documenti" si può caricare una foto o una scansione (JPG/PNG/PDF, anche più file per lo stesso documento) e scegliere il <b>tipo di documento</b>:</p>
+<ul>
+<li><b>Documento d'identità</b> (carta d'identità, patente, passaporto)</li>
+<li><b>Visura camerale</b> (persona giuridica)</li>
+<li><b>Tessera professionale avvocato</b></li>
+<li><b>Istanza/domanda di mediazione</b> (o di adesione)</li>
+<li><b>Comunicazione di avvio</b> (mediatore designato e data del primo incontro)</li>
+<li><b>Procura alle liti / mandato a conciliare</b></li>
+<li><b>Ricevuta di pagamento delle spese di mediazione</b> (bonifico)</li>
+</ul>
+<p>Per i tipi "Istanza", "Comunicazione di avvio", "Procura" e "Ricevuta di pagamento" i dati riconosciuti si distribuiscono da soli tra le sezioni pertinenti; per tutti gli altri tipi va indicato prima "a chi si riferisce il documento" (parte, rappresentante, titolare effettivo, o Organismo/mediatore). In ogni caso, dopo l'estrazione compare una schermata di <b>verifica</b>: nulla viene scritto nei campi finché non si preme "Applica ai campi selezionati", e si può correggere o deselezionare ogni singolo valore proposto.</p>
+<div class="box warn"><span class="t">Attenzione</span>Il riconoscimento avviene interamente nel browser (i file non vengono mai inviati a calcolomediazione.it) ma <b>può sbagliare</b>, soprattutto su scansioni di scarsa qualità o documenti non standard: va sempre controllato prima di confermare.</div>
+
+<h3>6.3 Salvataggio automatico, cronologia e ripresa del lavoro</h3>
+<p>Non appena si inserisce il <b>numero di procedura</b>, ogni modifica ai campi viene salvata automaticamente (con un breve ritardo) nel browser, associata a quel numero <b>e</b> al nome della parte corrente. L'indicatore "Salvataggio automatico attivo" mostra l'orario dell'ultimo salvataggio. Se in una sessione precedente era già stato compilato qualcosa per la stessa procedura, il box <b>"Sono stati trovati dati compilati..."</b> propone di ricaricarli con un pulsante dedicato — il caricamento non è mai automatico, va sempre confermato per non sovrascrivere per errore dati che si stanno digitando. Ogni volta che si generano i modelli, la data e l'elenco dei documenti prodotti vengono registrati nello <b>storico</b> di quella parte, visibile subito sotto il numero di procedura.</p>
+
+<h3>6.4 Comunicazioni e aggiornamenti del mediatore</h3>
+<p>Il box dedicato (sotto la sezione 1) permette di annotare data e contenuto di ogni comunicazione ricevuta nel corso della procedura — rinvii, nuovi elementi, variazioni comunicate tra una sessione e l'altra. La cronologia è unica per l'intera procedura (non per singola parte) e viene riportata automaticamente nella Scheda di valutazione del rischio generata, oltre ad aggiornare la data dell'ultimo aggiornamento in sezione 1.</p>
+
+<h3>6.5 Esportazione e importazione dei dati (.json)</h3>
+<p><b>"⇩ Esporta dati procedura (.json)"</b> scarica un unico file con tutte le parti, lo storico delle generazioni e la cronologia delle comunicazioni per la procedura corrente: utile per fare un backup, per passare il lavoro a un collega o per spostarlo su un altro computer/browser (i dati, per scelta di privacy, non si sincronizzano da soli). <b>"⇧ Importa dati procedura (.json)"</b> ricarica un file esportato in precedenza, ripristinando tutte le parti nella lista "Procedure con dati salvati".</p>
+
+<h3>6.6 Generare, stampare, scaricare il fascicolo</h3>
+<table>
+<tr><th>Pulsante</th><th>Cosa fa</th></tr>
+<tr><td><b>Genera i modelli</b></td><td>Compila automaticamente i sei documenti del fascicolo (più l'eventuale promemoria SOS) con i dati inseriti per la parte corrente.</td></tr>
+<tr><td><b>🖨️ Moduli in bianco (stampa)</b></td><td>Stampa i moduli senza i dati, per la compilazione manuale su carta.</td></tr>
+<tr><td><b>Stampa tutto</b></td><td>Stampa i modelli già generati con i dati inseriti.</td></tr>
+<tr><td><b>Scarica (.html)</b></td><td>Salva i modelli generati in un file HTML autonomo.</td></tr>
+<tr><td><b>📄 Scarica (apri in Word)</b></td><td>Salva i modelli generati in un file che si apre direttamente in Microsoft Word, pronto per essere archiviato o adattato.</td></tr>
+</table>
+
+<h3>6.7 "Azzera" e "+ Nuova parte": la differenza</h3>
+<p><b>"+ Nuova parte per questa procedura"</b> mantiene i dati comuni della procedura e pulisce solo i campi della parte, per aggiungere un nuovo soggetto. <b>"Azzera"</b> invece svuota <i>tutta</i> la scheda a schermo (compresi i dati della procedura), utile per iniziare da zero una pratica del tutto diversa — non cancella però i dati già salvati nel browser per le procedure precedenti, che restano recuperabili dal box "Procedure con dati salvati".</p>
+
+<h2 id="faq">7. Domande frequenti</h2>
+<div class="box"><span class="t">I dati inseriti vengono inviati a calcolomediazione.it?</span>Mai. Tutto resta nel browser del dispositivo usato per compilare (localStorage): non c'è alcun invio a un server, né di calcolomediazione.it né di terzi.</div>
+<div class="box"><span class="t">Cambio computer o browser: ritrovo i dati?</span>No, il salvataggio automatico è locale a quel browser. Per portare il lavoro su un altro dispositivo usa "⇩ Esporta dati procedura (.json)" e poi "⇧ Importa dati procedura (.json)" sull'altro computer.</div>
+<div class="box"><span class="t">Il pulsante "Carica questi dati" non compare: perché?</span>Il salvataggio e il recupero sono legati al numero di procedura: finché il campo "N. procedura / R.G. mediazione" è vuoto, lo strumento non sa a quale pratica associare i dati salvati.</div>
+<div class="box"><span class="t">Come tengo distinte le posizioni di più parti nella stessa procedura?</span>Con "+ Nuova parte per questa procedura": ogni parte resta salvata separatamente con il proprio nome, e nel box "Procedure con dati salvati" le trovi tutte elencate sotto lo stesso numero di procedura.</div>
+<div class="box"><span class="t">Rischio di perdere tutto se cancello i dati di navigazione del browser?</span>Sì: essendo un salvataggio solo locale, cancellando la cronologia/i dati di navigazione si perde anche quanto salvato qui. Per una conservazione affidabile nel tempo, dopo aver generato i modelli scarica sempre il fascicolo in Word o HTML, oppure esporta una copia dei dati in .json.</div>
+<div class="box"><span class="t">L'OCR ha letto male un dato: cosa faccio?</span>Nella schermata di verifica che compare dopo "Estrai dati dal documento" puoi correggere il testo di ogni campo proposto, oppure deselezionarlo per non applicarlo: nulla viene scritto finché non premi "Applica ai campi selezionati".</div>
+
+<div class="toolbar">
+<a class="btn primary" href="/antiriciclaggio.html">↩ Vai allo strumento (modelli + motore UIF)</a>
+<a class="btn" href="/antiriciclaggio-guida.html">📖 Guida agli obblighi di legge</a>
+<a class="btn" href="/">Tutti gli strumenti</a>
+</div>
+
+</div>
+<div class="foot">© calcolomediazione.it · Guida operativa alla compilazione: non sostituisce un parere legale sul caso concreto. Per gli obblighi di legge vedi la guida in linguaggio semplice; per i testi normativi, il dossier completo.</div>
+</div>
+</div>
+</body>
+</html>
