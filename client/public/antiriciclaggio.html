@@ -323,12 +323,26 @@
           <div class="role" data-role="mediatore"><b>Mediatore designato</b><small>per conto dell'ODM</small></div>
           <div class="role" data-role="avvocato"><b>Avvocato di parte</b><small>solo se operazione ex art. 3 c.4 c)</small></div>
         </div>
+<div class="ocrbox" id="procedureSalvateBox">
+<h3 class="grouph">Procedure con dati salvati su questo browser</h3>
+<p class="sub">Se hai già iniziato a compilare questa scheda per una procedura in una sessione precedente, la trovi qui: apri per richiamarne il numero e proporre il caricamento dei dati salvati.</p>
+<div id="procedure_salvate_lista"></div>
+</div>
 <h3 class="grouph">1 — Dati del procedimento</h3><div class="grid"><div class="field"><label>Denominazione Organismo</label><div class="hint">Nome dell'Organismo di mediazione (ODM) presso cui pende la procedura.</div><input id="odm_nome" type="text" placeholder="Organismo di Mediazione ..." ></div><div class="field"><label>N. iscrizione registro Min. Giustizia</label><div class="hint">Numero di iscrizione dell'ODM nel registro tenuto dal Ministero della Giustizia.</div><input id="odm_iscr" type="text" placeholder="n. ..." ></div><div class="field"><label>Sede</label><div class="hint">Indirizzo della sede dell'Organismo.</div><input id="odm_sede" type="text" placeholder="Via ..., Città" ></div><div class="field"><label>Legale rappresentante</label><div class="hint">Nome e cognome del legale rappresentante dell'Organismo.</div><input id="odm_lr" type="text" placeholder="Nome Cognome" ></div><div class="field"><label>N. procedura / R.G. mediazione</label><div class="hint">Numero identificativo della procedura assegnato dall'Organismo.</div><input id="proc_n" type="text" placeholder="n. .../20.." ></div>
 <div class="field" style="grid-column:1/-1">
-<label>Storico dei documenti già compilati per questa procedura</label>
-<div class="hint">Ogni volta che generi i modelli qui sotto, la data e l'elenco vengono registrati per questo numero di procedura. Lo storico resta salvato solo in questo browser (non su un server): cambiando computer o browser non lo ritrovi, e se cancelli i dati di navigazione viene perso.</div>
+<div id="dati_hint"></div>
+<label>Salvataggio automatico e storico — per procedura e per parte</label>
+<div class="hint">Una procedura di mediazione coinvolge sempre almeno due parti (istante e invitato/i): ciascuna va verificata separatamente. Mentre compili, i campi di questa scheda vengono salvati automaticamente in questo browser con il numero di procedura <b>e il nome della parte</b> come riferimento, così puoi riprendere il lavoro — anche per una parte alla volta — dopo aver chiuso la pagina. Ogni volta che generi i modelli qui sotto, la data e l'elenco vengono inoltre registrati come storico per quella parte. <b>Tutto resta solo su questo dispositivo/browser</b>: non viene mai inviato a calcolomediazione.it né ad alcun server; cambiando computer o browser non lo ritrovi, e se cancelli i dati di navigazione viene perso — per una conservazione affidabile nel tempo usa comunque «Genera i modelli» e scarica il fascicolo in Word/HTML, oppure esporta qui sotto una copia dei dati in .json.</div>
+<div id="autosave_ind" class="hint" style="font-style:italic"></div>
 <div id="storico_lista"></div>
-<button type="button" class="btn-ghost" style="margin-top:6px;padding:6px 10px;font-size:12.5px" onclick="cancellaStoricoProcedura()">Cancella lo storico di questa procedura</button>
+<div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:6px">
+<button type="button" class="btn-ghost" style="padding:6px 10px;font-size:12.5px" onclick="amlNuovaParte()">+ Nuova parte per questa procedura</button>
+<button type="button" class="btn-ghost" style="padding:6px 10px;font-size:12.5px" onclick="amlEsportaDati()">⇩ Esporta dati procedura (.json)</button>
+<button type="button" class="btn-ghost" style="padding:6px 10px;font-size:12.5px" onclick="$('import_dati_file').click()">⇧ Importa dati procedura (.json)</button>
+<input type="file" id="import_dati_file" accept="application/json" style="display:none" onchange="amlImportaDatiFile(this)">
+<button type="button" class="btn-ghost" style="padding:6px 10px;font-size:12.5px" onclick="amlCancellaDatiProcedura()">Cancella i dati compilati salvati (questa parte)</button>
+<button type="button" class="btn-ghost" style="padding:6px 10px;font-size:12.5px" onclick="cancellaStoricoProcedura()">Cancella lo storico delle generazioni</button>
+</div>
 </div>
 <div class="field"><label>Data deposito istanza</label><div class="hint">Data in cui l'istante ha depositato la domanda di mediazione.</div><input id="proc_data_dep_istanza" type="date" placeholder="" ></div><div class="field"><label>Data deposito adesione</label><div class="hint">Data in cui la parte aderente ha depositato l'adesione (se presente).</div><input id="proc_data_dep_adesione" type="date" placeholder="" ></div><div class="field"><label>Data primo incontro</label><div class="hint">Data del primo incontro tra le parti e il mediatore.</div><input id="proc_data" type="date" placeholder="" ></div><div class="field"><label>Mediatore designato</label><div class="hint">Nome e cognome del mediatore incaricato della procedura.</div><input id="proc_med" type="text" placeholder="Nome Cognome" ></div><div class="field"><label>Scheda compilata da</label><div class="hint">Nome di chi compila materialmente la scheda (mediatore o segreteria).</div><input id="scheda_compilata_da" type="text" placeholder="Nome Cognome" ></div><div class="field"><label>Qualifica</label><div class="hint">Qualifica di chi compila (es. mediatore, segreteria, RAR).</div><input id="scheda_qualifica" type="text" placeholder="es. Mediatore" ></div><div class="field"><label>Data della valutazione iniziale</label><div class="hint">Data in cui è stata svolta la prima valutazione del rischio.</div><input id="scheda_data_val_iniziale" type="date" placeholder="" ></div><div class="field"><label>Data dell'ultimo aggiornamento</label><div class="hint">Da compilare solo in caso di aggiornamento successivo della scheda.</div><input id="scheda_data_ultimo_agg" type="date" placeholder="" ></div><div class="field"><label>Motivo dell'aggiornamento</label><div class="hint">Perché la scheda è stata aggiornata (es. nuovi elementi, variazione dati).</div><input id="scheda_motivo_agg" type="text" placeholder="es. emersi nuovi elementi" ></div></div>
 <div class="ocrbox" id="aggBox">
@@ -448,7 +462,16 @@
   document.querySelectorAll(".role").forEach(el=>el.addEventListener("click",()=>{
     document.querySelectorAll(".role").forEach(r=>r.classList.remove("active"));
     el.classList.add("active"); role = el.dataset.role;
+    if(typeof amlAutosaveSchedule === "function") amlAutosaveSchedule();
   }));
+  document.addEventListener("input", (e)=>{
+    const t = e.target;
+    if(t && t.id && !AML_AUTOSAVE_EXCLUDE.has(t.id) && (t.tagName==="INPUT"||t.tagName==="SELECT"||t.tagName==="TEXTAREA")) amlAutosaveSchedule();
+  });
+  document.addEventListener("change", (e)=>{
+    const t = e.target;
+    if(t && t.id && !AML_AUTOSAVE_EXCLUDE.has(t.id) && (t.tagName==="INPUT"||t.tagName==="SELECT"||t.tagName==="TEXTAREA")) amlAutosaveSchedule();
+  });
 
 
   // ---------- toggle blocchi condizionali ----------
@@ -505,11 +528,41 @@
   calcRisk();
   if(typeof renderAggiornamenti === "function") renderAggiornamenti();
   if(typeof renderStorico === "function"){
+    amlMediatoreLogAutoload();
     renderStorico();
+    renderDatiSuggerimento();
+    renderProcedureSalvate();
+    const aggiornaProceduraECorrente = ()=>{ amlMediatoreLogAutoload(); renderStorico(); renderDatiSuggerimento(); };
+    const aggiornaParte = ()=>{ renderStorico(); renderDatiSuggerimento(); };
     const procNEl = $("proc_n");
-    if(procNEl){ procNEl.addEventListener("input", renderStorico); procNEl.addEventListener("change", renderStorico); }
+    if(procNEl){
+      procNEl.addEventListener("input", aggiornaProceduraECorrente);
+      procNEl.addEventListener("change", aggiornaProceduraECorrente);
+    }
+    const pNomeEl = $("p_nome");
+    if(pNomeEl){
+      pNomeEl.addEventListener("input", aggiornaParte);
+      pNomeEl.addEventListener("change", aggiornaParte);
+    }
+    // Delega degli eventi sui contenitori stabili: i pulsanti "Carica"/"Apri" dentro questi box vengono
+    // rigenerati ad ogni render (anche mentre l'utente clicca, per via del cambio di focus), quindi un
+    // onclick riscritto ogni volta rischierebbe di sparire proprio nell'istante del click.
+    const datiHintEl = $("dati_hint");
+    if(datiHintEl) datiHintEl.addEventListener("click", (e)=>{
+      const btn = e.target.closest("[data-carica-proc]");
+      if(!btn) return;
+      e.preventDefault();
+      amlDatiCarica(btn.dataset.caricaProc, btn.dataset.caricaParty);
+    });
+    const procListEl = $("procedure_salvate_lista");
+    if(procListEl) procListEl.addEventListener("click", (e)=>{
+      const a = e.target.closest("[data-open-proc]");
+      if(!a) return;
+      e.preventDefault();
+      amlApriProcedura(a.dataset.openProc, a.dataset.openParty);
+    });
   }
-  // ---------- document builders ----------
+// ---------- document builders ----------
   function docBlock(id,title,inner){
     return '<div class="doc" id="'+id+'"><div class="dh">'+title+
       '<div class="acts"><button class="btn-ghost" onclick="printOne(\''+id+'\')">Stampa</button>'+
@@ -901,6 +954,7 @@
   }
 
   function reset(){
+    clearTimeout(amlAutosaveTimer);
     document.querySelectorAll("input,select,textarea").forEach(el=>{
       if(el.tagName==="SELECT"){ el.selectedIndex=0; }
       else if(el.type==="checkbox"){ el.checked=false; }
@@ -918,6 +972,8 @@
     mediatoreLog = [];
     if(typeof renderAggiornamenti === "function") renderAggiornamenti();
     if(typeof renderStorico === "function") renderStorico();
+    if(typeof renderDatiSuggerimento === "function") renderDatiSuggerimento();
+    if(typeof renderProcedureSalvate === "function") renderProcedureSalvate();
   }
 
   // ---------- Comunicazioni e aggiornamenti del mediatore ----------
@@ -933,12 +989,14 @@
     }
     if(testoEl) testoEl.value = "";
     renderAggiornamenti();
+    if(typeof amlMediatoreLogAutosave === "function") amlMediatoreLogAutosave();
     toast("Aggiornamento aggiunto alla cronologia.");
   }
 
   function rimuoviAggiornamento(idx){
     mediatoreLog.splice(idx,1);
     renderAggiornamenti();
+    if(typeof amlMediatoreLogAutosave === "function") amlMediatoreLogAutosave();
   }
 
   // ---------- Storico dei documenti compilati, per procedura ----------
@@ -960,20 +1018,28 @@
   function amlProcKey(){
     return (v("proc_n")||"").trim().replace(/\s+/g," ");
   }
+  // Una stessa procedura di mediazione coinvolge sempre almeno due parti (istante e invitato/i), e
+  // ciascuna va identificata e valutata separatamente ai fini antiriciclaggio: lo storico e i dati
+  // salvati sono quindi organizzati per procedura e, all'interno, per parte (identificata dal nome/
+  // denominazione inserito nella scheda). "amlPartyKey" individua la parte attualmente a schermo.
+  function amlPartyKey(){
+    return (v("p_nome")||"").trim() || "(parte senza nome)";
+  }
 
   function amlStoricoRegistraGenerazione(){
-    const key = amlProcKey();
-    if(!key) return;
+    const procKey = amlProcKey();
+    if(!procKey) return;
+    const partyKey = amlPartyKey();
     const all = amlStoricoLoad();
-    if(!all[key]) all[key] = [];
+    if(!all[procKey]) all[procKey] = {};
+    if(!all[procKey][partyKey]) all[procKey][partyKey] = [];
     const parti = ["Informativa AML/privacy","Modulo di adeguata verifica","Scheda di valutazione del rischio","Dichiarazione del cliente","Foglio di annotazione","Checklist"];
     const rischio = calcRisk();
     if(rischio==="ALTO") parti.push("Promemoria SOS (riservato)");
-    all[key].push({
+    all[procKey][partyKey].push({
       ts: new Date().toISOString(),
       label: "Fascicolo generato — " + parti.join(", "),
-      rischio: rischio,
-      parte: val("p_nome") ? v("p_nome") : ""
+      rischio: rischio
     });
     amlStoricoSaveAll(all);
     renderStorico();
@@ -982,36 +1048,291 @@
   function renderStorico(){
     const box = $("storico_lista");
     if(!box) return;
-    const key = amlProcKey();
-    if(!key){
+    const procKey = amlProcKey();
+    if(!procKey){
       box.innerHTML = '<p class="hint">Inserisci il numero di procedura per vedere lo storico dei documenti già compilati su questo browser.</p>';
       return;
     }
-    const all = amlStoricoLoad();
-    const entries = all[key] || [];
+    const partyKey = amlPartyKey();
+    const entries = (amlStoricoLoad()[procKey] || {})[partyKey] || [];
     if(!entries.length){
-      box.innerHTML = '<p class="hint">Nessun documento risulta ancora generato per la procedura n. '+esc(key)+' su questo browser.</p>';
+      box.innerHTML = '<p class="hint">Nessun documento risulta ancora generato per la parte «'+esc(partyKey)+'» della procedura n. '+esc(procKey)+' su questo browser.</p>';
       return;
     }
     box.innerHTML = entries.slice().reverse().map(e =>
       '<div style="border:1px solid #ddd6d1;border-radius:8px;padding:8px 10px;margin-bottom:6px;font-size:13px;background:#fff">'
-      + '<div><b>'+esc(new Date(e.ts).toLocaleString("it-IT"))+'</b>'+(e.rischio ? ' — rischio '+esc(e.rischio) : '')+(e.parte ? ' — '+esc(e.parte) : '')+'</div>'
+      + '<div><b>'+esc(new Date(e.ts).toLocaleString("it-IT"))+'</b>'+(e.rischio ? ' — rischio '+esc(e.rischio) : '')+' — parte «'+esc(partyKey)+'»</div>'
       + '<div style="margin-top:2px;color:#373b40">'+esc(e.label)+'</div></div>'
     ).join("");
   }
 
   function cancellaStoricoProcedura(){
-    const key = amlProcKey();
-    if(!key){ toast("Inserisci prima il numero di procedura."); return; }
-    if(!confirm("Cancellare lo storico dei documenti generati per la procedura n. "+key+" su questo browser? L'operazione non è reversibile.")) return;
+    clearTimeout(amlAutosaveTimer);
+    const procKey = amlProcKey();
+    if(!procKey){ toast("Inserisci prima il numero di procedura."); return; }
+    const partyKey = amlPartyKey();
+    if(!confirm("Cancellare lo storico delle generazioni per la parte «"+partyKey+"» della procedura n. "+procKey+" su questo browser? L'operazione non è reversibile.")) return;
     const all = amlStoricoLoad();
-    delete all[key];
+    if(all[procKey]){
+      delete all[procKey][partyKey];
+      if(!Object.keys(all[procKey]).length) delete all[procKey];
+    }
     amlStoricoSaveAll(all);
     renderStorico();
-    toast("Storico cancellato per questa procedura.");
+    toast("Storico cancellato per questa parte.");
   }
 
-  function renderAggiornamenti(){
+  // ---------- Comunicazioni del mediatore: salvate per procedura (condivise tra tutte le parti) ----------
+  const AML_MEDLOG_KEY = "calcolomediazione_aml_comunicazioni";
+
+  function amlMediatoreLogLoadAll(){
+    try{ const raw = localStorage.getItem(AML_MEDLOG_KEY); return raw ? JSON.parse(raw) : {}; } catch(e){ return {}; }
+  }
+  function amlMediatoreLogSaveAll(all){
+    try{ localStorage.setItem(AML_MEDLOG_KEY, JSON.stringify(all)); } catch(e){ /* storage non disponibile */ }
+  }
+  function amlMediatoreLogAutosave(){
+    const procKey = amlProcKey();
+    if(!procKey) return;
+    const all = amlMediatoreLogLoadAll();
+    all[procKey] = mediatoreLog;
+    amlMediatoreLogSaveAll(all);
+  }
+  function amlMediatoreLogAutoload(){
+    const procKey = amlProcKey();
+    const all = amlMediatoreLogLoadAll();
+    mediatoreLog = (procKey && Array.isArray(all[procKey])) ? all[procKey].slice() : [];
+    if(typeof renderAggiornamenti === "function") renderAggiornamenti();
+  }
+
+  // ---------- Salvataggio automatico dei campi del modulo, per procedura e per parte ----------
+  // Oltre allo storico "sono stati generati i modelli il ..." qui sopra, salviamo anche il contenuto
+  // effettivo dei campi, così chi torna su questa pagina per la stessa procedura — e per la stessa
+  // parte, dato che una procedura coinvolge sempre almeno due parti da verificare separatamente —
+  // ritrova il lavoro già fatto. Stessa scelta di fondo del resto della card: solo localStorage del
+  // browser, nessun invio a calcolomediazione.it o a terzi. Il caricamento non è mai automatico e
+  // silenzioso: viene sempre proposto con un pulsante esplicito, per non sovrascrivere per errore dati
+  // che si stanno già compilando a schermo. I pulsanti generati dinamicamente usano la delega degli
+  // eventi (un solo listener sul contenitore stabile) invece di riscrivere un onclick ad ogni
+  // ricalcolo: un elenco rigenerato mentre l'utente clicca (es. per il cambio di campo che fa perdere
+  // il focus a un attimo prima) altrimenti farebbe sparire proprio il pulsante appena cliccato.
+  const AML_DATI_KEY = "calcolomediazione_aml_dati";
+  const AML_AUTOSAVE_EXCLUDE = new Set(["ocr_files","agg_data","agg_testo","import_dati_file"]);
+  // Campi della procedura/organismo, condivisi tra tutte le parti: non vengono azzerati da "+ Nuova parte".
+  const AML_PROCEDURE_SHARED_IDS = new Set(["odm_nome","odm_iscr","odm_sede","odm_lr","proc_n","proc_data_dep_istanza","proc_data_dep_adesione","proc_data","proc_med","proc_ogg"]);
+  let amlAutosaveTimer = null;
+
+  function amlDatiLoadAll(){
+    try{ const raw = localStorage.getItem(AML_DATI_KEY); return raw ? JSON.parse(raw) : {}; } catch(e){ return {}; }
+  }
+  function amlDatiSaveAll(all){
+    try{ localStorage.setItem(AML_DATI_KEY, JSON.stringify(all)); } catch(e){ /* storage non disponibile: si prosegue senza persistenza */ }
+  }
+
+  function amlRaccogliCampi(){
+    const campi = {};
+    document.querySelectorAll("input[id],select[id],textarea[id]").forEach(el=>{
+      if(AML_AUTOSAVE_EXCLUDE.has(el.id)) return;
+      campi[el.id] = (el.type==="checkbox") ? el.checked : el.value;
+    });
+    return campi;
+  }
+
+  function amlAutosaveSchedule(){
+    clearTimeout(amlAutosaveTimer);
+    amlAutosaveTimer = setTimeout(amlAutosaveEsegui, 500);
+  }
+
+  function amlAutosaveEsegui(){
+    const procKey = amlProcKey();
+    const ind = $("autosave_ind");
+    if(!procKey){
+      if(ind) ind.textContent = "Il salvataggio automatico si attiva dopo aver inserito il numero di procedura.";
+      return;
+    }
+    const partyKey = amlPartyKey();
+    const all = amlDatiLoadAll();
+    if(!all[procKey]) all[procKey] = {};
+    all[procKey][partyKey] = {
+      ts: new Date().toISOString(),
+      role: role,
+      riskLivelloManual: riskLivelloManual,
+      avTipoManual: avTipoManual,
+      campi: amlRaccogliCampi()
+    };
+    amlDatiSaveAll(all);
+    amlMediatoreLogAutosave();
+    if(ind) ind.textContent = "Salvataggio automatico attivo — parte «"+partyKey+"» — ultimo salvataggio alle " + new Date().toLocaleTimeString("it-IT") + ".";
+    renderProcedureSalvate();
+    renderDatiSuggerimento();
+  }
+
+  function amlDatiCarica(procKey, partyKey){
+    const all = amlDatiLoadAll();
+    const saved = all[procKey] && all[procKey][partyKey];
+    if(!saved){ toast("Nessun dato salvato trovato per questa parte."); return; }
+    Object.keys(saved.campi||{}).forEach(id=>{
+      const el = $(id);
+      if(!el) return;
+      if(el.type==="checkbox") el.checked = !!saved.campi[id];
+      else el.value = saved.campi[id];
+      el.dispatchEvent(new Event("input",{bubbles:true}));
+      el.dispatchEvent(new Event("change",{bubbles:true}));
+    });
+    if(saved.role){
+      document.querySelectorAll(".role").forEach(r=>r.classList.remove("active"));
+      const card = document.querySelector('.role[data-role="'+saved.role+'"]');
+      if(card) card.classList.add("active");
+      role = saved.role;
+    }
+    riskLivelloManual = !!saved.riskLivelloManual;
+    avTipoManual = !!saved.avTipoManual;
+    syncToggles();
+    calcRisk();
+    renderStorico();
+    renderDatiSuggerimento();
+    toast("Dati caricati — procedura n. " + procKey + ", parte «" + partyKey + "».");
+  }
+
+  function renderDatiSuggerimento(){
+    const box = $("dati_hint");
+    if(!box) return;
+    const procKey = amlProcKey();
+    if(!procKey){ box.innerHTML = ""; return; }
+    const parti = amlDatiLoadAll()[procKey] || {};
+    const partyKeys = Object.keys(parti);
+    if(!partyKeys.length){ box.innerHTML = ""; return; }
+    const correnteKey = amlPartyKey();
+    const righe = partyKeys.map(pk=>{
+      const d = parti[pk];
+      const isCorrente = pk === correnteKey;
+      return '<div style="display:flex;justify-content:space-between;align-items:center;gap:8px;padding:3px 0">'
+        + '<span>'+esc(pk)+(isCorrente ? ' <i>(nome corrente a schermo)</i>' : '')+' — salvato alle '+esc(new Date(d.ts).toLocaleTimeString("it-IT"))+'</span>'
+        + '<button type="button" class="btn-ghost" style="padding:3px 9px;font-size:12px;white-space:nowrap" data-carica-proc="'+esc(procKey)+'" data-carica-party="'+esc(pk)+'">Carica questa parte</button>'
+        + '</div>';
+    }).join("");
+    box.innerHTML = '<div class="ocr-warn"><b>Parti già verificate per questa procedura (salvate su questo browser):</b>'
+      + righe
+      + '<div class="hint" style="margin-top:4px">Caricare sovrascrive i campi attualmente a schermo. Per verificare una nuova parte della stessa procedura usa «+ Nuova parte per questa procedura» qui sotto, senza toccare il numero di procedura.</div></div>';
+  }
+
+  function renderProcedureSalvate(){
+    const box = $("procedure_salvate_lista");
+    if(!box) return;
+    const datiAll = amlDatiLoadAll();
+    const storicoAll = amlStoricoLoad();
+    const procKeys = Array.from(new Set([...Object.keys(datiAll), ...Object.keys(storicoAll)])).sort();
+    if(!procKeys.length){ box.innerHTML = '<p class="hint">Nessuna procedura con dati salvati su questo browser.</p>'; return; }
+    box.innerHTML = procKeys.map(pk=>{
+      const partyKeys = Array.from(new Set([...Object.keys(datiAll[pk]||{}), ...Object.keys(storicoAll[pk]||{})]));
+      const righeParti = partyKeys.map(party=>{
+        const d = datiAll[pk] && datiAll[pk][party];
+        const ultimo = d ? new Date(d.ts).toLocaleString("it-IT") : "";
+        return '<div style="display:flex;justify-content:space-between;align-items:center;gap:8px;padding:3px 0 3px 14px;font-size:12.5px">'
+          + '<span>· '+esc(party)+(ultimo ? ' — '+esc(ultimo) : ' — solo storico generazioni')+'</span>'
+          + '<a href="#" data-open-proc="'+esc(pk)+'" data-open-party="'+esc(party)+'" style="color:#a03317;text-decoration:none;font-weight:600;white-space:nowrap">Apri ›</a>'
+          + '</div>';
+      }).join("");
+      return '<div style="border:1px solid #ddd6d1;border-radius:8px;padding:8px 10px;margin-bottom:6px;font-size:13px;background:#fff">'
+        + '<b>Procedura n. '+esc(pk)+'</b>' + righeParti + '</div>';
+    }).join("");
+  }
+
+  function amlApriProcedura(procKey, partyKey){
+    const el = $("proc_n");
+    if(!el) return;
+    el.value = procKey;
+    el.dispatchEvent(new Event("input",{bubbles:true}));
+    el.dispatchEvent(new Event("change",{bubbles:true}));
+    amlDatiCarica(procKey, partyKey);
+    el.scrollIntoView({behavior:"smooth", block:"center"});
+  }
+
+  function amlNuovaParte(){
+    clearTimeout(amlAutosaveTimer);
+    const procKey = amlProcKey();
+    if(!procKey){ toast("Inserisci prima il numero di procedura."); return; }
+    if(!confirm("Verranno azzerati i campi relativi alla parte attuale (identificazione, titolare effettivo, PEP, operazione, rischio, dichiarazioni), mantenendo i dati della procedura già inseriti (organismo, numero, date, mediatore). Salva prima eventuali modifiche non ancora salvate. Continuare?")) return;
+    document.querySelectorAll("input[id],select[id],textarea[id]").forEach(el=>{
+      if(AML_PROCEDURE_SHARED_IDS.has(el.id) || AML_AUTOSAVE_EXCLUDE.has(el.id)) return;
+      if(el.tagName==="SELECT"){ el.selectedIndex = 0; }
+      else if(el.type==="checkbox"){ el.checked = false; }
+      else { el.value = ""; }
+    });
+    riskLivelloManual = false; avTipoManual = false;
+    syncToggles();
+    calcRisk();
+    renderStorico();
+    renderDatiSuggerimento();
+    toast("Pronto per una nuova parte di questa procedura: compila i suoi dati, verranno salvati separatamente.");
+  }
+
+  function amlEsportaDati(){
+    const procKey = amlProcKey();
+    if(!procKey){ toast("Inserisci prima il numero di procedura da esportare."); return; }
+    const dati = amlDatiLoadAll()[procKey] || null;
+    const storico = amlStoricoLoad()[procKey] || null;
+    const comunicazioni = amlMediatoreLogLoadAll()[procKey] || [];
+    if(!dati && !storico){ toast("Nessun dato salvato per questa procedura."); return; }
+    const pacchetto = { procedura: procKey, esportatoIl: new Date().toISOString(), parti: dati, storico: storico, comunicazioniMediatore: comunicazioni };
+    const blob = new Blob([JSON.stringify(pacchetto, null, 2)], {type:"application/json"});
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "dati_procedura_"+procKey.replace(/[^\w]/g,"_")+".json";
+    a.click(); URL.revokeObjectURL(a.href);
+  }
+
+  function amlImportaDatiFile(input){
+    const file = input.files && input.files[0];
+    if(!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      try{
+        const pacchetto = JSON.parse(reader.result);
+        if(!pacchetto || !pacchetto.procedura){ toast("File non riconosciuto: manca il numero di procedura."); return; }
+        if(pacchetto.parti){
+          const all = amlDatiLoadAll();
+          all[pacchetto.procedura] = pacchetto.parti;
+          amlDatiSaveAll(all);
+        }
+        if(pacchetto.storico){
+          const allS = amlStoricoLoad();
+          allS[pacchetto.procedura] = pacchetto.storico;
+          amlStoricoSaveAll(allS);
+        }
+        if(pacchetto.comunicazioniMediatore){
+          const allM = amlMediatoreLogLoadAll();
+          allM[pacchetto.procedura] = pacchetto.comunicazioniMediatore;
+          amlMediatoreLogSaveAll(allM);
+        }
+        const el = $("proc_n");
+        if(el){ el.value = pacchetto.procedura; el.dispatchEvent(new Event("input",{bubbles:true})); }
+        renderStorico(); renderDatiSuggerimento(); renderProcedureSalvate();
+        toast("Dati importati per la procedura n. " + pacchetto.procedura + ". Usa «Carica questa parte» per applicarli al modulo.");
+      } catch(e){ toast("Errore nella lettura del file: formato non valido."); }
+      input.value = "";
+    };
+    reader.readAsText(file);
+  }
+
+  function amlCancellaDatiProcedura(){
+    clearTimeout(amlAutosaveTimer);
+    const procKey = amlProcKey();
+    if(!procKey){ toast("Inserisci prima il numero di procedura."); return; }
+    const partyKey = amlPartyKey();
+    if(!confirm("Cancellare i dati compilati salvati automaticamente per la parte «"+partyKey+"» della procedura n. "+procKey+" su questo browser? Lo storico delle generazioni e le comunicazioni del mediatore non vengono toccati. L'operazione non è reversibile.")) return;
+    const all = amlDatiLoadAll();
+    if(all[procKey]){
+      delete all[procKey][partyKey];
+      if(!Object.keys(all[procKey]).length) delete all[procKey];
+    }
+    amlDatiSaveAll(all);
+    renderDatiSuggerimento();
+    renderProcedureSalvate();
+    toast("Dati compilati cancellati per questa parte.");
+  }
+
+function renderAggiornamenti(){
     const box = $("agg_lista");
     if(!box) return;
     if(!mediatoreLog.length){
