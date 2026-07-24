@@ -323,7 +323,14 @@
           <div class="role" data-role="mediatore"><b>Mediatore designato</b><small>per conto dell'ODM</small></div>
           <div class="role" data-role="avvocato"><b>Avvocato di parte</b><small>solo se operazione ex art. 3 c.4 c)</small></div>
         </div>
-<h3 class="grouph">1 — Dati del procedimento</h3><div class="grid"><div class="field"><label>Denominazione Organismo</label><div class="hint">Nome dell'Organismo di mediazione (ODM) presso cui pende la procedura.</div><input id="odm_nome" type="text" placeholder="Organismo di Mediazione ..." ></div><div class="field"><label>N. iscrizione registro Min. Giustizia</label><div class="hint">Numero di iscrizione dell'ODM nel registro tenuto dal Ministero della Giustizia.</div><input id="odm_iscr" type="text" placeholder="n. ..." ></div><div class="field"><label>Sede</label><div class="hint">Indirizzo della sede dell'Organismo.</div><input id="odm_sede" type="text" placeholder="Via ..., Città" ></div><div class="field"><label>Legale rappresentante</label><div class="hint">Nome e cognome del legale rappresentante dell'Organismo.</div><input id="odm_lr" type="text" placeholder="Nome Cognome" ></div><div class="field"><label>N. procedura / R.G. mediazione</label><div class="hint">Numero identificativo della procedura assegnato dall'Organismo.</div><input id="proc_n" type="text" placeholder="n. .../20.." ></div><div class="field"><label>Data deposito istanza</label><div class="hint">Data in cui l'istante ha depositato la domanda di mediazione.</div><input id="proc_data_dep_istanza" type="date" placeholder="" ></div><div class="field"><label>Data deposito adesione</label><div class="hint">Data in cui la parte aderente ha depositato l'adesione (se presente).</div><input id="proc_data_dep_adesione" type="date" placeholder="" ></div><div class="field"><label>Data primo incontro</label><div class="hint">Data del primo incontro tra le parti e il mediatore.</div><input id="proc_data" type="date" placeholder="" ></div><div class="field"><label>Mediatore designato</label><div class="hint">Nome e cognome del mediatore incaricato della procedura.</div><input id="proc_med" type="text" placeholder="Nome Cognome" ></div><div class="field"><label>Scheda compilata da</label><div class="hint">Nome di chi compila materialmente la scheda (mediatore o segreteria).</div><input id="scheda_compilata_da" type="text" placeholder="Nome Cognome" ></div><div class="field"><label>Qualifica</label><div class="hint">Qualifica di chi compila (es. mediatore, segreteria, RAR).</div><input id="scheda_qualifica" type="text" placeholder="es. Mediatore" ></div><div class="field"><label>Data della valutazione iniziale</label><div class="hint">Data in cui è stata svolta la prima valutazione del rischio.</div><input id="scheda_data_val_iniziale" type="date" placeholder="" ></div><div class="field"><label>Data dell'ultimo aggiornamento</label><div class="hint">Da compilare solo in caso di aggiornamento successivo della scheda.</div><input id="scheda_data_ultimo_agg" type="date" placeholder="" ></div><div class="field"><label>Motivo dell'aggiornamento</label><div class="hint">Perché la scheda è stata aggiornata (es. nuovi elementi, variazione dati).</div><input id="scheda_motivo_agg" type="text" placeholder="es. emersi nuovi elementi" ></div></div>
+<h3 class="grouph">1 — Dati del procedimento</h3><div class="grid"><div class="field"><label>Denominazione Organismo</label><div class="hint">Nome dell'Organismo di mediazione (ODM) presso cui pende la procedura.</div><input id="odm_nome" type="text" placeholder="Organismo di Mediazione ..." ></div><div class="field"><label>N. iscrizione registro Min. Giustizia</label><div class="hint">Numero di iscrizione dell'ODM nel registro tenuto dal Ministero della Giustizia.</div><input id="odm_iscr" type="text" placeholder="n. ..." ></div><div class="field"><label>Sede</label><div class="hint">Indirizzo della sede dell'Organismo.</div><input id="odm_sede" type="text" placeholder="Via ..., Città" ></div><div class="field"><label>Legale rappresentante</label><div class="hint">Nome e cognome del legale rappresentante dell'Organismo.</div><input id="odm_lr" type="text" placeholder="Nome Cognome" ></div><div class="field"><label>N. procedura / R.G. mediazione</label><div class="hint">Numero identificativo della procedura assegnato dall'Organismo.</div><input id="proc_n" type="text" placeholder="n. .../20.." ></div>
+<div class="field" style="grid-column:1/-1">
+<label>Storico dei documenti già compilati per questa procedura</label>
+<div class="hint">Ogni volta che generi i modelli qui sotto, la data e l'elenco vengono registrati per questo numero di procedura. Lo storico resta salvato solo in questo browser (non su un server): cambiando computer o browser non lo ritrovi, e se cancelli i dati di navigazione viene perso.</div>
+<div id="storico_lista"></div>
+<button type="button" class="btn-ghost" style="margin-top:6px;padding:6px 10px;font-size:12.5px" onclick="cancellaStoricoProcedura()">Cancella lo storico di questa procedura</button>
+</div>
+<div class="field"><label>Data deposito istanza</label><div class="hint">Data in cui l'istante ha depositato la domanda di mediazione.</div><input id="proc_data_dep_istanza" type="date" placeholder="" ></div><div class="field"><label>Data deposito adesione</label><div class="hint">Data in cui la parte aderente ha depositato l'adesione (se presente).</div><input id="proc_data_dep_adesione" type="date" placeholder="" ></div><div class="field"><label>Data primo incontro</label><div class="hint">Data del primo incontro tra le parti e il mediatore.</div><input id="proc_data" type="date" placeholder="" ></div><div class="field"><label>Mediatore designato</label><div class="hint">Nome e cognome del mediatore incaricato della procedura.</div><input id="proc_med" type="text" placeholder="Nome Cognome" ></div><div class="field"><label>Scheda compilata da</label><div class="hint">Nome di chi compila materialmente la scheda (mediatore o segreteria).</div><input id="scheda_compilata_da" type="text" placeholder="Nome Cognome" ></div><div class="field"><label>Qualifica</label><div class="hint">Qualifica di chi compila (es. mediatore, segreteria, RAR).</div><input id="scheda_qualifica" type="text" placeholder="es. Mediatore" ></div><div class="field"><label>Data della valutazione iniziale</label><div class="hint">Data in cui è stata svolta la prima valutazione del rischio.</div><input id="scheda_data_val_iniziale" type="date" placeholder="" ></div><div class="field"><label>Data dell'ultimo aggiornamento</label><div class="hint">Da compilare solo in caso di aggiornamento successivo della scheda.</div><input id="scheda_data_ultimo_agg" type="date" placeholder="" ></div><div class="field"><label>Motivo dell'aggiornamento</label><div class="hint">Perché la scheda è stata aggiornata (es. nuovi elementi, variazione dati).</div><input id="scheda_motivo_agg" type="text" placeholder="es. emersi nuovi elementi" ></div></div>
 <div class="ocrbox" id="aggBox">
 <h3 class="grouph">Comunicazioni e aggiornamenti del mediatore in corso di procedura</h3>
 <p class="sub">La mediazione si sviluppa spesso su più sessioni: registra qui ogni comunicazione del mediatore (rinvii, nuovi elementi, variazioni) man mano che arriva. La cronologia resta in questa pagina, viene riportata nella Scheda di valutazione del rischio generata qui sotto e aggiorna automaticamente la data dell'ultimo aggiornamento della scheda.</p>
@@ -497,6 +504,11 @@
   document.querySelectorAll('[id^="cb_an_"]').forEach(cb=>cb.addEventListener("change",calcRisk));
   calcRisk();
   if(typeof renderAggiornamenti === "function") renderAggiornamenti();
+  if(typeof renderStorico === "function"){
+    renderStorico();
+    const procNEl = $("proc_n");
+    if(procNEl){ procNEl.addEventListener("input", renderStorico); procNEl.addEventListener("change", renderStorico); }
+  }
   // ---------- document builders ----------
   function docBlock(id,title,inner){
     return '<div class="doc" id="'+id+'"><div class="dh">'+title+
@@ -885,6 +897,7 @@
     out.innerHTML = html;
     out.style.display = "block";
     out.scrollIntoView({behavior:"smooth"});
+    amlStoricoRegistraGenerazione();
   }
 
   function reset(){
@@ -904,6 +917,7 @@
     if(typeof ocrReset === "function") ocrReset();
     mediatoreLog = [];
     if(typeof renderAggiornamenti === "function") renderAggiornamenti();
+    if(typeof renderStorico === "function") renderStorico();
   }
 
   // ---------- Comunicazioni e aggiornamenti del mediatore ----------
@@ -925,6 +939,76 @@
   function rimuoviAggiornamento(idx){
     mediatoreLog.splice(idx,1);
     renderAggiornamenti();
+  }
+
+  // ---------- Storico dei documenti compilati, per procedura ----------
+  // A differenza del resto del modulo (che vive solo in memoria ed è azzerato da reset()), qui usiamo
+  // il localStorage del browser per ricordare, procedura per procedura, quando è stato generato il
+  // fascicolo: è l'unico modo per far sopravvivere l'informazione a una chiusura della scheda o a un
+  // "Azzera", restando comunque locale al dispositivo e mai trasmessa altrove.
+  const AML_STORICO_KEY = "calcolomediazione_aml_storico";
+
+  function amlStoricoLoad(){
+    try{
+      const raw = localStorage.getItem(AML_STORICO_KEY);
+      return raw ? JSON.parse(raw) : {};
+    } catch(e){ return {}; }
+  }
+  function amlStoricoSaveAll(all){
+    try{ localStorage.setItem(AML_STORICO_KEY, JSON.stringify(all)); } catch(e){ /* storage non disponibile: si prosegue senza persistenza */ }
+  }
+  function amlProcKey(){
+    return (v("proc_n")||"").trim().replace(/\s+/g," ");
+  }
+
+  function amlStoricoRegistraGenerazione(){
+    const key = amlProcKey();
+    if(!key) return;
+    const all = amlStoricoLoad();
+    if(!all[key]) all[key] = [];
+    const parti = ["Informativa AML/privacy","Modulo di adeguata verifica","Scheda di valutazione del rischio","Dichiarazione del cliente","Foglio di annotazione","Checklist"];
+    const rischio = calcRisk();
+    if(rischio==="ALTO") parti.push("Promemoria SOS (riservato)");
+    all[key].push({
+      ts: new Date().toISOString(),
+      label: "Fascicolo generato — " + parti.join(", "),
+      rischio: rischio,
+      parte: val("p_nome") ? v("p_nome") : ""
+    });
+    amlStoricoSaveAll(all);
+    renderStorico();
+  }
+
+  function renderStorico(){
+    const box = $("storico_lista");
+    if(!box) return;
+    const key = amlProcKey();
+    if(!key){
+      box.innerHTML = '<p class="hint">Inserisci il numero di procedura per vedere lo storico dei documenti già compilati su questo browser.</p>';
+      return;
+    }
+    const all = amlStoricoLoad();
+    const entries = all[key] || [];
+    if(!entries.length){
+      box.innerHTML = '<p class="hint">Nessun documento risulta ancora generato per la procedura n. '+esc(key)+' su questo browser.</p>';
+      return;
+    }
+    box.innerHTML = entries.slice().reverse().map(e =>
+      '<div style="border:1px solid #ddd6d1;border-radius:8px;padding:8px 10px;margin-bottom:6px;font-size:13px;background:#fff">'
+      + '<div><b>'+esc(new Date(e.ts).toLocaleString("it-IT"))+'</b>'+(e.rischio ? ' — rischio '+esc(e.rischio) : '')+(e.parte ? ' — '+esc(e.parte) : '')+'</div>'
+      + '<div style="margin-top:2px;color:#373b40">'+esc(e.label)+'</div></div>'
+    ).join("");
+  }
+
+  function cancellaStoricoProcedura(){
+    const key = amlProcKey();
+    if(!key){ toast("Inserisci prima il numero di procedura."); return; }
+    if(!confirm("Cancellare lo storico dei documenti generati per la procedura n. "+key+" su questo browser? L'operazione non è reversibile.")) return;
+    const all = amlStoricoLoad();
+    delete all[key];
+    amlStoricoSaveAll(all);
+    renderStorico();
+    toast("Storico cancellato per questa procedura.");
   }
 
   function renderAggiornamenti(){
