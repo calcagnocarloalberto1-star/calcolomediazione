@@ -105,6 +105,8 @@ function rowToAnalisi(row: any): AnalisiCaso {
 
 export class DatabaseStorage implements IStorage {
   async createAnalisi(data: InsertAnalisiCaso): Promise<AnalisiCaso & { accessToken: string }> {
+    // Retention: elimina le analisi piu' vecchie di 30 giorni (best-effort, non blocca la creazione).
+    pool.query("DELETE FROM analisi_casi WHERE created_at < now() - interval '30 days'").catch(() => {});
     const accessToken = crypto.randomBytes(32).toString("hex");
 
     const res = await pool.query(
