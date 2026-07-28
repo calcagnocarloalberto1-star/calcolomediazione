@@ -10,7 +10,8 @@
     "prebuild": "tsx script/validate-giurisprudenza.ts",
     "start": "NODE_ENV=production node dist/index.cjs",
     "check": "tsc",
-    "db:push": "drizzle-kit push"
+    "db:push": "drizzle-kit push",
+    "test": "tsx shared/calcolo-indennita.test.ts && tsx shared/notarile.test.ts && tsx shared/valore-catastale.test.ts && tsx shared/sentenza-slug.test.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.115.0",
