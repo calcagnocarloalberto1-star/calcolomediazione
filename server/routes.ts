@@ -513,6 +513,23 @@ export async function registerRoutes(
     }
   });
 
+  // ─── SPIEGAZIONE AI DEI CALCOLATORI (solo numeri/parametri, nessun dato personale) ─
+  app.post("/api/spiega", async (req, res) => {
+    try {
+      const contesto = (req.body?.contesto || "").toString().slice(0, 200);
+      const dati = req.body?.dati;
+      if (dati == null) return res.status(400).json({ error: "Dati mancanti." });
+      const datiStr = (typeof dati === "string" ? dati : JSON.stringify(dati)).slice(0, 12000);
+      const system = `Sei un assistente che spiega in italiano semplice e professionale i risultati di un calcolatore relativo alla mediazione civile (contesto: ${contesto}). Ricevi dati strutturati (etichette e valori). Scrivi una spiegazione discorsiva e chiara, adatta a un cliente non giurista: illustra cosa significano le voci principali, evidenzia il confronto e l'eventuale risparmio, e chiudi ricordando che si tratta di stime indicative. Non inventare cifre non presenti nei dati. Usa markdown leggero (grassetti ed elenchi), niente tabelle. Massimo circa 250 parole.`;
+      const user = `DATI DA SPIEGARE:\n${datiStr}`;
+      const spiegazione = await callLLM(system, user);
+      res.json({ spiegazione });
+    } catch (e: any) {
+      console.error("Errore /api/spiega:", e);
+      res.status(500).json({ error: (e && e.message) ? e.message : "Errore durante la spiegazione." });
+    }
+  });
+
   app.post("/api/analisi", async (req, res) => {
     try {
       const {
