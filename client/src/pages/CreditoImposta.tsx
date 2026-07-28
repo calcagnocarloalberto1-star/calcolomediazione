@@ -31,6 +31,7 @@ import {
   Shield,
 } from "lucide-react";
 import { ExportButtons } from "@/components/ExportButtons";
+import { SpiegaAI } from "@/components/SpiegaAI";
 import { SeoHead } from "@/components/SeoHead";
 import { DisclaimerLegale } from "@/components/DisclaimerLegale";
 import type { ReportData } from "@/lib/export-risultati";
@@ -542,6 +543,19 @@ export default function CreditoImposta() {
                       label="calcolo credito"
                       testIdPrefix="export-credito"
                       buildReport={() => buildReportCreditoImposta(risultato, {
+                        tipoMediazione,
+                        esito,
+                        indennitaVersata: parseFloat(indennitaVersata) || 0,
+                        compensoAvvocato: parseFloat(compensoAvvocato) || 0,
+                        contributoUnificato: parseFloat(contributoUnificato) || 0,
+                        tipoSoggetto,
+                        altriCreditiAnno: parseFloat(altriCreditiAnno) || 0,
+                        gratuitoPatrocinio,
+                      }, formatEuro)}
+                    />
+                    <SpiegaAI
+                      contesto="calcolo del credito d'imposta della mediazione (art. 20 D.Lgs. 28/2010)"
+                      getPayload={() => buildReportCreditoImposta(risultato, {
                         tipoMediazione,
                         esito,
                         indennitaVersata: parseFloat(indennitaVersata) || 0,

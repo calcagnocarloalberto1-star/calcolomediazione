@@ -33,6 +33,7 @@ import {
   type RisultatoVerificaCatastale,
 } from "@shared/valore-catastale";
 import { ExportButtons } from "@/components/ExportButtons";
+import { SpiegaAI } from "@/components/SpiegaAI";
 import { SeoHead } from "@/components/SeoHead";
 import { DisclaimerLegale } from "@/components/DisclaimerLegale";
 import type { ReportData } from "@/lib/export-risultati";
@@ -551,6 +552,10 @@ export default function Calcolatore() {
                       label="calcolo"
                       testIdPrefix="export-calcolatore"
                       buildReport={() => buildReportCalcolatore(risultato, tipoMediazione, tipoValore, valoreLite, esito)}
+                    />
+                    <SpiegaAI
+                      contesto="calcolo dell'indennità di mediazione (D.M. 150/2023)"
+                      getPayload={() => buildReportCalcolatore(risultato, tipoMediazione, tipoValore, valoreLite, esito)}
                     />
                   </div>
                 </CardHeader>
