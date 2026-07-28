@@ -412,3 +412,48 @@ Regole ferree: le date (doc_il, doc_scad) SEMPRE in formato AAAA-MM-GG. Non aggi
   }
   return out;
 }
+
+// ─── RICERCA SEMANTICA GIURISPRUDENZA (pagina pubblica Giurisprudenza) ─────
+// Riceve la domanda dell'utente e un catalogo testuale compatto delle pronunce
+// (dati PUBBLICI, nessun dato personale) e restituisce gli id piu' pertinenti
+// con una breve motivazione. Riusa la chiave Anthropic gia' configurata.
+export async function cercaGiurisprudenzaAI(
+  query: string,
+  catalogo: string
+): Promise<Array<{ id: number; motivo: string }>> {
+  const anthropic = getAnthropicClient();
+  if (!anthropic) throw new Error("Servizio AI non configurato (ANTHROPIC_API_KEY mancante).");
+
+  const system = `Sei un assistente giuridico esperto di mediazione civile e commerciale italiana (D.Lgs. 28/2010). Ti viene fornito un CATALOGO di pronunce, una per riga, ciascuna con il proprio identificativo numerico. In base alla richiesta dell'utente, individua le pronunce del catalogo piu' pertinenti (massimo 8), ordinate dalla piu' rilevante alla meno rilevante. Usa SOLO gli id presenti nel catalogo: non inventarne mai. Se nessuna pronuncia e' davvero pertinente, restituisci un array vuoto. Rispondi ESCLUSIVAMENTE con un array JSON valido, senza alcun testo attorno e senza markdown, nel formato: [{"id": <numero>, "motivo": "<una frase concisa sul perche' e' pertinente alla richiesta>"}].`;
+
+  const user = `RICHIESTA DELL'UTENTE:\n${query}\n\nCATALOGO:\n${catalogo}`;
+
+  const message = await anthropic.messages.create({
+    model: ANTHROPIC_MODEL,
+    max_tokens: 1500,
+    system,
+    messages: [{ role: "user", content: user }],
+  });
+
+  const textBlock = message.content.find(b => b.type === "text") as
+    | { type: "text"; text: string }
+    | undefined;
+  let raw = (textBlock?.text || "").trim();
+  raw = raw.replace(/^```(?:json)?/i, "").replace(/```$/, "").trim();
+  const start = raw.indexOf("[");
+  const end = raw.lastIndexOf("]");
+  if (start >= 0 && end > start) raw = raw.slice(start, end + 1);
+
+  let parsed: unknown;
+  try { parsed = JSON.parse(raw); }
+  catch { return []; }
+  if (!Array.isArray(parsed)) return [];
+
+  const out: Array<{ id: number; motivo: string }> = [];
+  for (const item of parsed) {
+    const id = Number((item as any)?.id);
+    const motivo = String((item as any)?.motivo ?? "").trim();
+    if (Number.isFinite(id)) out.push({ id, motivo });
+  }
+  return out.slice(0, 8);
+}
