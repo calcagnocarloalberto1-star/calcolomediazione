@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import { lazy, Suspense, type ReactNode } from "react";
 import { Switch, Route } from "wouter";
 import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
@@ -8,28 +8,29 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import CookieConsent from "@/components/CookieConsent";
 import Assistente from "@/components/Assistente";
-import Home from "@/pages/Home";
-import Calcolatore from "@/pages/Calcolatore";
-import AnalisiCasoAI from "@/pages/AnalisiCasoAI";
-import FAQ from "@/pages/FAQ";
-import GuidaDM150 from "@/pages/GuidaDM150";
-import ConfrontoCosti from "@/pages/ConfrontoCosti";
-import CostiNotarili from "@/pages/CostiNotarili";
-import PrivacyPolicy from "@/pages/PrivacyPolicy";
-import CookiePolicy from "@/pages/CookiePolicy";
-import TerminiCondizioni from "@/pages/TerminiCondizioni";
-import ChiSiamo from "@/pages/ChiSiamo";
-import Contatti from "@/pages/Contatti";
-import Glossario from "@/pages/Glossario";
-import GeneratoreProcura from "@/pages/GeneratoreProcura";
-import Giurisprudenza from "@/pages/Giurisprudenza";
-import SentenzaDetail from "@/pages/SentenzaDetail";
-import CreditoImposta from "@/pages/CreditoImposta";
-import Antiriciclaggio from "@/pages/Antiriciclaggio";
-import AntiriciclaggioGuida from "@/pages/AntiriciclaggioGuida";
-import NotFound from "@/pages/not-found";
-import Admin from "@/pages/Admin";
-import StrategieNegoziazione from "@/pages/StrategieNegoziazione";
+// Pagine caricate su richiesta (code-splitting): riducono il bundle iniziale.
+const Home = lazy(() => import("@/pages/Home"));
+const Calcolatore = lazy(() => import("@/pages/Calcolatore"));
+const AnalisiCasoAI = lazy(() => import("@/pages/AnalisiCasoAI"));
+const FAQ = lazy(() => import("@/pages/FAQ"));
+const GuidaDM150 = lazy(() => import("@/pages/GuidaDM150"));
+const ConfrontoCosti = lazy(() => import("@/pages/ConfrontoCosti"));
+const CostiNotarili = lazy(() => import("@/pages/CostiNotarili"));
+const PrivacyPolicy = lazy(() => import("@/pages/PrivacyPolicy"));
+const CookiePolicy = lazy(() => import("@/pages/CookiePolicy"));
+const TerminiCondizioni = lazy(() => import("@/pages/TerminiCondizioni"));
+const ChiSiamo = lazy(() => import("@/pages/ChiSiamo"));
+const Contatti = lazy(() => import("@/pages/Contatti"));
+const Glossario = lazy(() => import("@/pages/Glossario"));
+const GeneratoreProcura = lazy(() => import("@/pages/GeneratoreProcura"));
+const Giurisprudenza = lazy(() => import("@/pages/Giurisprudenza"));
+const SentenzaDetail = lazy(() => import("@/pages/SentenzaDetail"));
+const CreditoImposta = lazy(() => import("@/pages/CreditoImposta"));
+const Antiriciclaggio = lazy(() => import("@/pages/Antiriciclaggio"));
+const AntiriciclaggioGuida = lazy(() => import("@/pages/AntiriciclaggioGuida"));
+const NotFound = lazy(() => import("@/pages/not-found"));
+const Admin = lazy(() => import("@/pages/Admin"));
+const StrategieNegoziazione = lazy(() => import("@/pages/StrategieNegoziazione"));
 import { usePageTracker } from "@/hooks/use-page-tracker";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { installGlobalErrorHandlers } from "@/lib/error-logger";
@@ -121,7 +122,9 @@ function App() {
             className="flex-1"
             aria-label="Contenuto principale"
           >
-            <AppRouter />
+            <Suspense fallback={<div className="p-10 text-center text-muted-foreground">Caricamento…</div>}>
+              <AppRouter />
+            </Suspense>
           </main>
           <Footer />
           <CookieConsent />
