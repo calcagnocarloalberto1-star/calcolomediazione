@@ -12,7 +12,7 @@ import { compatibilitaInteressi } from "./ai/compatibilita-interessi.js";
 import { controlloBiasCognitivi } from "./ai/controllo-cognitivo.js";
 import { bozzaAccordo } from "./ai/bozza-accordo.js";
 import { analisiEconomica } from "./ai/analisi-economica.js";
-import { callLLM, estraiDocumentoAI, cercaGiurisprudenzaAI, rispostaAssistente } from "./ai/llm.js";
+import { callLLM, estraiDocumentoAI, cercaGiurisprudenzaAI, rispostaAssistente, serviziAIDisponibili } from "./ai/llm.js";
 import { BASE_CONOSCENZA } from "./ai/assistente-kb.js";
 import { generateAnalisiPdf } from "./pdf-export.js";
 import { stats } from "./stats.js";
@@ -618,6 +618,9 @@ export async function registerRoutes(
       }
       if (Array.isArray(parti) && parti.length > 20) {
         return res.status(400).json({ error: "Troppe parti indicate (max 20)." });
+      }
+      if (!serviziAIDisponibili()) {
+        return res.status(503).json({ error: "Il servizio di intelligenza artificiale non e' al momento disponibile. Riprova piu' tardi." });
       }
       const analisi = await storage.createAnalisi({
         titolo, descrizione,
