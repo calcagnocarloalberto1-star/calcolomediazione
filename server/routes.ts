@@ -356,6 +356,32 @@ function aiRateLimit(req: any, res: any, next: any) {
   next();
 }
 
+// ─── RATE LIMIT dedicati: login admin (anti brute-force) e upload PDF ──────
+const LOGIN_HITS = new Map<string, number[]>();
+function loginRateLimit(req: any, res: any, next: any) {
+  const ip = clientIp(req);
+  const now = Date.now();
+  const arr = (LOGIN_HITS.get(ip) || []).filter((t) => now - t < 60 * 60 * 1000);
+  if (arr.length >= 10) {
+    return res.status(429).json({ error: "Troppi tentativi di accesso. Riprova piu' tardi." });
+  }
+  arr.push(now);
+  LOGIN_HITS.set(ip, arr);
+  next();
+}
+const UPLOAD_HITS = new Map<string, number[]>();
+function uploadRateLimit(req: any, res: any, next: any) {
+  const ip = clientIp(req);
+  const now = Date.now();
+  const arr = (UPLOAD_HITS.get(ip) || []).filter((t) => now - t < 60 * 60 * 1000);
+  if (arr.length >= 20) {
+    return res.status(429).json({ error: "Troppi caricamenti. Riprova piu' tardi." });
+  }
+  arr.push(now);
+  UPLOAD_HITS.set(ip, arr);
+  next();
+}
+
 // ─── AUTENTICAZIONE ADMIN: token firmato HMAC con scadenza ────────────────
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "";
 const ADMIN_SECRET = process.env.ADMIN_SECRET || crypto.randomBytes(32).toString("hex");
@@ -460,7 +486,7 @@ export async function registerRoutes(
   registerClientErrorRoute(app);
 
   // ─── ADMIN (password da env obbligatoria; token firmato HMAC con scadenza) ──
-  app.post("/api/admin/login", (req, res) => {
+  app.post("/api/admin/login", loginRateLimit, (req, res) => {
     if (!ADMIN_PASSWORD) {
       return res.status(503).json({ error: "Area amministrativa non configurata." });
     }
@@ -484,7 +510,7 @@ export async function registerRoutes(
 
   // ─── ANALISI AI ───────────────────────────────────────────────────────────
 
-  app.post("/api/upload-pdf", upload.array("files", 10), async (req, res) => {
+  app.post("/api/upload-pdf", uploadRateLimit, upload.array("files", 10), async (req, res) => {
     try {
       const files = req.files as Express.Multer.File[];
       if (!files || files.length === 0) {
