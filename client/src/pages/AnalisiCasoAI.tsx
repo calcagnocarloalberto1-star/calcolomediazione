@@ -190,7 +190,7 @@ export default function AnalisiCasoAI() {
   const [mediatoreEsperto, setMediatoreEsperto] = useState(false);
   const [proceduraComplessa, setProceduraComplessa] = useState(false);
   // ─── Costi notarili ──────────────────────────────────────────────────────
-  const [attivaCalcoloCostiNotarili, setAttivaCalcoloCostiNotarili] = useState(false);
+  const [attivaCalcoloCostiNotarili, setAttivaCalcoloCostiNotarili] = useState(true); // acceso di default: per i casi immobiliari i costi notarili sono calcolati senza dover ricordare il toggle
   const [valoreImmobile, setValoreImmobile] = useState<string>("");
   const [applicaPrezzoValore, setApplicaPrezzoValore] = useState(false);
   const [venditoreImpresaIva, setVenditoreImpresaIva] = useState(false);
