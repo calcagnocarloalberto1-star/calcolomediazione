@@ -348,3 +348,67 @@ function generatePlaceholder(systemPrompt: string): string {
   }
   return `## Analisi AI\n\n> *Configurare API Key per risultati completi*`;
 }
+
+// ─── ESTRAZIONE DOCUMENTO DA IMMAGINE (VISIONE) ───────────────────────────
+// Usata dal tool antiriciclaggio in modalita' "alta precisione (AI)".
+// Riceve un'immagine (base64) e restituisce i campi anagrafici strutturati.
+// Riusa la chiave Anthropic gia' configurata (ANTHROPIC_MODEL = Haiku 4.5).
+export async function estraiDocumentoAI(
+  imageBase64: string,
+  mediaType: string,
+  doctype: string
+): Promise<Record<string, string>> {
+  const anthropic = getAnthropicClient();
+  if (!anthropic) throw new Error("Servizio AI non configurato (ANTHROPIC_API_KEY mancante).");
+
+  const istruzioni = `Sei un assistente che estrae dati da un documento italiano per la compilazione di un modulo antiriciclaggio (D.Lgs. 231/2007).
+Tipo di documento indicato dall'utente: ${doctype}.
+Leggi l'immagine e restituisci ESCLUSIVAMENTE un oggetto JSON valido (nessun testo prima o dopo, senza markdown, senza recinti) con ESATTAMENTE queste chiavi, tutte come stringhe. Se un dato non e' presente o non e' leggibile con certezza, usa stringa vuota "". NON inventare MAI valori.
+{
+  "nome": "Cognome e nome della persona fisica; oppure denominazione/ragione sociale se e' una societa'",
+  "nascita": "Luogo e data di nascita insieme, se presenti (es. 'Roma, 12/03/1980')",
+  "cf": "Codice fiscale (16 caratteri) della persona fisica; oppure P.IVA/codice fiscale se societa'",
+  "res": "Indirizzo di residenza (persona fisica) o sede legale (societa')",
+  "cittadinanza": "Cittadinanza (solo persona fisica)",
+  "doc": "Tipo e numero del documento (es. 'Carta d'identita' n. CA12345AB')",
+  "doc_da": "Autorita' o Comune che ha rilasciato il documento",
+  "doc_il": "Data di rilascio del documento",
+  "doc_scad": "Data di scadenza del documento",
+  "forma_giuridica": "Forma giuridica se societa' (es. 'S.r.l.'), altrimenti vuoto",
+  "capitale": "Capitale sociale se presente, altrimenti vuoto"
+}
+Regole ferree: le date (doc_il, doc_scad) SEMPRE in formato AAAA-MM-GG. Non aggiungere chiavi diverse da quelle elencate. Restituisci SOLO il JSON.`;
+
+  const message = await anthropic.messages.create({
+    model: ANTHROPIC_MODEL,
+    max_tokens: 1024,
+    messages: [{
+      role: "user",
+      content: [
+        { type: "image", source: { type: "base64", media_type: mediaType as any, data: imageBase64 } },
+        { type: "text", text: istruzioni },
+      ],
+    }],
+  });
+
+  const textBlock = message.content.find(b => b.type === "text") as
+    | { type: "text"; text: string }
+    | undefined;
+  let raw = (textBlock?.text || "").trim();
+  raw = raw.replace(/^```(?:json)?/i, "").replace(/```$/, "").trim();
+  const start = raw.indexOf("{");
+  const end = raw.lastIndexOf("}");
+  if (start >= 0 && end > start) raw = raw.slice(start, end + 1);
+
+  let parsed: Record<string, unknown> = {};
+  try { parsed = JSON.parse(raw); }
+  catch { throw new Error("Risposta AI non interpretabile."); }
+
+  const chiavi = ["nome","nascita","cf","res","cittadinanza","doc","doc_da","doc_il","doc_scad","forma_giuridica","capitale"];
+  const out: Record<string, string> = {};
+  for (const k of chiavi) {
+    const val = parsed[k];
+    out[k] = (typeof val === "string" ? val : (val == null ? "" : String(val))).trim();
+  }
+  return out;
+}
