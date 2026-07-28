@@ -11,7 +11,7 @@ import { compatibilitaInteressi } from "./ai/compatibilita-interessi.js";
 import { controlloBiasCognitivi } from "./ai/controllo-cognitivo.js";
 import { bozzaAccordo } from "./ai/bozza-accordo.js";
 import { analisiEconomica } from "./ai/analisi-economica.js";
-import { callLLM, estraiDocumentoAI } from "./ai/llm.js";
+import { callLLM, estraiDocumentoAI, cercaGiurisprudenzaAI } from "./ai/llm.js";
 import { generateAnalisiPdf } from "./pdf-export.js";
 import { stats } from "./stats.js";
 import { registerClientErrorRoute } from "./client-errors.js";
@@ -491,6 +491,25 @@ export async function registerRoutes(
     } catch (e: any) {
       console.error("Errore /api/aml-extract:", e);
       res.status(500).json({ error: (e && e.message) ? e.message : "Errore durante l'estrazione AI." });
+    }
+  });
+
+  // ─── RICERCA AI SULLA GIURISPRUDENZA (dati pubblici, nessun dato personale) ─
+  app.post("/api/giurisprudenza/cerca-ai", async (req, res) => {
+    try {
+      const query = (req.body?.query || "").toString().trim();
+      if (query.length < 5) {
+        return res.status(400).json({ error: "Descrivi la questione in almeno qualche parola." });
+      }
+      const catalogo = sentenze.map(s =>
+        `ID ${s.id} | ${s.organo} ${s.numero}/${s.anno} | ${s.categoria} | ${s.titolo} | temi: ${(s.temiChiave || []).join(", ")} | rif: ${(s.riferimentiNormativi || []).join(", ")} | massima: ${(s.massima || "").slice(0, 320)}`
+      ).join("\n");
+      const risultati = await cercaGiurisprudenzaAI(query, catalogo);
+      const validi = risultati.filter(r => sentenze.some(s => s.id === r.id));
+      res.json({ risultati: validi });
+    } catch (e: any) {
+      console.error("Errore /api/giurisprudenza/cerca-ai:", e);
+      res.status(500).json({ error: (e && e.message) ? e.message : "Errore durante la ricerca AI." });
     }
   });
 
