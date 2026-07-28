@@ -17,6 +17,83 @@ import {
   type Sentenza,
 } from "@/data/giurisprudenza-db";
 
+// Ricerca in linguaggio naturale sulla giurisprudenza (dati pubblici).
+// Chiama /api/giurisprudenza/cerca-ai e mostra le pronunce più pertinenti
+// con la motivazione. Nessun dato personale è coinvolto.
+function RicercaAI() {
+  const [q, setQ] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [errore, setErrore] = useState<string | null>(null);
+  const [risultati, setRisultati] = useState<Array<{ id: number; motivo: string }> | null>(null);
+
+  const cerca = async () => {
+    const query = q.trim();
+    if (query.length < 5) { setErrore("Descrivi la questione in almeno qualche parola."); return; }
+    setLoading(true); setErrore(null); setRisultati(null);
+    try {
+      const res = await fetch("/api/giurisprudenza/cerca-ai", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ query }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error((data && data.error) ? data.error : "Errore del servizio di ricerca");
+      setRisultati(Array.isArray(data.risultati) ? data.risultati : []);
+    } catch (e: any) {
+      setErrore((e && e.message) ? e.message : "Errore imprevisto");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="rounded-xl border-2 border-primary/30 bg-primary/5 p-4 space-y-3">
+      <div className="flex items-center gap-2">
+        <Scale className="w-5 h-5 text-primary" />
+        <h2 className="font-bold text-base">Ricerca AI — descrivi la questione a parole tue</h2>
+      </div>
+      <p className="text-xs text-muted-foreground">
+        Poni una domanda in linguaggio naturale (es. «onere di attivare la mediazione nell'opposizione a decreto ingiuntivo») e l'assistente indica le pronunce più pertinenti tra quelle in archivio, con il motivo. La ricerca opera solo sul database pubblico di giurisprudenza: nessun dato personale viene trattato.
+      </p>
+      <div className="flex gap-2">
+        <Input
+          type="text"
+          value={q}
+          onChange={(e) => setQ(e.target.value)}
+          onKeyDown={(e) => { if (e.key === "Enter") cerca(); }}
+          placeholder="Descrivi la questione giuridica..."
+          className="h-11 border-2 border-foreground/20 focus:border-primary text-sm"
+          data-testid="input-ricerca-ai"
+        />
+        <Button onClick={cerca} disabled={loading} className="h-11 whitespace-nowrap">
+          {loading ? "Ricerca…" : "Cerca con AI"}
+        </Button>
+      </div>
+      {errore && <p className="text-sm text-red-600">{errore}</p>}
+      {risultati && risultati.length === 0 && !errore && (
+        <p className="text-sm text-muted-foreground">Nessuna pronuncia dell'archivio risulta pertinente a questa richiesta. Prova a riformularla, oppure usa la ricerca per parole chiave qui sotto.</p>
+      )}
+      {risultati && risultati.length > 0 && (
+        <div className="space-y-2">
+          {risultati.map((r) => {
+            const s = sentenze.find((x) => x.id === r.id);
+            if (!s) return null;
+            return (
+              <Link key={r.id} href={urlSentenza(s)}>
+                <div className="rounded-lg bg-background border border-foreground/10 p-3 hover:border-primary cursor-pointer transition-colors">
+                  <div className="text-sm font-semibold">{s.organo} n. {s.numero}/{s.anno} — {s.titolo}</div>
+                  <div className="text-xs text-muted-foreground mt-1"><span className="font-medium">Perché è rilevante:</span> {r.motivo}</div>
+                </div>
+              </Link>
+            );
+          })}
+          <p className="text-[11px] text-muted-foreground">Risultati proposti dall'AI: verificane sempre la pertinenza leggendo la pronuncia. L'elenco completo e i filtri restano disponibili qui sotto.</p>
+        </div>
+      )}
+    </div>
+  );
+}
+
 // Badge color mapping for organo type
 function getOrganoBadgeClass(tipoOrgano: string): string {
   switch (tipoOrgano) {
@@ -280,6 +357,9 @@ export default function Giurisprudenza() {
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
         {/* Statistiche */}
         <StatisticheBrief />
+
+        {/* Ricerca AI in linguaggio naturale */}
+        <RicercaAI />
 
         {/* Search bar */}
         <div className="space-y-3">
