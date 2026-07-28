@@ -11,7 +11,8 @@ import { compatibilitaInteressi } from "./ai/compatibilita-interessi.js";
 import { controlloBiasCognitivi } from "./ai/controllo-cognitivo.js";
 import { bozzaAccordo } from "./ai/bozza-accordo.js";
 import { analisiEconomica } from "./ai/analisi-economica.js";
-import { callLLM, estraiDocumentoAI, cercaGiurisprudenzaAI } from "./ai/llm.js";
+import { callLLM, estraiDocumentoAI, cercaGiurisprudenzaAI, rispostaAssistente } from "./ai/llm.js";
+import { BASE_CONOSCENZA } from "./ai/assistente-kb.js";
 import { generateAnalisiPdf } from "./pdf-export.js";
 import { stats } from "./stats.js";
 import { registerClientErrorRoute } from "./client-errors.js";
@@ -527,6 +528,25 @@ export async function registerRoutes(
     } catch (e: any) {
       console.error("Errore /api/spiega:", e);
       res.status(500).json({ error: (e && e.message) ? e.message : "Errore durante la spiegazione." });
+    }
+  });
+
+  // ─── ASSISTENTE SUI CONTENUTI DEL SITO (dati pubblici, nessun dato personale) ─
+  app.post("/api/assistente", async (req, res) => {
+    try {
+      const messages = Array.isArray(req.body?.messages) ? req.body.messages : [];
+      const puliti = messages
+        .filter((m: any) => m && (m.role === "user" || m.role === "assistant") && typeof m.content === "string" && m.content.trim())
+        .slice(-12)
+        .map((m: any) => ({ role: m.role as "user" | "assistant", content: String(m.content).slice(0, 4000) }));
+      if (!puliti.length || puliti[puliti.length - 1].role !== "user") {
+        return res.status(400).json({ error: "Nessuna domanda ricevuta." });
+      }
+      const risposta = await rispostaAssistente(puliti, BASE_CONOSCENZA);
+      res.json({ risposta });
+    } catch (e: any) {
+      console.error("Errore /api/assistente:", e);
+      res.status(500).json({ error: (e && e.message) ? e.message : "Errore dell'assistente." });
     }
   });
 
