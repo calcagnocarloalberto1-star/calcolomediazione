@@ -246,7 +246,7 @@ const faqSections: FAQSection[] = [
       },
       {
         q: "Come ottenere un modello aggiornato di procura speciale sostanziale per la mediazione?",
-        a: "Il <a href=\"/generatore-procura\" class=\"underline text-primary\">Generatore Procura</a> di calcolomediazione.it produce gratuitamente un modello di procura speciale sostanziale conforme all’orientamento giurisprudenziale più recente (Cass. 8473/2019, 14676/2025, 9608/2026, 10978/2026). Il modello è separato dalla procura alle liti, contiene clausole specifiche per i poteri dispositivi (conciliare, transigere, sottoscrivere l’accordo, rinunciare, riscuotere), include una nota di richiamo agli arresti di legittimità e si adatta automaticamente alla materia (diritti reali, condominio, locazione, ecc.). È possibile scaricare il documento in formato PDF o DOCX e personalizzarlo. La <a href=\"/giurisprudenza\" class=\"underline text-primary\">banca dati giurisprudenza</a> contiene 88 pronunce, di cui 14 dedicate alla procura sostanziale.",
+        a: "Il <a href=\"/generatore-procura\" class=\"underline text-primary\">Generatore Procura</a> di calcolomediazione.it produce gratuitamente un modello di procura speciale sostanziale conforme all’orientamento giurisprudenziale più recente (Cass. 8473/2019, 14676/2025, 9608/2026, 10978/2026). Il modello è separato dalla procura alle liti, contiene clausole specifiche per i poteri dispositivi (conciliare, transigere, sottoscrivere l’accordo, rinunciare, riscuotere), include una nota di richiamo agli arresti di legittimità e si adatta automaticamente alla materia (diritti reali, condominio, locazione, ecc.). È possibile scaricare il documento in formato PDF o DOCX e personalizzarlo. La <a href=\"/giurisprudenza\" class=\"underline text-primary\">banca dati giurisprudenza</a> contiene 100 pronunce, di cui 14 dedicate alla procura sostanziale.",
       },
     ],
   },
@@ -260,7 +260,7 @@ const faqSections: FAQSection[] = [
       },
       {
         q: "I dati inseriti sono sicuri e riservati?",
-        a: "S\u00ec. La sicurezza e la riservatezza dei dati sono una priorit\u00e0 assoluta. Tutti i dati vengono trasmessi tramite connessione crittografata (HTTPS/TLS). I documenti caricati vengono elaborati in tempo reale e non vengono archiviati permanentemente sui nostri server. Il trattamento dei dati \u00e8 conforme al GDPR (Regolamento UE 2016/679) e alla normativa italiana sulla privacy. I dati non vengono condivisi con terze parti e vengono utilizzati esclusivamente per l\u2019analisi richiesta.",
+        a: "S\u00ec. La sicurezza e la riservatezza dei dati sono una priorit\u00e0 assoluta. Tutti i dati vengono trasmessi tramite connessione crittografata (HTTPS/TLS). I documenti caricati vengono elaborati in tempo reale e non vengono conservati sui nostri server; le analisi salvate vengono eliminate automaticamente entro 30 giorni. Il trattamento dei dati \u00e8 conforme al GDPR (Regolamento UE 2016/679) e alla normativa italiana sulla privacy. Le funzioni basate su intelligenza artificiale (analisi del caso e, su scelta esplicita dell\u2019utente, la lettura AI dei documenti nell\u2019antiriciclaggio) trasmettono i dati necessari a un fornitore terzo di intelligenza artificiale (Anthropic), che li elabora secondo la propria informativa al solo fine di fornire il risultato richiesto; i dati non vengono ceduti per altre finalit\u00e0.",
       },
       {
         q: "L\u2019analisi AI sostituisce il parere di un avvocato?",
