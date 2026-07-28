@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import { useToast } from "@/hooks/use-toast";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -173,6 +174,7 @@ interface ChatMessage { role: string; content: string; timestamp: string; }
 // COMPONENTE PRINCIPALE
 // ═══════════════════════════════════════════════════════════════════════════
 export default function AnalisiCasoAI() {
+  const { toast } = useToast();
   // Form state
   const [titolo, setTitolo] = useState("");
   const [descrizione, setDescrizione] = useState("");
@@ -332,9 +334,15 @@ export default function AnalisiCasoAI() {
       // Salva nello storico locale
       updateHistoryEntry(data);
       setAnalisi(data);
-    } catch (error) {
+    } catch (error: any) {
       console.error("Errore avvio analisi:", error);
       setIsRunning(false);
+      let descr = "Si e' verificato un errore durante l'avvio dell'analisi. Riprova tra poco.";
+      const m = String((error && error.message) || "");
+      const j = m.match(/\{.*"error"\s*:\s*"([^"]+)"/);
+      if (j) descr = j[1];
+      else if (/^503:/.test(m)) descr = "Il servizio di intelligenza artificiale non e' al momento disponibile. Riprova piu' tardi.";
+      toast({ title: "Analisi non avviata", description: descr, variant: "destructive" });
     }
   };
 
