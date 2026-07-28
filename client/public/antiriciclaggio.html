@@ -395,7 +395,7 @@
     <button class="btn-primary" type="button" id="ocr_ai_btn" onclick="ocrEstraiAI()" style="background:#0a7d54;border-color:#0a7d54">Alta precisione (AI) — invia l'immagine</button>
     <button class="btn-ghost" type="button" onclick="ocrReset()">Pulisci</button>
   </div>
-  <div class="ocr-warn" style="margin-top:8px"><b>Due modalità.</b> «Estrai dati dal documento» resta <b>tutto nel browser</b> (nessun invio). «Alta precisione (AI)» invece <b>invia l'immagine</b> del documento al servizio di intelligenza artificiale, che la legge e propone i campi: è molto più accurata, ma il documento esce dal dispositivo ed è trattato dal fornitore AI. Usala solo se hai una base giuridica per farlo e informane l'interessato. In entrambi i casi nulla viene scritto nei campi finché non lo confermi tu.</div>
+  <div class="ocr-warn" style="margin-top:8px"><b>Due modalità.</b> «Estrai dati dal documento» resta <b>tutto nel browser</b> (nessun invio). «Alta precisione (AI)» invece <b>trasmette il documento a un servizio di intelligenza artificiale (Anthropic)</b> che ne estrae i dati: è molto più accurata, ma il file esce dal dispositivo. Il sito <b>non salva né conserva</b> il file caricato o i dati estratti sui propri server: li elabora solo per il tempo della richiesta e li mostra nella schermata di controllo, dove finiscono nei campi soltanto se lo confermi tu. Il fornitore AI tratta il documento secondo la propria informativa. Usa questa modalità solo se hai una base giuridica e informane l'interessato.</div>
   <div id="ocr_status"></div>
   <div id="ocr_review" style="display:none">
     <div class="ocr-warn"><b>Verifica prima di applicare.</b> Correggi i campi necessari e deseleziona quelli da non usare, poi premi «Applica ai campi selezionati». I dati riconosciuti non modificano il modulo finché non confermi.</div>
@@ -1956,8 +1956,9 @@ function renderAggiornamenti(){
     const isPdf = /\.pdf$/i.test(file.name) || file.type === "application/pdf";
     const ok = confirm(
       "Modalita' alta precisione (AI)\n\n" +
-      "L'immagine del documento verra' INVIATA al servizio di intelligenza artificiale per la lettura e l'estrazione dei dati: non resta solo nel browser. " +
-      "Procedi solo se hai una base giuridica per questo trattamento e se ne hai informato l'interessato.\n\n" +
+      "Il documento verra' trasmesso a un servizio di intelligenza artificiale (Anthropic) per estrarne i dati. " +
+      "Il sito non salva ne' conserva il file o i dati estratti: li elabora solo per il tempo della richiesta. " +
+      "Procedi solo se hai una base giuridica e ne hai informato l'interessato.\n\n" +
       "Nulla verra' scritto nei campi finche' non lo confermi tu.\n\nInviare l'immagine e procedere?"
     );
     if(!ok) return;
