@@ -343,15 +343,15 @@ function clientIp(req: any): string {
 function aiRateLimit(req: any, res: any, next: any) {
   const ip = clientIp(req);
   const now = Date.now();
-  const arr = (AI_HITS.get(ip) || []).filter((t) => now - t < 24 * 60 * 60 * 1000);
-  const lastHour = arr.filter((t) => now - t < 60 * 60 * 1000).length;
+  const arr = (AI_HITS.get(ip) || []).filter((t: number) => now - t < 24 * 60 * 60 * 1000);
+  const lastHour = arr.filter((t: number) => now - t < 60 * 60 * 1000).length;
   if (lastHour >= AI_MAX_HOUR || arr.length >= AI_MAX_DAY) {
     return res.status(429).json({ error: "Troppe richieste al servizio AI. Riprova piu' tardi." });
   }
   arr.push(now);
   AI_HITS.set(ip, arr);
   if (AI_HITS.size > 5000) {
-    for (const [k, v] of AI_HITS) { if (!v.some((t) => now - t < 24 * 60 * 60 * 1000)) AI_HITS.delete(k); }
+    for (const [k, v] of AI_HITS) { if (!v.some((t: number) => now - t < 24 * 60 * 60 * 1000)) AI_HITS.delete(k); }
   }
   next();
 }
@@ -361,7 +361,7 @@ const LOGIN_HITS = new Map<string, number[]>();
 function loginRateLimit(req: any, res: any, next: any) {
   const ip = clientIp(req);
   const now = Date.now();
-  const arr = (LOGIN_HITS.get(ip) || []).filter((t) => now - t < 60 * 60 * 1000);
+  const arr = (LOGIN_HITS.get(ip) || []).filter((t: number) => now - t < 60 * 60 * 1000);
   if (arr.length >= 10) {
     return res.status(429).json({ error: "Troppi tentativi di accesso. Riprova piu' tardi." });
   }
@@ -373,7 +373,7 @@ const UPLOAD_HITS = new Map<string, number[]>();
 function uploadRateLimit(req: any, res: any, next: any) {
   const ip = clientIp(req);
   const now = Date.now();
-  const arr = (UPLOAD_HITS.get(ip) || []).filter((t) => now - t < 60 * 60 * 1000);
+  const arr = (UPLOAD_HITS.get(ip) || []).filter((t: number) => now - t < 60 * 60 * 1000);
   if (arr.length >= 20) {
     return res.status(429).json({ error: "Troppi caricamenti. Riprova piu' tardi." });
   }
@@ -520,7 +520,7 @@ export async function registerRoutes(
       for (const file of files) {
         try {
           const uint8 = new Uint8Array(file.buffer);
-          const parser = new PDFParse(uint8);
+          const parser: any = new PDFParse(uint8);
           await parser.load();
           const textResult = await parser.getText();
           const info = await parser.getInfo();
