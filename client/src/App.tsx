@@ -7,6 +7,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import CookieConsent from "@/components/CookieConsent";
+import Assistente from "@/components/Assistente";
 import Home from "@/pages/Home";
 import Calcolatore from "@/pages/Calcolatore";
 import AnalisiCasoAI from "@/pages/AnalisiCasoAI";
@@ -124,6 +125,7 @@ function App() {
           </main>
           <Footer />
           <CookieConsent />
+          <Assistente />
         </div>
       </TooltipProvider>
     </QueryClientProvider>
