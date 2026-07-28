@@ -289,9 +289,10 @@ export function searchPronunceByTag(query: string): PronunciaAI[] {
  * Limita a `max` pronunce e formato bullet con citazione + principio.
  */
 export function buildContestoGiurisprudenziale(
-  tema: TemaPronuncia,
+  tema?: TemaPronuncia,
   max = 3,
 ): string {
+  if (!tema) return "";
   const pronunce = getPronunceByTema(tema).slice(0, max);
   if (pronunce.length === 0) return "";
 
