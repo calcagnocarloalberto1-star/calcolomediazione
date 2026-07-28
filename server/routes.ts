@@ -11,7 +11,7 @@ import { compatibilitaInteressi } from "./ai/compatibilita-interessi.js";
 import { controlloBiasCognitivi } from "./ai/controllo-cognitivo.js";
 import { bozzaAccordo } from "./ai/bozza-accordo.js";
 import { analisiEconomica } from "./ai/analisi-economica.js";
-import { callLLM } from "./ai/llm.js";
+import { callLLM, estraiDocumentoAI } from "./ai/llm.js";
 import { generateAnalisiPdf } from "./pdf-export.js";
 import { stats } from "./stats.js";
 import { registerClientErrorRoute } from "./client-errors.js";
@@ -469,6 +469,28 @@ export async function registerRoutes(
     } catch (error) {
       console.error("Errore upload PDF:", error);
       res.status(500).json({ error: "Errore nell'elaborazione dei file" });
+    }
+  });
+
+  // ─── ESTRAZIONE AI DA IMMAGINE (tool antiriciclaggio, modalita' alta precisione) ─
+  app.post("/api/aml-extract", upload.single("file"), async (req, res) => {
+    try {
+      const file = (req as any).file;
+      const doctype = (req.body?.doctype || "id").toString();
+      if (!file || !file.buffer) {
+        return res.status(400).json({ error: "Nessun file ricevuto." });
+      }
+      const mediaType = (file.mimetype || "").toLowerCase();
+      const allowed = ["image/jpeg", "image/png", "image/webp", "image/gif"];
+      if (!allowed.includes(mediaType)) {
+        return res.status(400).json({ error: "Per la modalita' AI carica un'immagine (JPG, PNG o WEBP). Per i PDF usa l'estrazione locale." });
+      }
+      const base64 = file.buffer.toString("base64");
+      const fields = await estraiDocumentoAI(base64, mediaType, doctype);
+      res.json({ fields });
+    } catch (e: any) {
+      console.error("Errore /api/aml-extract:", e);
+      res.status(500).json({ error: (e && e.message) ? e.message : "Errore durante l'estrazione AI." });
     }
   });
 
