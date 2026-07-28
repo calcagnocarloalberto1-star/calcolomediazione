@@ -26,6 +26,7 @@ import {
 } from "@shared/costi-procedura";
 import { formatEuro, type ModalitaTariffaria } from "@shared/calcolo-indennita";
 import { ExportButtons } from "@/components/ExportButtons";
+import { SpiegaAI } from "@/components/SpiegaAI";
 import { SeoHead } from "@/components/SeoHead";
 import { DisclaimerLegale } from "@/components/DisclaimerLegale";
 import type { ReportData } from "@/lib/export-risultati";
@@ -360,6 +361,13 @@ export default function ConfrontoCosti() {
                 })}
               />
             </div>
+            <SpiegaAI
+              contesto="confronto costi mediazione vs causa civile e arbitrato"
+              getPayload={() => buildReportConfronto(risultato, risultatoMedyaPro, {
+                valoreLite, tipoValore, tipoMediazione, materiaImmobiliare,
+                primaCasa, modalitaTariffaria, medyaproLabel,
+              })}
+            />
             {/* Summary Cards — 5 colonne */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 mb-4">
               <Card className="border-2 border-foreground shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] bg-green-50">
