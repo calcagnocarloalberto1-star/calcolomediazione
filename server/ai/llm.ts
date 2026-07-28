@@ -457,3 +457,37 @@ export async function cercaGiurisprudenzaAI(
   }
   return out.slice(0, 8);
 }
+
+// ─── ASSISTENTE SUI CONTENUTI DEL SITO ────────────────────────────────────
+// Chat ancorata alla base di conoscenza (FAQ, glossario, guide). Dati pubblici.
+export async function rispostaAssistente(
+  messages: Array<{ role: "user" | "assistant"; content: string }>,
+  baseConoscenza: string
+): Promise<string> {
+  const anthropic = getAnthropicClient();
+  if (!anthropic) throw new Error("Servizio AI non configurato (ANTHROPIC_API_KEY mancante).");
+
+  const system = `Sei l'assistente virtuale del sito CalcoloMediazione.it, dedicato alla mediazione civile e commerciale italiana (D.Lgs. 28/2010) e agli strumenti del sito.
+Rispondi in italiano, in modo chiaro e professionale, basandoti PRIMA DI TUTTO sulla BASE DI CONOSCENZA qui sotto (tratta dai contenuti del sito). Puoi integrare con nozioni consolidate e non controverse del diritto della mediazione, citando le norme (es. D.Lgs. 28/2010, D.M. 150/2023, Riforma Cartabia D.Lgs. 149/2022).
+Regole:
+- Se la domanda esce dall'ambito della mediazione civile/commerciale e degli strumenti del sito, dillo con cortesia e riporta l'utente in tema.
+- Se non conosci la risposta con certezza, o se dipende dal caso concreto, dillo apertamente e invita a consultare un professionista o a usare gli strumenti del sito.
+- Quando pertinente, indirizza agli strumenti del sito: calcolatore indennita (D.M. 150/2023), confronto costi, analisi AI del caso, generatore procura, banca dati di giurisprudenza con ricerca AI, strumento antiriciclaggio.
+- NON fornire consulenza legale personalizzata: ricorda, quando serve, che si tratta di informazioni generali che non sostituiscono il parere di un professionista.
+- Sii conciso: di norma 3-8 frasi, salvo richiesta di approfondimento.
+
+BASE DI CONOSCENZA:
+${baseConoscenza}`;
+
+  const msg = await anthropic.messages.create({
+    model: ANTHROPIC_MODEL,
+    max_tokens: 1200,
+    system,
+    messages: messages.map(m => ({ role: m.role, content: m.content })),
+  });
+
+  const tb = msg.content.find(b => b.type === "text") as
+    | { type: "text"; text: string }
+    | undefined;
+  return (tb?.text || "").trim() || "Mi dispiace, non sono riuscito a formulare una risposta. Riprova a riformulare la domanda.";
+}
