@@ -58,9 +58,9 @@ export default function CookiePolicy() {
                     <td className="py-2"><a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer" className="underline" style={{ color: 'var(--primary)' }}>Privacy Policy</a></td>
                   </tr>
                   <tr className="border-b border-foreground/10">
-                    <td className="py-2 pr-4">Servizi AI (Google Gemini)</td>
-                    <td className="py-2 pr-4">Elaborazione analisi AI</td>
-                    <td className="py-2"><a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer" className="underline" style={{ color: 'var(--primary)' }}>Privacy Policy</a></td>
+                    <td className="py-2 pr-4">Servizi AI (Anthropic Claude; Google Gemini in fallback)</td>
+                    <td className="py-2 pr-4">Elaborazione delle analisi AI e, solo su richiesta dell'utente, lettura dei documenti caricati (modalità AI dello strumento antiriciclaggio)</td>
+                    <td className="py-2"><a href="https://www.anthropic.com/legal/privacy" target="_blank" rel="noopener noreferrer" className="underline" style={{ color: 'var(--primary)' }}>Privacy Policy</a></td>
                   </tr>
                   <tr className="border-b border-foreground/10">
                     <td className="py-2 pr-4">Font CDN (Google Fonts)</td>
