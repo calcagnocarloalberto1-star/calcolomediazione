@@ -1901,6 +1901,28 @@ function renderAggiornamenti(){
     }
   }
 
+  // Rende TUTTE le pagine di un PDF in immagini JPEG (una per pagina, max ~1560px
+  // lato lungo), cosi' la modalita' AI puo' leggere documenti di qualsiasi lunghezza.
+  async function ocrPdfAllPagesToJpegBlobs(file){
+    await ocrEnsureLibs(true);
+    const buf = await file.arrayBuffer();
+    const pdf = await window.pdfjsLib.getDocument({data: buf}).promise;
+    const blobs = [];
+    for(let p=1; p<=pdf.numPages; p++){
+      const page = await pdf.getPage(p);
+      const base = page.getViewport({scale: 1});
+      const scale = Math.min(2, 1560 / Math.max(base.width, base.height));
+      const viewport = page.getViewport({scale});
+      const canvas = document.createElement("canvas");
+      canvas.width = Math.round(viewport.width);
+      canvas.height = Math.round(viewport.height);
+      await page.render({canvasContext: canvas.getContext("2d"), viewport}).promise;
+      const blob = await new Promise((res) => canvas.toBlob(res, "image/jpeg", 0.9));
+      if(blob) blobs.push(blob);
+    }
+    return blobs;
+  }
+
   // Ridimensiona l'immagine a max 1600px lato lungo e la comprime in JPEG,
   // per un invio leggero e dentro i limiti del servizio AI.
   async function ocrAImgToJpegBlob(file){
@@ -1931,10 +1953,7 @@ function renderAggiornamenti(){
     const files = Array.from(($("ocr_files")||{}).files || []);
     if(!files.length){ ocrSetStatus("Seleziona prima un'immagine del documento."); return; }
     const file = files[0];
-    if(/\.pdf$/i.test(file.name) || file.type === "application/pdf"){
-      ocrSetStatus("La modalita' AI funziona con immagini (foto o scansione JPG/PNG). Per i PDF usa «Estrai dati dal documento».");
-      return;
-    }
+    const isPdf = /\.pdf$/i.test(file.name) || file.type === "application/pdf";
     const ok = confirm(
       "Modalita' alta precisione (AI)\n\n" +
       "L'immagine del documento verra' INVIATA al servizio di intelligenza artificiale per la lettura e l'estrazione dei dati: non resta solo nel browser. " +
@@ -1947,9 +1966,9 @@ function renderAggiornamenti(){
     $("ocr_review").style.display = "none";
     ocrSetStatus("Invio dell'immagine e lettura AI in corso…");
     try{
-      const blob = await ocrAImgToJpegBlob(file);
+      const blobs = isPdf ? await ocrPdfAllPagesToJpegBlobs(file) : [await ocrAImgToJpegBlob(file)];
       const fd = new FormData();
-      fd.append("file", blob, "documento.jpg");
+      blobs.forEach((b, i) => fd.append("files", b, "pagina-" + (i + 1) + ".jpg"));
       fd.append("doctype", v("ocr_doctype"));
       const resp = await fetch("/api/aml-extract", { method:"POST", body: fd });
       const data = await resp.json().catch(()=>({}));
