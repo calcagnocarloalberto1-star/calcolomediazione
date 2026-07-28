@@ -61,7 +61,7 @@ export default function PrivacyPolicy() {
             <p>In particolare:</p>
             <ul className="list-disc list-inside space-y-1 ml-4">
               <li>I dati di navigazione vengono conservati per un massimo di 12 mesi</li>
-              <li>I dati dei calcoli e delle analisi AI non vengono conservati in modo permanente</li>
+              <li>I dati dei calcoli non vengono conservati in modo permanente; le analisi AI eventualmente salvate vengono eliminate automaticamente entro 30 giorni</li>
               <li>I dati di contatto vengono conservati per il tempo necessario a evadere la richiesta</li>
             </ul>
           </Section>
