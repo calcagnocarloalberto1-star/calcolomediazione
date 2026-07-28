@@ -2004,9 +2004,11 @@ function renderAggiornamenti(){
         el.checked = true;
       } else {
         el.value = row.value;
-        el.dispatchEvent(new Event("input", {bubbles:true}));
       }
-      el.dispatchEvent(new Event("change", {bubbles:true}));
+      try {
+        if(el.type !== "checkbox") el.dispatchEvent(new Event("input", {bubbles:true}));
+        el.dispatchEvent(new Event("change", {bubbles:true}));
+      } catch(e){ console.error("Gestore del campo", row.id, "in errore:", e); }
       applied++;
       if(row.alsoSet && row.alsoSet.length && row.id.indexOf("rappr_")===0){
         row.alsoSet.forEach(as=>{
@@ -2014,7 +2016,7 @@ function renderAggiornamenti(){
           if(!t) return;
           if(t.type === "checkbox"){ t.checked = (as.value !== false); }
           else { t.value = as.value; }
-          t.dispatchEvent(new Event("change",{bubbles:true}));
+          try { t.dispatchEvent(new Event("change",{bubbles:true})); } catch(e){}
         });
       }
     });
@@ -2028,8 +2030,8 @@ function renderAggiornamenti(){
       const ng = $("p_natgiur");
       if(ng){ ng.value = ocrIstanzaFormaGiuridica; ng.dispatchEvent(new Event("change",{bubbles:true})); }
     }
-    syncToggles();
-    calcRisk();
+    try { syncToggles(); } catch(e){ console.error("syncToggles in errore:", e); }
+    try { calcRisk(); } catch(e){ console.error("calcRisk in errore:", e); }
     toast(applied>0 ? "Dati applicati a "+applied+" camp"+(applied===1?"o":"i")+"." : "Nessun campo selezionato da applicare.");
   }
 
