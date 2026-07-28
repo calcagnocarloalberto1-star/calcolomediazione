@@ -864,53 +864,65 @@ async function runPipeline(
   };
 
   try {
+    // ─── LIVELLO 0: NER (radice, nessuna dipendenza) ──────────────────────
     const nerResult = await safeStep(
       () => estrazioneEntita(descrizione, parti, documentiText),
       '[Estrazione entita non disponibile]', 'NER'
     );
     await storage.updateAnalisi(id, { prospettoEconomico: nerResult });
 
-    const giuridicaResult = await safeStep(
-      () => analisiGiuridica(descrizione, parti, truncate(nerResult), tipoAnalisi),
-      '[Analisi giuridica non disponibile]', 'Giuridica'
-    );
-    await storage.updateAnalisi(id, { analisiGiuridica: giuridicaResult });
+    // ─── LIVELLO 1: Giuridica + Strategica (dipendono solo dal NER) ────────
+    // Girano in parallelo: la Strategica non deve piu' aspettare la Giuridica.
+    const [giuridicaResult, strategicaResult] = await Promise.all([
+      safeStep(
+        () => analisiGiuridica(descrizione, parti, truncate(nerResult), tipoAnalisi),
+        '[Analisi giuridica non disponibile]', 'Giuridica'
+      ),
+      safeStep(
+        () => guidaStrategica(descrizione, parti, truncate(nerResult)),
+        '[Guida strategica non disponibile]', 'Strategica'
+      ),
+    ]);
+    await storage.updateAnalisi(id, {
+      analisiGiuridica: giuridicaResult,
+      guidaStrategica: strategicaResult,
+    });
 
-    const strategicaResult = await safeStep(
-      () => guidaStrategica(descrizione, parti, truncate(nerResult)),
-      '[Guida strategica non disponibile]', 'Strategica'
-    );
-    await storage.updateAnalisi(id, { guidaStrategica: strategicaResult });
+    // ─── LIVELLO 2: MAAN + Bias + Economica (dipendono solo dalla Giuridica) ─
+    // Tre chiamate in parallelo.
+    const [maanResult, biasResult, economicaResult] = await Promise.all([
+      safeStep(
+        () => analisiMaanBatna(descrizione, parti, valoreLite, truncate(giuridicaResult)),
+        '[Analisi MAAN/BATNA non disponibile]', 'MAAN/BATNA'
+      ),
+      safeStep(
+        () => controlloBiasCognitivi(descrizione, parti, teorieSelezionate, truncate(giuridicaResult)),
+        '[Controllo bias non disponibile]', 'Bias'
+      ),
+      safeStep(
+        () => analisiEconomica(descrizione, parti, valoreLite, tipoAnalisi, truncate(giuridicaResult), opzioniEconomiche),
+        '[Analisi economica non disponibile]', 'Economica'
+      ),
+    ]);
+    await storage.updateAnalisi(id, {
+      analisiMaanBatna: maanResult,
+      controlloBiasCognitivi: biasResult,
+      analisiEconomica: economicaResult,
+    });
 
-    const maanResult = await safeStep(
-      () => analisiMaanBatna(descrizione, parti, valoreLite, truncate(giuridicaResult)),
-      '[Analisi MAAN/BATNA non disponibile]', 'MAAN/BATNA'
-    );
-    await storage.updateAnalisi(id, { analisiMaanBatna: maanResult });
-
+    // ─── LIVELLO 3: Compatibilita (dipende da Giuridica + MAAN) ────────────
     const compatibilitaResult = await safeStep(
       () => compatibilitaInteressi(descrizione, parti, `${truncate(giuridicaResult, 8000)}\n\n${truncate(maanResult, 8000)}`),
       '[Compatibilita interessi non disponibile]', 'Compatibilita'
     );
     await storage.updateAnalisi(id, { compatibilitaInteressi: compatibilitaResult });
 
-    const biasResult = await safeStep(
-      () => controlloBiasCognitivi(descrizione, parti, teorieSelezionate, truncate(giuridicaResult)),
-      '[Controllo bias non disponibile]', 'Bias'
-    );
-    await storage.updateAnalisi(id, { controlloBiasCognitivi: biasResult });
-
+    // ─── LIVELLO 4: Bozza accordo (dipende da Giuridica + Compatibilita) ───
     const bozzaResult = await safeStep(
       () => bozzaAccordo(descrizione, parti, valoreLite, `${truncate(giuridicaResult, 8000)}\n\n${truncate(compatibilitaResult, 8000)}`),
       '[Bozza accordo non disponibile]', 'Accordo'
     );
-    await storage.updateAnalisi(id, { bozzaAccordo: bozzaResult });
-
-    const economicaResult = await safeStep(
-      () => analisiEconomica(descrizione, parti, valoreLite, tipoAnalisi, truncate(giuridicaResult), opzioniEconomiche),
-      '[Analisi economica non disponibile]', 'Economica'
-    );
-    await storage.updateAnalisi(id, { analisiEconomica: economicaResult, stato: "completata" });
+    await storage.updateAnalisi(id, { bozzaAccordo: bozzaResult, stato: "completata" });
     stats.track('analisi_complete');
 
   } catch (error) {
