@@ -354,15 +354,14 @@ function generatePlaceholder(systemPrompt: string): string {
 // Riceve un'immagine (base64) e restituisce i campi anagrafici strutturati.
 // Riusa la chiave Anthropic gia' configurata (ANTHROPIC_MODEL = Haiku 4.5).
 export async function estraiDocumentoAI(
-  imageBase64: string,
-  mediaType: string,
+  immagini: Array<{ base64: string; mediaType: string }>,
   doctype: string
 ): Promise<Record<string, string>> {
   const anthropic = getAnthropicClient();
   if (!anthropic) throw new Error("Servizio AI non configurato (ANTHROPIC_API_KEY mancante).");
 
   const istruzioni = `Sei un assistente che estrae dati da un documento italiano per la compilazione di un modulo antiriciclaggio (D.Lgs. 231/2007).
-Tipo di documento indicato dall'utente: ${doctype}.
+Tipo di documento indicato dall'utente: ${doctype}.\nLe immagini fornite possono essere piu' pagine o piu' facciate dello STESSO fascicolo/documento: considerale INSIEME e unisci le informazioni.
 Leggi l'immagine e restituisci ESCLUSIVAMENTE un oggetto JSON valido (nessun testo prima o dopo, senza markdown, senza recinti) con ESATTAMENTE queste chiavi, tutte come stringhe. Se un dato non e' presente o non e' leggibile con certezza, usa stringa vuota "". NON inventare MAI valori.
 {
   "nome": "Cognome e nome della persona fisica; oppure denominazione/ragione sociale se e' una societa'",
@@ -379,16 +378,16 @@ Leggi l'immagine e restituisci ESCLUSIVAMENTE un oggetto JSON valido (nessun tes
 }
 Regole ferree: le date (doc_il, doc_scad) SEMPRE in formato AAAA-MM-GG. Non aggiungere chiavi diverse da quelle elencate. Restituisci SOLO il JSON.`;
 
+  const content: any[] = immagini.map((im) => ({
+    type: "image",
+    source: { type: "base64", media_type: im.mediaType as any, data: im.base64 },
+  }));
+  content.push({ type: "text", text: istruzioni });
+
   const message = await anthropic.messages.create({
     model: ANTHROPIC_MODEL,
     max_tokens: 1024,
-    messages: [{
-      role: "user",
-      content: [
-        { type: "image", source: { type: "base64", media_type: mediaType as any, data: imageBase64 } },
-        { type: "text", text: istruzioni },
-      ],
-    }],
+    messages: [{ role: "user", content }],
   });
 
   const textBlock = message.content.find(b => b.type === "text") as
