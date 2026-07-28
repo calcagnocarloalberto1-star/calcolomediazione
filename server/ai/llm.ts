@@ -40,6 +40,11 @@ function getAnthropicClient(): Anthropic | null {
   return null;
 }
 
+// True se almeno un provider AI e' configurato (chiave presente).
+export function serviziAIDisponibili(): boolean {
+  return !!(process.env.ANTHROPIC_API_KEY || process.env.GEMINI_API_KEY);
+}
+
 // ─── FORMAT CONSTRAINT ────────────────────────────────────────────────────
 const FORMAT_CONSTRAINT = `\n\nIMPORTANTE — Regole di formattazione OBBLIGATORIE (violazioni non accettate):
 - NON usare MAI emoji, emoticon, simboli Unicode decorativi (frecce speciali, check mark, stelle, pallini colorati, icone, simboli come \u2713 \u2717 \u2022 \u25cf \u2605 \u2192 \u27a4). Usa SOLO caratteri ASCII standard.
