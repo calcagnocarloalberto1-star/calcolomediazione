@@ -1,6 +1,7 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import multer from "multer";
+import crypto from "crypto";
 import { PDFParse } from "pdf-parse";
 import { storage } from "./storage.js";
 import { estrazioneEntita } from "./ai/ner-extraction.js";
@@ -331,6 +332,52 @@ function buildBotHtml(page: { path: string; title: string; desc: string }, siteU
 </html>`;
 }
 
+// ─── PROTEZIONE ENDPOINT AI: rate limit in-memory per IP ──────────────────
+const AI_HITS = new Map<string, number[]>();
+const AI_MAX_HOUR = Number(process.env.AI_MAX_PER_HOUR || 30);
+const AI_MAX_DAY = Number(process.env.AI_MAX_PER_DAY || 150);
+function clientIp(req: any): string {
+  const xf = (req.headers["x-forwarded-for"] as string) || "";
+  return xf.split(",")[0].trim() || req.socket?.remoteAddress || "unknown";
+}
+function aiRateLimit(req: any, res: any, next: any) {
+  const ip = clientIp(req);
+  const now = Date.now();
+  const arr = (AI_HITS.get(ip) || []).filter((t) => now - t < 24 * 60 * 60 * 1000);
+  const lastHour = arr.filter((t) => now - t < 60 * 60 * 1000).length;
+  if (lastHour >= AI_MAX_HOUR || arr.length >= AI_MAX_DAY) {
+    return res.status(429).json({ error: "Troppe richieste al servizio AI. Riprova piu' tardi." });
+  }
+  arr.push(now);
+  AI_HITS.set(ip, arr);
+  if (AI_HITS.size > 5000) {
+    for (const [k, v] of AI_HITS) { if (!v.some((t) => now - t < 24 * 60 * 60 * 1000)) AI_HITS.delete(k); }
+  }
+  next();
+}
+
+// ─── AUTENTICAZIONE ADMIN: token firmato HMAC con scadenza ────────────────
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "";
+const ADMIN_SECRET = process.env.ADMIN_SECRET || crypto.randomBytes(32).toString("hex");
+const ADMIN_TTL_MS = 8 * 60 * 60 * 1000;
+function signAdminToken(): string {
+  const exp = Date.now() + ADMIN_TTL_MS;
+  const payload = `admin:${exp}`;
+  const sig = crypto.createHmac("sha256", ADMIN_SECRET).update(payload).digest("hex");
+  return Buffer.from(`${payload}:${sig}`).toString("base64");
+}
+function verifyAdminToken(token: string): boolean {
+  try {
+    const decoded = Buffer.from(token, "base64").toString();
+    const m = decoded.match(/^admin:(\d+):([0-9a-f]{64})$/);
+    if (!m) return false;
+    if (Date.now() > Number(m[1])) return false;
+    const expected = crypto.createHmac("sha256", ADMIN_SECRET).update(`admin:${m[1]}`).digest("hex");
+    const a = Buffer.from(m[2], "hex"), b = Buffer.from(expected, "hex");
+    return a.length === b.length && crypto.timingSafeEqual(a, b);
+  } catch { return false; }
+}
+
 export async function registerRoutes(
   httpServer: Server,
   app: Express
@@ -412,34 +459,27 @@ export async function registerRoutes(
   // e le inoltra a un Google Apps Script Web App (ERROR_LOG_WEBHOOK_URL).
   registerClientErrorRoute(app);
 
-  // ─── ADMIN ────────────────────────────────────────────────────────────────
-  const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "CalcoloMediazione2026!";
-
+  // ─── ADMIN (password da env obbligatoria; token firmato HMAC con scadenza) ──
   app.post("/api/admin/login", (req, res) => {
-    const { password } = req.body;
-    if (password === ADMIN_PASSWORD) {
-      const token = Buffer.from(`admin:${Date.now()}`).toString('base64');
-      res.json({ success: true, token });
+    if (!ADMIN_PASSWORD) {
+      return res.status(503).json({ error: "Area amministrativa non configurata." });
+    }
+    const pw = typeof req.body?.password === "string" ? req.body.password : "";
+    const ok = pw.length === ADMIN_PASSWORD.length &&
+      crypto.timingSafeEqual(Buffer.from(pw), Buffer.from(ADMIN_PASSWORD));
+    if (ok) {
+      res.json({ success: true, token: signAdminToken() });
     } else {
       res.status(401).json({ error: "Password errata" });
     }
   });
 
   app.get("/api/admin/stats", (req, res) => {
-    const auth = req.headers.authorization;
-    if (!auth || !auth.startsWith("Bearer ")) {
+    const auth = req.headers.authorization || "";
+    if (!auth.startsWith("Bearer ") || !verifyAdminToken(auth.slice(7))) {
       return res.status(401).json({ error: "Non autorizzato" });
     }
-    const token = auth.slice(7);
-    try {
-      const decoded = Buffer.from(token, 'base64').toString();
-      if (!decoded.startsWith("admin:")) {
-        return res.status(401).json({ error: "Token non valido" });
-      }
-      res.json(stats.getStats());
-    } catch {
-      res.status(401).json({ error: "Token non valido" });
-    }
+    res.json(stats.getStats());
   });
 
   // ─── ANALISI AI ───────────────────────────────────────────────────────────
@@ -474,20 +514,24 @@ export async function registerRoutes(
   });
 
   // ─── ESTRAZIONE AI DA IMMAGINE (tool antiriciclaggio, modalita' alta precisione) ─
-  app.post("/api/aml-extract", upload.single("file"), async (req, res) => {
+  app.post("/api/aml-extract", aiRateLimit, upload.array("files", 50), async (req, res) => {
     try {
-      const file = (req as any).file;
+      const files = ((req as any).files as Array<{ buffer: Buffer; mimetype: string }>) || [];
       const doctype = (req.body?.doctype || "id").toString();
-      if (!file || !file.buffer) {
+      if (!files.length) {
         return res.status(400).json({ error: "Nessun file ricevuto." });
       }
-      const mediaType = (file.mimetype || "").toLowerCase();
       const allowed = ["image/jpeg", "image/png", "image/webp", "image/gif"];
-      if (!allowed.includes(mediaType)) {
-        return res.status(400).json({ error: "Per la modalita' AI carica un'immagine (JPG, PNG o WEBP). Per i PDF usa l'estrazione locale." });
+      const immagini: Array<{ base64: string; mediaType: string }> = [];
+      for (const f of files) {
+        const mediaType = (f.mimetype || "").toLowerCase();
+        if (!allowed.includes(mediaType) || !f.buffer) continue;
+        immagini.push({ base64: f.buffer.toString("base64"), mediaType });
       }
-      const base64 = file.buffer.toString("base64");
-      const fields = await estraiDocumentoAI(base64, mediaType, doctype);
+      if (!immagini.length) {
+        return res.status(400).json({ error: "Nessuna immagine valida ricevuta." });
+      }
+      const fields = await estraiDocumentoAI(immagini, doctype);
       res.json({ fields });
     } catch (e: any) {
       console.error("Errore /api/aml-extract:", e);
@@ -496,7 +540,7 @@ export async function registerRoutes(
   });
 
   // ─── RICERCA AI SULLA GIURISPRUDENZA (dati pubblici, nessun dato personale) ─
-  app.post("/api/giurisprudenza/cerca-ai", async (req, res) => {
+  app.post("/api/giurisprudenza/cerca-ai", aiRateLimit, async (req, res) => {
     try {
       const query = (req.body?.query || "").toString().trim();
       if (query.length < 5) {
@@ -515,7 +559,7 @@ export async function registerRoutes(
   });
 
   // ─── SPIEGAZIONE AI DEI CALCOLATORI (solo numeri/parametri, nessun dato personale) ─
-  app.post("/api/spiega", async (req, res) => {
+  app.post("/api/spiega", aiRateLimit, async (req, res) => {
     try {
       const contesto = (req.body?.contesto || "").toString().slice(0, 200);
       const dati = req.body?.dati;
@@ -532,7 +576,7 @@ export async function registerRoutes(
   });
 
   // ─── ASSISTENTE SUI CONTENUTI DEL SITO (dati pubblici, nessun dato personale) ─
-  app.post("/api/assistente", async (req, res) => {
+  app.post("/api/assistente", aiRateLimit, async (req, res) => {
     try {
       const messages = Array.isArray(req.body?.messages) ? req.body.messages : [];
       const puliti = messages
@@ -550,7 +594,7 @@ export async function registerRoutes(
     }
   });
 
-  app.post("/api/analisi", async (req, res) => {
+  app.post("/api/analisi", aiRateLimit, async (req, res) => {
     try {
       const {
         titolo, descrizione, tipoAnalisi, modalitaTariffaria, valoreLite, tipoValore, parti,
@@ -565,6 +609,15 @@ export async function registerRoutes(
       } = req.body;
       if (!titolo || !descrizione) {
         return res.status(400).json({ error: "Titolo e descrizione sono obbligatori" });
+      }
+      if (String(titolo).length > 300) {
+        return res.status(400).json({ error: "Il titolo e' troppo lungo (max 300 caratteri)." });
+      }
+      if (String(descrizione).length > 20000) {
+        return res.status(400).json({ error: "La descrizione del caso e' troppo lunga (max 20.000 caratteri)." });
+      }
+      if (Array.isArray(parti) && parti.length > 20) {
+        return res.status(400).json({ error: "Troppe parti indicate (max 20)." });
       }
       const analisi = await storage.createAnalisi({
         titolo, descrizione,
@@ -720,7 +773,7 @@ export async function registerRoutes(
     res.json({ success: true });
   });
 
-  app.post("/api/analisi/:id/chat", async (req, res) => {
+  app.post("/api/analisi/:id/chat", aiRateLimit, async (req, res) => {
     try {
       const id = parseInt(req.params.id);
       const { message } = req.body;
