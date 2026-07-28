@@ -73,6 +73,7 @@ export default function PrivacyPolicy() {
               <li>Provider di servizi di intelligenza artificiale per l'elaborazione delle analisi AI, in conformità alle rispettive policy sulla privacy</li>
               <li>Autorità competenti, ove richiesto dalla legge</li>
             </ul>
+            <p className="mt-2"><strong>Compilazione automatica dei modelli antiriciclaggio — modalità «alta precisione (AI)».</strong> Su scelta esplicita dell'utente, l'immagine del documento caricato nello strumento antiriciclaggio viene trasmessa a un fornitore di servizi di intelligenza artificiale (Anthropic) al solo fine di estrarne automaticamente i dati per la compilazione dei modelli. Il trattamento avviene sotto la responsabilità del professionista o dell'organismo che utilizza lo strumento, tenuto a verificare la sussistenza di un'idonea base giuridica e a informare l'interessato. La modalità predefinita di riconoscimento (OCR) opera invece interamente nel browser, senza trasmissione dei file. I dati estratti sono comunque sottoposti a controllo umano prima dell'inserimento.</p>
           </Section>
 
           <Section title="7. Diritti dell'Interessato">
