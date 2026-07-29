@@ -220,13 +220,21 @@ const PARAMETRI_FORENSI_CASSAZIONE = [
 // TABELLE NORMATIVE — MEDIAZIONE
 // ========================
 
-function getSpeseAvvioNazionaliConfronto(valoreLite: number): number {
+// Art. 28, co. 4: le controversie indeterminabili pagano SEMPRE €110 di spese di avvio,
+// indipendentemente dal valore "proxy" (VALORI_INDETERMINABILI) usato per stimare le altre
+// voci di questo comparatore semplificato. Prima della correzione, il valore proxy (es. €25.000
+// per indeterminabile_basso) faceva ricadere erroneamente il calcolo nella fascia €75.
+function getSpeseAvvioNazionaliConfronto(valoreLite: number, tipoValore?: InputConfronto["tipoValore"]): number {
+  if (tipoValore && tipoValore !== "determinato") return 110;
   if (valoreLite <= 1000) return 40;
   if (valoreLite <= 50000) return 75;
   return 110;
 }
 
-function getSpeseMediazionePrimoIncontroConfronto(valoreLite: number): number {
+function getSpeseMediazionePrimoIncontroConfronto(valoreLite: number, tipoValore?: InputConfronto["tipoValore"]): number {
+  if (tipoValore === "indeterminabile_basso") return 60;
+  if (tipoValore === "indeterminabile_medio") return 120;
+  if (tipoValore === "indeterminabile_alto") return 170;
   if (valoreLite <= 1000) return 60;
   if (valoreLite <= 50000) return 120;
   return 170;
@@ -420,7 +428,7 @@ function calcolaCostiMediazione(input: InputConfronto, valoreEffettivo: number):
   if (modalita === "coa_genova") {
     // Spese di primo incontro COA Genova: identiche alle nazionali (verificato sul
     // Tariffario Mediazione 2026 COA Genova — Facoltative e Contrattuali)
-    speseAvvio = getSpeseAvvioNazionaliConfronto(valoreEffettivo);
+    speseAvvio = getSpeseAvvioNazionaliConfronto(valoreEffettivo, input.tipoValore);
     if (input.tipoValore !== "determinato") {
       indennita = INDENNITA_GENOVA_PROSECUZIONE_INDETERMINABILI[input.tipoValore] ?? 1256.60;
     } else {
@@ -432,7 +440,7 @@ function calcolaCostiMediazione(input: InputConfronto, valoreEffettivo: number):
       speseAvvio = Math.round(speseAvvio * 0.8);
     }
   } else {
-    speseAvvio = getSpeseAvvioNazionaliConfronto(valoreEffettivo);
+    speseAvvio = getSpeseAvvioNazionaliConfronto(valoreEffettivo, input.tipoValore);
     const scagTabA = findScaglione(TABELLA_A_MEDIAZIONE_NAZIONALE, valoreEffettivo);
     indennita = scagTabA.minimoTabA;
     if (isObbligatoria(input.tipoMediazione)) {
