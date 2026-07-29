@@ -20,10 +20,16 @@ export default function AntiriciclaggioGuida() {
       try {
         const doc = frame.contentWindow?.document;
         if (doc?.body) {
-          const h = Math.max(
-            doc.body.scrollHeight,
-            doc.documentElement.scrollHeight,
-          );
+          // Nota: NON usare doc.documentElement.scrollHeight qui. Dentro un
+          // iframe la cui altezza è impostata via JS (come questo), lo
+          // scrollHeight dell'elemento <html> non scende mai sotto l'altezza
+          // corrente impostata sull'iframe stesso: è un "cricchetto" che può
+          // solo crescere. Se una singola misurazione lo sovrastima anche di
+          // poco, l'iframe resta bloccato più alto del contenuto reale per
+          // sempre, lasciando uno spazio vuoto sotto la guida prima del
+          // footer del sito. doc.body.scrollHeight non ha questo problema e
+          // riflette sempre l'altezza reale del contenuto.
+          const h = doc.body.scrollHeight;
           setHeight((prev) => (prev === h + 40 ? prev : h + 40));
         }
       } catch {
