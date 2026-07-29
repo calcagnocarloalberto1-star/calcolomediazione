@@ -2022,9 +2022,30 @@ function renderAggiornamenti(){
       ocrRawText = JSON.stringify(fields, null, 2);
       const rawEl = $("ocr_raw"); if(rawEl) rawEl.textContent = ocrRawText;
       ocrLastDoctype = v("ocr_doctype");
+      // Per i documenti "istituzionali" della procedura (istanza, avviso, procura,
+      // bonifico) l'AI restituisce gia' gli id reali dei campi (piu' soggetti coinvolti):
+      // vanno scritti direttamente, senza passare dalla mappatura destinatario/tipo.
+      const ISTITUZIONALI_LABELS = {
+        odm_nome: "Denominazione Organismo (da documento)",
+        proc_n: "N. procedura (da documento)",
+        proc_data_dep_istanza: "Data deposito istanza (da documento)",
+        op_materia: "Materia (da documento)",
+        op_valore: "Valore della controversia (da documento)",
+        p_nome: "Denominazione/nome parte istante (da documento)",
+        p_cf: "Codice fiscale / P. IVA parte istante (da documento)",
+        p_res: "Recapito/sede parte istante (da documento)",
+        p_pec: "PEC parte istante (da documento)",
+        p_tel: "Telefono parte istante (da documento)",
+        rappr_nome: "Rappresentante legale / difensore (da documento)",
+        rappr_nascita: "Luogo e data di nascita rappresentante (da documento)",
+        rappr_cf: "Codice fiscale rappresentante/difensore (da documento)"
+      };
+      const isIstituzionale = ["istanza","avviso","procura","bonifico"].includes(ocrLastDoctype);
       const rows = Object.keys(fields)
         .filter(k => fields[k] && String(fields[k]).trim())
-        .map(k => ({ key: k, value: String(fields[k]).trim() }));
+        .map(k => isIstituzionale
+          ? { id: k, label: ISTITUZIONALI_LABELS[k] || k, value: String(fields[k]).trim() }
+          : { key: k, value: String(fields[k]).trim() });
       ocrRenderReview(rows);
       ocrSetStatus(rows.length
         ? "Lettura AI completata: controlla i dati sotto prima di applicarli."
