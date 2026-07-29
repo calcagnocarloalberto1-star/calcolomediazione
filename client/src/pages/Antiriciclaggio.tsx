@@ -14,16 +14,24 @@ export default function Antiriciclaggio() {
 
     let observer: ResizeObserver | null = null;
     let interval: number | undefined;
+    const settleTimers: number[] = [];
 
     const sync = () => {
       try {
         const doc = frame.contentWindow?.document;
         if (doc?.body) {
-          const h = Math.max(
-            doc.body.scrollHeight,
-            doc.documentElement.scrollHeight,
-          );
-          setHeight(h + 40);
+          // Nota: NON usare doc.documentElement.scrollHeight qui. Dentro un
+          // iframe la cui altezza è impostata via JS (come questo), lo
+          // scrollHeight dell'elemento <html> non scende mai sotto l'altezza
+          // corrente impostata sull'iframe stesso: è un "cricchetto" che può
+          // solo crescere. Questo strumento cambia altezza di continuo (form
+          // che si espandono, "Genera i modelli", intervista T1-T7, dettagli
+          // apribili/richiudibili): se una sola misurazione la sovrastima,
+          // l'iframe resta bloccato più alto del contenuto reale, lasciando
+          // uno spazio vuoto prima del footer del sito. doc.body.scrollHeight
+          // riflette invece sempre l'altezza reale del contenuto.
+          const h = doc.body.scrollHeight;
+          setHeight((prev) => (prev === h + 40 ? prev : h + 40));
         }
       } catch {
         /* cross-origin: ignora */
@@ -31,7 +39,14 @@ export default function Antiriciclaggio() {
     };
 
     const onLoad = () => {
-      sync();
+      requestAnimationFrame(() => requestAnimationFrame(sync));
+
+      // Rete di sicurezza: form che si espandono, immagini, generazione dei
+      // modelli e dettagli apribili possono cambiare l'altezza dopo il load.
+      [50, 150, 350, 700, 1200, 2000].forEach((ms) => {
+        settleTimers.push(window.setTimeout(sync, ms));
+      });
+
       try {
         const doc = frame.contentWindow!.document;
         observer = new ResizeObserver(sync);
@@ -46,6 +61,7 @@ export default function Antiriciclaggio() {
       frame.removeEventListener("load", onLoad);
       observer?.disconnect();
       if (interval) window.clearInterval(interval);
+      settleTimers.forEach((t) => window.clearTimeout(t));
     };
   }, []);
 
