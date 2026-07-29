@@ -53,12 +53,13 @@ li{margin:5px 0}
 .pill{display:inline-block;font-size:11px;font-weight:700;padding:2px 8px;border-radius:999px;background:var(--light);color:var(--accentDark)}
 .foot{padding:14px 26px;border-top:1px solid var(--line);color:var(--muted);font-size:12px;background:#fbfaf8}
 .num td:first-child{font-weight:700;color:var(--blue);width:48px;text-align:center}
-.modgrid{display:grid;grid-template-columns:1fr 1fr;gap:16px 18px;margin:14px 0}
+.modgrid{display:grid;grid-template-columns:1fr;gap:22px;margin:14px 0}
 .modgrid figure{margin:0}
-.modgrid img{max-width:100%;height:auto;border:1px solid var(--line);border-radius:8px;display:block;box-shadow:0 2px 8px rgba(19,22,27,.05)}
+.modgrid a.imglink{display:block;position:relative}
+.modgrid img{max-width:100%;height:auto;border:1px solid var(--line);border-radius:8px;display:block;box-shadow:0 2px 8px rgba(19,22,27,.05);cursor:zoom-in}
+.modgrid a.imglink::after{content:"🔍 Clicca per ingrandire";position:absolute;right:10px;bottom:10px;background:rgba(19,22,27,.75);color:#fff;font-size:11.5px;font-weight:600;padding:4px 9px;border-radius:999px;pointer-events:none}
 .modgrid figcaption{font-size:12.5px;color:var(--muted);margin-top:6px;line-height:1.45}
 .modgrid figcaption b{color:var(--navy)}
-@media(max-width:640px){.modgrid{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -165,38 +166,38 @@ li{margin:5px 0}
 
 <p><b>Quali moduli trovi già e quali compili tu.</b> Quando ti siedi al tavolo, nel fascicolo dovresti già trovare (preparati dalla segreteria al deposito): la copertina (L.1), l'informativa firmata (L.13), l'adeguata verifica con i documenti (L.3), il titolare effettivo per le società (L.4) e la dichiarazione del cliente (L.5). Tu compili: la scheda di rischio (L.6, sempre), il foglio di annotazione (L.14) e — solo se c'è un'anomalia — il modulo SI-AML/01 per il responsabile (L.7). In breve: <b>L.1</b> è il "frontespizio" del fascicolo; <b>L.3/L.4/L.5</b> servono a sapere con chi hai a che fare; <b>L.13</b> informa le parti; <b>L.6</b> misura il rischio; <b>L.14</b> mette nero su bianco cosa hai fatto; <b>L.7</b> è il campanello che giri al RAR.</p>
 
-<p class="sub">Ogni modulo qui sotto è mostrato così come lo produce lo <a href="/antiriciclaggio.html" style="color:var(--blue)">strumento</a>, compilato con dati di fantasia solo a scopo illustrativo (Beta S.r.l., Organismo Esempio ADR): servono per farti vedere in anteprima che cosa troverai, non sono un modello da copiare.</p>
+<p class="sub">Ogni modulo qui sotto è mostrato così come lo produce lo <a href="/antiriciclaggio.html" style="color:var(--blue)">strumento</a>, compilato con dati di fantasia solo a scopo illustrativo (Beta S.r.l., Organismo Esempio ADR): servono per farti vedere in anteprima che cosa troverai, non sono un modello da copiare. <b>Clicca su un'immagine per aprirla a piena risoluzione</b> e leggerla per intero.</p>
 <div class="modgrid">
 <figure>
-<img src="modulo-L1-copertina.png" width="1200" height="281" alt="Esempio illustrativo della copertina del fascicolo">
+<a class="imglink" href="modulo-L1-copertina.png" target="_blank" rel="noopener"><img src="modulo-L1-copertina.png" width="1200" height="281" alt="Esempio illustrativo della copertina del fascicolo"></a>
 <figcaption><b>L.1 — Copertina.</b> Riepilogo di organismo, procedura e parti. Nota: lo strumento online non genera una copertina a sé: qui è una ricostruzione illustrativa con lo stesso stile grafico degli altri moduli, utile solo a farsi un'idea del frontespizio del fascicolo cartaceo.</figcaption>
 </figure>
 <figure>
-<img src="modulo-L13-informativa.png" width="1567" height="493" alt="Esempio di modulo di informativa antiriciclaggio e privacy compilato">
+<a class="imglink" href="modulo-L13-informativa.png" target="_blank" rel="noopener"><img src="modulo-L13-informativa.png" width="1567" height="493" alt="Esempio di modulo di informativa antiriciclaggio e privacy compilato"></a>
 <figcaption><b>L.13 — Informativa.</b> Titolare del trattamento, finalità, base giuridica, conservazione: la parte firma per presa visione.</figcaption>
 </figure>
 <figure>
-<img src="modulo-L3-adeguata-verifica.png" width="1525" height="784" alt="Esempio di modulo di adeguata verifica compilato, sezioni A-C">
+<a class="imglink" href="modulo-L3-adeguata-verifica.png" target="_blank" rel="noopener"><img src="modulo-L3-adeguata-verifica.png" width="1525" height="784" alt="Esempio di modulo di adeguata verifica compilato, sezioni A-C"></a>
 <figcaption><b>L.3 — Adeguata verifica.</b> Identificazione della parte (sezioni A-B) e del rappresentante (sezione C); prosegue con PEP e valore dell'operazione.</figcaption>
 </figure>
 <figure>
-<img src="modulo-L4-titolare-effettivo.png" width="1568" height="638" alt="Esempio di sezione titolare effettivo compilata, all'interno del modulo di adeguata verifica">
+<a class="imglink" href="modulo-L4-titolare-effettivo.png" target="_blank" rel="noopener"><img src="modulo-L4-titolare-effettivo.png" width="1568" height="638" alt="Esempio di sezione titolare effettivo compilata, all'interno del modulo di adeguata verifica"></a>
 <figcaption><b>L.4 — Titolare effettivo.</b> È la Sezione E dello stesso modulo di adeguata verifica (L.3), non un documento separato: criterio di individuazione, dati del titolare effettivo, fonte ed esito della verifica.</figcaption>
 </figure>
 <figure>
-<img src="modulo-L5-dichiarazione-cliente.png" width="1568" height="336" alt="Esempio di dichiarazione del cliente ex art. 22 compilata">
+<a class="imglink" href="modulo-L5-dichiarazione-cliente.png" target="_blank" rel="noopener"><img src="modulo-L5-dichiarazione-cliente.png" width="1568" height="336" alt="Esempio di dichiarazione del cliente ex art. 22 compilata"></a>
 <figcaption><b>L.5 — Dichiarazione del cliente.</b> La parte dichiara che i dati forniti sono completi e veritieri e si impegna ad aggiornarli.</figcaption>
 </figure>
 <figure>
-<img src="modulo-L6-scheda-rischio.png" width="1567" height="727" alt="Esempio di scheda di valutazione del rischio compilata">
+<a class="imglink" href="modulo-L6-scheda-rischio.png" target="_blank" rel="noopener"><img src="modulo-L6-scheda-rischio.png" width="1567" height="727" alt="Esempio di scheda di valutazione del rischio compilata"></a>
 <figcaption><b>L.6 — Scheda di rischio.</b> Dati del procedimento e della parte, poi (più in basso nello stesso modulo) il livello di rischio complessivo con la motivazione.</figcaption>
 </figure>
 <figure>
-<img src="modulo-L14-foglio-annotazione.png" width="1567" height="481" alt="Esempio di foglio di annotazione AML compilato">
+<a class="imglink" href="modulo-L14-foglio-annotazione.png" target="_blank" rel="noopener"><img src="modulo-L14-foglio-annotazione.png" width="1567" height="481" alt="Esempio di foglio di annotazione AML compilato"></a>
 <figcaption><b>L.14 — Foglio di annotazione.</b> Il riepilogo interno degli adempimenti svolti in sessione e dell'esito: resta nel fascicolo riservato, mai nel verbale.</figcaption>
 </figure>
 <figure>
-<img src="modulo-L7-si-aml01.png" width="1568" height="762" alt="Esempio di analisi dei trigger UIF con bozza di motivazione per il modulo SI-AML/01">
+<a class="imglink" href="modulo-L7-si-aml01.png" target="_blank" rel="noopener"><img src="modulo-L7-si-aml01.png" width="1568" height="762" alt="Esempio di analisi dei trigger UIF con bozza di motivazione per il modulo SI-AML/01"></a>
 <figcaption><b>L.7 — SI-AML/01.</b> Lo strumento non compila da solo il modulo, ma — dall'analisi dei segnali T1-T7 — prepara questa bozza di motivazione tecnica, da rivedere e trasferire nel modulo per il RAR.</figcaption>
 </figure>
 </div>
