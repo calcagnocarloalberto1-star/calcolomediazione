@@ -14,6 +14,7 @@ export default function AntiriciclaggioGuida() {
 
     let observer: ResizeObserver | null = null;
     let interval: number | undefined;
+    const settleTimers: number[] = [];
 
     const sync = () => {
       try {
@@ -23,7 +24,7 @@ export default function AntiriciclaggioGuida() {
             doc.body.scrollHeight,
             doc.documentElement.scrollHeight,
           );
-          setHeight(h + 40);
+          setHeight((prev) => (prev === h + 40 ? prev : h + 40));
         }
       } catch {
         /* cross-origin: ignora */
@@ -31,11 +32,31 @@ export default function AntiriciclaggioGuida() {
     };
 
     const onLoad = () => {
-      sync();
+      // Doppio rAF: assicura che il browser abbia completato almeno un
+      // ciclo di layout/paint prima della prima misurazione. Senza questa
+      // attesa la prima lettura di scrollHeight può essere transitoriamente
+      // troppo alta, lasciando per un istante uno spazio vuoto sotto il
+      // contenuto della guida prima del "salto" all'altezza corretta.
+      requestAnimationFrame(() => requestAnimationFrame(sync));
+
+      // Rete di sicurezza: alcuni reflow (immagini che finiscono di
+      // caricare, dettagli che si aprono) arrivano dopo il load event.
+      // Ri-misura per un paio di secondi finché l'altezza non si è assestata.
+      [50, 150, 350, 700, 1200, 2000].forEach((ms) => {
+        settleTimers.push(window.setTimeout(sync, ms));
+      });
+
       try {
         const doc = frame.contentWindow!.document;
         observer = new ResizeObserver(sync);
         observer.observe(doc.body);
+        // Ogni immagine che completa il caricamento può cambiare l'altezza
+        // del contenuto: ridisegna la misura anche in quel momento.
+        doc.querySelectorAll("img").forEach((img) => {
+          if (!(img as HTMLImageElement).complete) {
+            img.addEventListener("load", sync, { once: true });
+          }
+        });
       } catch {
         interval = window.setInterval(sync, 600);
       }
@@ -46,6 +67,7 @@ export default function AntiriciclaggioGuida() {
       frame.removeEventListener("load", onLoad);
       observer?.disconnect();
       if (interval) window.clearInterval(interval);
+      settleTimers.forEach((t) => window.clearTimeout(t));
     };
   }, []);
 
