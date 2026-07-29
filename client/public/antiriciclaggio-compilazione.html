@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Antiriciclaggio in mediazione — Guida alla compilazione | calcolomediazione.it</title>
-<meta name="description" content="Guida pratica passo per passo alla compilazione dello strumento antiriciclaggio di calcolomediazione.it: cosa fa l'Organismo, cosa fa il Mediatore, cosa fa l'Avvocato, sezione per sezione, con OCR, gestione multi-parte, salvataggio automatico ed esportazione Word.">
+<meta name="description" content="Guida pratica passo per passo alla compilazione dello strumento antiriciclaggio di calcolomediazione.it: cosa fa l'Organismo, cosa fa il Mediatore, cosa fa l'Avvocato, sezione per sezione, con motore unico di compilazione automatica (assistente AI multi-documento e OCR mirato), gestione multi-parte, salvataggio automatico ed esportazione Word.">
 <style>
 :root{
 --navy:#13161b; --blue:#a03317; --accentDark:#861600; --light:#ffe5d7; --line:#ddd6d1;
@@ -68,7 +68,7 @@ li{margin:5px 0}
 <a class="btn" href="/">Tutti gli strumenti</a>
 </div>
 
-<p class="lead">Questa guida non spiega la normativa (per quello c'è la <a href="/antiriciclaggio-guida.html">guida in linguaggio semplice</a>): spiega <b>come si compila</b> lo strumento, campo per campo e ruolo per ruolo, comprese le funzioni più recenti — gestione di più parti nella stessa procedura, riconoscimento automatico dei documenti (OCR), salvataggio e ripresa del lavoro, cronologia delle comunicazioni del mediatore, esportazione e download in Word.</p>
+<p class="lead">Questa guida non spiega la normativa (per quello c'è la <a href="/antiriciclaggio-guida.html">guida in linguaggio semplice</a>): spiega <b>come si compila</b> lo strumento, campo per campo e ruolo per ruolo, comprese le funzioni più recenti — gestione di più parti nella stessa procedura, motore unico di compilazione automatica dai documenti del fascicolo (assistente AI multi-documento e OCR mirato su un singolo documento), salvataggio e ripresa del lavoro, cronologia delle comunicazioni del mediatore, esportazione e download in Word.</p>
 
 <div class="toc">
 <b>In questa pagina:</b>
@@ -78,7 +78,7 @@ li{margin:5px 0}
 <li><a href="#mediatore">Cosa compila il Mediatore designato</a></li>
 <li><a href="#avvocato">Cosa compila l'Avvocato di parte</a></li>
 <li><a href="#sezioni">Le 18 sezioni del modulo, una per una</a></li>
-<li><a href="#funzioni">Le funzioni trasversali (OCR, multi-parte, salvataggio, export, Word)</a></li>
+<li><a href="#funzioni">Le funzioni trasversali (motore di compilazione automatica, multi-parte, salvataggio, export, Word)</a></li>
 <li><a href="#faq">Domande frequenti</a></li>
 </ol>
 </div>
@@ -97,7 +97,7 @@ li{margin:5px 0}
 <li><b>Sezioni 2-4 e 14</b>, in tutto o in parte, se allo sportello vengono già raccolti i dati anagrafici della parte e la documentazione (carta d'identità, visura camerale, dichiarazione sul titolare effettivo): in questo caso conviene compilarle subito, così il mediatore le trova pronte al tavolo e deve solo verificarle.</li>
 <li><b>Sezione 8</b>, limitatamente a oggetto e valore della controversia, se già risultano dalla domanda depositata.</li>
 </ul>
-<p><b>Documenti da caricare via OCR (facoltativo, v. punto 6.2):</b> documento d'identità, visura camerale, procura alle liti/mandato a conciliare, ricevuta di pagamento delle spese di mediazione. Lo strumento prova a leggerli e a proporre la compilazione dei campi corrispondenti.</p>
+<p><b>Documenti da caricare nel motore di compilazione automatica (facoltativo, v. punto 6.2):</b> documento d'identità, visura camerale, procura alle liti/mandato a conciliare, ricevuta di pagamento delle spese di mediazione. Si possono caricare tutti insieme nel motore unico in cima alla pagina, oppure uno alla volta nella modalità mirata: lo strumento prova a leggerli e a proporre la compilazione dei campi corrispondenti.</p>
 <p><b>Altre azioni tipiche dell'Organismo:</b></p>
 <ul>
 <li>Usare <b>"🖨️ Moduli in bianco (stampa)"</b> per stampare i moduli cartacei da far compilare a mano, se preferito.</li>
@@ -128,7 +128,7 @@ li{margin:5px 0}
 <p>Gli obblighi si riattivano solo se l'incarico dell'avvocato sfocia in un'<b>operazione economica autonoma tipica dell'art. 3, c. 4, lett. c)</b> — ad esempio un trasferimento immobiliare collegato all'accordo. In quel caso, per la parte che assiste:</p>
 <ul>
 <li>Compila i propri dati nella <b>Sezione 5 — Rappresentante o soggetto autorizzato ad agire per la parte</b>, indicando come titolo di intervento "Difensore" o "Procuratore speciale", con i propri riferimenti anagrafici, i poteri conferiti (rappresentare, formulare proposte, disporre del diritto, sottoscrivere l'accordo) e il documento da cui derivano (procura alle liti, procura speciale/notarile).</li>
-<li>Può caricare via OCR la propria <b>tessera professionale</b> o la <b>procura alle liti/mandato a conciliare</b> per precompilare automaticamente questi campi (v. punto 6.2).</li>
+<li>Può caricare la propria <b>tessera professionale</b> o la <b>procura alle liti/mandato a conciliare</b> nel motore di compilazione automatica per precompilare questi campi (v. punto 6.2).</li>
 </ul>
 <p>Le sezioni relative alla valutazione del rischio, alle anomalie e alla trasmissione al RAR (9-16) restano di norma di competenza del mediatore/Organismo, non dell'avvocato, anche quando quest'ultimo interviene per un'operazione dell'art. 3 c. 4 lett. c).</p>
 
@@ -161,8 +161,11 @@ li{margin:5px 0}
 <h3>6.1 Più parti nella stessa procedura</h3>
 <p>Il pulsante <b>"+ Nuova parte per questa procedura"</b> (sotto il numero di procedura) mantiene i dati comuni — Organismo, numero, date, mediatore, oggetto — e azzera solo i campi specifici della parte, in modo da poter compilare separatamente il Modulo di adeguata verifica e la Scheda di valutazione del rischio per ciascun soggetto. Il box <b>"Procedure con dati salvati su questo browser"</b>, in cima al compilatore, elenca tutte le procedure già trattate su quel browser con le rispettive parti annidate: da lì si riapre in un clic qualunque combinazione procedura/parte con il link <b>"Apri ›"</b>.</p>
 
-<h3>6.2 Compilazione automatica da documenti (OCR)</h3>
-<p>Nel box "Compilazione automatica da documenti" si può caricare una foto o una scansione (JPG/PNG/PDF, anche più file per lo stesso documento) e scegliere il <b>tipo di documento</b>:</p>
+<h3>6.2 Motore unico di compilazione dai documenti del fascicolo</h3>
+<p>In cima al modulo, subito sopra la sezione 1, trovi il <b>motore unico di compilazione</b>: un solo punto di partenza, con due modalità.</p>
+<p><b>Modalità principale — l'assistente su più documenti insieme.</b> Scrivi in linguaggio naturale che cosa ti serve (es. «Mi compili il modulo AV e la scheda di valutazione del rischio alla luce di questi documenti?») e carichi <b>tutti insieme</b> i documenti del fascicolo che hai a disposizione (istanza, documento d'identità, visura camerale, procura, comunicazione di avvio, ricevute di pagamento, ecc. — anche più file di tipo diverso nello stesso caricamento). L'assistente li legge insieme, risponde in linguaggio naturale e propone la compilazione di gran parte dei campi del modulo sottostante con il pulsante "Chiedi all'assistente e compila". Nulla viene scritto nei campi finché non lo confermi tu nella schermata di verifica che segue.</p>
+<div class="box warn"><span class="t">Attenzione — questa modalità invia i documenti</span>L'assistente <b>trasmette i documenti caricati all'API di Anthropic</b>, che li legge e ne estrae i dati (per contratto Anthropic non li usa per addestrare i propri modelli e conserva i log tecnici al massimo 7 giorni; il sito non salva né conserva file o dati estratti). Usa questa funzione come titolare del trattamento, con idonea base giuridica e informativa all'interessato.</div>
+<p><b>Modalità mirata — un documento alla volta.</b> Se preferisci lavorare su un singolo documento, o vuoi la possibilità di restare sempre nel browser senza inviare nulla, apri il riquadro a comparsa <b>"Preferisci un solo documento mirato, o un'estrazione che resta sempre nel browser?"</b> subito sotto la richiesta all'assistente. Qui scegli il <b>tipo di documento</b>:</p>
 <ul>
 <li><b>Documento d'identità</b> (carta d'identità, patente, passaporto)</li>
 <li><b>Visura camerale</b> (persona giuridica)</li>
@@ -172,8 +175,13 @@ li{margin:5px 0}
 <li><b>Procura alle liti / mandato a conciliare</b></li>
 <li><b>Ricevuta di pagamento delle spese di mediazione</b> (bonifico)</li>
 </ul>
-<p>Per i tipi "Istanza", "Comunicazione di avvio", "Procura" e "Ricevuta di pagamento" i dati riconosciuti si distribuiscono da soli tra le sezioni pertinenti; per tutti gli altri tipi va indicato prima "a chi si riferisce il documento" (parte, rappresentante, titolare effettivo, o Organismo/mediatore). In ogni caso, dopo l'estrazione compare una schermata di <b>verifica</b>: nulla viene scritto nei campi finché non si preme "Applica ai campi selezionati", e si può correggere o deselezionare ogni singolo valore proposto.</p>
-<div class="box warn"><span class="t">Attenzione</span>Il riconoscimento avviene interamente nel browser (i file non vengono mai inviati a calcolomediazione.it) ma <b>può sbagliare</b>, soprattutto su scansioni di scarsa qualità o documenti non standard: va sempre controllato prima di confermare.</div>
+<p>Per i tipi "Istanza", "Comunicazione di avvio", "Procura" e "Ricevuta di pagamento" i dati riconosciuti si distribuiscono da soli tra le sezioni pertinenti; per tutti gli altri tipi va indicato prima "a chi si riferisce il documento" (parte, rappresentante, titolare effettivo, o Organismo/mediatore). Qui hai due pulsanti indipendenti:</p>
+<ul>
+<li><b>"Estrai dati dal documento"</b> — riconoscimento <b>interamente nel browser</b>: il file non viene mai inviato a calcolomediazione.it né a server esterni.</li>
+<li><b>"Alta precisione (AI)"</b> — invia il documento all'API di Anthropic, con le stesse garanzie di conservazione della modalità assistente: più accurata, ma comporta l'invio del file.</li>
+</ul>
+<p>In entrambe le modalità, dopo l'estrazione compare una schermata di <b>verifica</b>: nulla viene scritto nei campi finché non si preme "Applica ai campi selezionati", e si può correggere o deselezionare ogni singolo valore proposto.</p>
+<div class="box warn"><span class="t">Attenzione</span>Sia l'assistente sia l'estrazione "alta precisione" <b>possono sbagliare</b>, soprattutto su scansioni di scarsa qualità, documenti stranieri o formati non standard: il risultato va sempre controllato prima di confermare.</div>
 
 <h3>6.3 Salvataggio automatico, cronologia e ripresa del lavoro</h3>
 <p>Non appena si inserisce il <b>numero di procedura</b>, ogni modifica ai campi viene salvata automaticamente (con un breve ritardo) nel browser, associata a quel numero <b>e</b> al nome della parte corrente. L'indicatore "Salvataggio automatico attivo" mostra l'orario dell'ultimo salvataggio. Se in una sessione precedente era già stato compilato qualcosa per la stessa procedura, il box <b>"Sono stati trovati dati compilati..."</b> propone di ricaricarli con un pulsante dedicato — il caricamento non è mai automatico, va sempre confermato per non sovrascrivere per errore dati che si stanno digitando. Ogni volta che si generano i modelli, la data e l'elenco dei documenti prodotti vengono registrati nello <b>storico</b> di quella parte, visibile subito sotto il numero di procedura.</p>
@@ -203,7 +211,8 @@ li{margin:5px 0}
 <div class="box"><span class="t">Il pulsante "Carica questi dati" non compare: perché?</span>Il salvataggio e il recupero sono legati al numero di procedura: finché il campo "N. procedura / R.G. mediazione" è vuoto, lo strumento non sa a quale pratica associare i dati salvati.</div>
 <div class="box"><span class="t">Come tengo distinte le posizioni di più parti nella stessa procedura?</span>Con "+ Nuova parte per questa procedura": ogni parte resta salvata separatamente con il proprio nome, e nel box "Procedure con dati salvati" le trovi tutte elencate sotto lo stesso numero di procedura.</div>
 <div class="box"><span class="t">Rischio di perdere tutto se cancello i dati di navigazione del browser?</span>Sì: essendo un salvataggio solo locale, cancellando la cronologia/i dati di navigazione si perde anche quanto salvato qui. Per una conservazione affidabile nel tempo, dopo aver generato i modelli scarica sempre il fascicolo in Word o HTML, oppure esporta una copia dei dati in .json.</div>
-<div class="box"><span class="t">L'OCR ha letto male un dato: cosa faccio?</span>Nella schermata di verifica che compare dopo "Estrai dati dal documento" puoi correggere il testo di ogni campo proposto, oppure deselezionarlo per non applicarlo: nulla viene scritto finché non premi "Applica ai campi selezionati".</div>
+<div class="box"><span class="t">L'assistente o l'OCR hanno letto male un dato: cosa faccio?</span>Nella schermata di verifica che compare dopo l'estrazione (sia con l'assistente, sia con "Estrai dati dal documento" o "Alta precisione") puoi correggere il testo di ogni campo proposto, oppure deselezionarlo per non applicarlo: nulla viene scritto finché non premi "Applica ai campi selezionati".</div>
+<div class="box"><span class="t">Assistente sul motore unico o estrazione mirata: quale uso?</span>Se hai più documenti del fascicolo e vuoi una prima bozza rapida su gran parte del modulo, usa l'assistente in cima alla pagina (invia sempre i documenti all'API di Anthropic). Se hai un solo documento, o vuoi restare sempre nel browser senza inviare nulla, apri il riquadro a comparsa e usa l'estrazione mirata: "Estrai dati dal documento" non invia nulla, "Alta precisione (AI)" invia il singolo documento per un risultato più accurato.</div>
 
 <div class="toolbar">
 <a class="btn primary" href="/antiriciclaggio.html">↩ Vai allo strumento (modelli + motore UIF)</a>
