@@ -64,8 +64,14 @@ export default function AntiriciclaggioGuida() {
           }
         });
       } catch {
-        interval = window.setInterval(sync, 600);
+        /* cross-origin: il polling qui sotto resta comunque attivo */
       }
+
+      // Rete di sicurezza permanente: un ResizeObserver che osserva il body
+      // di un documento in un altro iframe non sempre notifica in modo
+      // affidabile le riduzioni di altezza. Un controllo periodico leggero
+      // garantisce che l'iframe si restringa comunque entro un secondo.
+      interval = window.setInterval(sync, 900);
     };
 
     frame.addEventListener("load", onLoad);

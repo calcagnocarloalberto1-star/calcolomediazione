@@ -52,8 +52,17 @@ export default function Antiriciclaggio() {
         observer = new ResizeObserver(sync);
         observer.observe(doc.body);
       } catch {
-        interval = window.setInterval(sync, 600);
+        /* cross-origin: il polling qui sotto resta comunque attivo */
       }
+
+      // Rete di sicurezza permanente: questo strumento è molto interattivo
+      // (genera/azzera i modelli, apre/chiude dettagli, più parti nella
+      // stessa procedura) e il ResizeObserver, osservando il body di un
+      // documento in un altro iframe, non sempre notifica le riduzioni di
+      // altezza in modo affidabile. Un controllo periodico leggero garantisce
+      // che l'iframe si restringa comunque, entro un secondo, quando il
+      // contenuto si riduce (es. dopo "Azzera").
+      interval = window.setInterval(sync, 900);
     };
 
     frame.addEventListener("load", onLoad);
