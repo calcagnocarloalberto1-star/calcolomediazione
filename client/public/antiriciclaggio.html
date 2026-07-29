@@ -1952,8 +1952,6 @@ function renderAggiornamenti(){
   async function ocrEstraiAI(){
     const files = Array.from(($("ocr_files")||{}).files || []);
     if(!files.length){ ocrSetStatus("Seleziona prima un'immagine del documento."); return; }
-    const file = files[0];
-    const isPdf = /\.pdf$/i.test(file.name) || file.type === "application/pdf";
     const ok = confirm(
       "Modalita' alta precisione (AI)\n\n" +
       "Il documento verra' trasmesso all'API di Anthropic per estrarne i dati. " +
@@ -1965,9 +1963,16 @@ function renderAggiornamenti(){
     const btn = $("ocr_ai_btn"); if(btn) btn.disabled = true;
     const btn2 = $("ocr_btn"); if(btn2) btn2.disabled = true;
     $("ocr_review").style.display = "none";
-    ocrSetStatus("Invio dell'immagine e lettura AI in corso…");
+    ocrSetStatus(files.length > 1 ? "Invio dei documenti e lettura AI in corso…" : "Invio del documento e lettura AI in corso…");
     try{
-      const blobs = isPdf ? await ocrPdfAllPagesToJpegBlobs(file) : [await ocrAImgToJpegBlob(file)];
+      let blobs = [];
+      for(const f of files){
+        const fIsPdf = /\.pdf$/i.test(f.name) || f.type === "application/pdf";
+        const parte = fIsPdf ? await ocrPdfAllPagesToJpegBlobs(f) : [await ocrAImgToJpegBlob(f)];
+        blobs = blobs.concat(parte);
+      }
+      // Anthropic accetta al massimo 20 immagini per richiesta
+      if(blobs.length > 20){ blobs = blobs.slice(0, 20); }
       const fd = new FormData();
       blobs.forEach((b, i) => fd.append("files", b, "pagina-" + (i + 1) + ".jpg"));
       fd.append("doctype", v("ocr_doctype"));
