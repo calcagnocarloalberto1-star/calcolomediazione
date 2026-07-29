@@ -53,6 +53,12 @@ li{margin:5px 0}
 .pill{display:inline-block;font-size:11px;font-weight:700;padding:2px 8px;border-radius:999px;background:var(--light);color:var(--accentDark)}
 .foot{padding:14px 26px;border-top:1px solid var(--line);color:var(--muted);font-size:12px;background:#fbfaf8}
 .num td:first-child{font-weight:700;color:var(--blue);width:48px;text-align:center}
+.modgrid{display:grid;grid-template-columns:1fr 1fr;gap:16px 18px;margin:14px 0}
+.modgrid figure{margin:0}
+.modgrid img{max-width:100%;height:auto;border:1px solid var(--line);border-radius:8px;display:block;box-shadow:0 2px 8px rgba(19,22,27,.05)}
+.modgrid figcaption{font-size:12.5px;color:var(--muted);margin-top:6px;line-height:1.45}
+.modgrid figcaption b{color:var(--navy)}
+@media(max-width:640px){.modgrid{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -69,7 +75,7 @@ li{margin:5px 0}
 <a class="btn" href="/antiriciclaggio-compilazione.html">📝 Guida alla compilazione (Organismo, Mediatore, Avvocato)</a>
 <a class="btn" href="/">Tutti gli strumenti</a>
 </div>
-<p class="lead">Questa guida spiega in modo semplice gli stessi contenuti del dossier tecnico. Ogni paragrafo è una domanda con una risposta diretta. I riferimenti alle norme restano tra parentesi, ma puoi anche ignorarli: il senso si capisce comunque.</p>
+<p class="lead">Ogni paragrafo di questa guida contiene una domanda con una risposta diretta. I riferimenti alle norme restano tra parentesi, ma puoi anche ignorarli: il senso si capisce comunque.</p>
 
 <h2>1. Di che cosa stiamo parlando?</h2>
 <p>L'antiriciclaggio è l'insieme delle regole che servono a impedire che il denaro "sporco" (proveniente da reati) venga ripulito usando attività lecite. La legge principale è il <b>D.Lgs. 231/2007</b>. Anche la mediazione civile può, in teoria, essere usata per far passare operazioni sospette: per questo la legge la inserisce tra le attività da tenere d'occhio.</p>
@@ -158,6 +164,43 @@ li{margin:5px 0}
 </figure>
 
 <p><b>Quali moduli trovi già e quali compili tu.</b> Quando ti siedi al tavolo, nel fascicolo dovresti già trovare (preparati dalla segreteria al deposito): la copertina (L.1), l'informativa firmata (L.13), l'adeguata verifica con i documenti (L.3), il titolare effettivo per le società (L.4) e la dichiarazione del cliente (L.5). Tu compili: la scheda di rischio (L.6, sempre), il foglio di annotazione (L.14) e — solo se c'è un'anomalia — il modulo SI-AML/01 per il responsabile (L.7). In breve: <b>L.1</b> è il "frontespizio" del fascicolo; <b>L.3/L.4/L.5</b> servono a sapere con chi hai a che fare; <b>L.13</b> informa le parti; <b>L.6</b> misura il rischio; <b>L.14</b> mette nero su bianco cosa hai fatto; <b>L.7</b> è il campanello che giri al RAR.</p>
+
+<p class="sub">Ogni modulo qui sotto è mostrato così come lo produce lo <a href="/antiriciclaggio.html" style="color:var(--blue)">strumento</a>, compilato con dati di fantasia solo a scopo illustrativo (Beta S.r.l., Organismo Esempio ADR): servono per farti vedere in anteprima che cosa troverai, non sono un modello da copiare.</p>
+<div class="modgrid">
+<figure>
+<img src="modulo-L1-copertina.png" width="1200" height="281" alt="Esempio illustrativo della copertina del fascicolo">
+<figcaption><b>L.1 — Copertina.</b> Riepilogo di organismo, procedura e parti. Nota: lo strumento online non genera una copertina a sé: qui è una ricostruzione illustrativa con lo stesso stile grafico degli altri moduli, utile solo a farsi un'idea del frontespizio del fascicolo cartaceo.</figcaption>
+</figure>
+<figure>
+<img src="modulo-L13-informativa.png" width="1567" height="493" alt="Esempio di modulo di informativa antiriciclaggio e privacy compilato">
+<figcaption><b>L.13 — Informativa.</b> Titolare del trattamento, finalità, base giuridica, conservazione: la parte firma per presa visione.</figcaption>
+</figure>
+<figure>
+<img src="modulo-L3-adeguata-verifica.png" width="1525" height="784" alt="Esempio di modulo di adeguata verifica compilato, sezioni A-C">
+<figcaption><b>L.3 — Adeguata verifica.</b> Identificazione della parte (sezioni A-B) e del rappresentante (sezione C); prosegue con PEP e valore dell'operazione.</figcaption>
+</figure>
+<figure>
+<img src="modulo-L4-titolare-effettivo.png" width="1568" height="638" alt="Esempio di sezione titolare effettivo compilata, all'interno del modulo di adeguata verifica">
+<figcaption><b>L.4 — Titolare effettivo.</b> È la Sezione E dello stesso modulo di adeguata verifica (L.3), non un documento separato: criterio di individuazione, dati del titolare effettivo, fonte ed esito della verifica.</figcaption>
+</figure>
+<figure>
+<img src="modulo-L5-dichiarazione-cliente.png" width="1568" height="336" alt="Esempio di dichiarazione del cliente ex art. 22 compilata">
+<figcaption><b>L.5 — Dichiarazione del cliente.</b> La parte dichiara che i dati forniti sono completi e veritieri e si impegna ad aggiornarli.</figcaption>
+</figure>
+<figure>
+<img src="modulo-L6-scheda-rischio.png" width="1567" height="727" alt="Esempio di scheda di valutazione del rischio compilata">
+<figcaption><b>L.6 — Scheda di rischio.</b> Dati del procedimento e della parte, poi (più in basso nello stesso modulo) il livello di rischio complessivo con la motivazione.</figcaption>
+</figure>
+<figure>
+<img src="modulo-L14-foglio-annotazione.png" width="1567" height="481" alt="Esempio di foglio di annotazione AML compilato">
+<figcaption><b>L.14 — Foglio di annotazione.</b> Il riepilogo interno degli adempimenti svolti in sessione e dell'esito: resta nel fascicolo riservato, mai nel verbale.</figcaption>
+</figure>
+<figure>
+<img src="modulo-L7-si-aml01.png" width="1568" height="762" alt="Esempio di analisi dei trigger UIF con bozza di motivazione per il modulo SI-AML/01">
+<figcaption><b>L.7 — SI-AML/01.</b> Lo strumento non compila da solo il modulo, ma — dall'analisi dei segnali T1-T7 — prepara questa bozza di motivazione tecnica, da rivedere e trasferire nel modulo per il RAR.</figcaption>
+</figure>
+</div>
+
 <p><b>Cosa dire alle parti (in presenza), prima di ciascun modulo:</b> per l'informativa (L.13) «le consegno l'informativa antiriciclaggio e sulla privacy, da firmare per presa visione»; per l'identificazione (L.3) «devo identificarla: mi mostra un documento d'identità?»; per il titolare effettivo (L.4) «per la società, mi indichi chi detiene oltre il 25% o ne ha il controllo»; per la dichiarazione del cliente (L.5) «mi firma questa dichiarazione che i dati sono completi e veritieri». La scheda di rischio (L.6), il foglio di annotazione (L.14) e il SI-AML/01 (L.7) si compilano senza dire nulla alle parti.</p>
 
 <h2>11. I 7 segnali da riconoscere al tavolo</h2>
@@ -213,7 +256,7 @@ li{margin:5px 0}
 <li>Premi "Analizza i trigger": la card ti dice se c'è un "dubbio ragionevole" e prepara una bozza di motivazione per il RAR, che puoi copiare.</li>
 </ol>
 <div class="box ok"><span class="t">Ricorda</span>La card non invia nulla e non decide la segnalazione: la decisione è sempre del RAR. È un aiuto, non un parere legale.</div>
-<p><b>Preferisci la carta?</b> Nel dossier completo (Allegato L) trovi tutti i moduli del fascicolo già pronti da <b>stampare e compilare a mano</b>: copertina del fascicolo, scheda di adeguata verifica, dichiarazione del titolare effettivo, scheda di rischio, dichiarazione del cliente (art. 22), Modulo SI-AML/01, registri delle valutazioni e della formazione, verbale dei controlli e checklist del contenuto minimo.</p>
+<p><b>Preferisci la carta?</b> Nello <a href="/antiriciclaggio.html" style="color:var(--blue)">strumento online</a>, il pulsante <b>"🖨️ Moduli in bianco (stampa)"</b> genera tutti i moduli del fascicolo già pronti da <b>stampare e compilare a mano</b>: informativa, adeguata verifica (con titolare effettivo), scheda di rischio, dichiarazione del cliente (art. 22), Modulo SI-AML/01 e checklist del contenuto minimo.</p>
 
 <h2>13. Due esempi concreti (casi di fantasia)</h2>
 <p>Per fissare le idee, ecco due procedure inventate: una che fila liscia e una con un campanello d'allarme.</p>
@@ -325,7 +368,7 @@ Vanno distinti i due obblighi. <b>Adeguata verifica e conservazione:</b> secondo
 </details>
 
 <h3>Chi fa cosa, quando, su quali documenti</h3>
-<p class="sub">Ripartizione degli adempimenti tra Organismo/RAR (assetto e back-office) e mediatore (al tavolo). I codici L.x rinviano ai modelli del fascicolo (Allegato L del dossier).</p>
+<p class="sub">Ripartizione degli adempimenti tra Organismo/RAR (assetto e back-office) e mediatore (al tavolo). I codici L.x rinviano ai modelli del fascicolo generati dallo strumento (v. punto 10 più sopra).</p>
 <table style="width:100%;border-collapse:collapse;font-size:13px">
 <tr style="background:#13161b;color:#fff"><td style="padding:6px 8px">Adempimento</td><td style="padding:6px 8px">A chi compete</td><td style="padding:6px 8px">Quando</td><td style="padding:6px 8px">Doc.</td></tr>
 <tr><td style="padding:6px 8px;border-bottom:1px solid #eee">Informativa AML/privacy</td><td style="padding:6px 8px;border-bottom:1px solid #eee">Mediatore (consegna); Organismo (predispone)</td><td style="padding:6px 8px;border-bottom:1px solid #eee">Primo incontro</td><td style="padding:6px 8px;border-bottom:1px solid #eee">L.13</td></tr>
@@ -402,7 +445,7 @@ L.5 — «Le chiedo di sottoscrivere questa dichiarazione, con cui conferma che 
 <details><summary>1 · Adeguata verifica della clientela <span class="chev">›</span></summary><div class="inner">Identificazione delle parti e degli esecutori, verifica dell'identità e del titolare effettivo (artt. 17-19). Soglia per le operazioni occasionali: <b>15.000 €</b>; in caso di sospetto, a prescindere da ogni soglia.</div></details>
 <details><summary>2 · Titolare effettivo <span class="chev">›</span></summary><div class="inner">Per le parti diverse da persona fisica: individuazione della persona fisica che detiene oltre il <b>25%</b> o che esercita il controllo (artt. 18, 20, 22).</div></details>
 <details><summary>3 · Conservazione <span class="chev">›</span></summary><div class="inner">Fascicolo riservato conservato per <b>10 anni</b> (artt. 31-32), separato dal fascicolo ordinario della procedura.</div></details>
-<details><summary>4 · Segnalazione di operazioni sospette (SOS) <span class="chev">›</span></summary><div class="inner">Invio alla <b>UIF</b> tramite portale INFOSTAT-UIF quando si "sa, sospetta o ha motivi ragionevoli per sospettare" (artt. 35-41), in forma riservata e senza informativa alle parti (divieto di tipping-off).</div></details>
+<details><summary>4 · Segnalazione di operazioni sospette (SOS) <span class="chev">›</span></summary><div class="inner">Invio alla <b>UIF</b> tramite portale INFOSTAT-UIF quando si "sa, sospetta o ha motivi ragionevoli per sospettare" (artt. 35-41), in forma riservata e senza informativa alle parti (divieto di tipping-off: è vietato avvisare l'interessato che è in corso o è stata inviata una segnalazione).</div></details>
 <details><summary>5 · Autovalutazione e scheda di rischio <span class="chev">›</span></summary><div class="inner">Documento di autovalutazione generale (art. 15) e scheda di rischio per ogni pratica, anche nei casi di rischio basso.</div></details>
 <details><summary>6 · Formazione e presidi interni <span class="chev">›</span></summary><div class="inner">Formazione periodica, procedure scritte, designazione del responsabile antiriciclaggio. Il registro/archivio è stato <b>abolito</b> (art. 69).</div></details>
 
@@ -411,7 +454,7 @@ L.5 — «Le chiedo di sottoscrivere questa dichiarazione, con cui conferma che 
 <details><summary>Verbale iniziale (primo incontro) <span class="chev">›</span></summary><div class="inner">Dare atto, in forma neutra, dell'avvenuta <b>identificazione delle parti e degli esecutori</b> presenti e, per le persone giuridiche, dell'acquisizione della <b>dichiarazione sul titolare effettivo</b> (conservata nel fascicolo dell'Organismo). Esempio: «Le parti sono state identificate sulla base di documento d'identità in corso di validità; per le parti diverse da persona fisica è stata acquisita la dichiarazione sul titolare effettivo.» Nessun livello di rischio.</div></details>
 <details><summary>Verbale di prosecuzione <span class="chev">›</span></summary><div class="inner">Dare atto, in modo neutro, di eventuali <b>aggiornamenti rilevanti</b> (ingresso di nuovi soggetti, modifica delle modalità di pagamento, nuovi trasferimenti). Se occorre rinviare per un'anomalia, usare formule neutre: «necessità di approfondimento», «supplemento di riflessione delle parti». Mai accennare a sospetti o all'antiriciclaggio.</div></details>
 <details><summary>Accordo <span class="chev">›</span></summary><div class="inner">Inserire la <b>clausola di tracciabilità dei pagamenti</b>: «Le parti danno atto che i pagamenti previsti dal presente accordo saranno eseguiti con strumenti tracciabili, nel rispetto dei limiti all'uso del contante di cui all'art. 49 del D.Lgs. 231/2007.» Confermare l'identificazione. Nessun riferimento a valutazioni di rischio o a segnalazioni.</div></details>
-<div class="note"><b>Da non scrivere MAI a verbale:</b> il livello di rischio, gli indicatori di anomalia, l'esistenza o l'invio di una segnalazione (SOS) o di una segnalazione interna al RAR. Violerebbe la riservatezza (artt. 9-10 D.Lgs. 28/2010) e il divieto di tipping-off (art. 39 D.Lgs. 231/2007). Tutto ciò va nel fascicolo AML riservato.</div>
+<div class="note"><b>Da non scrivere MAI a verbale:</b> il livello di rischio, gli indicatori di anomalia, l'esistenza o l'invio di una segnalazione (SOS) o di una segnalazione interna al RAR. Violerebbe la riservatezza (artt. 9-10 D.Lgs. 28/2010) e il divieto di tipping-off (art. 39 D.Lgs. 231/2007: vietato avvisare l'interessato che è in corso o è stata inviata una segnalazione, anche solo lasciandolo intuire). Tutto ciò va nel fascicolo AML riservato.</div>
 
 <div class="toolbar">
 <a class="btn primary" href="/antiriciclaggio.html">↩ Vai allo strumento (modelli + motore UIF)</a>
@@ -419,7 +462,7 @@ L.5 — «Le chiedo di sottoscrivere questa dichiarazione, con cui conferma che 
 <a class="btn" href="/">Tutti gli strumenti</a>
 </div>
 </div>
-<div class="foot">© calcolomediazione.it · Guida informativa che semplifica volutamente: non sostituisce un parere legale sul caso concreto. Per i testi di legge e gli approfondimenti, vedi il dossier completo.</div>
+<div class="foot">© calcolomediazione.it · Guida informativa che semplifica volutamente: non sostituisce un parere legale sul caso concreto. Per i testi di legge citati, fai sempre riferimento alle fonti normative ufficiali.</div>
 </div>
 </div>
 </body>
