@@ -358,12 +358,78 @@ function generatePlaceholder(systemPrompt: string): string {
 // Usata dal tool antiriciclaggio in modalita' "alta precisione (AI)".
 // Riceve un'immagine (base64) e restituisce i campi anagrafici strutturati.
 // Riusa la chiave Anthropic gia' configurata (ANTHROPIC_MODEL = Haiku 4.5).
+const DOCTYPE_ISTITUZIONALI = new Set(["istanza", "avviso", "procura", "bonifico"]);
+
+// Schema dedicato ai documenti "istituzionali" della procedura (istanza di mediazione,
+// comunicazione di avvio, procura, ricevuta di pagamento): a differenza di un documento
+// d'identita' o di una visura, qui compaiono PIU' soggetti diversi (parte istante,
+// rappresentante legale, difensore, controparte) e dati della procedura. Le chiavi
+// restituite corrispondono DIRETTAMENTE agli id dei campi del modulo (non passano per
+// la mappatura target/tipo usata per i documenti di identita').
+const ISTITUZIONALI_SCHEMA: Record<string, string> = {
+  odm_nome: "Denominazione dell'Organismo di Mediazione destinatario (es. 'Organismo di Mediazione e Formazione dell'Ordine degli Avvocati di Genova')",
+  proc_n: "Numero della procedura/istanza (es. 'MED-350-286-931-187' o simile)",
+  proc_data_dep_istanza: "Data di deposito/creazione dell'istanza, in formato AAAA-MM-GG",
+  op_materia: "Materia della controversia (es. 'Contratti bancari')",
+  op_valore: "Valore indicativo della controversia, testo cosi' come scritto (es. 'INDETERMINATO (ALTO)' o un importo)",
+  p_nome: "Denominazione o nome e cognome della PARTE ISTANTE (chi presenta la domanda) — la PRIMA parte istante se ce ne sono piu' d'una",
+  p_cf: "Codice fiscale o Partita IVA della parte istante",
+  p_res: "Indirizzo/recapito della parte istante",
+  p_pec: "PEC della parte istante, se presente",
+  p_tel: "Telefono della parte istante, se presente",
+  rappr_nome: "Nome e cognome del RAPPRESENTANTE LEGALE della parte istante (se persona giuridica), oppure del DIFENSORE/avvocato nominato — indica la persona incaricata di assistere/rappresentare la parte istante",
+  rappr_nascita: "Luogo e data di nascita del rappresentante legale, se presenti (es. 'Genova, 23/04/1969')",
+  rappr_cf: "Codice fiscale del rappresentante legale o del difensore, se presente"
+};
+
 export async function estraiDocumentoAI(
   immagini: Array<{ base64: string; mediaType: string }>,
   doctype: string
 ): Promise<Record<string, string>> {
   const anthropic = getAnthropicClient();
   if (!anthropic) throw new Error("Servizio AI non configurato (ANTHROPIC_API_KEY mancante).");
+
+  if (DOCTYPE_ISTITUZIONALI.has(doctype)) {
+    const schemaLines = Object.entries(ISTITUZIONALI_SCHEMA)
+      .map(([k, desc]) => `  "${k}": "${desc}"`).join(",\n");
+    const istruzioniIst = `Sei un assistente esperto che estrae dati da documenti italiani della procedura di mediazione civile (D.Lgs. 28/2010), per compilare la scheda antiriciclaggio (D.Lgs. 231/2007).
+Tipo di documento indicato dall'utente: ${doctype} (documento della procedura, non un documento d'identita': puo' contenere PIU' soggetti diversi — parte istante, suo rappresentante legale o difensore, e la controparte).
+Le immagini fornite possono essere piu' pagine dello STESSO documento: considerale insieme.
+Concentrati SOLO sulla PARTE ISTANTE (chi presenta la domanda) e sul suo rappresentante/difensore: NON estrarre i dati della controparte/parte invitata.
+Leggi con attenzione tutto il testo, incluse intestazioni, tabelle e firme.
+Restituisci ESCLUSIVAMENTE un oggetto JSON valido (nessun testo prima o dopo, senza markdown, senza recinti) con ESATTAMENTE queste chiavi, tutte come stringhe. Se un dato non e' presente o non e' leggibile, usa stringa vuota "". NON inventare MAI valori non presenti nel documento.
+{
+${schemaLines}
+}
+Regole ferree: le date SEMPRE in formato AAAA-MM-GG. Non aggiungere chiavi diverse da quelle elencate. Restituisci SOLO il JSON.`;
+
+    const contentIst: any[] = immagini.map((im) => ({
+      type: "image",
+      source: { type: "base64", media_type: im.mediaType as any, data: im.base64 },
+    }));
+    contentIst.push({ type: "text", text: istruzioniIst });
+
+    const messageIst = await anthropic.messages.create({
+      model: ANTHROPIC_MODEL,
+      max_tokens: 1024,
+      messages: [{ role: "user", content: contentIst }],
+    });
+    const textBlockIst = messageIst.content.find(b => b.type === "text") as
+      | { type: "text"; text: string } | undefined;
+    let rawIst = (textBlockIst?.text || "").trim();
+    rawIst = rawIst.replace(/^```(?:json)?/i, "").replace(/```$/, "").trim();
+    const si = rawIst.indexOf("{"), ei = rawIst.lastIndexOf("}");
+    if (si >= 0 && ei > si) rawIst = rawIst.slice(si, ei + 1);
+    let parsedIst: Record<string, unknown> = {};
+    try { parsedIst = JSON.parse(rawIst); }
+    catch { throw new Error("Risposta AI non interpretabile."); }
+    const outIst: Record<string, string> = {};
+    for (const k of Object.keys(ISTITUZIONALI_SCHEMA)) {
+      const val = parsedIst[k];
+      outIst[k] = (typeof val === "string" ? val : (val == null ? "" : String(val))).trim();
+    }
+    return outIst;
+  }
 
   const istruzioni = `Sei un assistente esperto che estrae dati da documenti italiani per compilare un modulo antiriciclaggio (D.Lgs. 231/2007).
 Tipo di documento indicato dall'utente: ${doctype}.
