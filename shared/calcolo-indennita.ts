@@ -3,12 +3,13 @@
  * Supporta due modalità tariffarie:
  * 1. Nazionale — D.M. 150/2023 (art. 28 primo incontro + Tabella A incontri successivi)
  * 2. COA Genova — Tariffe locali dell'Ordine degli Avvocati di Genova
- * 
+ *    (Tariffario Mediazione 2026 — Obbligatorie e Demandate / Facoltative e Contrattuali)
+ *
  * Differenziazione:
  * - Mediazione VOLONTARIA: tariffe piene
  * - Mediazione OBBLIGATORIA: riduzione 1/5 (nazionale) / 20% (Genova) — art. 28, co. 8
  * - Mediazione DEMANDATA: stesse riduzioni dell'obbligatoria
- * 
+ *
  * Struttura D.M. 150/2023:
  * - Art. 28, co. 4: Spese di avvio (€40 / €75 / €110)
  * - Art. 28, co. 5: Spese di mediazione primo incontro (€60 / €120 / €170)
@@ -16,6 +17,17 @@
  * - Art. 30, co. 1: Conciliazione al primo incontro → ulteriori spese = Tabella A minimi
  * - Art. 30, co. 2/3: Conciliazione incontri successivi → Tabella A + maggiorazione 25%
  * - Art. 34, co. 2: Dalle ulteriori spese si detraggono le spese mediazione primo incontro (art. 28, co. 5)
+ *
+ * NOTA COA Genova (verificato sul Tariffario Mediazione 2026 pubblicato da ordineavvocatigenova.it):
+ * - Le spese di PRIMO INCONTRO (spese di avvio + acconto mediazione) del tariffario COA Genova
+ *   "Facoltative e Contrattuali" (tariffe piene) sono numericamente identiche a quelle nazionali
+ *   D.M. 150/2023 art. 28 co. 4-5 (€40/€75/€110 e €60/€120/€170); per questo vengono riusate le
+ *   stesse funzioni getSpeseAvvioNazionali / getSpeseMediazionePrimoIncontro.
+ * - Per gli INCONTRI SUCCESSIVI / ACCORDO (art. 30), invece, COA Genova pubblica una propria
+ *   "Tabella delle Indennità" distinta dalla Tabella A nazionale (vedi TABELLA_INDENNITA_GENOVA
+ *   sotto), con importi ("Indennità base") diversi da quelli nazionali e diversi anche dalle
+ *   spese di primo incontro. Le mediazioni obbligatorie/demandate applicano una riduzione del 20%
+ *   su tutti questi importi (rapporto esatto 0,8 verificato riga per riga sul tariffario).
  */
 
 export type ModalitaTariffaria = "nazionale" | "coa_genova";
@@ -67,6 +79,8 @@ export interface InputCalcolo {
 
 // ========================
 // SPESE PRIMO INCONTRO — D.M. 150/2023, Art. 28, commi 4-5
+// Valide sia per le tariffe NAZIONALI sia per COA GENOVA (importi identici, verificato
+// sul Tariffario Mediazione 2026 COA Genova — Facoltative e Contrattuali)
 // ========================
 
 /**
@@ -119,33 +133,43 @@ const TABELLA_A_NAZIONALI = [
 ];
 
 // ========================
-// SCAGLIONI COA GENOVA — Tariffe Ordine Avvocati Genova
-// Spese avvio e indennità (acconto mediazione) per valore determinato
-// Le tariffe sono piene (facoltativa/volontaria); per obbligatoria si applica riduzione 20%
+// TABELLA DELLE INDENNITÀ — COA GENOVA (incontri successivi / accordo, art. 30)
+// Fonte: Tariffario Mediazione 2026 — Facoltative e Contrattuali (tariffe piene),
+// Ordine degli Avvocati di Genova. Per le mediazioni obbligatorie/demandate si applica
+// la riduzione del 20% (rapporto esatto verificato riga per riga contro il tariffario
+// "Obbligatorie e Demandate": ogni importo è pari all'80% del corrispondente importo
+// "Facoltative e Contrattuali").
+// "indennitaBase" = colonna "Indennità base" del tariffario (importo pre-IVA, pre-maggiorazione,
+// prima della riduzione 20% per le obbligatorie). Le maggiorazioni +10% (accordo al primo
+// incontro, art. 31 co. 1) e +25% (accordo agli incontri successivi, art. 30 co. 2) vengono
+// applicate dinamicamente dalla logica generica di calcolaIndennita, già condivisa con la
+// modalità nazionale.
 // ========================
-const SCAGLIONI_GENOVA = [
-  { min: 0, max: 1000, speseAvvio: 40, indennita: 110, label: "Fino a €1.000" },
-  { min: 1000.01, max: 5000, speseAvvio: 80, indennita: 220, label: "€1.001 - €5.000" },
-  { min: 5000.01, max: 10000, speseAvvio: 100, indennita: 260, label: "€5.001 - €10.000" },
-  { min: 10000.01, max: 25000, speseAvvio: 120, indennita: 360, label: "€10.001 - €25.000" },
-  { min: 25000.01, max: 50000, speseAvvio: 180, indennita: 520, label: "€25.001 - €50.000" },
-  { min: 50000.01, max: 100000, speseAvvio: 220, indennita: 780, label: "€50.001 - €100.000" },
-  { min: 100000.01, max: 250000, speseAvvio: 260, indennita: 1560, label: "€100.001 - €250.000" },
-  { min: 250000.01, max: 500000, speseAvvio: 300, indennita: 2600, label: "€250.001 - €500.000" },
-  { min: 500000.01, max: Infinity, speseAvvio: 340, indennita: 3900, label: "Oltre €500.000" },
+const TABELLA_INDENNITA_GENOVA = [
+  { min: 0, max: 1000, indennitaBase: 24.40, label: "Fino a €1.000" },
+  { min: 1000.01, max: 5000, indennitaBase: 48.80, label: "€1.001 - €5.000" },
+  { min: 5000.01, max: 10000, indennitaBase: 207.40, label: "€5.001 - €10.000" },
+  { min: 10000.01, max: 25000, indennitaBase: 390.40, label: "€10.001 - €25.000" },
+  { min: 25000.01, max: 50000, indennitaBase: 732.00, label: "€25.001 - €50.000" },
+  { min: 50000.01, max: 150000, indennitaBase: 1256.60, label: "€50.001 - €150.000" },
+  { min: 150000.01, max: 250000, indennitaBase: 1622.60, label: "€150.001 - €250.000" },
+  { min: 250000.01, max: 500000, indennitaBase: 2842.60, label: "€250.001 - €500.000" },
+  { min: 500000.01, max: 1500000, indennitaBase: 4550.60, label: "€500.001 - €1.500.000" },
+  { min: 1500000.01, max: 2500000, indennitaBase: 5404.60, label: "€1.500.001 - €2.500.000" },
+  { min: 2500000.01, max: Infinity, indennitaBase: 7722.60, label: "Oltre €2.500.000" },
 ];
 
-// Indennità Genova per controversie indeterminabili (solo acconto, spese avvio fisse €88)
-// Applicate come tariffe piene; per obbligatoria riduzione 20%
-const INDENNITA_GENOVA_INDETERMINABILI = {
-  indeterminabile_basso: 260,   // complessità bassa
-  indeterminabile_medio: 520,   // complessità media
-  indeterminabile_alto: 780,    // complessità alta
+// Indennità base (tariffe piene) per gli incontri successivi/accordo su controversie
+// indeterminabili — COA Genova (Tabella delle Indennità, colonna "Indennità base").
+// Nota: a differenza delle spese di primo incontro, questi importi NON coincidono con lo
+// scaglione determinato equivalente (dato pubblicato direttamente dal tariffario COA Genova).
+const INDENNITA_GENOVA_PROSECUZIONE_INDETERMINABILI: Record<string, number> = {
+  indeterminabile_basso: 1390.80,
+  indeterminabile_medio: 1317.60,
+  indeterminabile_alto: 1256.60,
 };
 
-const SPESE_AVVIO_GENOVA_INDETERMINABILI = 88;
-
-// Valori fittizi per controversie indeterminabili (per lookup altre tabelle)
+// Valori fittizi per controversie indeterminabili (per lookup altre tabelle, es. esenzione art. 17)
 const VALORI_INDETERMINABILI: Record<string, number> = {
   indeterminabile_basso: 25000,
   indeterminabile_medio: 50000,
@@ -173,6 +197,19 @@ function getValorePerTabellaA(valoreLite: number, tipoValore: TipoValore): numbe
     return 100000; // rientra nello scaglione €50.001-€150.000
   }
   return valoreLite;
+}
+
+/**
+ * Spese di mediazione per incontri successivi/accordo (art. 30) — COA Genova.
+ * Tariffe piene (Facoltative e Contrattuali); la riduzione 20% per le obbligatorie/demandate
+ * viene applicata a valle da calcolaIndennita (riduzioneRate), come per la modalità nazionale.
+ */
+function getUlterioriSpeseBaseGenova(valoreLite: number, tipoValore: TipoValore): number {
+  if (tipoValore !== "determinato") {
+    return INDENNITA_GENOVA_PROSECUZIONE_INDETERMINABILI[tipoValore] ?? 1256.60;
+  }
+  const scaglione = getScaglioneFromTable(TABELLA_INDENNITA_GENOVA, valoreLite);
+  return scaglione.indennitaBase;
 }
 
 // ========================
@@ -224,17 +261,18 @@ export function calcolaIndennita(input: InputCalcolo): CalcoloRisultato {
 
   if (modalita === "coa_genova") {
     // ---- TARIFFE COA GENOVA ----
+    // Primo incontro: importi identici alle tariffe nazionali D.M. 150/2023 art. 28 co. 4-5
+    // (verificato sul Tariffario Mediazione 2026 COA Genova — Facoltative e Contrattuali)
+    speseAvvio = getSpeseAvvioNazionali(valoreLite, tipoValore);
+    speseMediazionePrimoIncontro = getSpeseMediazionePrimoIncontro(valoreLite, tipoValore);
+    // Label scaglione basata sulla Tabella delle Indennità COA Genova (incontri successivi)
     if (tipoValore !== "determinato") {
-      speseAvvio = SPESE_AVVIO_GENOVA_INDETERMINABILI;
-      speseMediazionePrimoIncontro = INDENNITA_GENOVA_INDETERMINABILI[tipoValore] || 260;
       scaglioneLabel = tipoValore === "indeterminabile_basso" ? "Indeterminabile — basso"
         : tipoValore === "indeterminabile_medio" ? "Indeterminabile — medio"
         : "Indeterminabile — alto";
     } else {
-      const scaglione = getScaglioneFromTable(SCAGLIONI_GENOVA, valoreLite);
-      speseAvvio = scaglione.speseAvvio;
-      speseMediazionePrimoIncontro = scaglione.indennita;
-      scaglioneLabel = scaglione.label;
+      const scaglioneGenova = getScaglioneFromTable(TABELLA_INDENNITA_GENOVA, valoreLite);
+      scaglioneLabel = scaglioneGenova.label;
     }
     // Genova: riduzione 20% per obbligatoria/demandata
     riduzioneRate = isObbligatoria(tipoMediazione) ? 0.2 : 0;
@@ -290,14 +328,14 @@ export function calcolaIndennita(input: InputCalcolo): CalcoloRisultato {
   }
 
   // Se accordo al primo incontro (art. 28, co. 7 + art. 30, co. 1):
-  // Ulteriori spese = Tabella A minimi, con maggiorazione +10% per conciliazione al primo incontro
+  // Ulteriori spese = Tabella A minimi (nazionale) / Tabella delle Indennità (Genova),
+  // con maggiorazione +10% per conciliazione al primo incontro.
   // Detrazione: spese di mediazione primo incontro già versate (art. 34, co. 2)
   if (esito === "accordo_primo") {
     let ulterioriSpeseBase: number;
 
     if (modalita === "coa_genova") {
-      // Per Genova: usa l'indennità come base per la maggiorazione
-      ulterioriSpeseBase = speseMediazionePrimoIncontro;
+      ulterioriSpeseBase = getUlterioriSpeseBaseGenova(valoreLite, tipoValore);
     } else {
       // Nazionale: Tabella A minimi (art. 30, co. 1)
       const valoreTabA = getValorePerTabellaA(valoreLite, tipoValore);
@@ -305,7 +343,7 @@ export function calcolaIndennita(input: InputCalcolo): CalcoloRisultato {
       ulterioriSpeseBase = scagTabA.minimoTabA;
     }
 
-    // Riduzione 1/5 per obbligatoria/demandata (art. 30, co. 4)
+    // Riduzione 1/5 (nazionale) / 20% (Genova) per obbligatoria/demandata (art. 30, co. 4)
     const riduzioneObbligatoriaUlteriori = ulterioriSpeseBase * riduzioneRate;
     const ulterioriSpeseRidotte = ulterioriSpeseBase - riduzioneObbligatoriaUlteriori;
 
@@ -342,11 +380,11 @@ export function calcolaIndennita(input: InputCalcolo): CalcoloRisultato {
     };
   }
 
-  // Incontri successivi (art. 30, co. 2-3 + Tabella A)
+  // Incontri successivi (art. 30, co. 2-3 + Tabella A / Tabella delle Indennità Genova)
   let ulterioriSpeseBase: number;
 
   if (modalita === "coa_genova") {
-    ulterioriSpeseBase = speseMediazionePrimoIncontro;
+    ulterioriSpeseBase = getUlterioriSpeseBaseGenova(valoreLite, tipoValore);
   } else {
     // Tabella A minimi
     const valoreTabA = getValorePerTabellaA(valoreLite, tipoValore);
@@ -354,7 +392,7 @@ export function calcolaIndennita(input: InputCalcolo): CalcoloRisultato {
     ulterioriSpeseBase = scagTabA.minimoTabA;
   }
 
-  // Riduzione 1/5 per obbligatoria/demandata (art. 30, co. 4)
+  // Riduzione 1/5 (nazionale) / 20% (Genova) per obbligatoria/demandata (art. 30, co. 4)
   const riduzioneObbligatoriaUlteriori = ulterioriSpeseBase * riduzioneRate;
   let ulterioriSpeseCalc = ulterioriSpeseBase - riduzioneObbligatoriaUlteriori;
 
@@ -413,11 +451,18 @@ export function calcolaIndennita(input: InputCalcolo): CalcoloRisultato {
 
 export function getScaglioni(modalita: ModalitaTariffaria = "nazionale") {
   if (modalita === "coa_genova") {
-    return SCAGLIONI_GENOVA.map(s => ({
-      label: s.label,
-      speseAvvio: s.speseAvvio,
-      indennita: s.indennita,
-    }));
+    // Tabella delle Indennità COA Genova (incontri successivi/accordo) con spese di avvio
+    // primo incontro corrispondenti (identiche alle nazionali, vedi getSpeseAvvioNazionali)
+    return TABELLA_INDENNITA_GENOVA.map(s => {
+      let speseAvvio = 110;
+      if (s.max <= 1000) speseAvvio = 40;
+      else if (s.max <= 50000) speseAvvio = 75;
+      return {
+        label: s.label,
+        speseAvvio,
+        indennita: s.indennitaBase,
+      };
+    });
   }
   // Nazionale: mostra la Tabella A con spese avvio corrette
   return TABELLA_A_NAZIONALI.map(s => {
@@ -435,9 +480,21 @@ export function getScaglioni(modalita: ModalitaTariffaria = "nazionale") {
 
 export function getScaglioniGenovaIndeterminabili() {
   return [
-    { label: "Indeterminabile — complessità bassa", speseAvvio: SPESE_AVVIO_GENOVA_INDETERMINABILI, indennita: INDENNITA_GENOVA_INDETERMINABILI.indeterminabile_basso },
-    { label: "Indeterminabile — complessità media", speseAvvio: SPESE_AVVIO_GENOVA_INDETERMINABILI, indennita: INDENNITA_GENOVA_INDETERMINABILI.indeterminabile_medio },
-    { label: "Indeterminabile — complessità alta", speseAvvio: SPESE_AVVIO_GENOVA_INDETERMINABILI, indennita: INDENNITA_GENOVA_INDETERMINABILI.indeterminabile_alto },
+    {
+      label: "Indeterminabile — complessità bassa",
+      speseAvvio: getSpeseAvvioNazionali(0, "indeterminabile_basso"),
+      indennita: getSpeseMediazionePrimoIncontro(0, "indeterminabile_basso"),
+    },
+    {
+      label: "Indeterminabile — complessità media",
+      speseAvvio: getSpeseAvvioNazionali(0, "indeterminabile_medio"),
+      indennita: getSpeseMediazionePrimoIncontro(0, "indeterminabile_medio"),
+    },
+    {
+      label: "Indeterminabile — complessità alta",
+      speseAvvio: getSpeseAvvioNazionali(0, "indeterminabile_alto"),
+      indennita: getSpeseMediazionePrimoIncontro(0, "indeterminabile_alto"),
+    },
   ];
 }
 

@@ -111,8 +111,8 @@ export interface GratuitoPatrocinio {
 }
 
 export interface CostiArbitrato {
-  onorariCAM: number;          // onorari istituzione (CAM o Medyapro spese amm.)
-  onorariArbitro: number;      // onorari arbitro/collegio (netto IVA)
+  onorariCAM: number; // onorari istituzione (CAM o Medyapro spese amm.)
+  onorariArbitro: number; // onorari arbitro/collegio (netto IVA)
   ivaArbitro: number;
   compensoAvvocato: number;
   speseGenerali15: number;
@@ -247,23 +247,32 @@ const TABELLA_A_MEDIAZIONE_NAZIONALE = [
   { min: 5000000.01, max: Infinity, minimoTabA: 10000 },
 ];
 
-const INDENNITA_MEDIAZIONE_GENOVA = [
-  { min: 0, max: 1000, speseAvvio: 40, indennita: 110 },
-  { min: 1000.01, max: 5000, speseAvvio: 80, indennita: 220 },
-  { min: 5000.01, max: 10000, speseAvvio: 100, indennita: 260 },
-  { min: 10000.01, max: 25000, speseAvvio: 120, indennita: 360 },
-  { min: 25000.01, max: 50000, speseAvvio: 180, indennita: 520 },
-  { min: 50000.01, max: 100000, speseAvvio: 220, indennita: 780 },
-  { min: 100000.01, max: 250000, speseAvvio: 260, indennita: 1560 },
-  { min: 250000.01, max: 500000, speseAvvio: 300, indennita: 2600 },
-  { min: 500000.01, max: Infinity, speseAvvio: 340, indennita: 3900 },
+// Tabella delle Indennità COA Genova (incontri successivi/accordo, art. 30) — tariffe piene
+// (Facoltative e Contrattuali). Fonte: Tariffario Mediazione 2026, Ordine Avvocati Genova.
+// Verificato riga per riga contro il tariffario ufficiale (colonna "Indennità base"); per le
+// mediazioni obbligatorie/demandate si applica la riduzione 20% (rapporto esatto 0,8).
+// Le spese di PRIMO INCONTRO per COA Genova sono invece identiche a quelle nazionali
+// (getSpeseAvvioNazionaliConfronto) e non necessitano di una tabella separata.
+const TABELLA_INDENNITA_GENOVA_PROSECUZIONE = [
+  { min: 0, max: 1000, indennitaBase: 24.40 },
+  { min: 1000.01, max: 5000, indennitaBase: 48.80 },
+  { min: 5000.01, max: 10000, indennitaBase: 207.40 },
+  { min: 10000.01, max: 25000, indennitaBase: 390.40 },
+  { min: 25000.01, max: 50000, indennitaBase: 732.00 },
+  { min: 50000.01, max: 150000, indennitaBase: 1256.60 },
+  { min: 150000.01, max: 250000, indennitaBase: 1622.60 },
+  { min: 250000.01, max: 500000, indennitaBase: 2842.60 },
+  { min: 500000.01, max: 1500000, indennitaBase: 4550.60 },
+  { min: 1500000.01, max: 2500000, indennitaBase: 5404.60 },
+  { min: 2500000.01, max: Infinity, indennitaBase: 7722.60 },
 ];
 
-const GENOVA_INDETERMINABILI = {
-  speseAvvio: 88,
-  indeterminabile_basso: 260,
-  indeterminabile_medio: 520,
-  indeterminabile_alto: 780,
+// Indennità base (tariffe piene) per gli incontri successivi/accordo su controversie
+// indeterminabili — COA Genova (Tabella delle Indennità, colonna "Indennità base").
+const INDENNITA_GENOVA_PROSECUZIONE_INDETERMINABILI: Record<string, number> = {
+  indeterminabile_basso: 1390.80,
+  indeterminabile_medio: 1317.60,
+  indeterminabile_alto: 1256.60,
 };
 
 // ========================
@@ -286,51 +295,51 @@ const TARIFFE_ARBITRATO_CAM = [
 
 // Spese amministrative per parte (ciascuna parte versa al deposito)
 const SPESE_AMM_MEDYAPRO_ORDINARIO = [
-  { min: 0,         max: 5000,     spese: 200 },
-  { min: 5000.01,   max: 15000,    spese: 300 },
-  { min: 15000.01,  max: 30000,    spese: 400 },
-  { min: 30000.01,  max: 250000,   spese: 800 },
-  { min: 250000.01, max: 500000,   spese: 1400 },
-  { min: 500000.01, max: 1000000,  spese: 2400 },
-  { min: 1000000.01,max: Infinity, spese: 3600 },
+  { min: 0, max: 5000, spese: 200 },
+  { min: 5000.01, max: 15000, spese: 300 },
+  { min: 15000.01, max: 30000, spese: 400 },
+  { min: 30000.01, max: 250000, spese: 800 },
+  { min: 250000.01, max: 500000, spese: 1400 },
+  { min: 500000.01, max: 1000000, spese: 2400 },
+  { min: 1000000.01, max: Infinity, spese: 3600 },
 ];
 
 const SPESE_AMM_MEDYAPRO_RAPIDO = [
-  { min: 0,         max: 5000,     spese: 150 },
-  { min: 5000.01,   max: 15000,    spese: 250 },
-  { min: 15000.01,  max: 30000,    spese: 350 },
-  { min: 30000.01,  max: 250000,   spese: 600 },
-  { min: 250000.01, max: 500000,   spese: 1000 },
-  { min: 500000.01, max: 1000000,  spese: 1800 },
-  { min: 1000000.01,max: Infinity, spese: 2600 },
+  { min: 0, max: 5000, spese: 150 },
+  { min: 5000.01, max: 15000, spese: 250 },
+  { min: 15000.01, max: 30000, spese: 350 },
+  { min: 30000.01, max: 250000, spese: 600 },
+  { min: 250000.01, max: 500000, spese: 1000 },
+  { min: 500000.01, max: 1000000, spese: 1800 },
+  { min: 1000000.01, max: Infinity, spese: 2600 },
 ];
 
 // Compensi arbitro unico Medyapro (min/max totale — dividere per 2 per parte)
 const COMPENSI_ARBITRO_UNICO_MEDYAPRO = [
-  { min: 0,          max: 30000,    compMin: 1000,  compMax: 2000 },
-  { min: 30000.01,   max: 50000,    compMin: 1000,  compMax: 2500 },
-  { min: 50000.01,   max: 100000,   compMin: 2000,  compMax: 4500 },
-  { min: 100000.01,  max: 250000,   compMin: 3500,  compMax: 7500 },
-  { min: 250000.01,  max: 500000,   compMin: 6500,  compMax: 15000 },
-  { min: 500000.01,  max: 1000000,  compMin: 8000,  compMax: 20000 },
-  { min: 1000000.01, max: 2500000,  compMin: 15000, compMax: 35000 },
-  { min: 2500000.01, max: 5000000,  compMin: 25000, compMax: 60000 },
+  { min: 0, max: 30000, compMin: 1000, compMax: 2000 },
+  { min: 30000.01, max: 50000, compMin: 1000, compMax: 2500 },
+  { min: 50000.01, max: 100000, compMin: 2000, compMax: 4500 },
+  { min: 100000.01, max: 250000, compMin: 3500, compMax: 7500 },
+  { min: 250000.01, max: 500000, compMin: 6500, compMax: 15000 },
+  { min: 500000.01, max: 1000000, compMin: 8000, compMax: 20000 },
+  { min: 1000000.01, max: 2500000, compMin: 15000, compMax: 35000 },
+  { min: 2500000.01, max: 5000000, compMin: 25000, compMax: 60000 },
   { min: 5000000.01, max: 10000000, compMin: 35000, compMax: 75000 },
-  { min: 10000000.01,max: Infinity, compMin: 35000, compMax: 75000, percentualeEccedenza: 0.005 },
+  { min: 10000000.01, max: Infinity, compMin: 35000, compMax: 75000, percentualeEccedenza: 0.005 },
 ];
 
 // Compensi collegio arbitrale Medyapro (min/max totale — dividere per 2 per parte)
 const COMPENSI_COLLEGIO_MEDYAPRO = [
-  { min: 0,          max: 30000,    compMin: 3000,   compMax: 6000 },
-  { min: 30000.01,   max: 50000,    compMin: 3000,   compMax: 7000 },
-  { min: 50000.01,   max: 100000,   compMin: 6000,   compMax: 11000 },
-  { min: 100000.01,  max: 250000,   compMin: 10000,  compMax: 19000 },
-  { min: 250000.01,  max: 500000,   compMin: 15000,  compMax: 38000 },
-  { min: 500000.01,  max: 1000000,  compMin: 22000,  compMax: 58000 },
-  { min: 1000000.01, max: 2500000,  compMin: 34000,  compMax: 87000 },
-  { min: 2500000.01, max: 5000000,  compMin: 56000,  compMax: 150000 },
+  { min: 0, max: 30000, compMin: 3000, compMax: 6000 },
+  { min: 30000.01, max: 50000, compMin: 3000, compMax: 7000 },
+  { min: 50000.01, max: 100000, compMin: 6000, compMax: 11000 },
+  { min: 100000.01, max: 250000, compMin: 10000, compMax: 19000 },
+  { min: 250000.01, max: 500000, compMin: 15000, compMax: 38000 },
+  { min: 500000.01, max: 1000000, compMin: 22000, compMax: 58000 },
+  { min: 1000000.01, max: 2500000, compMin: 34000, compMax: 87000 },
+  { min: 2500000.01, max: 5000000, compMin: 56000, compMax: 150000 },
   { min: 5000000.01, max: 10000000, compMin: 100000, compMax: 212000 },
-  { min: 10000000.01,max: Infinity, compMin: 100000, compMax: 212000, percentualeEccedenza: 0.0125 },
+  { min: 10000000.01, max: Infinity, compMin: 100000, compMax: 212000, percentualeEccedenza: 0.0125 },
 ];
 
 // ========================
@@ -409,17 +418,18 @@ function calcolaCostiMediazione(input: InputConfronto, valoreEffettivo: number):
   let indennita: number;
 
   if (modalita === "coa_genova") {
+    // Spese di primo incontro COA Genova: identiche alle nazionali (verificato sul
+    // Tariffario Mediazione 2026 COA Genova — Facoltative e Contrattuali)
+    speseAvvio = getSpeseAvvioNazionaliConfronto(valoreEffettivo);
     if (input.tipoValore !== "determinato") {
-      speseAvvio = GENOVA_INDETERMINABILI.speseAvvio;
-      indennita = GENOVA_INDETERMINABILI[input.tipoValore as keyof typeof GENOVA_INDETERMINABILI] as number || 260;
+      indennita = INDENNITA_GENOVA_PROSECUZIONE_INDETERMINABILI[input.tipoValore] ?? 1256.60;
     } else {
-      const scag = findScaglione(INDENNITA_MEDIAZIONE_GENOVA, valoreEffettivo);
-      speseAvvio = scag.speseAvvio;
-      indennita = scag.indennita;
+      const scag = findScaglione(TABELLA_INDENNITA_GENOVA_PROSECUZIONE, valoreEffettivo);
+      indennita = scag.indennitaBase;
     }
     if (isObbligatoria(input.tipoMediazione)) {
       indennita = indennita * 0.8;
-      speseAvvio = speseAvvio * 0.8;
+      speseAvvio = Math.round(speseAvvio * 0.8);
     }
   } else {
     speseAvvio = getSpeseAvvioNazionaliConfronto(valoreEffettivo);

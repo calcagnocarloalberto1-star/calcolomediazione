@@ -119,28 +119,31 @@ assert(r6no.esenzioneArt17.esenteRegistro === false, "Nessun accordo → registr
 
 // ==========================================
 // TEST 7: COA Genova - scaglioni
+// Verificato contro Tariffario Mediazione 2026 COA Genova — Facoltative e Contrattuali:
+// il primo incontro Genova è numericamente identico al primo incontro nazionale
+// (€75 spese avvio per €25.000, fascia €1.001-€50.000).
 // ==========================================
 console.log("\n=== TEST 7: Tariffe COA Genova ===");
 
 const t7: InputCalcolo = { tipoMediazione: "volontaria", esito: "nessuno_primo", tipoValore: "determinato", valoreLite: 25000, modalitaTariffaria: "coa_genova" };
 const r7 = calcolaIndennita(t7);
-assert(r7.speseAvvio === 120, `Genova spese avvio €25.000 = €120 (got ${r7.speseAvvio})`);
+assert(r7.speseAvvio === 75, `Genova spese avvio €25.000 = €75 (got ${r7.speseAvvio})`);
 
 // Genova riduzione 20% obbligatoria
 const t7obb: InputCalcolo = { tipoMediazione: "obbligatoria", esito: "nessuno_primo", tipoValore: "determinato", valoreLite: 25000, modalitaTariffaria: "coa_genova" };
 const r7obb = calcolaIndennita(t7obb);
-assert(r7obb.speseAvvio === 96, `Genova obbligatoria spese avvio = €96 (120*0.8) (got ${r7obb.speseAvvio})`);
+assert(r7obb.speseAvvio === 60, `Genova obbligatoria spese avvio = €60 (75*0.8) (got ${r7obb.speseAvvio})`);
 
 // ==========================================
-// TEST 8: Tabella A scaglioni (12 scaglioni nazionali)
+// TEST 8: Scaglioni Tabella A nazionale (12) e Tabella delle Indennità COA Genova (11)
 // ==========================================
-console.log("\n=== TEST 8: Scaglioni Tabella A ===");
+console.log("\n=== TEST 8: Scaglioni Tabella A / Tabella Indennità Genova ===");
 
 const scaglioni = getScaglioni("nazionale");
 assert(scaglioni.length === 12, `12 scaglioni nazionali (got ${scaglioni.length})`);
 
 const scagGe = getScaglioni("coa_genova");
-assert(scagGe.length === 9, `9 scaglioni Genova (got ${scagGe.length})`);
+assert(scagGe.length === 11, `11 scaglioni Genova (got ${scagGe.length})`);
 
 // ==========================================
 // TEST 9: Detrazione art. 34, co. 2
@@ -150,6 +153,22 @@ console.log("\n=== TEST 9: Detrazione art. 34 co. 2 ===");
 const t9: InputCalcolo = { tipoMediazione: "volontaria", esito: "accordo_successivi", tipoValore: "determinato", valoreLite: 25000, modalitaTariffaria: "nazionale" };
 const r9 = calcolaIndennita(t9);
 assert(r9.detrazioneSpese > 0, `Detrazione art. 34 presente (got ${r9.detrazioneSpese})`);
+
+// ==========================================
+// TEST 10: COA Genova — Tabella delle Indennità (incontri successivi/accordo)
+// Verificato contro Tariffario Mediazione 2026 COA Genova — Facoltative e Contrattuali,
+// scaglione €10.001-€25.000, Indennità base = €390,40 (volontaria) / €312,32 (obbligatoria,
+// -20%, valore identico a quello pubblicato nel Tariffario "Obbligatorie e Demandate").
+// ==========================================
+console.log("\n=== TEST 10: Tabella delle Indennità COA Genova ===");
+
+const t10vol: InputCalcolo = { tipoMediazione: "volontaria", esito: "accordo_successivi", tipoValore: "determinato", valoreLite: 20000, modalitaTariffaria: "coa_genova" };
+const r10vol = calcolaIndennita(t10vol);
+assert(r10vol.speseBase === 390.40, `Genova indennità base €20.000 = €390,40 (got ${r10vol.speseBase})`);
+
+const t10obb: InputCalcolo = { tipoMediazione: "obbligatoria", esito: "nessuno_successivi", tipoValore: "determinato", valoreLite: 20000, modalitaTariffaria: "coa_genova" };
+const r10obb = calcolaIndennita(t10obb);
+assert(Math.abs(r10obb.speseBase * 0.8 - 312.32) < 0.01, `Genova indennità base obbligatoria €20.000 *0.8 = €312,32 (got ${r10obb.speseBase * 0.8})`);
 
 // ==========================================
 console.log("\n✅ TUTTI I TEST SUPERATI ✅\n");
