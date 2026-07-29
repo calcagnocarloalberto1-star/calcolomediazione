@@ -358,7 +358,7 @@
 <button type="button" class="btn-ghost" onclick="aggiungiAggiornamento()">+ Aggiungi alla cronologia</button>
 <div id="agg_lista" style="margin-top:10px"></div>
 </div>
-<div class="ocrbox" id="ocrbox"
+<div class="ocrbox" id="ocrbox">
 <h3 class="grouph">Compilazione automatica da documenti (facoltativo)</h3><p class="sub">Carica una foto o una scansione di un documento e il sistema prova a leggerne il testo e a proporre la compilazione dei campi corrispondenti qui sotto. <b>Il riconoscimento avviene interamente nel browser</b>: i file caricati non vengono inviati a calcolomediazione.it né a server esterni (solo le librerie di riconoscimento vengono scaricate da un CDN pubblico). Il risultato va sempre controllato: l'OCR può sbagliare, soprattutto su scansioni di scarsa qualità, documenti stranieri o formati non standard — nulla viene scritto nei campi finché non lo confermi tu.</p>
   <div class="grid">
     <div class="field">
@@ -1901,6 +1901,33 @@ function renderAggiornamenti(){
     }
   }
 
+  // Rileva un canvas "vuoto" (praticamente un unico colore): sintomo tipico di
+  // un'immagine che il browser non e' riuscito a decodificare (es. foto HEIC di iPhone
+  // non supportate da Chrome), dove la conversione non genera errore ma produce
+  // un'immagine bianca/nera senza contenuto.
+  function ocrCanvasSembraVuoto(canvas){
+    try{
+      const ctx = canvas.getContext("2d");
+      const w = canvas.width, h = canvas.height;
+      if(!w || !h) return true;
+      const step = Math.max(1, Math.floor(Math.min(w,h)/60));
+      const img = ctx.getImageData(0, 0, w, h);
+      const d = img.data;
+      let sum=0, sumSq=0, n=0;
+      for(let y=0; y<h; y+=step){
+        for(let x=0; x<w; x+=step){
+          const i = (y*w+x)*4;
+          const g = (d[i]+d[i+1]+d[i+2])/3;
+          sum += g; sumSq += g*g; n++;
+        }
+      }
+      if(!n) return true;
+      const mean = sum/n;
+      const variance = sumSq/n - mean*mean;
+      return variance < 4; // quasi nessuna variazione di colore = immagine vuota
+    }catch(e){ return false; } // se il controllo stesso fallisce, non blocchiamo l'invio
+  }
+
   // Rende TUTTE le pagine di un PDF in immagini JPEG (una per pagina, max ~1560px
   // lato lungo), cosi' la modalita' AI puo' leggere documenti di qualsiasi lunghezza.
   async function ocrPdfAllPagesToJpegBlobs(file){
@@ -1918,7 +1945,7 @@ function renderAggiornamenti(){
       canvas.height = Math.round(viewport.height);
       await page.render({canvasContext: canvas.getContext("2d"), viewport}).promise;
       const blob = await new Promise((res) => canvas.toBlob(res, "image/jpeg", 0.9));
-      if(blob) blobs.push(blob);
+      if(blob){ blob.ocrVuoto = ocrCanvasSembraVuoto(canvas); blobs.push(blob); }
     }
     return blobs;
   }
@@ -1944,7 +1971,9 @@ function renderAggiornamenti(){
     const c = document.createElement("canvas");
     c.width = Math.round(w*scale); c.height = Math.round(h*scale);
     c.getContext("2d").drawImage(src, 0, 0, c.width, c.height);
-    return await new Promise(res => c.toBlob(res, "image/jpeg", 0.9));
+    const blob = await new Promise(res => c.toBlob(res, "image/jpeg", 0.9));
+    if(blob) blob.ocrVuoto = ocrCanvasSembraVuoto(c);
+    return blob;
   }
 
   // Modalita' "alta precisione": invia l'immagine al server, che la fa leggere
@@ -1973,6 +2002,16 @@ function renderAggiornamenti(){
       }
       // Anthropic accetta al massimo 20 immagini per richiesta
       if(blobs.length > 20){ blobs = blobs.slice(0, 20); }
+      const totKb = Math.round(blobs.reduce((s,b)=>s+(b?b.size:0),0)/1024);
+      const vuote = blobs.filter(b=>!b || b.size < 500 || b.ocrVuoto).length;
+      if(vuote){
+        ocrSetStatus("ATTENZIONE: " + vuote + " immagine/i risultano vuote o non decodificate correttamente (probabile foto in formato HEIC non supportato dal browser). Su iPhone: Impostazioni > Fotocamera > Formati > \"Massima compatibilita'\", poi rifai la foto o riseleziona il file; oppure usa un file JPG/PNG.");
+        if(btn) btn.disabled = false;
+        if(btn2) btn2.disabled = false;
+        return;
+      }
+      ocrSetStatus("Preparate " + blobs.length + " immagine/i, " + totKb + " KB totali. Invio in corso…");
+      await new Promise(r=>setTimeout(r, 400));
       const fd = new FormData();
       blobs.forEach((b, i) => fd.append("files", b, "pagina-" + (i + 1) + ".jpg"));
       fd.append("doctype", v("ocr_doctype"));
