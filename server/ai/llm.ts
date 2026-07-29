@@ -365,9 +365,11 @@ export async function estraiDocumentoAI(
   const anthropic = getAnthropicClient();
   if (!anthropic) throw new Error("Servizio AI non configurato (ANTHROPIC_API_KEY mancante).");
 
-  const istruzioni = `Sei un assistente che estrae dati da un documento italiano per la compilazione di un modulo antiriciclaggio (D.Lgs. 231/2007).
-Tipo di documento indicato dall'utente: ${doctype}.\nLe immagini fornite possono essere piu' pagine o piu' facciate dello STESSO fascicolo/documento: considerale INSIEME e unisci le informazioni.
-Leggi l'immagine e restituisci ESCLUSIVAMENTE un oggetto JSON valido (nessun testo prima o dopo, senza markdown, senza recinti) con ESATTAMENTE queste chiavi, tutte come stringhe. Se un dato non e' presente o non e' leggibile con certezza, usa stringa vuota "". NON inventare MAI valori.
+  const istruzioni = `Sei un assistente esperto che estrae dati da documenti italiani per compilare un modulo antiriciclaggio (D.Lgs. 231/2007).
+Tipo di documento indicato dall'utente: ${doctype}.
+Le immagini fornite possono essere piu' pagine o piu' facciate dello STESSO documento (es. fronte e retro): considerale INSIEME e unisci le informazioni.
+Estrai TUTTI i campi effettivamente presenti e leggibili: leggi con attenzione anche il testo piccolo, la zona MRZ (le righe con i simboli < in fondo a carte d'identita' e passaporti), timbri e retro del documento. Per una carta d'identita'/CIE italiana sono di norma leggibili: cognome e nome, luogo e data di nascita, cittadinanza, numero del documento, Comune/autorita' di rilascio, date di rilascio e scadenza; il codice fiscale e la residenza sono spesso presenti (sul retro o sulla CIE): estraili se visibili. Per patente/passaporto adatta di conseguenza; per una visura camerale estrai denominazione, forma giuridica, sede legale, P.IVA/CF e capitale sociale.
+Restituisci ESCLUSIVAMENTE un oggetto JSON valido (nessun testo prima o dopo, senza markdown, senza recinti) con ESATTAMENTE queste chiavi, tutte come stringhe. Compila ogni campo che riesci a leggere; usa stringa vuota "" solo per i dati realmente assenti o illeggibili. NON inventare MAI valori non presenti nel documento.
 {
   "nome": "Cognome e nome della persona fisica; oppure denominazione/ragione sociale se e' una societa'",
   "nascita": "Luogo e data di nascita insieme, se presenti (es. 'Roma, 12/03/1980')",
