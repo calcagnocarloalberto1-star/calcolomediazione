@@ -4,6 +4,14 @@ import { SeoHead } from "@/components/SeoHead";
 // Pagina "Antiriciclaggio in mediazione".
 // Incorpora lo strumento statico /antiriciclaggio.html (servito da client/public)
 // con auto-ridimensionamento dell'altezza (stessa origine, nessun bordo/scroll interno).
+//
+// ASSET_VERSION: da incrementare ad ogni modifica di /antiriciclaggio.html.
+// Il file statico viene richiesto con "?v=ASSET_VERSION": senza questo parametro
+// il browser può continuare a servire dalla cache una copia vecchia del file
+// anche dopo che il resto del sito (bundle React) si è aggiornato, perché
+// l'indirizzo dell'iframe altrimenti non cambia mai da una modifica all'altra.
+const ASSET_VERSION = "4";
+
 export default function Antiriciclaggio() {
   const frameRef = useRef<HTMLIFrameElement>(null);
   const [height, setHeight] = useState<number>(1600);
@@ -83,7 +91,7 @@ export default function Antiriciclaggio() {
       />
       <iframe
         ref={frameRef}
-        src="/antiriciclaggio.html"
+        src={`/antiriciclaggio.html?v=${ASSET_VERSION}`}
         title="Antiriciclaggio in mediazione — obblighi e modelli"
         loading="lazy"
         scrolling="no"
