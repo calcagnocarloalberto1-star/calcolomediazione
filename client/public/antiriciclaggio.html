@@ -1107,11 +1107,12 @@ amlDatiCarica(procKey, partyKey);
 el.scrollIntoView({behavior:"smooth", block:"center"});
 }
 
-function amlNuovaParte(){
-clearTimeout(amlAutosaveTimer);
-const procKey = amlProcKey();
-if(!procKey){ toast("Inserisci prima il numero di procedura."); return; }
-if(!confirm("Verranno azzerati i campi relativi alla parte attuale (identificazione, titolare effettivo, PEP, operazione, rischio, dichiarazioni), mantenendo i dati della procedura già inseriti (organismo, numero, date, mediatore). Salva prima eventuali modifiche non ancora salvate. Continuare?")) return;
+// Azzera SOLO i campi specifici della parte corrente (identificazione, titolare
+// effettivo, PEP, operazione, rischio, dichiarazioni), mantenendo i dati di
+// procedura condivisi (organismo, numero, date, mediatore). Riusata sia dal
+// pulsante manuale "+ Nuova parte" sia dal passaggio automatico tra le parti
+// individuate dalla lettura AI di un'Istanza multi-parte.
+function amlClearPartyFields(){
 document.querySelectorAll("input[id],select[id],textarea[id]").forEach(el=>{
 if(AML_PROCEDURE_SHARED_IDS.has(el.id) || AML_AUTOSAVE_EXCLUDE.has(el.id)) return;
 if(el.tagName==="SELECT"){ el.selectedIndex = 0; }
@@ -1119,6 +1120,14 @@ else if(el.type==="checkbox"){ el.checked = false; }
 else { el.value = ""; }
 });
 riskLivelloManual = false; avTipoManual = false;
+}
+
+function amlNuovaParte(){
+clearTimeout(amlAutosaveTimer);
+const procKey = amlProcKey();
+if(!procKey){ toast("Inserisci prima il numero di procedura."); return; }
+if(!confirm("Verranno azzerati i campi relativi alla parte attuale (identificazione, titolare effettivo, PEP, operazione, rischio, dichiarazioni), mantenendo i dati della procedura già inseriti (organismo, numero, date, mediatore). Salva prima eventuali modifiche non ancora salvate. Continuare?")) return;
+amlClearPartyFields();
 syncToggles();
 calcRisk();
 renderStorico();
@@ -1665,6 +1674,101 @@ if(ordinante) rows.push({id:"cb_provenienza_disponente", label:"Provenienza dei 
 return rows;
 }
 
+// ─── Istanza multi-parte: elenco delle parti individuate, da applicare una alla volta ───
+let ocrParti = [];
+let ocrProcedura = {};
+let ocrPartiApplicate = new Set();
+
+function ocrRenderPartiMultiple(procedura, parti){
+ocrParti = parti || [];
+ocrProcedura = procedura || {};
+ocrPartiApplicate = new Set();
+const container = $("ocr_fields");
+container.innerHTML = "";
+if(!ocrParti.length){
+container.innerHTML = '<p class="hint">Nessuna parte individuata automaticamente. Puoi comunque leggere il testo grezzo qui sotto e compilare a mano.</p>';
+$("ocr_review").style.display = "block";
+return;
+}
+const wrap = document.createElement("div");
+wrap.innerHTML = '<p class="hint" style="margin-bottom:8px">Individuate '+ocrParti.length+' parte/i nel documento. Applica una parte alla volta: dopo aver generato/salvato il modulo per una parte, applica la successiva — i campi della parte precedente verranno azzerati automaticamente, mantenendo i dati di procedura.</p>';
+ocrParti.forEach((parte,i)=>{
+const row = document.createElement("div");
+row.id = "ocr_parte_row_"+i;
+row.style.cssText = "border:1px solid #c7d6f5;border-radius:10px;padding:10px 12px;margin-bottom:8px;background:#fff;display:flex;align-items:center;gap:10px;flex-wrap:wrap";
+const ruoloLabel = parte.ruolo === "aderente" ? "Aderente" : "Istante";
+const rapprInfo = parte.rappr_nome ? (" · rappr./difensore: "+esc(parte.rappr_nome)) : "";
+row.innerHTML =
+'<div style="flex:1;min-width:200px">'
++ '<span style="font-size:11px;font-weight:700;padding:2px 8px;border-radius:999px;background:#eef3ff;color:#243559;margin-right:6px">'+ruoloLabel+'</span>'
++ '<b>'+esc(parte.nome||"(nome non individuato)")+'</b>'
++ (parte.cf ? ' <span style="color:#6b7280">— '+esc(parte.cf)+'</span>' : '')
++ '<div style="font-size:12px;color:#6b7280;margin-top:2px">'+rapprInfo.replace(/^ · /,'')+'</div>'
++ '</div>'
++ '<button type="button" class="btn-primary" id="ocr_parte_btn_'+i+'" style="padding:8px 14px;font-size:13px">Applica questa parte ai campi</button>';
+wrap.appendChild(row);
+});
+container.appendChild(wrap);
+ocrParti.forEach((_,i)=>{
+const btn = $("ocr_parte_btn_"+i);
+if(btn) btn.addEventListener("click", ()=>ocrApplicaParte(i));
+});
+$("ocr_review").style.display = "block";
+}
+
+function ocrApplicaParte(idx){
+const parte = ocrParti[idx];
+if(!parte) return;
+// Se e' gia' stata applicata almeno una parte in questa sessione di lettura, azzera
+// prima i campi specifici della parte precedente (mantenendo i dati di procedura).
+if(ocrPartiApplicate.size > 0){
+amlClearPartyFields();
+}
+const setField = (id, val) => {
+const el = $(id);
+if(!el || !val) return;
+el.value = val;
+try{ el.dispatchEvent(new Event("input",{bubbles:true})); el.dispatchEvent(new Event("change",{bubbles:true})); }catch(e){}
+};
+const setSelect = (id, val) => {
+const el = $(id);
+if(!el || !val) return;
+el.value = val;
+try{ el.dispatchEvent(new Event("change",{bubbles:true})); }catch(e){}
+};
+// Dati di procedura (condivisi): si riapplicano ad ogni parte, sono innocui da riscrivere.
+setField("odm_nome", ocrProcedura.odm_nome);
+setField("proc_n", ocrProcedura.proc_n);
+setField("proc_data_dep_istanza", ocrProcedura.proc_data_dep_istanza);
+setField("op_materia", ocrProcedura.op_materia);
+setField("proc_ogg", ocrProcedura.op_materia);
+setField("op_valore", ocrProcedura.op_valore);
+// Ruolo e dati della parte
+setSelect("p_ruolo", parte.ruolo === "aderente" ? "aderente" : "istante");
+setField("p_nome", parte.nome);
+setField("p_cf", parte.cf);
+setField("p_res", parte.res);
+setField("p_pec", parte.pec);
+setField("p_tel", parte.tel);
+// Rappresentante legale o difensore di QUESTA parte, se presente
+if(parte.rappr_nome){
+setField("rappr_nome", parte.rappr_nome);
+setField("rappr_nascita", parte.rappr_nascita);
+setField("rappr_cf", parte.rappr_cf);
+setSelect("rappr_ruolo", ["legale_rapp","difensore"].includes(parte.rappr_ruolo) ? parte.rappr_ruolo : "legale_rapp");
+}
+ocrPartiApplicate.add(idx);
+// Segna la riga come applicata nell'elenco
+const row = $("ocr_parte_row_"+idx);
+if(row){ row.style.background = "#f3f9f3"; row.style.borderColor = "#8fbf8f"; }
+const btn = $("ocr_parte_btn_"+idx);
+if(btn){ btn.textContent = "✓ Applicata"; btn.disabled = true; }
+try { syncToggles(); } catch(e){ console.error("syncToggles in errore:", e); }
+try { calcRisk(); } catch(e){ console.error("calcRisk in errore:", e); }
+const ruoloLabel = parte.ruolo === "aderente" ? "aderente" : "istante";
+toast("Applicata la parte «"+(parte.nome||"senza nome")+"» ("+ruoloLabel+"). Genera/salva il modulo, poi applica la parte successiva.");
+}
+
 function ocrRenderReview(rows){
 const target = v("ocr_target");
 ocrRecognized = [];
@@ -1875,9 +1979,23 @@ const fields = data.fields || {};
 ocrRawText = JSON.stringify(fields, null, 2);
 const rawEl = $("ocr_raw"); if(rawEl) rawEl.textContent = ocrRawText;
 ocrLastDoctype = v("ocr_doctype");
-// Per i documenti "istituzionali" della procedura (istanza, avviso, procura,
-// bonifico) l'AI restituisce gia' gli id reali dei campi (piu' soggetti coinvolti):
-// vanno scritti direttamente, senza passare dalla mappatura destinatario/tipo.
+
+// Istanza di mediazione: puo' contenere PIU' parti (istanti e aderenti), ciascuna
+// con un proprio eventuale rappresentante/difensore. In questo caso il motore
+// restituisce { procedura, parti: [...] } invece di un unico set di campi: si
+// mostra un elenco di parti da applicare una alla volta, invece della vecchia
+// vista "una parte sola" che ignorava gli aderenti.
+if(ocrLastDoctype === "istanza" && fields && Array.isArray(fields.parti)){
+ocrRenderPartiMultiple(fields.procedura || {}, fields.parti);
+ocrSetStatus(fields.parti.length
+? "Lettura AI completata: individuate " + fields.parti.length + " parte/i. Applica ciascuna parte una alla volta."
+: "Lettura AI completata, ma nessuna parte individuata: puoi compilare a mano.");
+return;
+}
+
+// Per i documenti "istituzionali" della procedura (avviso, procura, bonifico)
+// l'AI restituisce gia' gli id reali dei campi: vanno scritti direttamente,
+// senza passare dalla mappatura destinatario/tipo.
 const ISTITUZIONALI_LABELS = {
 odm_nome: "Denominazione Organismo (da documento)",
 proc_n: "N. procedura (da documento)",
@@ -1893,7 +2011,7 @@ rappr_nome: "Rappresentante legale / difensore (da documento)",
 rappr_nascita: "Luogo e data di nascita rappresentante (da documento)",
 rappr_cf: "Codice fiscale rappresentante/difensore (da documento)"
 };
-const isIstituzionale = ["istanza","avviso","procura","bonifico"].includes(ocrLastDoctype);
+const isIstituzionale = ["avviso","procura","bonifico"].includes(ocrLastDoctype);
 const rows = Object.keys(fields)
 .filter(k => fields[k] && String(fields[k]).trim())
 .map(k => isIstituzionale
@@ -1967,6 +2085,9 @@ ocrSetStatus("");
 ocrRecognized = [];
 ocrRawText = "";
 ocrIstanzaFormaGiuridica = "";
+ocrParti = [];
+ocrProcedura = {};
+ocrPartiApplicate = new Set();
 }
 
 // ─── ASSISTENTE AI DI COMPILAZIONE (piu' documenti + richiesta libera) ─────
