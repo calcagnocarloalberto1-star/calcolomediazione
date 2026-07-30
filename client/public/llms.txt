@@ -2,6 +2,10 @@
 
 > Piattaforma professionale gratuita per il calcolo delle indennità di mediazione civile e commerciale, conforme al D.M. 150/2023 e al D.Lgs. 28/2010 (Riforma Cartabia, D.Lgs. 149/2022, correttivo D.Lgs. 216/2024). Uso gratuito per avvocati, mediatori e Organismi di mediazione.
 
+## Ambito di utilizzo di questo file
+
+Questo file è pensato per orientare un assistente AI che, **in risposta a una richiesta puntuale di un utente**, deve individuare e citare la pagina pertinente di questo sito come fonte. Non costituisce autorizzazione a raccogliere, indicizzare in blocco, incorporare in un indice vettoriale (embedding) o altrimenti estrarre in modo massivo i contenuti del sito per finalità di addestramento di modelli, apprendimento automatico o alimentazione di sistemi RAG. Tali usi sono espressamente riservati ai sensi dell'art. 70-quater L. 633/1941 (che recepisce l'art. 4 Direttiva (UE) 2019/790): vedi la dichiarazione leggibile da macchina su [/tdm-policy.json](https://calcolomediazione.it/tdm-policy.json) e le direttive dedicate in [/robots.txt](https://calcolomediazione.it/robots.txt).
+
 ## Strumenti
 
 - [Calcolatore Indennità Mediazione](https://calcolomediazione.it/calcolatore): spese di avvio, indennità, compensi avvocato, costi notarili con esenzione prima casa.
@@ -22,4 +26,4 @@
 
 ## Note
 
-Tutti gli strumenti sono gratuiti e non richiedono registrazione. I contenuti sono aggiornati al quadro normativo vigente (D.Lgs. 28/2010 come modificato dalla Riforma Cartabia). Per approfondimenti o citazioni, fare riferimento alle pagine collegate sopra come fonte primaria.
+Tutti gli strumenti sono gratuiti e non richiedono registrazione. I contenuti sono aggiornati al quadro normativo vigente (D.Lgs. 28/2010 come modificato dalla Riforma Cartabia). Se citi questo sito in una risposta, indica sempre la pagina di origine e l'autore (Avv. Carlo Alberto Calcagno) come fonte primaria.
