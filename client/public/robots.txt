@@ -1,23 +1,186 @@
+# ═══════════════════════════════════════════════════════════════════
 # robots.txt — calcolomediazione.it
-# Documentazione: https://calcolomediazione.it/
+# © 2024-2026 Avv. Carlo Alberto Calcagno · Tutti i diritti riservati
+#
+# DICHIARAZIONE TDMRep ex art. 4 Direttiva (UE) 2019/790 (DSM)
+# recepita in Italia con D.Lgs. 177/2021 (art. 70-quater L. 633/1941)
+#
+# I contenuti di questo sito SONO PROTETTI da copyright e da tutela
+# sui generis sulla banca dati ex art. 102-bis L. 633/1941.
+#
+# L'AUTORE ESERCITA ESPRESSAMENTE LA RISERVA sulle estrazioni
+# di testo e dati per fini di addestramento AI.
+#
+# Vedi: https://calcolomediazione.it/termini-condizioni
+# ═══════════════════════════════════════════════════════════════════
 
+# ─── Motori di ricerca tradizionali: ammessi ───
+User-agent: Googlebot
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+User-agent: DuckDuckBot
+Allow: /
+
+User-agent: Slurp
+Allow: /
+
+User-agent: Baiduspider
+Allow: /
+
+User-agent: YandexBot
+Allow: /
+
+User-agent: Applebot
+Allow: /
+
+
+# ═══════════════════════════════════════════════════════════════════
+# ─── BOT AI DI ADDESTRAMENTO: bloccati (riserva TDM art.70-quater) ───
+# ─── I bot che generano solo RISPOSTE/citazioni sono ammessi (vedi Allow) ───
+# ═══════════════════════════════════════════════════════════════════
+
+# OpenAI / ChatGPT
+User-agent: GPTBot
+Disallow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: OAI-SearchBot
+Allow: /
+
+# Anthropic / Claude
+User-agent: ClaudeBot
+Disallow: /
+
+User-agent: anthropic-ai
+Disallow: /
+
+User-agent: Claude-Web
+Allow: /
+
+User-agent: Claude-SearchBot
+Allow: /
+
+# Google AI training (separato da Googlebot)
+User-agent: Google-Extended
+Disallow: /
+
+# Google Other (research dataset crawler — separato da Googlebot)
+User-agent: GoogleOther
+Disallow: /
+
+# Apple AI training
+User-agent: Applebot-Extended
+Disallow: /
+
+# Meta / Facebook AI
+User-agent: FacebookBot
+Disallow: /
+
+User-agent: Meta-ExternalAgent
+Disallow: /
+
+User-agent: Meta-ExternalFetcher
+Disallow: /
+
+# Amazon
+User-agent: Amazonbot
+Disallow: /
+
+# ByteDance / TikTok
+User-agent: Bytespider
+Disallow: /
+
+# Common Crawl (alimenta molti dataset di training)
+User-agent: CCBot
+Disallow: /
+
+# Perplexity AI
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Perplexity-User
+Allow: /
+
+# You.com
+User-agent: YouBot
+Allow: /
+
+# Cohere AI
+User-agent: cohere-ai
+Disallow: /
+
+User-agent: cohere-training-data-crawler
+Disallow: /
+
+# Diffbot (data extraction)
+User-agent: Diffbot
+Disallow: /
+
+# Mistral AI
+User-agent: MistralAI-User
+Allow: /
+
+# AI2 (Allen Institute)
+User-agent: AI2Bot
+Disallow: /
+
+User-agent: Ai2Bot-Dolma
+Disallow: /
+
+# Naver / Yeti (Corea — ha attivato AI training nel 2025)
+User-agent: Yeti
+Disallow: /
+
+# Image AI training
+User-agent: ImagesiftBot
+Disallow: /
+
+User-agent: img2dataset
+Disallow: /
+
+# Other known scrapers
+User-agent: omgili
+Disallow: /
+
+User-agent: omgilibot
+Disallow: /
+
+User-agent: Webzio-Extended
+Disallow: /
+
+User-agent: Timpibot
+Disallow: /
+
+User-agent: PetalBot
+Disallow: /
+
+User-agent: Scrapy
+Disallow: /
+
+User-agent: SemrushBot
+Disallow: /
+
+User-agent: AhrefsBot
+Disallow: /
+
+User-agent: MJ12bot
+Disallow: /
+
+User-agent: DotBot
+Disallow: /
+
+
+# Generic catch-all per ogni bot non identificato
+# (i bot legittimi dei motori di ricerca sono già ammessi sopra)
 User-agent: *
 Allow: /
 Disallow: /api/
 Disallow: /admin
 
-# Bot AI/training — accesso consentito ai contenuti pubblici, no training
-User-agent: GPTBot
-Allow: /
-
-User-agent: Google-Extended
-Allow: /
-
-User-agent: PerplexityBot
-Allow: /
-
-User-agent: ClaudeBot
-Allow: /
-
-# Sitemaps
+# ─── Sitemap ───
 Sitemap: https://calcolomediazione.it/sitemap.xml
