@@ -412,6 +412,13 @@ if (doctype === DOCTYPE_ISTANZA) {
 Le immagini fornite possono essere piu' pagine di PIU' documenti diversi della STESSA procedura (es. l'Istanza originaria E una successiva Adesione): considerale INSIEME come un unico fascicolo, non solo la prima pagina.
 ATTENZIONE — cerca sistematicamente i blocchi RIPETUTI: questi documenti elencano le parti con intestazioni del tipo "Parte Istante N di M" oppure "Parte Invitata/Aderente N di M" (es. "Parte Istante 1 di 5", "Parte Istante 2 di 5", ... fino a "5 di 5"). Se vedi anche un solo blocco con "N di M" e M maggiore di 1, DEVI cercare e restituire TUTTI gli M blocchi corrispondenti, non fermarti al primo. Un'istanza o un'adesione puo' contenere PIU' parti istanti e PIU' parti aderenti: individuale TUTTE, senza escluderne nessuna. Per ciascuna parte individua anche il proprio rappresentante legale o difensore, se indicato nel documento (ogni parte puo' avere un rappresentante diverso).
 Se tra le immagini e' presente un'Adesione, essa di norma richiama gli estremi e le parti dell'Istanza originaria: usa queste informazioni per completare l'elenco delle parti istanti, non limitarti ai soli dati della parte che deposita l'adesione.
+
+REGOLA FERREA per non scambiare istante e aderente (errore frequente, evitalo con attenzione):
+- Nell'Istanza, la parte che DEPOSITA la domanda (si presenta come "Parte Istante", firma in calce all'istanza, conferisce mandato al proprio difensore per la domanda) e' SEMPRE "istante".
+- Nell'Istanza, la parte "nei cui confronti" si chiede la mediazione compare come "Parte Invitata" (puo' NON comparire ancora la parola "Aderente" a questo stadio): questa parte va comunque etichettata "aderente" nel risultato, anche se il documento la chiama "Invitata".
+- Nell'Adesione, chi SOTTOSCRIVE l'atto di adesione (il dichiarante che aderisce alla procedura) e' SEMPRE "aderente" — mai "istante" — anche se nel testo dell'adesione vengono citati i dati anagrafici della parte istante come riferimento del procedimento a cui si aderisce: quei dati richiamati restano "istante", non vanno mai rietichettati come "aderente".
+- Verifica sempre chi PRESENTA/FIRMA/SOTTOSCRIVE ciascun documento, non ti fidare della sola posizione del nome nel testo: e' quello il criterio per assegnare il ruolo, non l'ordine in cui i nomi compaiono.
+
 Leggi con attenzione tutto il testo, incluse intestazioni, tabelle e firme.
 Restituisci ESCLUSIVAMENTE un oggetto JSON valido (nessun testo prima o dopo, senza markdown, senza recinti) con questa struttura ESATTA:
 {
