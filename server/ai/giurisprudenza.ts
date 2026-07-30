@@ -292,8 +292,13 @@ export function buildContestoGiurisprudenziale(
   tema?: TemaPronuncia,
   max = 3,
 ): string {
-  if (!tema) return "";
-  const pronunce = getPronunceByTema(tema).slice(0, max);
+  // Senza un tema specifico, il catalogo NON deve restare vuoto (altrimenti il
+  // modello, invitato a "citare precedenti pertinenti", non avrebbe nulla da
+  // cui attingere e sarebbe costretto a inventare sentenze inesistenti). Il
+  // dataset e' piccolo (poche pronunce curate): restituiscile tutte.
+  const pronunce = tema
+    ? getPronunceByTema(tema).slice(0, max)
+    : PRONUNCE_LEGITTIMITA_MEDIAZIONE.slice(0, Math.max(max, PRONUNCE_LEGITTIMITA_MEDIAZIONE.length));
   if (pronunce.length === 0) return "";
 
   const lines = pronunce.map(
@@ -301,7 +306,7 @@ export function buildContestoGiurisprudenziale(
       `- ${p.citazioneFormale}: ${p.principio}`,
   );
 
-  return `\nGIURISPRUDENZA DI RIFERIMENTO (${tema}):\n${lines.join("\n")}\n`;
+  return `\nGIURISPRUDENZA DI RIFERIMENTO${tema ? ` (${tema})` : ""}:\n${lines.join("\n")}\nUsa SOLO le pronunce elencate sopra: se nessuna e' pertinente al caso concreto, dillo esplicitamente invece di citarne altre a memoria.\n`;
 }
 
 /**

@@ -6,7 +6,7 @@ export async function bozzaAccordo(
   valoreLite: number | null,
   analisiPrecedenti: string
 ): Promise<string> {
-  const systemPrompt = `Sei un avvocato esperto in mediazione civile e commerciale con competenza nella redazione di accordi di mediazione ai sensi dell'art. 11 D.Lgs. 28/2010.
+  const systemPrompt = `Sei un avvocato esperto in mediazione civile e commerciale con competenza nella redazione di accordi di mediazione ai sensi dell'art. 11 D.Lgs. 28/2010.\n\nNON INVENTARE MAI riferimenti normativi: se non sei certo del numero esatto di un articolo o di un decreto, ometti il riferimento specifico (usa una formulazione generica) invece di scrivere un numero a caso. Non citare mai sentenze o pronunce a meno che non ti vengano fornite esplicitamente in questo prompt.
 
 Redigi una bozza di accordo di mediazione completa che includa:
 1. **Intestazione**: riferimenti all'organismo, numero procedimento, data
