@@ -408,9 +408,10 @@ const anthropic = getAnthropicClient();
 if (!anthropic) throw new Error("Servizio AI non configurato (ANTHROPIC_API_KEY mancante).");
 
 if (doctype === DOCTYPE_ISTANZA) {
-  const istruzioniIstanza = `Sei un assistente esperto che estrae dati da un'Istanza di mediazione civile italiana (D.Lgs. 28/2010), per compilare la scheda antiriciclaggio (D.Lgs. 231/2007) di TUTTE le parti coinvolte.
-Le immagini fornite possono essere piu' pagine dello STESSO documento: considerale insieme.
-Un'istanza di mediazione puo' contenere PIU' parti istanti e PIU' parti aderenti (mai solo una): individuale TUTTE, senza escluderne nessuna. Per ciascuna parte individua anche il proprio rappresentante legale o difensore, se indicato nel documento (ogni parte puo' avere un rappresentante diverso).
+  const istruzioniIstanza = `Sei un assistente esperto che estrae dati da documenti di una procedura di mediazione civile italiana (D.Lgs. 28/2010) — Istanza e/o Adesione — per compilare la scheda antiriciclaggio (D.Lgs. 231/2007) di TUTTE le parti coinvolte.
+Le immagini fornite possono essere piu' pagine di PIU' documenti diversi della STESSA procedura (es. l'Istanza originaria E una successiva Adesione): considerale INSIEME come un unico fascicolo, non solo la prima pagina.
+ATTENZIONE — cerca sistematicamente i blocchi RIPETUTI: questi documenti elencano le parti con intestazioni del tipo "Parte Istante N di M" oppure "Parte Invitata/Aderente N di M" (es. "Parte Istante 1 di 5", "Parte Istante 2 di 5", ... fino a "5 di 5"). Se vedi anche un solo blocco con "N di M" e M maggiore di 1, DEVI cercare e restituire TUTTI gli M blocchi corrispondenti, non fermarti al primo. Un'istanza o un'adesione puo' contenere PIU' parti istanti e PIU' parti aderenti: individuale TUTTE, senza escluderne nessuna. Per ciascuna parte individua anche il proprio rappresentante legale o difensore, se indicato nel documento (ogni parte puo' avere un rappresentante diverso).
+Se tra le immagini e' presente un'Adesione, essa di norma richiama gli estremi e le parti dell'Istanza originaria: usa queste informazioni per completare l'elenco delle parti istanti, non limitarti ai soli dati della parte che deposita l'adesione.
 Leggi con attenzione tutto il testo, incluse intestazioni, tabelle e firme.
 Restituisci ESCLUSIVAMENTE un oggetto JSON valido (nessun testo prima o dopo, senza markdown, senza recinti) con questa struttura ESATTA:
 {
@@ -437,7 +438,7 @@ Regole ferree: le date SEMPRE in formato AAAA-MM-GG. Se un dato non e' presente 
 
   const messageIstanza = await anthropic.messages.create({
     model: ANTHROPIC_MODEL,
-    max_tokens: 2048,
+    max_tokens: 4096,
     messages: [{ role: "user", content: contentIstanza }],
   });
   const textBlockIstanza = messageIstanza.content.find(b => b.type === "text") as
