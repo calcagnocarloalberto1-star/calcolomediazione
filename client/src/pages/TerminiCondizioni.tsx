@@ -56,6 +56,7 @@ export default function TerminiCondizioni() {
 
           <Section title="4. Proprietà Intellettuale">
             <p>Tutti i contenuti del Sito — testi, grafica, layout, codice sorgente, loghi e marchi — sono di proprietà del Titolare o dei rispettivi aventi diritto e sono protetti dalle leggi italiane e internazionali sulla proprietà intellettuale.</p>
+            <p className="mt-2"><strong>Riserva sull'estrazione di testo e dati (Text and Data Mining).</strong> Ai sensi dell'art. 70-quater della Legge 633/1941 (che recepisce l'art. 4 della Direttiva (UE) 2019/790) il Titolare esercita espressamente la riserva sull'estrazione di testo e dati dai contenuti del Sito per finalità di addestramento di modelli di intelligenza artificiale, apprendimento automatico, fine-tuning, generazione di embedding o alimentazione di sistemi RAG (retrieval-augmented generation). Tale riserva è resa disponibile in formato leggibile da macchina all'indirizzo <code>/tdm-policy.json</code> e tramite le direttive dedicate nel file <code>robots.txt</code> del Sito. Restano ferme la normale indicizzazione da parte dei motori di ricerca e la citazione con attribuzione per finalità accademiche o giornalistiche. Per richieste di licenza relative all'uso dei contenuti oltre quanto sopra consentito, contattare il Titolare.</p>
             <p>È vietata la riproduzione, distribuzione, trasmissione o modifica dei contenuti del Sito senza preventiva autorizzazione scritta del Titolare, salvo quanto consentito dalla legge.</p>
           </Section>
 
