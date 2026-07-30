@@ -1,0 +1,25 @@
+# CalcoloMediazione
+
+> Piattaforma professionale gratuita per il calcolo delle indennità di mediazione civile e commerciale, conforme al D.M. 150/2023 e al D.Lgs. 28/2010 (Riforma Cartabia, D.Lgs. 149/2022, correttivo D.Lgs. 216/2024). Uso gratuito per avvocati, mediatori e Organismi di mediazione.
+
+## Strumenti
+
+- [Calcolatore Indennità Mediazione](https://calcolomediazione.it/calcolatore): spese di avvio, indennità, compensi avvocato, costi notarili con esenzione prima casa.
+- [Analisi AI del Caso](https://calcolomediazione.it/analisi-caso-ai): analisi giuridica, MAAN/BATNA, bias cognitivi, bozza accordo, confronto economico.
+- [Confronto Costi Mediazione vs Processo](https://calcolomediazione.it/confronto-costi): primo grado, appello, cassazione, stima CTU.
+- [Generatore Procura Speciale](https://calcolomediazione.it/generatore-procura): conforme al D.Lgs. 28/2010.
+- [Database Giurisprudenza Mediazione](https://calcolomediazione.it/giurisprudenza): sentenze di Cassazione, Tribunali e Corti d'Appello.
+- [Credito d'Imposta e Gratuito Patrocinio](https://calcolomediazione.it/credito-imposta): art. 20 D.Lgs. 28/2010.
+- [Strategie di Negoziazione](https://calcolomediazione.it/strategie-negoziazione): MAAN/BATNA, ZOPA, ancoraggio.
+- [Antiriciclaggio in Mediazione](https://calcolomediazione.it/antiriciclaggio): obblighi D.Lgs. 231/2007 e compilazione automatica dei modelli del fascicolo.
+
+## Guide e Risorse
+
+- [FAQ](https://calcolomediazione.it/faq)
+- [Guida al D.M. 150/2023](https://calcolomediazione.it/guida-dm-150)
+- [Glossario della Mediazione Civile](https://calcolomediazione.it/glossario)
+- [Chi Siamo](https://calcolomediazione.it/chi-siamo)
+
+## Note
+
+Tutti gli strumenti sono gratuiti e non richiedono registrazione. I contenuti sono aggiornati al quadro normativo vigente (D.Lgs. 28/2010 come modificato dalla Riforma Cartabia). Per approfondimenti o citazioni, fare riferimento alle pagine collegate sopra come fonte primaria.
