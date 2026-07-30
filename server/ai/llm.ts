@@ -416,14 +416,23 @@ if (doctype === DOCTYPE_ISTANZA || doctype === DOCTYPE_ADESIONE) {
   const isAdesione = doctype === DOCTYPE_ADESIONE;
   const ruoloCercato = isAdesione ? "aderente" : "istante";
   const istruzioniRuolo = isAdesione
-    ? `Il documento e' un ATTO DI ADESIONE alla mediazione. Il tuo UNICO compito e' individuare chi SOTTOSCRIVE l'adesione (il dichiarante che aderisce alla procedura): questa e sempre e solo la parte "aderente". Nel testo dell'adesione possono comparire anche i dati della parte istante originaria (richiamata come riferimento del procedimento a cui si aderisce): IGNORA COMPLETAMENTE quei dati, non estrarli e non inserirli in "parti" per nessun motivo, anche se compaiono per primi o in modo prominente nel testo. Estrai SOLO chi sottoscrive/deposita l'adesione, con il proprio eventuale rappresentante legale o difensore.`
-    : `Il documento e' un'ISTANZA (domanda) di mediazione. Il tuo UNICO compito e' individuare chi DEPOSITA la domanda (si presenta come "Parte Istante", firma in calce all'istanza): questi sono sempre e solo le parti "istanti". IGNORA COMPLETAMENTE la parte "nei cui confronti" si chiede la mediazione (compare come "Parte Invitata" o simili): non estrarla, non inserirla in "parti" per nessun motivo. Estrai SOLO le parti istanti, con il proprio eventuale rappresentante legale o difensore.
-ATTENZIONE — cerca sistematicamente i blocchi RIPETUTI: l'istanza elenca le parti istanti con intestazioni del tipo "Parte Istante N di M" (es. "Parte Istante 1 di 5", "Parte Istante 2 di 5", ... fino a "5 di 5"). Se vedi anche un solo blocco con "N di M" e M maggiore di 1, DEVI cercare e restituire TUTTI gli M blocchi corrispondenti, non fermarti al primo.`;
+    ? `Il documento e' un ATTO DI ADESIONE alla mediazione. Estrai TUTTE le parti presenti, distinguendo con attenzione DUE gruppi diversi che spesso compaiono entrambi nello stesso documento:
+1) La "Parte aderente" (o "Parte/i aderente/i"): chi sottoscrive/deposita l'adesione. Ruolo "aderente".
+2) Se il documento elenca esplicitamente, sotto un'intestazione come "Parte/i istante/i" o simile, i nominativi delle parti istanti originarie (nome, codice fiscale, data di nascita), estrai ANCHE questi come parti separate con ruolo "istante": e' un elenco esplicito e affidabile, non un semplice riferimento incidentale, quindi NON va ignorato. Se piu' istanti condividono lo stesso rappresentante/difensore indicato collettivamente per il gruppo, assegna quel rappresentante a ciascuno di essi.
+Non includere invece dati dell'istante richiamati solo genericamente nel testo (es. "in relazione alla procedura promossa da...") se non fanno parte di un elenco nominativo esplicito come sopra.
+ATTENZIONE — attribuzione per persona, non per cognome: se il difensore dell'aderente condivide il cognome con una delle parti istanti elencate nel documento (es. difensore "Ferrando Roberto" e un'istante "Ferrando Marina"), sono individui COMPLETAMENTE DIVERSI: non confonderli, non fonderli, abbina ogni dato al nome e cognome completi della persona a cui appartiene realmente.`
+    : `Il documento e' un'ISTANZA (domanda) di mediazione, eventualmente accompagnata da Procure sostanziali. Il tuo UNICO compito e' individuare TUTTE le parti istanti, con il proprio eventuale rappresentante legale o difensore. IGNORA COMPLETAMENTE la parte "nei cui confronti" si chiede la mediazione (compare come "Parte Invitata" o simili): non estrarla, non inserirla in "parti" per nessun motivo.
+Gli istanti possono comparire in DUE modi diversi, che devi combinare:
+1) Un istante nominato per esteso, di solito con l'etichetta "Parte Istante" (nome, codice fiscale, indirizzo).
+2) Una riga sintetica del tipo "COINTERESSATO — [nome] + N" (es. "Ferrando Marina + 3"): significa che ci sono N ULTERIORI istanti oltre a quello nominato, i cui nomi NON compaiono per esteso in questo punto del documento. In questo caso, cerca i loro nomi nelle altre pagine fornite: ogni pagina intitolata "PROCURA SPECIALE SOSTANZIALE PER IL PROCEDIMENTO DI MEDIAZIONE" (o simile) firmata da una persona fisica che conferisce procura per QUESTA stessa procedura e' un istante aggiuntivo da includere in "parti", anche se il suo nome non compare affatto nell'istanza principale. Verifica che il numero di procure-firmatari trovate corrisponda al numero atteso (nominato + N del "+N"); se una pagina di procura riguarda invece la parte invitata/aderente, non includerla qui.
+ATTENZIONE — attribuzione per persona, non per cognome: quando piu' persone diverse condividono lo stesso COGNOME (es. un istante "Ferrando Marina" e, in tutt'altro documento, un difensore "Ferrando Roberto" che assiste la controparte), sono individui COMPLETAMENTE DIVERSI: abbina sempre ogni dato (codice fiscale, data di nascita, ruolo) alla persona con NOME E COGNOME COMPLETI risultanti da quella specifica pagina/procura, mai al solo cognome. Non fondere mai due persone diverse in una sola per la sola coincidenza del cognome.`;
 
   const istruzioniIstanza = `Sei un assistente esperto che estrae dati da un documento italiano di una procedura di mediazione civile (D.Lgs. 28/2010), per compilare la scheda antiriciclaggio (D.Lgs. 231/2007).
 Le immagini fornite possono essere piu' pagine dello STESSO documento: considerale insieme.
 ${istruzioniRuolo}
-Ogni parte estratta deve avere "ruolo": "${ruoloCercato}" (mai un altro valore: se non sei sicuro che una parte sia ${ruoloCercato}, non includerla).
+${isAdesione
+  ? 'Per ciascuna parte indica "ruolo": "aderente" oppure "istante" a seconda del gruppo da cui proviene (vedi sopra): non lasciarlo vuoto e non inventare un terzo valore.'
+  : `Ogni parte estratta deve avere "ruolo": "${ruoloCercato}" (mai un altro valore: se non sei sicuro che una parte sia ${ruoloCercato}, non includerla).`}
 Leggi con attenzione tutto il testo, incluse intestazioni, tabelle e firme.
 Restituisci ESCLUSIVAMENTE un oggetto JSON valido (nessun testo prima o dopo, senza markdown, senza recinti) con questa struttura ESATTA:
 {
@@ -474,9 +483,13 @@ Regole ferree: le date SEMPRE in formato AAAA-MM-GG. Se un dato di procedura non
   const partiIn = Array.isArray(parsedIstanza.parti) ? parsedIstanza.parti : [];
   const parti = partiIn
     .map((p: any) => ({
-      // Il ruolo e' fissato dal tipo di documento letto in QUESTA chiamata: non si
-      // fida di un campo "ruolo" restituito a caso dal modello per l'altro valore.
-      ruolo: ruoloCercato,
+      // Per l'Istanza il ruolo resta forzato (quel documento non deve MAI produrre
+      // un aderente). Per l'Adesione, che puo' legittimamente contenere sia
+      // l'aderente sia gli istanti esplicitamente elencati, ci si fida del ruolo
+      // indicato dal modello, validato sui due soli valori ammessi.
+      ruolo: isAdesione
+        ? (str(p.ruolo) === "istante" ? "istante" : "aderente")
+        : ruoloCercato,
       nome: str(p.nome),
       cf: str(p.cf),
       res: str(p.res),
