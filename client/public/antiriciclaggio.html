@@ -195,7 +195,8 @@ h2,details:not([data-print]){display:none}
 <option value="id">Documento d'identità (carta d'identità, patente, passaporto)</option>
 <option value="visura">Visura camerale (persona giuridica)</option>
 <option value="avvocato">Tessera professionale avvocato</option>
-<option value="istanza">Istanza / domanda di mediazione (o di adesione)</option>
+<option value="istanza">Istanza / domanda di mediazione (solo parti istanti)</option>
+<option value="adesione">Adesione alla mediazione (solo parte/i aderente/i)</option>
 <option value="avviso">Comunicazione di avvio (mediatore designato e data incontro)</option>
 <option value="procura">Procura alle liti / mandato a conciliare</option>
 <option value="bonifico">Ricevuta di pagamento spese di mediazione (bonifico)</option>
@@ -1680,10 +1681,18 @@ let ocrParti = [];
 let ocrProcedura = {};
 let ocrPartiApplicate = new Set();
 
-function ocrRenderPartiMultiple(procedura, parti){
-ocrParti = parti || [];
-ocrProcedura = procedura || {};
-ocrPartiApplicate = new Set();
+function ocrRenderPartiMultiple(procedura, nuoveParti){
+// Le parti si SOMMANO a quelle gia' individuate in una lettura precedente (es. prima
+// l'Istanza con i suoi istanti, poi l'Adesione con l'aderente): non si sostituiscono,
+// cosi' due letture separate costruiscono insieme l'elenco completo delle parti.
+nuoveParti = nuoveParti || [];
+ocrParti = ocrParti.concat(nuoveParti);
+// Dati di procedura: si completano, senza sovrascrivere valori gia' letti in precedenza.
+procedura = procedura || {};
+ocrProcedura = ocrProcedura || {};
+["odm_nome","proc_n","proc_data_dep_istanza","op_materia","op_valore"].forEach(k=>{
+if(!ocrProcedura[k] && procedura[k]) ocrProcedura[k] = procedura[k];
+});
 const container = $("ocr_fields");
 container.innerHTML = "";
 if(!ocrParti.length){
@@ -1692,11 +1701,12 @@ $("ocr_review").style.display = "block";
 return;
 }
 const wrap = document.createElement("div");
-wrap.innerHTML = '<p class="hint" style="margin-bottom:8px"><b>Individuate '+ocrParti.length+' parte/i nel documento.</b> Applica una parte alla volta: ogni clic compila i campi E genera subito il modulo per quella parte, sostituendo quello mostrato in precedenza — <b>scarica o stampa ciascun modulo prima di applicare la parte successiva</b>. I campi della parte precedente vengono azzerati automaticamente, mantenendo i dati di procedura.</p>';
+wrap.innerHTML = '<p class="hint" style="margin-bottom:8px"><b>'+ocrParti.length+' parte/i individuate finora.</b> Se devi leggere sia l\'Istanza sia un\'Adesione, leggile una alla volta (seleziona il tipo giusto ogni volta): le parti trovate si sommano qui sotto. Applica una parte alla volta: ogni clic compila i campi E genera subito il modulo per quella parte, sostituendo quello mostrato in precedenza — <b>scarica o stampa ciascun modulo prima di applicare la parte successiva</b>. I campi della parte precedente vengono azzerati automaticamente, mantenendo i dati di procedura.</p>';
 ocrParti.forEach((parte,i)=>{
 const row = document.createElement("div");
 row.id = "ocr_parte_row_"+i;
-row.style.cssText = "border:1px solid #c7d6f5;border-radius:10px;padding:10px 12px;margin-bottom:8px;background:#fff;display:flex;align-items:center;gap:10px;flex-wrap:wrap";
+const gia = ocrPartiApplicate.has(i);
+row.style.cssText = "border:1px solid "+(gia?"#8fbf8f":"#c7d6f5")+";border-radius:10px;padding:10px 12px;margin-bottom:8px;background:"+(gia?"#f3f9f3":"#fff")+";display:flex;align-items:center;gap:10px;flex-wrap:wrap";
 const ruoloLabel = parte.ruolo === "aderente" ? "Aderente" : "Istante";
 const rapprInfo = parte.rappr_nome ? (" · rappr./difensore: "+esc(parte.rappr_nome)) : "";
 row.innerHTML =
@@ -1706,13 +1716,13 @@ row.innerHTML =
 + (parte.cf ? ' <span style="color:#6b7280">— '+esc(parte.cf)+'</span>' : '')
 + '<div style="font-size:12px;color:#6b7280;margin-top:2px">'+rapprInfo.replace(/^ · /,'')+'</div>'
 + '</div>'
-+ '<button type="button" class="btn-primary" id="ocr_parte_btn_'+i+'" style="padding:8px 14px;font-size:13px">Applica questa parte ai campi</button>';
++ '<button type="button" class="btn-primary" id="ocr_parte_btn_'+i+'" style="padding:8px 14px;font-size:13px"'+(gia?' disabled':'')+'>'+(gia?'✓ Applicata e generata':'Applica questa parte ai campi')+'</button>';
 wrap.appendChild(row);
 });
 container.appendChild(wrap);
 ocrParti.forEach((_,i)=>{
 const btn = $("ocr_parte_btn_"+i);
-if(btn) btn.addEventListener("click", ()=>ocrApplicaParte(i));
+if(btn && !ocrPartiApplicate.has(i)) btn.addEventListener("click", ()=>ocrApplicaParte(i));
 });
 $("ocr_review").style.display = "block";
 }
@@ -1992,11 +2002,11 @@ ocrLastDoctype = v("ocr_doctype");
 // restituisce { procedura, parti: [...] } invece di un unico set di campi: si
 // mostra un elenco di parti da applicare una alla volta, invece della vecchia
 // vista "una parte sola" che ignorava gli aderenti.
-if(ocrLastDoctype === "istanza" && fields && Array.isArray(fields.parti)){
+if((ocrLastDoctype === "istanza" || ocrLastDoctype === "adesione") && fields && Array.isArray(fields.parti)){
 ocrRenderPartiMultiple(fields.procedura || {}, fields.parti);
 ocrSetStatus(fields.parti.length
-? "Lettura AI completata: individuate " + fields.parti.length + " parte/i. Applica ciascuna parte una alla volta."
-: "Lettura AI completata, ma nessuna parte individuata: puoi compilare a mano.");
+? "Lettura AI completata: individuate " + fields.parti.length + " parte/i in questo documento (si sommano a quelle gia' lette in precedenza, se presenti). Applica ciascuna parte una alla volta."
+: "Lettura AI completata, ma nessuna parte individuata in questo documento: puoi compilare a mano o provare a leggere l'altro documento (Istanza/Adesione).");
 return;
 }
 
