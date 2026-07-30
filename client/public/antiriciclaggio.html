@@ -109,8 +109,6 @@ button{font-family:inherit;font-size:14px;font-weight:600;border-radius:9px;bord
 .ocr-field-row label{width:230px;flex:0 0 230px;font-size:12.5px;font-weight:600;color:var(--navy);padding-top:7px;display:flex;gap:6px;align-items:flex-start}
 .ocr-field-row label input[type=checkbox]{width:auto;margin-top:2px}
 .ocr-field-row input[type=text]{flex:1;padding:6px 8px;font-size:13px}
-#ocr_status{font-size:12.5px;color:#6b7280;margin:8px 0;min-height:16px}
-#ocr_raw{white-space:pre-wrap;font-size:11px;background:#fff;border:1px solid var(--line);border-radius:8px;padding:10px;max-height:220px;overflow:auto;margin-top:8px}
 
 @media print{
 body{background:#fff}
@@ -173,61 +171,6 @@ h2,details:not([data-print]){display:none}
 </div>
 <pre id="assist_raw" style="display:none;white-space:pre-wrap;font-size:11px;background:#fff;border:1px solid var(--line);border-radius:8px;padding:10px;max-height:220px;overflow:auto;margin-top:8px"></pre>
 </div>
-<details style="margin-top:14px">
-<summary>Preferisci un solo documento mirato, o un'estrazione che resta sempre nel browser? <span class="chev">&rsaquo;</span></summary>
-<div class="inner">
-<p class="sub">Carica una foto o una scansione di un singolo documento e indica a chi si riferisce: qui sotto puoi scegliere tra riconoscimento <b>solo nel browser</b> (nessun invio) oppure <b>ad alta precisione via AI</b> (v. dettagli più sotto). Il risultato va sempre controllato: il riconoscimento può sbagliare, soprattutto su scansioni di scarsa qualità, documenti stranieri o formati non standard — nulla viene scritto nei campi finché non lo confermi tu.</p>
-<div class="grid">
-<div class="field">
-<label>A chi si riferisce il documento</label>
-<div class="hint" id="ocr_target_hint">La persona o sezione del modulo in cui inserire i dati riconosciuti. Non si applica ai tipi «Istanza/domanda di mediazione», «Comunicazione di avvio», «Procura alle liti / mandato a conciliare» e «Ricevuta di pagamento spese di mediazione»: in quei casi i dati vengono distribuiti automaticamente tra le sezioni del procedimento, la parte istante, il rappresentante/difensore e le modalità di pagamento dell'operazione.</div>
-<select id="ocr_target">
-<option value="parte">Parte</option>
-<option value="rappr">Rappresentante / difensore / procuratore della parte</option>
-<option value="te">Titolare effettivo</option>
-<option value="organismo">Organismo / mediatore (chi compila)</option>
-</select>
-</div>
-<div class="field">
-<label>Tipo di documento</label>
-<div class="hint">Determina quali campi il sistema prova a riconoscere nel testo.</div>
-<select id="ocr_doctype">
-<option value="id">Documento d'identità (carta d'identità, patente, passaporto)</option>
-<option value="visura">Visura camerale (persona giuridica)</option>
-<option value="avvocato">Tessera professionale avvocato</option>
-<option value="istanza">Istanza / domanda di mediazione (solo parti istanti)</option>
-<option value="adesione">Adesione alla mediazione (solo parte/i aderente/i)</option>
-<option value="avviso">Comunicazione di avvio (mediatore designato e data incontro)</option>
-<option value="procura">Procura alle liti / mandato a conciliare</option>
-<option value="bonifico">Ricevuta di pagamento spese di mediazione (bonifico)</option>
-</select>
-</div>
-</div>
-<div class="field">
-<label>File da caricare</label>
-<div class="hint">Immagine (JPG/PNG) o PDF. Puoi selezionare più file per lo stesso documento (es. fronte e retro): il testo verrà unito prima del riconoscimento.</div>
-<input type="file" id="ocr_files" accept="image/*,.pdf" multiple>
-</div>
-<div class="row-btns">
-<button class="btn-primary" type="button" id="ocr_btn" onclick="ocrEstrai()">Estrai dati dal documento</button>
-<button class="btn-primary" type="button" id="ocr_ai_btn" onclick="ocrEstraiAI()" style="background:#0a7d54;border-color:#0a7d54">Alta precisione (AI) — invia l'immagine</button>
-<button class="btn-ghost" type="button" onclick="ocrReset()">Pulisci</button>
-</div>
-<div class="ocr-warn" style="margin-top:8px"><b>Due modalità.</b> «Estrai dati dal documento» resta <b>tutto nel browser</b> (nessun invio). «Alta precisione (AI)» invece <b>trasmette il documento all'API di Anthropic</b>, che ne estrae i dati: molto più accurata. <b>Garanzie:</b> per contratto (DPA conforme al GDPR) Anthropic <b>non usa i documenti per addestrare i propri modelli</b> e conserva i log tecnici al massimo 7 giorni (elaborazione prevalentemente su infrastruttura USA con clausole standard di trasferimento). Il <b>sito</b> non salva né conserva il file o i dati estratti: li elabora solo per il tempo della richiesta e i dati finiscono nei campi soltanto se lo confermi tu. Usa questa modalità come titolare del trattamento, con idonea base giuridica e informativa all'interessato.</div>
-<div id="ocr_status"></div>
-<div id="ocr_review" style="display:none">
-<div class="ocr-warn"><b>Verifica prima di applicare.</b> Correggi i campi necessari e deseleziona quelli da non usare, poi premi «Applica ai campi selezionati». I dati riconosciuti non modificano il modulo finché non confermi.</div>
-<div id="ocr_fields"></div>
-<div class="row-btns">
-<button class="btn-primary" type="button" onclick="ocrApplica()">Applica ai campi selezionati</button>
-<button class="btn-ghost" type="button" onclick="ocrToggleRaw()">Mostra/nascondi testo riconosciuto (grezzo)</button>
-</div>
-<pre id="ocr_raw" style="display:none"></pre>
-</div>
-</div>
-</details>
-</div>
-
 <!-- ===================== COMPILATORE (motore unico: dati + trigger UIF + rischio) ===================== -->
 <h2 class="no-print">Compila e genera i modelli</h2>
 <p class="sub no-print">Un solo percorso, dall'inizio alla fine: inserisci i dati una sola volta — comprese le risposte sui segnali di anomalia — e lo strumento compila da solo i modelli del fascicolo, pronti da raggruppare per Organismo, Mediatore e Avvocato più sotto.</p>
@@ -829,7 +772,6 @@ riskLivelloManual = false; avTipoManual = false;
 syncToggles();
 $("out").style.display="none"; $("out").innerHTML="";
 calcRisk();
-if(typeof ocrReset === "function") ocrReset();
 mediatoreLog = [];
 if(typeof renderAggiornamenti === "function") renderAggiornamenti();
 if(typeof renderStorico === "function") renderStorico();
@@ -978,7 +920,7 @@ if(typeof renderAggiornamenti === "function") renderAggiornamenti();
 // ricalcolo: un elenco rigenerato mentre l'utente clicca (es. per il cambio di campo che fa perdere
 // il focus a un attimo prima) altrimenti farebbe sparire proprio il pulsante appena cliccato.
 const AML_DATI_KEY = "calcolomediazione_aml_dati";
-const AML_AUTOSAVE_EXCLUDE = new Set(["ocr_files","agg_data","agg_testo","import_dati_file"]);
+const AML_AUTOSAVE_EXCLUDE = new Set(["agg_data","agg_testo","import_dati_file"]);
 // Campi della procedura/organismo, condivisi tra tutte le parti: non vengono azzerati da "+ Nuova parte".
 const AML_PROCEDURE_SHARED_IDS = new Set(["odm_nome","odm_iscr","odm_sede","odm_lr","proc_n","proc_data_dep_istanza","proc_data_dep_adesione","proc_data","proc_med","proc_ogg"]);
 let amlAutosaveTimer = null;
@@ -1219,27 +1161,9 @@ box.innerHTML = mediatoreLog.map((e,i)=>
 }
 
 // ---------- OCR: compilazione automatica da documenti ----------
-const OCR_TESS_URL = "https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js";
+// ---------- Conversione documenti in immagini per l'assistente AI ----------
 const OCR_PDFJS_URL = "https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/legacy/build/pdf.min.js";
 const OCR_PDFJS_WORKER_URL = "https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/legacy/build/pdf.worker.min.js";
-const OCR_KEY_LABELS = {
-nome: "Cognome e nome / Denominazione",
-nascita: "Luogo e data di nascita / Sede",
-cf: "Codice fiscale / P. IVA",
-res: "Residenza / Indirizzo",
-cittadinanza: "Cittadinanza",
-doc: "Documento (tipo e numero)",
-doc_da: "Rilasciato da",
-doc_il: "Rilasciato il",
-doc_scad: "Scadenza documento",
-forma_giuridica: "Forma giuridica",
-capitale: "Capitale sociale",
-legame: "Legame / titolo (es. foro, n. iscrizione)",
-percentuale: "% di partecipazione"
-};
-let ocrRecognized = [];
-let ocrRawText = "";
-let ocrLastDoctype = "";
 
 function ocrLoadScript(src){
 return new Promise((resolve,reject)=>{
@@ -1252,626 +1176,11 @@ document.head.appendChild(s);
 });
 }
 
-async function ocrEnsureLibs(needPdf){
-if(typeof window.Tesseract === "undefined"){
-await ocrLoadScript(OCR_TESS_URL);
-}
-if(needPdf && typeof window.pdfjsLib === "undefined"){
+// Carica pdf.js (serve a rendere le pagine dei PDF in immagini per l'assistente AI).
+async function ocrEnsureLibs(){
+if(typeof window.pdfjsLib === "undefined"){
 await ocrLoadScript(OCR_PDFJS_URL);
 window.pdfjsLib.GlobalWorkerOptions.workerSrc = OCR_PDFJS_WORKER_URL;
-}
-}
-
-function ocrSetStatus(msg){ const el = $("ocr_status"); if(el) el.textContent = msg || ""; }
-function ocrLines(text){ return text.split(/\r?\n/).map(l=>l.trim()).filter(Boolean); }
-
-function ocrFindAfterLabel(lines, labelRegexes){
-for(let i=0;i<lines.length;i++){
-for(const re of labelRegexes){
-const m = lines[i].match(re);
-if(m){
-let val = lines[i].slice(m.index + m[0].length).trim().replace(/^[:\-\/]+/,"").trim();
-if(!val && lines[i+1] && !labelRegexes.some(r=>r.test(lines[i+1]))) val = lines[i+1].trim();
-if(val) return val;
-}
-}
-}
-return "";
-}
-
-function ocrToISODate(s){
-if(!s) return "";
-const m = s.match(/(\d{1,2})[.\/\-\s](\d{1,2})[.\/\-\s](\d{2,4})/);
-if(!m) return "";
-let d = m[1], mo = m[2], y = m[3];
-if(y.length===2) y = (parseInt(y,10) > 30 ? "19" : "20") + y;
-d = d.padStart(2,"0"); mo = mo.padStart(2,"0");
-if(+mo<1||+mo>12||+d<1||+d>31) return "";
-return y+"-"+mo+"-"+d;
-}
-
-// Pre-elaborazione dell'immagine per migliorare nettamente l'OCR su foto e
-// scansioni: ingrandimento se l'immagine e' piccola, conversione in scala di
-// grigi e stretch di contrasto (normalizza chiari/scuri). Tesseract lavora
-// molto meglio su un'immagine grigia e contrastata che su una foto a colori.
-function ocrPreprocessCanvas(srcCanvas){
-const minSide = 1500;
-const sw = srcCanvas.width, sh = srcCanvas.height;
-const scale = Math.min(sw, sh) < minSide ? (minSide / Math.min(sw, sh)) : 1;
-const canvas = document.createElement("canvas");
-canvas.width = Math.round(sw * scale);
-canvas.height = Math.round(sh * scale);
-const ctx = canvas.getContext("2d");
-ctx.imageSmoothingEnabled = true;
-ctx.imageSmoothingQuality = "high";
-ctx.drawImage(srcCanvas, 0, 0, canvas.width, canvas.height);
-try{
-const img = ctx.getImageData(0, 0, canvas.width, canvas.height);
-const d = img.data;
-let min = 255, max = 0;
-for(let i=0;i<d.length;i+=4){
-const g = (d[i]*0.299 + d[i+1]*0.587 + d[i+2]*0.114) | 0;
-d[i]=d[i+1]=d[i+2]=g;
-if(g<min) min=g;
-if(g>max) max=g;
-}
-const range = Math.max(1, max - min);
-for(let i=0;i<d.length;i+=4){
-let g = (d[i]-min) * 255 / range;
-g = g<0?0:(g>255?255:g);
-d[i]=d[i+1]=d[i+2]=g;
-}
-ctx.putImageData(img, 0, 0);
-}catch(e){ /* se getImageData fallisce (immagine cross-origin), si usa l'immagine ingrandita cosi' com'e' */ }
-return canvas;
-}
-
-function ocrImageFileToCanvas(file){
-return new Promise((resolve,reject)=>{
-const img = new Image();
-const url = URL.createObjectURL(file);
-img.onload = () => {const canvas = document.createElement("canvas");
-canvas.width = img.naturalWidth; canvas.height = img.naturalHeight;
-canvas.getContext("2d").drawImage(img,0,0);
-URL.revokeObjectURL(url);
-resolve(ocrPreprocessCanvas(canvas));
-};
-img.onerror = () => { URL.revokeObjectURL(url); reject(new Error("Immagine non leggibile: "+file.name)); };
-img.src = url;
-});
-}
-
-async function ocrFileToPages(file){
-const isPdf = file.type === "application/pdf" || /\.pdf$/i.test(file.name);
-if(isPdf){
-await ocrEnsureLibs(true);
-const buf = await file.arrayBuffer();
-const pdf = await window.pdfjsLib.getDocument({data: buf}).promise;
-const pages = [];
-for(let p=1; p<=pdf.numPages; p++){
-const page = await pdf.getPage(p);
-const txtContent = await page.getTextContent();
-// Ricostruisce gli "a capo" in base allo spostamento verticale fra un elemento e il
-// successivo: pdf.js non inserisce \n di suo, e molti parser (incluse le nuove funzioni
-// per istanza/comunicazione di avvio) lavorano riga per riga.
-let txt = ""; let lastY = null;
-for(const it of txtContent.items){
-const y = (it.transform && it.transform.length>5) ? it.transform[5] : null;
-if(!it.str){ continue; }
-if(lastY !== null && y !== null && Math.abs(y - lastY) > 2){
-txt += "\n";
-} else if(txt && !/[\n\s]$/.test(txt)){
-txt += " ";
-}
-txt += it.str;
-if(y !== null) lastY = y;
-}
-txt = txt.trim();
-if(txt.length > 40){
-pages.push({text: txt});
-} else {
-const viewport = page.getViewport({scale: 2.2});
-const canvas = document.createElement("canvas");
-canvas.width = viewport.width; canvas.height = viewport.height;
-await page.render({canvasContext: canvas.getContext("2d"), viewport}).promise;
-pages.push({canvas: ocrPreprocessCanvas(canvas)});
-}
-}
-return pages;
-}
-return [{canvas: await ocrImageFileToCanvas(file)}];
-}
-
-function ocrFieldId(target, key){
-const isPG = v("p_tipo")==="pg";
-if(key==="nome"){
-if(target==="parte") return "p_nome";
-if(target==="rappr") return "rappr_nome";
-if(target==="organismo") return "scheda_compilata_da";
-if(target==="te") return isPG ? "te_nome" : "te3_nome";
-}
-if(key==="nascita"){
-if(target==="parte") return "p_nascita";
-if(target==="rappr") return "rappr_nascita";
-if(target==="te") return isPG ? "te_nascita" : "te3_nascita";
-}
-if(key==="cf"){
-if(target==="parte") return "p_cf";
-if(target==="rappr") return "rappr_cf";
-if(target==="te") return isPG ? "te_cf" : "te3_cf";
-}
-if(key==="res"){
-if(target==="parte") return "p_res";
-if(target==="rappr") return "rappr_res";
-if(target==="te" && !isPG) return "te3_res";
-}
-if(key==="cittadinanza"){
-if(target==="parte") return "p_cittadinanza";
-if(target==="rappr") return "rappr_cittadinanza";
-if(target==="te" && !isPG) return "te3_cittadinanza";
-}
-if(key==="doc"){
-if(target==="parte") return "p_doc";
-if(target==="rappr") return "rappr_doc";
-if(target==="te" && !isPG) return "te3_doc";
-}
-if(key==="doc_da"){ if(target==="parte") return "p_doc_rilasciato_da"; if(target==="rappr") return "rappr_doc_da"; }
-if(key==="doc_il"){ if(target==="parte") return "p_doc_rilasciato_il"; if(target==="rappr") return "rappr_doc_il"; }
-if(key==="doc_scad"){ if(target==="parte") return "p_doc_scadenza"; if(target==="rappr") return "rappr_doc_scadenza"; }
-if(key==="forma_giuridica" && target==="parte") return "p_forma_giuridica";
-if(key==="capitale" && target==="parte") return "p_capitale_sociale";
-if(key==="legame" && target==="rappr") return "rappr_legame";
-if(key==="percentuale" && target==="te" && isPG) return "te_percentuale";
-return null;
-}
-
-const OCR_CF_REGEX = /\b[A-Z]{6}\d{2}[A-EHLMPR-T]\d{2}[A-Z]\d{3}[A-Z]\b/;
-
-function ocrParseDocumentoIdentita(text){
-const lines = ocrLines(text);
-const rows = [];
-const cognome = ocrFindAfterLabel(lines, [/^COGNOME(\s*\/\s*SURNAME)?\b\.?/i,/^SURNAME\b\.?/i,/^1\.?\s+/]);
-const nomeP = ocrFindAfterLabel(lines, [/^NOME(\s*\/\s*NAME(\(S\))?)?\b\.?/i,/^NAME(\(S\))?\b\.?/i,/^2\.?\s+/]);
-let nomeCompleto = [cognome, nomeP].filter(Boolean).join(" ").trim();
-if(!nomeCompleto){
-const mrz = lines.find(l => l.replace(/\s/g,"").includes("<<") && /^[A-Z0-9<\s]{10,}$/.test(l));
-if(mrz){
-const clean = mrz.replace(/\s/g,"");
-const parts = clean.split("<<");
-const sur = (parts[0]||"").replace(/</g," ").trim();
-const giv = (parts[1]||"").replace(/</g," ").trim();
-nomeCompleto = [sur, giv].filter(Boolean).join(" ");
-}
-}
-if(nomeCompleto) rows.push({key:"nome", value: nomeCompleto});
-
-// "Luogo e data di nascita" è già un campo unico nel modulo (come su carta d’identità italiana):
-// proviamo prima l’etichetta combinata, poi in fallback cerchiamo una qualunque data plausibile nel testo.
-let nascitaCombo = ocrFindAfterLabel(lines, [
-/^LUOGO (E DATA )?DI NASCITA(\s*\/\s*PLACE (AND DATE )?OF BIRTH)?\b/i,
-/^PLACE (AND DATE )?OF BIRTH\b/i,
-/^3\.?\s+/
-]);
-if(!nascitaCombo){
-const fullText = lines.join(" ");
-const anyDate = fullText.match(/(\d{1,2}[.\/\-]\d{1,2}[.\/\-](19|20)\d{2})/);
-if(anyDate) nascitaCombo = anyDate[1];
-}
-if(nascitaCombo) rows.push({key:"nascita", value: nascitaCombo});
-
-const cfMatch = text.match(OCR_CF_REGEX);
-if(cfMatch) rows.push({key:"cf", value: cfMatch[0]});
-
-const cittadinanza = ocrFindAfterLabel(lines, [/^CITTADINANZA(\s*\/\s*(NAZIONALIT[AÀ]|NATIONALITY))?\b/i,/^NAZIONALIT[AÀ](\s*\/\s*NATIONALITY)?\b/i,/^NATIONALITY\b/i]);
-if(cittadinanza) rows.push({key:"cittadinanza", value: cittadinanza});
-
-const indirizzo = ocrFindAfterLabel(lines, [/^INDIRIZZO(\s*\/\s*ADDRESS)?\b/i,/^RESIDENZA(\s*\/\s*ADDRESS)?\b/i,/^ADDRESS\b/i]);
-if(indirizzo) rows.push({key:"res", value: indirizzo});
-
-const rilasciatoDa = ocrFindAfterLabel(lines, [/^EMESSA DA(\s*\/\s*AUTHORITY)?\b/i,/^AUTORIT[AÀ](\s*\/\s*AUTHORITY)?\b/i,/^AUTHORITY\b/i]);
-if(rilasciatoDa) rows.push({key:"doc_da", value: rilasciatoDa});
-
-const rilascioISO = ocrToISODate(ocrFindAfterLabel(lines, [/^DATA DI RILASCIO(\s*\/\s*DATE OF ISSUE)?\b/i,/^DATE OF ISSUE\b/i,/^4A\.?\s+/i]));
-if(rilascioISO) rows.push({key:"doc_il", value: rilascioISO});
-
-const scadenzaISO = ocrToISODate(ocrFindAfterLabel(lines, [/^(DATA DI )?SCADENZA(\s*\/\s*(DATE OF EXPIRY|EXPIRY))?\b/i,/^SCADE\b/i,/^DATE OF EXPIRY\b/i,/^EXPIRY\b/i,/^4B\.?\s+/i]));
-if(scadenzaISO) rows.push({key:"doc_scad", value: scadenzaISO});
-
-const numDoc = ocrFindAfterLabel(lines, [/^N\.?\s*(DOCUMENTO|CARTA D.?IDENTIT[AÀ]|PATENTE|PASSAPORTO)(\s*\/\s*(DOCUMENT|PASSPORT)\s*NO\.?)?\b/i,/^DOCUMENT NO\.?\b/i,/^PASSPORT NO\.?\b/i]);
-if(numDoc) rows.push({key:"doc", value: numDoc});
-
-return rows;
-}
-
-function ocrParseVisura(text){
-const lines = ocrLines(text);
-const rows = [];
-const denom = ocrFindAfterLabel(lines, [/^DENOMINAZIONE\s*:?/i,/^RAGIONE SOCIALE\s*:?/i]);
-if(denom) rows.push({key:"nome", value: denom});
-
-const forma = ocrFindAfterLabel(lines, [/^FORMA GIURIDICA\s*:?/i,/^NATURA GIURIDICA\s*:?/i]);
-if(forma) rows.push({key:"forma_giuridica", value: forma});
-
-const sede = ocrFindAfterLabel(lines, [/^SEDE( LEGALE)?\s*:?/i,/^INDIRIZZO SEDE\s*:?/i]);
-if(sede) rows.push({key:"res", value: sede});
-
-const cfMatch = text.match(/\b\d{11}\b/) || text.match(OCR_CF_REGEX);
-if(cfMatch) rows.push({key:"cf", value: cfMatch[0]});
-
-const capitale = ocrFindAfterLabel(lines, [/^CAPITALE SOCIALE\s*:?/i]);
-if(capitale) rows.push({key:"capitale", value: capitale});
-
-// Nome del legale rappresentante/amministratore: cerca l’etichetta e prende la riga successiva
-// se somiglia a un nome di persona (accetta sia "Mario Bianchi" che "MARIO BIANCHI", frequente nelle visure/OCR).
-const isNameLike = (s) => {
-const words = s.split(/\s+/).filter(Boolean);
-return words.length>=2 && words.length<=5 && words.every(w => /^[A-Za-zÀ-ÿ']+$/.test(w));
-};
-for(let i=0;i<lines.length;i++){
-if(/AMMINISTRATORE UNICO|LEGALE RAPPRESENTANTE|PRESIDENTE\s+C\.?D\.?A\.?|SOCIO UNICO/i.test(lines[i])){
-const cand = (lines[i+1]||"").trim();
-if(cand && isNameLike(cand)){
-rows.push({key:"nome", id:"rappr_nome", label:"Legale rappresentante (da visura) — imposta anche «Titolo di intervento: legale rappresentante»", value: cand,
-alsoSet:[{id:"rappr_ruolo", value:"legale_rapp"}]});
-}
-break;
-}
-}
-return rows;
-}
-
-function ocrParseTesseraAvvocato(text){
-const lines = ocrLines(text);
-const rows = [];
-const avvMatch = text.match(/Avv(?:ocato)?\.?\s+([A-Za-zÀ-ÿ'\s]{4,40}?)(?=\s{2,}|\n|$|,)/i);
-let nome = avvMatch ? avvMatch[1].trim() : ocrFindAfterLabel(lines, [/^COGNOME\b/i,/^NOME\b/i]);
-if(nome) rows.push({key:"nome", value: nome, alsoSet:[{id:"rappr_ruolo", value:"difensore"}]});
-
-const foro = ocrFindAfterLabel(lines, [/^ORDINE (DEGLI )?AVVOCATI DI\s*/i,/^FORO DI\s*/i]);
-const numIscr = ocrFindAfterLabel(lines, [/^N\.?\s*ISCRIZIONE\s*:?/i,/^N\.?\s*ALBO\s*:?/i]);
-const legameParts = [];
-if(foro) legameParts.push("Avvocato del Foro di "+foro);
-if(numIscr) legameParts.push("n. iscrizione "+numIscr);
-if(legameParts.length) rows.push({key:"legame", value: legameParts.join(" — ")});
-
-const cfMatch = text.match(OCR_CF_REGEX);
-if(cfMatch) rows.push({key:"cf", value: cfMatch[0]});
-
-return rows;
-}
-
-// Istanza/domanda di mediazione (o modulo di adesione): documento "denso", contiene di solito
-// in un colpo solo i dati del procedimento, della parte istante e del suo rappresentante legale.
-// Per questo le righe restituite usano quasi sempre un id esplicito (invece della coppia
-// target/key) così da poter scrivere contemporaneamente in sezioni diverse del modulo.
-let ocrIstanzaFormaGiuridica = "";
-function ocrParseIstanza(text){
-const lines = ocrLines(text);
-const rows = [];
-const push = (id, label, value) => { if(value) rows.push({id: id, label: label, value: value}); };
-ocrIstanzaFormaGiuridica = "";
-
-// Organismo di mediazione (intestazione / riga "Spett.le")
-const spettIdx = lines.findIndex(l => /^Spett\.?le$/i.test(l));
-let odm = "";
-if(spettIdx >= 0){
-odm = [lines[spettIdx+1], lines[spettIdx+2]].filter(Boolean)
-.filter(l => !/^(via|piazza|corso|c\.so|p\.zza)\b/i.test(l)).join(" ").trim();
-}
-if(!odm){
-const l = lines.find(l => /Organismo di Mediazione/i.test(l) && !/ISTANZA|DOMANDA|ADESIONE/i.test(l));
-if(l) odm = l.trim();
-}
-push("odm_nome", "Denominazione Organismo (da istanza)", odm);
-
-// N. procedura (riferimento assegnato dal portale al momento del deposito)
-const nProc = text.match(/N\.\s*(MED-[\w-]+)/i);
-if(nProc) push("proc_n", "N. procedura (rif. da istanza)", nProc[1]);
-
-// Data di deposito/creazione
-const dDep = text.match(/creata\s+on-?line\s+il\s+(\d{1,2}[\/.\-]\d{1,2}[\/.\-]\d{2,4})/i)
-|| text.match(/(?:depositata|presentata)\s+(?:in data|il)\s+(\d{1,2}[\/.\-]\d{1,2}[\/.\-]\d{2,4})/i);
-if(dDep){ const iso = ocrToISODate(dDep[1]); if(iso) push("proc_data_dep_istanza", "Data deposito istanza", iso); }
-
-// Materia e valore della controversia
-const materia = ocrFindAfterLabel(lines, [/^MATERIA DELLA CONTROVERSIA\s*:?/i]);
-if(materia){
-push("op_materia", "Materia (da istanza)", materia);
-push("proc_ogg", "Oggetto della mediazione (da istanza)", materia);
-}
-const valore = ocrFindAfterLabel(lines, [/^VALORE (INDICATIVO )?DELLA CONTROVERSIA[^:]*:?/i]);
-if(valore) push("op_valore", "Valore della controversia (da istanza)", valore);
-
-// Parte istante: nome/denominazione, CF/P.IVA, recapito, PEC, telefono
-const idxIstante = lines.findIndex(l => /^Parte Istante\b/i.test(l));
-if(idxIstante >= 0){
-const nomeIstante = (lines[idxIstante+1]||"").replace(/^[-–]\s*/,"").trim();
-const blockText = lines.slice(idxIstante, idxIstante+14).join(" \n ");
-if(nomeIstante && !/^Cod\.?\s*fisc/i.test(nomeIstante)){
-push("p_nome", "Denominazione/nome parte istante", nomeIstante);
-
-const FORME = [[/S\.?\s?R\.?\s?L\.?\b/i,"srl"], [/S\.?\s?P\.?\s?A\.?\b/i,"spa"],
-[/S\.?\s?N\.?\s?C\.?\b/i,"sp"], [/S\.?\s?A\.?\s?S\.?\b/i,"sp"], [/SOCIET[AÀ] COOPERATIVA/i,"coop"]];
-const forma = FORME.find(f => f[0].test(nomeIstante));
-if(forma || /RAPPRESENTANTE LEGALE/i.test(text)) ocrIstanzaFormaGiuridica = forma ? forma[1] : "altro";
-}
-
-const cf = blockText.match(/Cod\.?\s*fisc\.?\s*([A-Z0-9]{11,16})/i);
-if(cf) push("p_cf", "Codice fiscale / P. IVA parte istante", cf[1]);
-
-const recapito = blockText.match(/Recapito:\s*([^\n]+)/i);
-if(recapito) push("p_res", "Sede/Residenza parte istante (da istanza)", recapito[1].trim());
-
-const pecIstante = blockText.match(/PEC:?\s*([\w.\-]+@[\w.\-]+)/i);
-if(pecIstante) push("p_pec", "PEC parte istante", pecIstante[1]);
-
-const telIstante = blockText.match(/Tel\.?\s+([\d\s\/]{6,20})/i);
-if(telIstante) push("p_tel", "Telefono parte istante", telIstante[1].trim());
-}
-
-// Rappresentante legale della parte istante
-const idxRappr = lines.findIndex(l => /^RAPPRESENTANTE LEGALE\b/i.test(l));
-if(idxRappr >= 0){
-const nomeRappr = (lines[idxRappr+1]||"").replace(/^[-–]\s*(SIG\.?\s*(RA)?\.?\s*)?/i,"").trim();
-if(nomeRappr) rows.push({id:"rappr_nome", label:"Nome legale rappresentante (da istanza)", value: nomeRappr,
-alsoSet:[{id:"rappr_ruolo", value:"legale_rapp"}]});
-const blockR = lines.slice(idxRappr, idxRappr+4).join(" ");
-const nasc = blockR.match(/Dati di nascita:?\s*(\d{1,2}[\/.\-]\d{1,2}[\/.\-]\d{2,4})\s+([A-ZÀ-Üa-zà-ü''()\s]+?)(?:\s+ITALIA)?\s+sesso/i);
-if(nasc) push("rappr_nascita", "Luogo e data di nascita rappresentante (da istanza)", nasc[2].trim()+", "+nasc[1]);
-}
-
-return rows;
-}
-
-// Comunicazione di avvio/convocazione inviata dalla segreteria dell'Organismo: contiene tipicamente
-// il nome del mediatore designato e la data (ed ora) del primo incontro.
-function ocrParseAvviso(text){
-const rows = [];
-// Copre sia la formula "Il Mediatore designato è l'Avv. NOME e il primo incontro..." (comunicazione
-// alla parte istante) sia "...davanti al Mediatore designato, l'Avv. NOME, presso..." (comunicazione
-// alla parte chiamata), oltre alla forma sintetica "Mediatore designato: Avv. NOME".
-const med = text.match(/Mediatore designato[,:]?\s*(?:è\s*)?(?:l['’]\s*)?(?:Avv\.?\s*)?([A-ZÀ-Ü][A-Za-zÀ-ÿ'.\s]{3,60}?)(?=\s*(?:,|\.|;|\s+e\s+|\s+presso\b|\s+del\b|\n\s*\n|$))/i);
-if(med) rows.push({id:"proc_med", label:"Mediatore designato (da comunicazione di avvio)", value: med[1].trim().replace(/\s+/g," ")});
-
-const dt = text.match(/fissato per il giorno\s+(\d{1,2}[\/.\-]\d{1,2}[\/.\-]\d{2,4})/i)
-|| text.match(/primo incontro[^.\n]{0,40}?(\d{1,2}[\/.\-]\d{1,2}[\/.\-]\d{2,4})/i);
-if(dt){ const iso = ocrToISODate(dt[1]); if(iso) rows.push({id:"proc_data", label:"Data primo incontro (da comunicazione di avvio)", value: iso}); }
-
-return rows;
-}
-
-// Procura alle liti / mandato a conciliare: individua l'avvocato nominato difensore (e, se presente,
-// il relativo codice fiscale) e segnala che il documento risulta acquisito nel fascicolo (sezione
-// "Documenti acquisiti").
-function ocrParseProcura(text){
-const rows = [];
-const m = text.match(/[Ll]['’]\s*[Aa]vv\.?\s*([A-ZÀ-Ü][A-Za-zÀ-ÿ'’]+(?:\s+[A-ZÀ-Ü][A-Za-zÀ-ÿ'’]+){0,3})\s*\(?\s*C\.?\s*F\.?\s*:?\s*([A-Z0-9]{11,20})/i);
-if(m){
-rows.push({id:"rappr_nome", label:"Nominativo del difensore nominato (da procura/mandato)", value: m[1].trim(),
-alsoSet:[{id:"rappr_ruolo", value:"difensore"}]});
-rows.push({id:"rappr_cf", label:"Codice fiscale del difensore (da procura/mandato)", value: m[2].toUpperCase()});
-} else {
-const m2 = text.match(/difensore[\s\S]{0,150}?[Aa]vv\.?\s*([A-ZÀ-Ü][A-Za-zÀ-ÿ'’]+(?:\s+[A-ZÀ-Ü][A-Za-zÀ-ÿ'’]+){0,3})/i);
-if(m2) rows.push({id:"rappr_nome", label:"Nominativo del difensore nominato (da procura/mandato)", value: m2[1].trim(),
-alsoSet:[{id:"rappr_ruolo", value:"difensore"}]});
-}
-if(rows.length) rows.push({id:"cb_docacq_procalliti", label:"Documento acquisito: Procura alle liti (rilevato dal file caricato)", value:"Sì"});
-return rows;
-}
-
-// Ricevuta di bonifico per il pagamento delle spese di mediazione: se il beneficiario è
-// l'Organismo di mediazione, segnala la modalità di pagamento (bonifico bancario) e, se indicato
-// l'ordinante, la provenienza dei fondi dalla disponibilità della parte/ente.
-function ocrParseBonifico(text){
-const rows = [];
-const lines = ocrLines(text);
-const beneficiario = ocrFindAfterLabel(lines, [/^Beneficiario\s*:?/i]);
-const ordinante = ocrFindAfterLabel(lines, [/^Ordinante\s*:?/i]);
-const isMediazione = /organismo|mediazione|ordine\s+degli\s+avvocati|consiglio\s+dell['’]?ordine/i.test(beneficiario||"")
-|| /spese di (avvio|mediazione)|organismo di mediazione/i.test(text);
-if(!isMediazione) return rows;
-
-rows.push({id:"cb_pagamento_bonifico", label:"Modalità di pagamento dell'operazione: bonifico bancario (da ricevuta di bonifico spese di mediazione)", value:"Sì"});
-if(ordinante) rows.push({id:"cb_provenienza_disponente", label:"Provenienza dei fondi: disponibilità dell'ente/società — bonifico ordinato da «"+ordinante+"»", value:"Sì"});
-return rows;
-}
-
-// ─── Istanza multi-parte: elenco delle parti individuate, da applicare una alla volta ───
-let ocrParti = [];
-let ocrProcedura = {};
-let ocrPartiApplicate = new Set();
-
-function ocrRenderPartiMultiple(procedura, nuoveParti){
-// Le parti si SOMMANO a quelle gia' individuate in una lettura precedente (es. prima
-// l'Istanza con i suoi istanti, poi l'Adesione con l'aderente): non si sostituiscono,
-// cosi' due letture separate costruiscono insieme l'elenco completo delle parti.
-nuoveParti = nuoveParti || [];
-ocrParti = ocrParti.concat(nuoveParti);
-// Dati di procedura: si completano, senza sovrascrivere valori gia' letti in precedenza.
-procedura = procedura || {};
-ocrProcedura = ocrProcedura || {};
-["odm_nome","proc_n","proc_data_dep_istanza","op_materia","op_valore"].forEach(k=>{
-if(!ocrProcedura[k] && procedura[k]) ocrProcedura[k] = procedura[k];
-});
-const container = $("ocr_fields");
-container.innerHTML = "";
-if(!ocrParti.length){
-container.innerHTML = '<p class="hint">Nessuna parte individuata automaticamente. Puoi comunque leggere il testo grezzo qui sotto e compilare a mano.</p>';
-$("ocr_review").style.display = "block";
-return;
-}
-const wrap = document.createElement("div");
-wrap.innerHTML = '<p class="hint" style="margin-bottom:8px"><b>'+ocrParti.length+' parte/i individuate finora.</b> Se devi leggere sia l\'Istanza sia un\'Adesione, leggile una alla volta (seleziona il tipo giusto ogni volta): le parti trovate si sommano qui sotto. Applica una parte alla volta: ogni clic compila i campi E genera subito il modulo per quella parte, sostituendo quello mostrato in precedenza — <b>scarica o stampa ciascun modulo prima di applicare la parte successiva</b>. I campi della parte precedente vengono azzerati automaticamente, mantenendo i dati di procedura.</p>';
-ocrParti.forEach((parte,i)=>{
-const row = document.createElement("div");
-row.id = "ocr_parte_row_"+i;
-const gia = ocrPartiApplicate.has(i);
-row.style.cssText = "border:1px solid "+(gia?"#8fbf8f":"#c7d6f5")+";border-radius:10px;padding:10px 12px;margin-bottom:8px;background:"+(gia?"#f3f9f3":"#fff")+";display:flex;align-items:center;gap:10px;flex-wrap:wrap";
-const ruoloLabel = parte.ruolo === "aderente" ? "Aderente" : "Istante";
-const rapprInfo = parte.rappr_nome ? (" · rappr./difensore: "+esc(parte.rappr_nome)) : "";
-row.innerHTML =
-'<div style="flex:1;min-width:200px">'
-+ '<span style="font-size:11px;font-weight:700;padding:2px 8px;border-radius:999px;background:#eef3ff;color:#243559;margin-right:6px">'+ruoloLabel+'</span>'
-+ '<b>'+esc(parte.nome||"(nome non individuato)")+'</b>'
-+ (parte.cf ? ' <span style="color:#6b7280">— '+esc(parte.cf)+'</span>' : '')
-+ '<div style="font-size:12px;color:#6b7280;margin-top:2px">'+rapprInfo.replace(/^ · /,'')+'</div>'
-+ '</div>'
-+ '<button type="button" class="btn-primary" id="ocr_parte_btn_'+i+'" style="padding:8px 14px;font-size:13px"'+(gia?' disabled':'')+'>'+(gia?'✓ Applicata e generata':'Applica questa parte ai campi')+'</button>';
-wrap.appendChild(row);
-});
-container.appendChild(wrap);
-ocrParti.forEach((_,i)=>{
-const btn = $("ocr_parte_btn_"+i);
-if(btn && !ocrPartiApplicate.has(i)) btn.addEventListener("click", ()=>ocrApplicaParte(i));
-});
-$("ocr_review").style.display = "block";
-}
-
-function ocrApplicaParte(idx){
-const parte = ocrParti[idx];
-if(!parte) return;
-// Se e' gia' stata applicata almeno una parte in questa sessione di lettura, azzera
-// prima i campi specifici della parte precedente (mantenendo i dati di procedura).
-if(ocrPartiApplicate.size > 0){
-amlClearPartyFields();
-}
-const setField = (id, val) => {
-const el = $(id);
-if(!el || !val) return;
-el.value = val;
-try{ el.dispatchEvent(new Event("input",{bubbles:true})); el.dispatchEvent(new Event("change",{bubbles:true})); }catch(e){}
-};
-const setSelect = (id, val) => {
-const el = $(id);
-if(!el || !val) return;
-el.value = val;
-try{ el.dispatchEvent(new Event("change",{bubbles:true})); }catch(e){}
-};
-// Dati di procedura (condivisi): si riapplicano ad ogni parte, sono innocui da riscrivere.
-setField("odm_nome", ocrProcedura.odm_nome);
-setField("proc_n", ocrProcedura.proc_n);
-setField("proc_data_dep_istanza", ocrProcedura.proc_data_dep_istanza);
-setField("op_materia", ocrProcedura.op_materia);
-setField("proc_ogg", ocrProcedura.op_materia);
-setField("op_valore", ocrProcedura.op_valore);
-// Ruolo e dati della parte
-setSelect("p_ruolo", parte.ruolo === "aderente" ? "aderente" : "istante");
-setField("p_nome", parte.nome);
-setField("p_cf", parte.cf);
-setField("p_res", parte.res);
-setField("p_pec", parte.pec);
-setField("p_tel", parte.tel);
-// Rappresentante legale o difensore di QUESTA parte, se presente
-if(parte.rappr_nome){
-setField("rappr_nome", parte.rappr_nome);
-setField("rappr_nascita", parte.rappr_nascita);
-setField("rappr_cf", parte.rappr_cf);
-setSelect("rappr_ruolo", ["legale_rapp","difensore"].includes(parte.rappr_ruolo) ? parte.rappr_ruolo : "legale_rapp");
-}
-ocrPartiApplicate.add(idx);
-// Segna la riga come applicata nell'elenco
-const row = $("ocr_parte_row_"+idx);
-if(row){ row.style.background = "#f3f9f3"; row.style.borderColor = "#8fbf8f"; }
-const btn = $("ocr_parte_btn_"+idx);
-if(btn){ btn.textContent = "✓ Applicata e generata"; btn.disabled = true; }
-try { syncToggles(); } catch(e){ console.error("syncToggles in errore:", e); }
-try { calcRisk(); } catch(e){ console.error("calcRisk in errore:", e); }
-// Genera subito il modulo per questa parte: la generazione SOSTITUISCE quella
-// precedente a schermo, quindi va scaricata/stampata prima di applicare la parte
-// successiva, altrimenti si perde dalla vista (resta pero' traccia nello storico).
-try { if(typeof genera === "function") genera(); } catch(e){ console.error("genera() in errore:", e); }
-const ruoloLabel = parte.ruolo === "aderente" ? "aderente" : "istante";
-const restanti = ocrParti.length - ocrPartiApplicate.size;
-toast("Modulo generato per «"+(parte.nome||"senza nome")+"» ("+ruoloLabel+"). SCARICA O STAMPA QUESTO MODULO ORA: applicando la prossima parte, il modulo qui sopra verra' sostituito."
-+ (restanti>0 ? " Restano "+restanti+" parte/i da applicare." : " Tutte le parti individuate sono state applicate."));
-}
-
-function ocrRenderReview(rows){
-const target = v("ocr_target");
-ocrRecognized = [];
-rows.forEach(r=>{
-const id = r.id || ocrFieldId(target, r.key);
-if(!id || !$(id)) return;
-ocrRecognized.push({
-id: id,
-label: r.label || OCR_KEY_LABELS[r.key] || r.key,
-value: r.value,
-alsoSet: r.alsoSet || [],
-checked: true
-});
-});
-const container = $("ocr_fields");
-container.innerHTML = "";
-if(!ocrRecognized.length){
-container.innerHTML = '<p class="hint">Nessun campo riconosciuto automaticamente per questa combinazione di documento/destinatario. Puoi comunque leggere il testo grezzo qui sotto e riportare i dati a mano.</p>';
-}
-ocrRecognized.forEach((row,i)=>{
-const div = document.createElement("div");
-div.className = "ocr-field-row";
-const targetEl = $(row.id);
-const isTargetCheckbox = targetEl && targetEl.type === "checkbox";
-div.innerHTML = '<label><input type="checkbox" data-ocridx="'+i+'" checked> '+esc(row.label)+'</label>'
-+ (isTargetCheckbox ? '' : '<input type="text" data-ocrval="'+i+'" value="'+esc(row.value)+'">');
-container.appendChild(div);
-});
-container.querySelectorAll("[data-ocrval]").forEach(inp=>{
-inp.addEventListener("input", ()=>{ ocrRecognized[+inp.dataset.ocrval].value = inp.value; });
-});
-container.querySelectorAll("[data-ocridx]").forEach(cb=>{
-cb.addEventListener("change", ()=>{ ocrRecognized[+cb.dataset.ocridx].checked = cb.checked; });
-});
-$("ocr_review").style.display = "block";
-}
-
-async function ocrEstrai(){
-const files = Array.from(($("ocr_files")||{}).files || []);
-if(!files.length){ ocrSetStatus("Seleziona almeno un file (immagine o PDF) prima di avviare il riconoscimento."); return; }
-const btn = $("ocr_btn");
-btn.disabled = true;
-$("ocr_review").style.display = "none";
-ocrRawText = "";
-try{
-const needPdf = files.some(f => f.type==="application/pdf" || /\.pdf$/i.test(f.name));
-await ocrEnsureLibs(needPdf);
-let allText = "";
-for(let fi=0; fi<files.length; fi++){
-const file = files[fi];
-const pages = await ocrFileToPages(file);
-for(let pi=0; pi<pages.length; pi++){
-const pg = pages[pi];
-if(pg.text){
-allText += "\n" + pg.text;
-ocrSetStatus("File "+(fi+1)+"/"+files.length+": testo estratto direttamente dal PDF…");
-} else {
-const res = await window.Tesseract.recognize(pg.canvas, "ita+eng", {
-logger: m => { if(m.status==="recognizing text"){ ocrSetStatus("File "+(fi+1)+"/"+files.length+": riconoscimento OCR "+Math.round((m.progress||0)*100)+"%…"); } }
-});
-allText += "\n" + ((res && res.data && res.data.text) || "");
-}
-}
-}
-ocrRawText = allText.trim();
-const rawEl = $("ocr_raw");
-if(rawEl) rawEl.textContent = ocrRawText || "(nessun testo riconosciuto)";
-const doctype = v("ocr_doctype");
-ocrLastDoctype = doctype;
-let parsed = [];
-if(doctype==="id") parsed = ocrParseDocumentoIdentita(ocrRawText);
-else if(doctype==="visura") parsed = ocrParseVisura(ocrRawText);
-else if(doctype==="avvocato") parsed = ocrParseTesseraAvvocato(ocrRawText);
-else if(doctype==="istanza") parsed = ocrParseIstanza(ocrRawText);
-else if(doctype==="avviso") parsed = ocrParseAvviso(ocrRawText);
-else if(doctype==="procura") parsed = ocrParseProcura(ocrRawText);
-else parsed = ocrParseBonifico(ocrRawText);
-ocrRenderReview(parsed);
-ocrSetStatus(parsed.length
-? "Riconoscimento completato: controlla i dati sotto prima di applicarli."
-: "Riconoscimento completato ma nessun campo individuato automaticamente: consulta il testo grezzo qui sotto.");
-} catch(err){
-console.error(err);
-ocrSetStatus("Errore durante il riconoscimento: " + (err && err.message ? err.message : err) + ". Puoi comunque compilare i campi manualmente.");
-} finally {
-btn.disabled = false;
 }
 }
 
@@ -1905,7 +1214,7 @@ return variance < 4; // quasi nessuna variazione di colore = immagine vuota
 // Rende TUTTE le pagine di un PDF in immagini JPEG (una per pagina, max ~1560px
 // lato lungo), cosi' la modalita' AI puo' leggere documenti di qualsiasi lunghezza.
 async function ocrPdfAllPagesToJpegBlobs(file){
-await ocrEnsureLibs(true);
+await ocrEnsureLibs();
 const buf = await file.arrayBuffer();
 const pdf = await window.pdfjsLib.getDocument({data: buf}).promise;
 const blobs = [];
@@ -1948,163 +1257,6 @@ c.getContext("2d").drawImage(src, 0, 0, c.width, c.height);
 const blob = await new Promise(res => c.toBlob(res, "image/jpeg", 0.9));
 if(blob) blob.ocrVuoto = ocrCanvasSembraVuoto(c);
 return blob;
-}
-
-// Modalita' "alta precisione": invia l'immagine al server, che la fa leggere
-// a Claude e restituisce i campi. Riusa la stessa schermata di controllo.
-async function ocrEstraiAI(){
-const files = Array.from(($("ocr_files")||{}).files || []);
-if(!files.length){ ocrSetStatus("Seleziona prima un'immagine del documento."); return; }
-const ok = confirm(
-"Modalita' alta precisione (AI)\n\n" +
-"Il documento verra' trasmesso all'API di Anthropic per estrarne i dati. " +
-"Per contratto (DPA conforme al GDPR) Anthropic non usa i documenti per addestrare i modelli e conserva i log al massimo 7 giorni; il sito non salva ne' conserva il file o i dati estratti. " +
-"Procedi solo se hai una base giuridica e ne hai informato l'interessato.\n\n" +
-"Nulla verra' scritto nei campi finche' non lo confermi tu.\n\nInviare l'immagine e procedere?"
-);
-if(!ok) return;
-const btn = $("ocr_ai_btn"); if(btn) btn.disabled = true;
-const btn2 = $("ocr_btn"); if(btn2) btn2.disabled = true;
-$("ocr_review").style.display = "none";
-ocrSetStatus(files.length > 1 ? "Invio dei documenti e lettura AI in corso…" : "Invio del documento e lettura AI in corso…");
-try{
-let blobs = [];
-for(const f of files){
-const fIsPdf = /\.pdf$/i.test(f.name) || f.type === "application/pdf";
-const parte = fIsPdf ? await ocrPdfAllPagesToJpegBlobs(f) : [await ocrAImgToJpegBlob(f)];
-blobs = blobs.concat(parte);
-}
-// Anthropic accetta al massimo 20 immagini per richiesta
-if(blobs.length > 20){ blobs = blobs.slice(0, 20); }
-const totKb = Math.round(blobs.reduce((s,b)=>s+(b?b.size:0),0)/1024);
-const vuote = blobs.filter(b=>!b || b.size < 500 || b.ocrVuoto).length;
-if(vuote){
-ocrSetStatus("ATTENZIONE: " + vuote + " immagine/i risultano vuote o non decodificate correttamente (probabile foto in formato HEIC non supportato dal browser). Su iPhone: Impostazioni > Fotocamera > Formati > \"Massima compatibilita'\", poi rifai la foto o riseleziona il file; oppure usa un file JPG/PNG.");
-if(btn) btn.disabled = false;
-if(btn2) btn2.disabled = false;
-return;
-}
-ocrSetStatus("Preparate " + blobs.length + " immagine/i, " + totKb + " KB totali. Invio in corso…");
-await new Promise(r=>setTimeout(r, 400));
-const fd = new FormData();
-blobs.forEach((b, i) => fd.append("files", b, "pagina-" + (i + 1) + ".jpg"));
-fd.append("doctype", v("ocr_doctype"));
-const resp = await fetch("/api/aml-extract", { method:"POST", body: fd });
-const data = await resp.json().catch(()=>({}));
-if(!resp.ok){ throw new Error((data && data.error) ? data.error : "Errore del servizio AI"); }
-const fields = data.fields || {};
-ocrRawText = JSON.stringify(fields, null, 2);
-const rawEl = $("ocr_raw"); if(rawEl) rawEl.textContent = ocrRawText;
-ocrLastDoctype = v("ocr_doctype");
-
-// Istanza di mediazione: puo' contenere PIU' parti (istanti e aderenti), ciascuna
-// con un proprio eventuale rappresentante/difensore. In questo caso il motore
-// restituisce { procedura, parti: [...] } invece di un unico set di campi: si
-// mostra un elenco di parti da applicare una alla volta, invece della vecchia
-// vista "una parte sola" che ignorava gli aderenti.
-if((ocrLastDoctype === "istanza" || ocrLastDoctype === "adesione") && fields && Array.isArray(fields.parti)){
-ocrRenderPartiMultiple(fields.procedura || {}, fields.parti);
-ocrSetStatus(fields.parti.length
-? "Lettura AI completata: individuate " + fields.parti.length + " parte/i in questo documento (si sommano a quelle gia' lette in precedenza, se presenti). Applica ciascuna parte una alla volta."
-: "Lettura AI completata, ma nessuna parte individuata in questo documento: puoi compilare a mano o provare a leggere l'altro documento (Istanza/Adesione).");
-return;
-}
-
-// Per i documenti "istituzionali" della procedura (avviso, procura, bonifico)
-// l'AI restituisce gia' gli id reali dei campi: vanno scritti direttamente,
-// senza passare dalla mappatura destinatario/tipo.
-const ISTITUZIONALI_LABELS = {
-odm_nome: "Denominazione Organismo (da documento)",
-proc_n: "N. procedura (da documento)",
-proc_data_dep_istanza: "Data deposito istanza (da documento)",
-op_materia: "Materia (da documento)",
-op_valore: "Valore della controversia (da documento)",
-p_nome: "Denominazione/nome parte istante (da documento)",
-p_cf: "Codice fiscale / P. IVA parte istante (da documento)",
-p_res: "Recapito/sede parte istante (da documento)",
-p_pec: "PEC parte istante (da documento)",
-p_tel: "Telefono parte istante (da documento)",
-rappr_nome: "Rappresentante legale / difensore (da documento)",
-rappr_nascita: "Luogo e data di nascita rappresentante (da documento)",
-rappr_cf: "Codice fiscale rappresentante/difensore (da documento)"
-};
-const isIstituzionale = ["avviso","procura","bonifico"].includes(ocrLastDoctype);
-const rows = Object.keys(fields)
-.filter(k => fields[k] && String(fields[k]).trim())
-.map(k => isIstituzionale
-? { id: k, label: ISTITUZIONALI_LABELS[k] || k, value: String(fields[k]).trim() }
-: { key: k, value: String(fields[k]).trim() });
-ocrRenderReview(rows);
-ocrSetStatus(rows.length
-? "Lettura AI completata: controlla i dati sotto prima di applicarli."
-: "Lettura AI completata, ma nessun campo individuato: puoi compilare a mano.");
-}catch(err){
-console.error(err);
-ocrSetStatus("Errore nella lettura AI: " + (err && err.message ? err.message : err) + ". Puoi usare l'estrazione locale o compilare a mano.");
-}finally{
-if(btn) btn.disabled = false;
-if(btn2) btn2.disabled = false;
-}
-}
-
-function ocrApplica(){
-let applied = 0;
-ocrRecognized.forEach(row=>{
-if(!row.checked) return;
-const el = $(row.id);
-if(!el) return;
-if(el.type === "checkbox"){
-el.checked = true;
-} else {
-el.value = row.value;
-}
-try {
-if(el.type !== "checkbox") el.dispatchEvent(new Event("input", {bubbles:true}));
-el.dispatchEvent(new Event("change", {bubbles:true}));
-} catch(e){ console.error("Gestore del campo", row.id, "in errore:", e); }
-applied++;
-if(row.alsoSet && row.alsoSet.length && row.id.indexOf("rappr_")===0){
-row.alsoSet.forEach(as=>{
-const t = $(as.id);
-if(!t) return;
-if(t.type === "checkbox"){ t.checked = (as.value !== false); }
-else { t.value = as.value; }
-try { t.dispatchEvent(new Event("change",{bubbles:true})); } catch(e){}
-});
-}
-});
-if(ocrLastDoctype==="visura" && v("p_tipo")!=="pg" && ocrRecognized.some(r=>(r.id==="p_forma_giuridica"||r.id==="p_capitale_sociale"||r.id==="p_nome") && r.checked)){
-const pt = $("p_tipo");
-if(pt){ pt.value = "pg"; pt.dispatchEvent(new Event("change",{bubbles:true})); }
-}
-if(ocrLastDoctype==="istanza" && ocrIstanzaFormaGiuridica && v("p_tipo")!=="pg" && ocrRecognized.some(r=>r.id==="p_nome" && r.checked)){
-const pt = $("p_tipo");
-if(pt){ pt.value = "pg"; pt.dispatchEvent(new Event("change",{bubbles:true})); }
-const ng = $("p_natgiur");
-if(ng){ ng.value = ocrIstanzaFormaGiuridica; ng.dispatchEvent(new Event("change",{bubbles:true})); }
-}
-try { syncToggles(); } catch(e){ console.error("syncToggles in errore:", e); }
-try { calcRisk(); } catch(e){ console.error("calcRisk in errore:", e); }
-toast(applied>0 ? "Dati applicati a "+applied+" camp"+(applied===1?"o":"i")+"." : "Nessun campo selezionato da applicare.");
-}
-
-function ocrToggleRaw(){
-const el = $("ocr_raw");
-if(el) el.style.display = (el.style.display==="none" ? "block" : "none");
-}
-
-function ocrReset(){
-const f = $("ocr_files"); if(f) f.value = "";
-const rev = $("ocr_review"); if(rev) rev.style.display = "none";
-const fl = $("ocr_fields"); if(fl) fl.innerHTML = "";
-const raw = $("ocr_raw"); if(raw){ raw.textContent = ""; raw.style.display = "none"; }
-ocrSetStatus("");
-ocrRecognized = [];
-ocrRawText = "";
-ocrIstanzaFormaGiuridica = "";
-ocrParti = [];
-ocrProcedura = {};
-ocrPartiApplicate = new Set();
 }
 
 // ─── ASSISTENTE AI DI COMPILAZIONE (piu' documenti + richiesta libera) ─────
@@ -2181,6 +1333,98 @@ cb_docacq_procspec:"Acquisito: procura speciale/sostanziale",cb_docacq_procnot:"
 
 function assistSetStatus(msg){ const el = $("assist_status"); if(el) el.textContent = msg || ""; }
 
+// ─── Assistente unico: elenco delle parti individuate, applicabili una alla volta ───
+// Stessa logica gia' collaudata nella sezione "Alta precisione (AI)" dedicata:
+// qui pero' ogni parte porta con se' un set MOLTO piu' ricco di campi (anagrafica,
+// rappresentante, PEP, titolare effettivo, rischio), le cui chiavi coincidono gia'
+// con gli id reali dei campi del modulo (vedi ASSIST_LABELS) — si possono quindi
+// scrivere direttamente, senza bisogno di una mappatura dedicata come nell'altra sezione.
+let assistParti = [];
+let assistProcedura = {};
+let assistPartiApplicate = new Set();
+
+function assistRenderPartiMultiple(procedura, parti){
+assistParti = parti || [];
+assistProcedura = procedura || {};
+assistPartiApplicate = new Set();
+const container = $("assist_fields");
+container.innerHTML = "";
+if(!assistParti.length){
+container.innerHTML = '<p class="hint">Nessuna parte individuata automaticamente dai documenti caricati: consulta la risposta qui sopra e compila a mano.</p>';
+$("assist_review").style.display = "block";
+return;
+}
+const wrap = document.createElement("div");
+wrap.innerHTML = '<p class="hint" style="margin-bottom:8px"><b>'+assistParti.length+' parte/i individuate.</b> Applica una parte alla volta: ogni clic compila i campi (anagrafica, rappresentante, PEP, titolare effettivo, rischio) E genera subito il modulo per quella parte, sostituendo quello mostrato in precedenza — <b>scarica o stampa ciascun modulo prima di applicare la parte successiva</b>. I campi della parte precedente vengono azzerati automaticamente, mantenendo i dati di procedura.</p>';
+assistParti.forEach((parte,i)=>{
+const row = document.createElement("div");
+row.id = "assist_parte_row_"+i;
+const gia = assistPartiApplicate.has(i);
+row.style.cssText = "border:1px solid "+(gia?"#8fbf8f":"#c7d6f5")+";border-radius:10px;padding:10px 12px;margin-bottom:8px;background:"+(gia?"#f3f9f3":"#fff")+";display:flex;align-items:center;gap:10px;flex-wrap:wrap";
+const nome = parte.p_nome || "(nome non individuato)";
+const cf = parte.p_cf || "";
+const rapprInfo = parte.rappr_nome ? ("rappr./difensore: "+esc(parte.rappr_nome)) : "";
+const ruoloOptions = ["istante","aderente","terzo","altro"];
+const ruoloAttuale = ruoloOptions.includes(parte.p_ruolo) ? parte.p_ruolo : "istante";
+const ruoloSelect = gia
+? '<span style="font-size:11px;font-weight:700;padding:2px 8px;border-radius:999px;background:#eef3ff;color:#243559;margin-right:6px">'+ruoloAttuale+'</span>'
+: '<select id="assist_parte_ruolo_'+i+'" style="font-size:11px;font-weight:700;padding:2px 6px;border-radius:8px;margin-right:6px;width:auto">'
+  + ruoloOptions.map(r=>'<option value="'+r+'"'+(r===ruoloAttuale?' selected':'')+'>'+r.charAt(0).toUpperCase()+r.slice(1)+'</option>').join('')
+  + '</select>';
+row.innerHTML =
+'<div style="flex:1;min-width:200px">'
++ ruoloSelect
++ '<b>'+esc(nome)+'</b>'
++ (cf ? ' <span style="color:#6b7280">— '+esc(cf)+'</span>' : '')
++ '<div style="font-size:12px;color:#6b7280;margin-top:2px">'+rapprInfo+'</div>'
++ (!gia ? '<div style="font-size:11.5px;color:#a03317;margin-top:3px">Verifica il ruolo qui sopra prima di applicare: la lettura AI puo\' sbagliarlo, correggilo se serve.</div>' : '')
++ '</div>'
++ '<button type="button" class="btn-primary" id="assist_parte_btn_'+i+'" style="padding:8px 14px;font-size:13px"'+(gia?' disabled':'')+'>'+(gia?'✓ Applicata e generata':'Applica questa parte ai campi')+'</button>';
+wrap.appendChild(row);
+});
+container.appendChild(wrap);
+assistParti.forEach((_,i)=>{
+const btn = $("assist_parte_btn_"+i);
+if(btn && !assistPartiApplicate.has(i)) btn.addEventListener("click", ()=>assistApplicaParte(i));
+});
+$("assist_review").style.display = "block";
+}
+
+function assistApplicaParte(idx){
+const parte = assistParti[idx];
+if(!parte) return;
+const ruoloSel = $("assist_parte_ruolo_"+idx);
+if(ruoloSel && ruoloSel.value){ parte.p_ruolo = ruoloSel.value; }
+if(assistPartiApplicate.size > 0){
+amlClearPartyFields();
+}
+const setAny = (id, val) => {
+const el = $(id);
+if(!el || val === undefined || val === null) return;
+if(el.type === "checkbox"){
+el.checked = (val === true || val === "true");
+} else {
+el.value = String(val);
+}
+try{ el.dispatchEvent(new Event("input",{bubbles:true})); el.dispatchEvent(new Event("change",{bubbles:true})); }catch(e){}
+};
+// Dati di procedura: condivisi, si riapplicano ad ogni parte (innocuo riscriverli).
+Object.keys(assistProcedura).forEach(k=>setAny(k, assistProcedura[k]));
+// Dati della parte: le chiavi coincidono gia' con gli id reali dei campi del modulo.
+Object.keys(parte).forEach(k=>setAny(k, parte[k]));
+assistPartiApplicate.add(idx);
+const row = $("assist_parte_row_"+idx);
+if(row){ row.style.background = "#f3f9f3"; row.style.borderColor = "#8fbf8f"; }
+const btn = $("assist_parte_btn_"+idx);
+if(btn){ btn.textContent = "✓ Applicata e generata"; btn.disabled = true; }
+try { syncToggles(); } catch(e){ console.error("syncToggles in errore:", e); }
+try { calcRisk(); } catch(e){ console.error("calcRisk in errore:", e); }
+try { if(typeof genera === "function") genera(); } catch(e){ console.error("genera() in errore:", e); }
+const restanti = assistParti.length - assistPartiApplicate.size;
+toast("Modulo generato per «"+(parte.p_nome||"senza nome")+"». SCARICA O STAMPA QUESTO MODULO ORA: applicando la prossima parte, il modulo qui sopra verra' sostituito."
++ (restanti>0 ? " Restano "+restanti+" parte/i da applicare." : " Tutte le parti individuate sono state applicate."));
+}
+
 function assistRenderReview(campi){
 assistRecognized = [];
 Object.keys(campi).forEach(id=>{
@@ -2250,14 +1494,23 @@ fd.append("richiesta", richiesta || "");
 const resp = await fetch("/api/aml-assist", { method:"POST", body: fd });
 const data = await resp.json().catch(()=>({}));
 if(!resp.ok){ throw new Error((data && data.error) ? data.error : "Errore del servizio AI"); }
-const campi = data.campi || {};
 const rawEl = $("assist_raw"); if(rawEl) rawEl.textContent = JSON.stringify(data, null, 2);
 if(ansEl){ ansEl.style.display = "block"; ansEl.textContent = data.risposta || ""; }
+if(Array.isArray(data.parti)){
+// Nuovo formato: procedura + elenco di TUTTE le parti individuate (istanti e aderenti).
+assistRenderPartiMultiple(data.campi || {}, data.parti);
+assistSetStatus(data.parti.length
+? "Lettura AI completata: individuate " + data.parti.length + " parte/i. Applica ciascuna parte una alla volta."
+: "Lettura AI completata, ma nessuna parte individuata: leggi la risposta sopra e compila a mano.");
+} else {
+// Formato precedente (compatibilita'): un unico set di campi piatto.
+const campi = data.campi || {};
 assistRenderReview(campi);
 const n = Object.keys(campi).length;
 assistSetStatus(n
 ? "Lettura AI completata: controlla i dati sotto prima di applicarli."
 : "Lettura AI completata, ma nessun campo individuato: leggi la risposta sopra e compila a mano.");
+}
 }catch(err){
 console.error(err);
 assistSetStatus("Errore nell'assistente AI: " + (err && err.message ? err.message : err) + ". Puoi comunque compilare a mano.");
@@ -2298,6 +1551,9 @@ const f = $("assist_files"); if(f) f.value = "";
 const rev = $("assist_review"); if(rev) rev.style.display = "none";
 const fl = $("assist_fields"); if(fl) fl.innerHTML = "";
 const raw = $("assist_raw"); if(raw){ raw.textContent = ""; raw.style.display = "none"; }
+assistParti = [];
+assistProcedura = {};
+assistPartiApplicate = new Set();
 const ans = $("assist_answer"); if(ans){ ans.style.display = "none"; ans.textContent = ""; }
 assistSetStatus("");
 assistRecognized = [];
