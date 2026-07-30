@@ -20,6 +20,8 @@ const SEO_PAGES: Record<string, { title: string; description: string }> = {
   "/calcolo-assegni": { title: "Calcolo Assegni di Separazione e Divorzio", description: "Strumento orientativo per il calcolo dell'assegno di mantenimento del coniuge, dell'assegno divorzile (Cass. SU 18287/2018) e del contributo al mantenimento dei figli (art. 337-ter c.c.). Esportazione PDF del report motivato." },
   "/chi-siamo": { title: "Chi Siamo \u2014 Avv. Carlo Alberto Calcagno, mediatore e Legal Tech Genova", description: "Avv. Carlo Alberto Calcagno: mediatore familiare e civile ODM Genova, commissario ADR COA Genova, formatore. Legal Tech, AI applicata alla mediazione e ADR. Tutti gli strumenti gratuiti di CalcoloMediazione." },
   "/contatti": { title: "Contatti - CalcoloMediazione", description: "Contatta il team di CalcoloMediazione per informazioni, supporto tecnico e collaborazioni." },
+  "/antiriciclaggio": { title: "Antiriciclaggio in Mediazione \u2014 Obblighi e Modelli per Avvocati e Organismi", description: "Guida agli obblighi antiriciclaggio in mediazione (D.Lgs. 231/2007) e compilazione automatica dei modelli del fascicolo: adeguata verifica, titolare effettivo, scheda di rischio, segnalazione operazioni sospette." },
+  "/antiriciclaggio-guida": { title: "Guida Semplice all'Antiriciclaggio in Mediazione \u2014 D.Lgs. 231/2007", description: "Guida in linguaggio semplice agli obblighi antiriciclaggio per mediatori e Organismi di mediazione: chi \u00e8 obbligato, cosa fare al tavolo, segnalazione operazioni sospette." },
 };
 
 const PRIMARY_URL = "https://calcolomediazione.it";

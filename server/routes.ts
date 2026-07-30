@@ -41,6 +41,8 @@ const PAGES = [
 { path: "/glossario", title: "Glossario della Mediazione Civile", desc: "Glossario completo dei termini utilizzati nella mediazione civile e commerciale. Definizioni chiare e riferimenti normativi.", priority: "0.5", changefreq: "monthly" },
 { path: "/chi-siamo", title: "Chi Siamo - CalcoloMediazione", desc: "Scopri il team dietro CalcoloMediazione, la piattaforma professionale per mediatori civili e commerciali.", priority: "0.4", changefreq: "yearly" },
 { path: "/contatti", title: "Contatti - CalcoloMediazione", desc: "Contatta il team di CalcoloMediazione per informazioni, supporto tecnico e collaborazioni.", priority: "0.4", changefreq: "yearly" },
+{ path: "/antiriciclaggio", title: "Antiriciclaggio in Mediazione — Obblighi e Modelli per Avvocati e Organismi", desc: "Guida agli obblighi antiriciclaggio in mediazione (D.Lgs. 231/2007) e compilazione automatica dei modelli del fascicolo: adeguata verifica, titolare effettivo, scheda di rischio, segnalazione operazioni sospette.", priority: "0.7", changefreq: "monthly" },
+{ path: "/antiriciclaggio-guida", title: "Guida Semplice all'Antiriciclaggio in Mediazione — D.Lgs. 231/2007", desc: "Guida in linguaggio semplice agli obblighi antiriciclaggio per mediatori e Organismi di mediazione: chi è obbligato, cosa fare al tavolo, segnalazione operazioni sospette.", priority: "0.6", changefreq: "monthly" },
 ];
 
 function getSiteUrl(req: any): string {

@@ -32,6 +32,8 @@ export const SEO_CONTENT: Record<string, string> = {
 <li><a href="/faq">Domande Frequenti sulla Mediazione Civile</a></li>
 <li><a href="/guida-dm-150">Guida Completa al D.M. 150/2023</a></li>
 <li><a href="/glossario">Glossario della Mediazione Civile</a></li>
+<li><a href="/chi-siamo">Chi Siamo</a></li>
+<li><a href="/privacy-policy">Privacy Policy</a></li>
 </ul>
 <p>CalcoloMediazione e una piattaforma professionale per il calcolo delle indennita di mediazione civile e commerciale. Conforme al Decreto Ministeriale 150/2023 e al D.Lgs. 28/2010 come modificato dalla Riforma Cartabia (D.Lgs. 149/2022).</p>
 </div>`,
@@ -128,5 +130,23 @@ export const SEO_CONTENT: Record<string, string> = {
   "/guida-dm-150": `<div style="max-width:900px;margin:0 auto;padding:40px 20px;font-family:Inter,sans-serif;color:#2d2926">
 <h1 style="font-size:2rem;font-family:'Space Grotesk',sans-serif">Guida Completa al D.M. 150/2023 - Tariffe Mediazione</h1>
 <p>Guida dettagliata al Decreto Ministeriale 150/2023 sulle tariffe di mediazione civile e commerciale. Tabelle, calcoli ed esempi pratici. Include Tabella A con scaglioni di valore, spese di avvio, indennita per il primo incontro, ulteriori spese, riduzioni e maggiorazioni.</p>
+</div>`,
+
+  "/antiriciclaggio": `<div style="max-width:900px;margin:0 auto;padding:40px 20px;font-family:Inter,sans-serif;color:#2d2926">
+<h1 style="font-size:2rem;font-family:'Space Grotesk',sans-serif">Antiriciclaggio in Mediazione</h1>
+<p>Guida agli obblighi antiriciclaggio nella mediazione civile (D.Lgs. 231/2007) e compilazione automatica dei modelli del fascicolo riservato, per avvocati, mediatori e Organismi di mediazione.</p>
+<h2>Chi e' obbligato</h2>
+<p>Orientamento su chi ricade negli obblighi antiriciclaggio in mediazione: Organismo di mediazione (soggetto obbligato principale ex art. 3, c. 5, lett. g D.Lgs. 231/2007), mediatore designato, avvocato che assiste una parte (di regola esente), negoziazione assistita, OCC e gestore della crisi da sovraindebitamento.</p>
+<h2>I sei obblighi principali</h2>
+<ul>
+<li>Adeguata verifica della clientela (artt. 17-19)</li>
+<li>Individuazione del titolare effettivo (artt. 18, 20, 22)</li>
+<li>Conservazione del fascicolo riservato per 10 anni (artt. 31-32)</li>
+<li>Segnalazione di operazioni sospette alla UIF (artt. 35-41)</li>
+<li>Autovalutazione e scheda di rischio per ogni pratica (art. 15)</li>
+<li>Formazione e presidi interni</li>
+</ul>
+<h2>Compilazione automatica dei modelli</h2>
+<p>Lo strumento genera in automatico i modelli del fascicolo riservato (informativa, modulo di adeguata verifica, scheda di valutazione del rischio, dichiarazione del cliente, foglio di annotazione) a partire dai dati inseriti, con anche una modalita' di lettura assistita dei documenti (identita', visura camerale, istanza di mediazione).</p>
 </div>`,
 };
