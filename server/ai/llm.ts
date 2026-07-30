@@ -793,47 +793,71 @@ cb_docacq_procnot: "Acquisita procura notarile",
 cb_docacq_modulomav: "Acquisito il modulo di Adeguata Verifica"
 };
 
+// Chiavi che riguardano la PROCEDURA nel suo complesso (uguali per tutte le parti):
+// organismo, numero/date, oggetto della controversia. Tutto il resto dello schema
+// (anagrafica, rappresentante, PEP, titolare effettivo, rischio, checkbox) riguarda
+// la SINGOLA parte e va quindi in un elenco "parti", non piu' in un blocco unico:
+// prima l'assistente si fermava sempre alla prima parte, qualunque fosse la richiesta.
+const AML_ASSIST_PROCEDURA_KEYS = new Set([
+"odm_nome","odm_iscr","odm_sede","odm_lr",
+"proc_n","proc_data_dep_istanza","proc_data_dep_adesione","proc_data","proc_med","proc_ogg",
+"op_materia","op_valore","op_importo","op_descrizione",
+]);
+
 export async function assistenteCompilazioneAI(
 immagini: Array<{ base64: string; mediaType: string }>,
 richiesta: string
-): Promise<{ risposta: string; campi: Record<string, string | boolean> }> {
+): Promise<{ risposta: string; campi: Record<string, string | boolean>; parti: Array<Record<string, string | boolean>> }> {
 const anthropic = getAnthropicClient();
 if (!anthropic) throw new Error("Servizio AI non configurato (ANTHROPIC_API_KEY mancante).");
 
-const schemaTesto = Object.entries(AML_ASSIST_SCHEMA).map(([k, d]) => ` "${k}": "${d}"`).join(",\n");
-const schemaCheckbox = Object.entries(AML_ASSIST_CHECKBOX_SCHEMA).map(([k, d]) => ` "${k}": "${d}"`).join(",\n");
+const partyKeys = Object.keys(AML_ASSIST_SCHEMA).filter(k => !AML_ASSIST_PROCEDURA_KEYS.has(k));
+const procKeys = Object.keys(AML_ASSIST_SCHEMA).filter(k => AML_ASSIST_PROCEDURA_KEYS.has(k));
+const schemaProcedura = procKeys.map(k => ` "${k}": "${AML_ASSIST_SCHEMA[k]}"`).join(",\n");
+const schemaParteTesto = partyKeys.map(k => ` "${k}": "${AML_ASSIST_SCHEMA[k]}"`).join(",\n");
+const schemaParteCheckbox = Object.entries(AML_ASSIST_CHECKBOX_SCHEMA).map(([k, d]) => ` "${k}": "${d}"`).join(",\n");
 
-const istruzioni = `Sei un assistente esperto di antiriciclaggio (D.Lgs. 231/2007) nella mediazione civile (D.Lgs. 28/2010). Un mediatore/Organismo ti ha caricato uno o piu' documenti del fascicolo di una procedura (es. istanza di mediazione, documenti di identita', visura camerale, procura, comunicazioni, ricevute di pagamento) e ti ha rivolto questa richiesta in linguaggio naturale:
+const istruzioni = `Sei un assistente esperto di antiriciclaggio (D.Lgs. 231/2007) nella mediazione civile (D.Lgs. 28/2010). Un mediatore/Organismo ti ha caricato uno o piu' documenti del fascicolo di una procedura (es. istanza di mediazione, adesione, documenti di identita', visura camerale, procura, comunicazioni, ricevute di pagamento) e ti ha rivolto questa richiesta in linguaggio naturale:
 
 """${richiesta || "Compila il modulo di Adeguata Verifica e la scheda di valutazione del rischio alla luce di questi documenti."}"""
 
-Il tuo compito e' duplice:
-1) Rispondere alla richiesta in linguaggio naturale, in italiano professionale e chiaro, in un campo "risposta" (poche frasi): spiega che cosa hai fatto, quali documenti hai usato, quali dati NON hai trovato e quindi non hai potuto compilare, ed eventuali osservazioni utili (es. se i documenti riguardano piu' parti, spiega che questa compilazione copre la parte istante principale e che le altre parti vanno aggiunte separatamente con "+ Nuova parte per questa procedura"). Se dai documenti emerge un elemento di rischio o un'anomalia, segnalalo chiaramente nella risposta.
-2) Estrarre dai documenti quanti piu' campi possibile del modulo, in un campo "campi" (object).
+Il tuo compito ha TRE parti:
+1) Rispondere alla richiesta in linguaggio naturale, in italiano professionale e chiaro, in un campo "risposta" (poche frasi): spiega che cosa hai fatto, quante parti hai individuato (istanti e aderenti) e con quali ruoli, quali dati NON hai trovato, ed eventuali osservazioni di rischio o anomalie emerse dai documenti.
+2) Estrarre i dati della PROCEDURA (organismo, numero, date, oggetto/materia/valore della controversia: sono UNICI per tutta la procedura, uguali per ogni parte) in un campo "procedura" (object).
+3) Individuare TUTTE le parti realmente presenti nei documenti — istanti E aderenti, quante che siano — e per CIASCUNA restituire un oggetto completo con la sua anagrafica, il suo rappresentante/difensore, la sua valutazione PEP/titolare effettivo/rischio, nell'array "parti". NON limitarti alla prima parte istante: se i documenti mostrano 5 istanti e 1 aderente, "parti" deve contenere 6 oggetti. Se un'Adesione elenca esplicitamente "Parte/i istante/i" oltre all'aderente che la sottoscrive, estrai anche quegli istanti.
 
-Leggi con attenzione TUTTI i documenti forniti (possono essere piu' pagine e piu' documenti diversi): incrociali per ricostruire un quadro coerente (es. i dati anagrafici possono comparire su un documento di identita', l'oggetto e il valore della controversia sull'istanza, la sede legale sulla visura, ecc.).
-Se i documenti riguardano piu' parti istanti o piu' controparti, concentrati SOLO sulla PRIMA parte istante (chi presenta la domanda) salvo diversa indicazione esplicita nella richiesta dell'utente.
-NON inventare MAI valori non presenti nei documenti o non ragionevolmente deducibili dal contesto. Per i campi di "valutazione del rischio" (quelli descritti come "Suggerimento di rischio" o "Proposta") puoi formulare una valutazione professionale ragionevole in base al contenuto dei documenti, ma resta un SUGGERIMENTO che l'utente dovra' confermare.
+Leggi con attenzione TUTTI i documenti forniti (possono essere piu' pagine e piu' documenti diversi): incrociali per ricostruire un quadro coerente (es. i dati anagrafici possono comparire su un documento di identita', l'oggetto e il valore della controversia sull'istanza, la sede legale sulla visura, i nominativi delle parti istanti su una comunicazione di adesione o su procure sostanziali separate).
+ATTENZIONE — attribuzione per persona, non per cognome: quando piu' persone diverse condividono lo stesso cognome (es. un'istante e, in un altro documento, il difensore della controparte), sono individui COMPLETAMENTE DIVERSI: abbina ogni dato al nome e cognome completi della persona a cui appartiene realmente, mai al solo cognome.
+NON inventare MAI valori non presenti nei documenti o non ragionevolmente deducibili dal contesto. Per i campi di "valutazione del rischio" (quelli descritti come "Suggerimento di rischio" o "Proposta") puoi formulare una valutazione professionale ragionevole in base al contenuto dei documenti, ma resta un SUGGERIMENTO che l'utente dovra' confermare, e va formulata per CIASCUNA parte separatamente (il rischio di un istante puo' essere diverso da quello dell'aderente).
 
-Restituisci ESCLUSIVAMENTE un oggetto JSON valido (nessun testo prima o dopo, senza markdown, senza recinti), con questa struttura:
+Restituisci ESCLUSIVAMENTE un oggetto JSON valido (nessun testo prima o dopo, senza markdown, senza recinti), con questa struttura ESATTA:
 {
 "risposta": "testo della risposta discorsiva in italiano",
-"campi": {
+"procedura": {
  // includi SOLO le chiavi (tra quelle elencate sotto) per cui hai un valore effettivo
-}
+},
+"parti": [
+ { ... una parte, con i campi testo/selezione e checkbox elencati sotto ... },
+ { ... un'altra parte ... }
+]
 }
 
-Campi TESTO/SELEZIONE disponibili (valore sempre come stringa; per i valori "ammessi" riporta ESATTAMENTE uno di quelli indicati; le date sempre in formato AAAA-MM-GG):
+Campi di PROCEDURA disponibili (valore sempre come stringa; le date sempre in formato AAAA-MM-GG):
 {
-${schemaTesto}
+${schemaProcedura}
 }
 
-Campi CHECKBOX disponibili (valore booleano; includili in "campi" con valore true SOLO se la condizione risulta dai documenti; se non risulta, ometti semplicemente la chiave — non scrivere mai false):
+Campi TESTO/SELEZIONE disponibili per OGNI PARTE (valore sempre come stringa; per i valori "ammessi" riporta ESATTAMENTE uno di quelli indicati; le date sempre in formato AAAA-MM-GG):
 {
-${schemaCheckbox}
+${schemaParteTesto}
 }
 
-Regola ferrea: non aggiungere in "campi" chiavi diverse da quelle elencate sopra. Restituisci SOLO il JSON.`;
+Campi CHECKBOX disponibili per OGNI PARTE (valore booleano; includili SOLO se la condizione risulta dai documenti per quella parte; se non risulta, ometti semplicemente la chiave — non scrivere mai false):
+{
+${schemaParteCheckbox}
+}
+
+Regola ferrea: non aggiungere chiavi diverse da quelle elencate sopra, ne' in "procedura" ne' dentro ciascuna parte. Restituisci SOLO il JSON.`;
 
 const content: any[] = immagini.map((im) => ({
 type: "image",
@@ -843,7 +867,7 @@ content.push({ type: "text", text: istruzioni });
 
 const message = await anthropic.messages.create({
 model: ANTHROPIC_MODEL,
-max_tokens: 4096,
+max_tokens: 8192,
 messages: [{ role: "user", content }],
 });
 
@@ -861,19 +885,37 @@ try { parsed = JSON.parse(raw); }
 catch { throw new Error("Risposta AI non interpretabile."); }
 
 const risposta = typeof parsed.risposta === "string" ? parsed.risposta.trim() : "";
-const campiIn = (parsed.campi && typeof parsed.campi === "object") ? parsed.campi : {};
+
+const campiIn = (parsed.procedura && typeof parsed.procedura === "object") ? parsed.procedura : {};
 const campi: Record<string, string | boolean> = {};
-for (const k of Object.keys(AML_ASSIST_SCHEMA)) {
+for (const k of procKeys) {
 const val = campiIn[k];
 if (val === undefined || val === null) continue;
 const s = String(val).trim();
 if (s) campi[k] = s;
 }
-for (const k of Object.keys(AML_ASSIST_CHECKBOX_SCHEMA)) {
-const val = campiIn[k];
-if (val === true || val === "true") campi[k] = true;
+
+const partiIn = Array.isArray(parsed.parti) ? parsed.parti : [];
+const parti: Array<Record<string, string | boolean>> = partiIn.map((pIn: any) => {
+const parte: Record<string, string | boolean> = {};
+for (const k of partyKeys) {
+const val = pIn ? pIn[k] : undefined;
+if (val === undefined || val === null) continue;
+const s = String(val).trim();
+if (s) parte[k] = s;
 }
-return { risposta: risposta || "Ho analizzato i documenti caricati e compilato i campi individuati qui sotto: controllali prima di applicarli.", campi };
+for (const k of Object.keys(AML_ASSIST_CHECKBOX_SCHEMA)) {
+const val = pIn ? pIn[k] : undefined;
+if (val === true || val === "true") parte[k] = true;
+}
+return parte;
+}).filter((p: any) => p.p_nome);
+
+return {
+risposta: risposta || "Ho analizzato i documenti caricati e compilato i dati individuati qui sotto: controllali prima di applicarli.",
+campi,
+parti,
+};
 }
 
 // ─── RICERCA SEMANTICA GIURISPRUDENZA (pagina pubblica Giurisprudenza) ─────
