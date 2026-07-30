@@ -358,7 +358,8 @@ return `## Analisi AI\n\n> *Configurare API Key per risultati completi*`;
 // Usata dal tool antiriciclaggio in modalita' "alta precisione (AI)".
 // Riceve un'immagine (base64) e restituisce i campi anagrafici strutturati.
 // Riusa la chiave Anthropic gia' configurata (ANTHROPIC_MODEL = Haiku 4.5).
-const DOCTYPE_ISTITUZIONALI = new Set(["istanza", "avviso", "procura", "bonifico"]);
+const DOCTYPE_ISTITUZIONALI = new Set(["avviso", "procura", "bonifico"]);
+const DOCTYPE_ISTANZA = "istanza";
 
 // Schema dedicato ai documenti "istituzionali" della procedura (istanza di mediazione,
 // comunicazione di avvio, procura, ricevuta di pagamento): a differenza di un documento
@@ -382,12 +383,97 @@ rappr_nascita: "Luogo e data di nascita del rappresentante legale, se presenti (
 rappr_cf: "Codice fiscale del rappresentante legale o del difensore, se presente"
 };
 
+// Schema per l'Istanza di mediazione: a differenza degli altri documenti
+// "istituzionali", l'istanza contiene sempre ALMENO DUE parti (istante e
+// aderente/i), ciascuna con un eventuale proprio rappresentante legale o
+// difensore. Il vecchio schema (una sola parte istante) ignorava l'aderente:
+// qui l'AI restituisce un array di tutte le parti trovate, non piu' una sola.
+const PARTE_SCHEMA_DESC = `Ogni parte e' un oggetto con queste chiavi (tutte stringhe, "" se assente):
+  "ruolo": "istante" oppure "aderente" (mai altro valore)
+  "nome": denominazione o nome e cognome della parte
+  "cf": codice fiscale o Partita IVA della parte
+  "res": indirizzo/recapito della parte
+  "pec": PEC della parte, se presente
+  "tel": telefono della parte, se presente
+  "rappr_nome": nome e cognome del rappresentante legale (se persona giuridica) o del difensore/avvocato di QUESTA parte, se presente
+  "rappr_nascita": luogo e data di nascita del rappresentante/difensore, se presenti (es. "Genova, 23/04/1969")
+  "rappr_cf": codice fiscale del rappresentante/difensore, se presente
+  "rappr_ruolo": "legale_rapp" se e' il rappresentante legale della societa'/ente, "difensore" se e' l'avvocato che assiste la parte, "" se non c'e' alcun rappresentante/difensore per questa parte`;
+
 export async function estraiDocumentoAI(
 immagini: Array<{ base64: string; mediaType: string }>,
 doctype: string
-): Promise<Record<string, string>> {
+): Promise<any> {
 const anthropic = getAnthropicClient();
 if (!anthropic) throw new Error("Servizio AI non configurato (ANTHROPIC_API_KEY mancante).");
+
+if (doctype === DOCTYPE_ISTANZA) {
+  const istruzioniIstanza = `Sei un assistente esperto che estrae dati da un'Istanza di mediazione civile italiana (D.Lgs. 28/2010), per compilare la scheda antiriciclaggio (D.Lgs. 231/2007) di TUTTE le parti coinvolte.
+Le immagini fornite possono essere piu' pagine dello STESSO documento: considerale insieme.
+Un'istanza di mediazione puo' contenere PIU' parti istanti e PIU' parti aderenti (mai solo una): individuale TUTTE, senza escluderne nessuna. Per ciascuna parte individua anche il proprio rappresentante legale o difensore, se indicato nel documento (ogni parte puo' avere un rappresentante diverso).
+Leggi con attenzione tutto il testo, incluse intestazioni, tabelle e firme.
+Restituisci ESCLUSIVAMENTE un oggetto JSON valido (nessun testo prima o dopo, senza markdown, senza recinti) con questa struttura ESATTA:
+{
+  "procedura": {
+    "odm_nome": "denominazione dell'Organismo di Mediazione destinatario",
+    "proc_n": "numero della procedura/istanza",
+    "proc_data_dep_istanza": "data di deposito/creazione, formato AAAA-MM-GG",
+    "op_materia": "materia della controversia",
+    "op_valore": "valore indicativo della controversia, testo cosi' come scritto"
+  },
+  "parti": [
+    { ... una parte, vedi schema sotto ... },
+    { ... un'altra parte ... }
+  ]
+}
+${PARTE_SCHEMA_DESC}
+Regole ferree: le date SEMPRE in formato AAAA-MM-GG. Se un dato non e' presente o leggibile, usa stringa vuota "". NON inventare MAI valori non presenti nel documento. Includi in "parti" TUTTE le parti realmente presenti nel documento (istanti e aderenti), non fermarti alla prima. Restituisci SOLO il JSON.`;
+
+  const contentIstanza: any[] = immagini.map((im) => ({
+    type: "image",
+    source: { type: "base64", media_type: im.mediaType as any, data: im.base64 },
+  }));
+  contentIstanza.push({ type: "text", text: istruzioniIstanza });
+
+  const messageIstanza = await anthropic.messages.create({
+    model: ANTHROPIC_MODEL,
+    max_tokens: 2048,
+    messages: [{ role: "user", content: contentIstanza }],
+  });
+  const textBlockIstanza = messageIstanza.content.find(b => b.type === "text") as
+    | { type: "text"; text: string } | undefined;
+  let rawIstanza = (textBlockIstanza?.text || "").trim();
+  rawIstanza = rawIstanza.replace(/^```(?:json)?/i, "").replace(/```$/, "").trim();
+  const si2 = rawIstanza.indexOf("{"), ei2 = rawIstanza.lastIndexOf("}");
+  if (si2 >= 0 && ei2 > si2) rawIstanza = rawIstanza.slice(si2, ei2 + 1);
+  let parsedIstanza: any = {};
+  try { parsedIstanza = JSON.parse(rawIstanza); }
+  catch { throw new Error("Risposta AI non interpretabile."); }
+
+  const str = (v: unknown) => (typeof v === "string" ? v : (v == null ? "" : String(v))).trim();
+  const procIn = parsedIstanza.procedura || {};
+  const procedura = {
+    odm_nome: str(procIn.odm_nome),
+    proc_n: str(procIn.proc_n),
+    proc_data_dep_istanza: str(procIn.proc_data_dep_istanza),
+    op_materia: str(procIn.op_materia),
+    op_valore: str(procIn.op_valore),
+  };
+  const partiIn = Array.isArray(parsedIstanza.parti) ? parsedIstanza.parti : [];
+  const parti = partiIn.map((p: any) => ({
+    ruolo: (str(p.ruolo) === "aderente" ? "aderente" : "istante"),
+    nome: str(p.nome),
+    cf: str(p.cf),
+    res: str(p.res),
+    pec: str(p.pec),
+    tel: str(p.tel),
+    rappr_nome: str(p.rappr_nome),
+    rappr_nascita: str(p.rappr_nascita),
+    rappr_cf: str(p.rappr_cf),
+    rappr_ruolo: (["legale_rapp","difensore"].includes(str(p.rappr_ruolo)) ? str(p.rappr_ruolo) : ""),
+  })).filter((p: any) => p.nome);
+  return { procedura, parti };
+}
 
 if (DOCTYPE_ISTITUZIONALI.has(doctype)) {
 const schemaLines = Object.entries(ISTITUZIONALI_SCHEMA)
