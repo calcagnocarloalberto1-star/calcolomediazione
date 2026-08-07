@@ -401,8 +401,27 @@ const PARTE_SCHEMA_DESC = `Ogni parte e' un oggetto con queste chiavi (tutte str
   "rappr_cf": codice fiscale del rappresentante/difensore, se presente
   "rappr_ruolo": "legale_rapp" se e' il rappresentante legale della societa'/ente, "difensore" se e' l'avvocato che assiste la parte, "" se non c'e' alcun rappresentante/difensore per questa parte`;
 
+// Costruisce i content block per l'API di Anthropic: le immagini restano
+// blocchi "image" (visione nativa), i PDF diventano blocchi "document" (letti
+// nativamente dal modello pagina per pagina, senza rasterizzarli lato client
+// -- lo stesso meccanismo con cui si legge un PDF allegato in chat).
+function buildContentBlocks(documenti: Array<{ base64: string; mediaType: string }>): any[] {
+return documenti.map((d) => {
+if (d.mediaType === "application/pdf") {
+return {
+type: "document",
+source: { type: "base64", media_type: "application/pdf", data: d.base64 },
+};
+}
+return {
+type: "image",
+source: { type: "base64", media_type: d.mediaType as any, data: d.base64 },
+};
+});
+}
+
 export async function estraiDocumentoAI(
-immagini: Array<{ base64: string; mediaType: string }>,
+documenti: Array<{ base64: string; mediaType: string }>,
 doctype: string
 ): Promise<any> {
 const anthropic = getAnthropicClient();
@@ -428,7 +447,7 @@ Gli istanti possono comparire in DUE modi diversi, che devi combinare:
 ATTENZIONE — attribuzione per persona, non per cognome: quando piu' persone diverse condividono lo stesso COGNOME (es. un istante "Ferrando Marina" e, in tutt'altro documento, un difensore "Ferrando Roberto" che assiste la controparte), sono individui COMPLETAMENTE DIVERSI: abbina sempre ogni dato (codice fiscale, data di nascita, ruolo) alla persona con NOME E COGNOME COMPLETI risultanti da quella specifica pagina/procura, mai al solo cognome. Non fondere mai due persone diverse in una sola per la sola coincidenza del cognome.`;
 
   const istruzioniIstanza = `Sei un assistente esperto che estrae dati da un documento italiano di una procedura di mediazione civile (D.Lgs. 28/2010), per compilare la scheda antiriciclaggio (D.Lgs. 231/2007).
-Le immagini fornite possono essere piu' pagine dello STESSO documento: considerale insieme.
+Le immagini o i PDF forniti possono essere piu' pagine dello STESSO documento: considerale insieme.
 ${istruzioniRuolo}
 ${isAdesione
   ? 'Per ciascuna parte indica "ruolo": "aderente" oppure "istante" a seconda del gruppo da cui proviene (vedi sopra): non lasciarlo vuoto e non inventare un terzo valore.'
@@ -450,10 +469,7 @@ Restituisci ESCLUSIVAMENTE un oggetto JSON valido (nessun testo prima o dopo, se
 ${PARTE_SCHEMA_DESC}
 Regole ferree: le date SEMPRE in formato AAAA-MM-GG. Se un dato di procedura non e' presente in QUESTO documento, usa stringa vuota "" (verra' eventualmente completato da un'altra lettura). NON inventare MAI valori non presenti nel documento. Includi in "parti" TUTTE le parti con ruolo "${ruoloCercato}" realmente presenti, non fermarti alla prima. Restituisci SOLO il JSON.`;
 
-  const contentIstanza: any[] = immagini.map((im) => ({
-    type: "image",
-    source: { type: "base64", media_type: im.mediaType as any, data: im.base64 },
-  }));
+  const contentIstanza: any[] = buildContentBlocks(documenti);
   contentIstanza.push({ type: "text", text: istruzioniIstanza });
 
   const messageIstanza = await anthropic.messages.create({
@@ -509,7 +525,7 @@ const schemaLines = Object.entries(ISTITUZIONALI_SCHEMA)
 .map(([k, desc]) => ` "${k}": "${desc}"`).join(",\n");
 const istruzioniIst = `Sei un assistente esperto che estrae dati da documenti italiani della procedura di mediazione civile (D.Lgs. 28/2010), per compilare la scheda antiriciclaggio (D.Lgs. 231/2007).
 Tipo di documento indicato dall'utente: ${doctype} (documento della procedura, non un documento d'identita': puo' contenere PIU' soggetti diversi — parte istante, suo rappresentante legale o difensore, e la controparte).
-Le immagini fornite possono essere piu' pagine dello STESSO documento: considerale insieme.
+Le immagini o i PDF forniti possono essere piu' pagine dello STESSO documento: considerale insieme.
 Concentrati SOLO sulla PARTE ISTANTE (chi presenta la domanda) e sul suo rappresentante/difensore: NON estrarre i dati della controparte/parte invitata.
 Leggi con attenzione tutto il testo, incluse intestazioni, tabelle e firme.
 Restituisci ESCLUSIVAMENTE un oggetto JSON valido (nessun testo prima o dopo, senza markdown, senza recinti) con ESATTAMENTE queste chiavi, tutte come stringhe. Se un dato non e' presente o non e' leggibile, usa stringa vuota "". NON inventare MAI valori non presenti nel documento.
@@ -518,10 +534,7 @@ ${schemaLines}
 }
 Regole ferree: le date SEMPRE in formato AAAA-MM-GG. Non aggiungere chiavi diverse da quelle elencate. Restituisci SOLO il JSON.`;
 
-const contentIst: any[] = immagini.map((im) => ({
-type: "image",
-source: { type: "base64", media_type: im.mediaType as any, data: im.base64 },
-}));
+const contentIst: any[] = buildContentBlocks(documenti);
 contentIst.push({ type: "text", text: istruzioniIst });
 
 const messageIst = await anthropic.messages.create({
@@ -548,7 +561,7 @@ return outIst;
 
 const istruzioni = `Sei un assistente esperto che estrae dati da documenti italiani per compilare un modulo antiriciclaggio (D.Lgs. 231/2007).
 Tipo di documento indicato dall'utente: ${doctype}.
-Le immagini fornite possono essere piu' pagine o piu' facciate dello STESSO documento (es. fronte e retro): considerale INSIEME e unisci le informazioni.
+Le immagini o i PDF forniti possono essere piu' pagine o piu' facciate dello STESSO documento (es. fronte e retro): considerale INSIEME e unisci le informazioni.
 Estrai TUTTI i campi effettivamente presenti e leggibili: leggi con attenzione anche il testo piccolo, la zona MRZ (le righe con i simboli < in fondo a carte d'identita' e passaporti), timbri e retro del documento. Per una carta d'identita'/CIE italiana sono di norma leggibili: cognome e nome, luogo e data di nascita, cittadinanza, numero del documento, Comune/autorita' di rilascio, date di rilascio e scadenza; il codice fiscale e la residenza sono spesso presenti (sul retro o sulla CIE): estraili se visibili. Per patente/passaporto adatta di conseguenza; per una visura camerale estrai denominazione, forma giuridica, sede legale, P.IVA/CF e capitale sociale.
 Restituisci ESCLUSIVAMENTE un oggetto JSON valido (nessun testo prima o dopo, senza markdown, senza recinti) con ESATTAMENTE queste chiavi, tutte come stringhe. Compila ogni campo che riesci a leggere; usa stringa vuota "" solo per i dati realmente assenti o illeggibili. NON inventare MAI valori non presenti nel documento.
 {
@@ -566,10 +579,7 @@ Restituisci ESCLUSIVAMENTE un oggetto JSON valido (nessun testo prima o dopo, se
 }
 Regole ferree: le date (doc_il, doc_scad) SEMPRE in formato AAAA-MM-GG. Non aggiungere chiavi diverse da quelle elencate. Restituisci SOLO il JSON.`;
 
-const content: any[] = immagini.map((im) => ({
-type: "image",
-source: { type: "base64", media_type: im.mediaType as any, data: im.base64 },
-}));
+const content: any[] = buildContentBlocks(documenti);
 content.push({ type: "text", text: istruzioni });
 
 const message = await anthropic.messages.create({
@@ -805,7 +815,7 @@ const AML_ASSIST_PROCEDURA_KEYS = new Set([
 ]);
 
 export async function assistenteCompilazioneAI(
-immagini: Array<{ base64: string; mediaType: string }>,
+documenti: Array<{ base64: string; mediaType: string }>,
 richiesta: string
 ): Promise<{ risposta: string; campi: Record<string, string | boolean>; parti: Array<Record<string, string | boolean>> }> {
 const anthropic = getAnthropicClient();
@@ -866,10 +876,7 @@ ${schemaParteCheckbox}
 
 Regola ferrea: non aggiungere chiavi diverse da quelle elencate sopra, ne' in "procedura" ne' dentro ciascuna parte. Restituisci SOLO il JSON.`;
 
-const content: any[] = immagini.map((im) => ({
-type: "image",
-source: { type: "base64", media_type: im.mediaType as any, data: im.base64 },
-}));
+const content: any[] = buildContentBlocks(documenti);
 content.push({ type: "text", text: istruzioni });
 
 const message = await anthropic.messages.create({
