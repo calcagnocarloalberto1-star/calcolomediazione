@@ -289,7 +289,7 @@ margin-bottom:2cm;
 <script> // ---------- utils ----------
 const $ = id => document.getElementById(id);
 const v = id => ($(id) ? ($(id).value || "").trim() : "");
-const esc = s => (s||"").replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]));
+const esc = s => (s||"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const blank = "____________________";
 const val = id => esc(v(id)) || ('<span style="color:#9aa6b6">'+blank+'</span>');
 const today = () => new Date().toLocaleDateString("it-IT");
@@ -303,7 +303,8 @@ let role = "odm";
 // Chi non ne fa parte lascia il formato generico, che resta quello di default per tutti gli altri utenti
 // del sito. La scelta è personale e resta salvata su questo browser.
 const USA_FORMATO_GENOVA_KEY = "calcolomediazione_aml_formato_genova";
-let usaFormatoGenova = localStorage.getItem(USA_FORMATO_GENOVA_KEY) === "1";
+let usaFormatoGenova = false;
+try{ usaFormatoGenova = localStorage.getItem(USA_FORMATO_GENOVA_KEY) === "1"; } catch(e){ /* storage non disponibile: si prosegue senza persistenza */ }
 // Cronologia delle comunicazioni/aggiornamenti ricevuti dal mediatore in corso di procedura
 // (es. rinvii, nuovi elementi, variazioni comunicate in una sessione successiva alla prima).
 // Resta in memoria per la sola sessione del browser, come il resto del modulo, e viene riportata
@@ -934,7 +935,7 @@ h += goRow([goCkBox("cb_rappr_poteri_rappresentare","Rappresentare la parte nell
 h += goRow([goCkBox("cb_rappr_poteri_proposte","Formulare e ricevere proposte conciliative"), goCkBox("cb_rappr_poteri_disporre","Disporre del diritto controverso")]);
 h += goRow([goCkBox("cb_rappr_poteri_sottoscrivere","Sottoscrivere l'accordo di conciliazione"), goCkBox("cb_rappr_poteri_altro","Altro"+($("cb_rappr_poteri_altro")&&$("cb_rappr_poteri_altro").checked?": "+v("rappr_poteri_altro_txt"):""))]);
 } else {
-h += '<p class="go-note">La parte agisce personalmente; non risulta alcun rappresentante o soggetto autorizzato.</p>';
+h += '<p class="go-note" style="font-family:'+GO_FONT+'">La parte agisce personalmente; non risulta alcun rappresentante o soggetto autorizzato.</p>';
 }
 
 h += goBar("SEZIONE D — PERSONA POLITICAMENTE ESPOSTA (PEP)");
@@ -967,7 +968,7 @@ h += goRow([goCkBox("cb_tecrit_poteri","Poteri di amministrazione o direzione"),
 h += goSub("Fonte documentale utilizzata");
 h += goRow([goCkBox("cb_tefonte_visura","Visura camerale"), goCkBox("cb_tefonte_statuto","Statuto"), goCkBox("cb_tefonte_libro","Libro soci")]);
 h += goRow([goCkBox("cb_tefonte_assetto","Assetto proprietario dichiarato"), goCkBox("cb_tefonte_docsoc","Documentazione societaria"), goCkBox("cb_tefonte_altro","Altro"+($("cb_tefonte_altro")&&$("cb_tefonte_altro").checked?": "+v("tefonte_altro_txt"):""))]);
-h += '<p class="go-note">Aggiungere sezione in caso di più titolari effettivi.</p>';
+h += '<p class="go-note" style="font-family:'+GO_FONT+'">Aggiungere sezione in caso di più titolari effettivi.</p>';
 }
 
 h += goBar("SEZIONE F — NATURA, VALORE E FONDI DELLA PRESTAZIONE");
@@ -996,12 +997,12 @@ if(v("dich_carichi")==="presenti") h += goField("Specificare", v("dich_carichi_d
 h += goRow([goCkBox("cb_dich_privacy","Di aver ricevuto e preso visione dell'informativa sul trattamento dei dati personali (artt. 13-14 Reg. UE 2016/679)")]);
 
 h += goBar("SEZIONE H — DOCUMENTI");
-h += '<p class="go-note">Il dichiarante allega:</p>';
+h += '<p class="go-note" style="font-family:'+GO_FONT+'">Il dichiarante allega:</p>';
 h += goRow([goCkBox("cb_docacq_identita","Documento identità"), goCkBox("cb_docacq_cf","Codice fiscale"), goCkBox("cb_docacq_visura","Visura camerale")]);
 h += goRow([goCkBox("cb_docacq_procalliti","Procura alle liti"), goCkBox("cb_docacq_procspec","Procura sostanziale"), goCkBox("cb_docacq_procnot","Procura notarile")]);
 h += goRow([goCkBox("cb_docacq_statuto","Statuto"), goCkBox("cb_docacq_attocost","Atto costitutivo"), goCkBox("cb_docacq_modulomav","Modulo di Adeguata Verifica")]);
 
-h += '<div class="go-sign"><div>Luogo e Data: '+blank+'</div><div style="margin-top:10px">Firma della parte o del legale rappresentante: '+blank+'</div><div style="margin-top:10px">Firma del procuratore o esecutore: '+blank+'</div></div>';
+h += '<div class="go-sign" style="font-family:'+GO_FONT+'"><div>Luogo e Data: '+blank+'</div><div style="margin-top:10px">Firma della parte o del legale rappresentante: '+blank+'</div><div style="margin-top:10px">Firma del procuratore o esecutore: '+blank+'</div></div>';
 h += goLegendaPEP();
 
 return docBlockGO("mAV", h);
@@ -1155,13 +1156,13 @@ h += goRow([goCkSel("trasm_tipo","non_necessaria","Non necessaria"), goCkSel("tr
 h += goField("Destinatario", v("trasm_destinatario"));
 h += goField("Motivo della trasmissione", v("trasm_motivo"));
 h += goField("Annotazioni riservate", v("trasm_annotazioni"));
-h += '<div class="go-sign"><div>Luogo e data: '+blank+'</div><div style="margin-top:10px">Il Mediatore: '+blank+'</div></div>';
+h += '<div class="go-sign" style="font-family:'+GO_FONT+'"><div>Luogo e data: '+blank+'</div><div style="margin-top:10px">Il Mediatore: '+blank+'</div></div>';
 
 h += goSub("VERIFICA DEL RESPONSABILE DELL'ORGANISMO / RAR");
 h += goField("Data", v("resp_data")?dateIt("resp_data"):"");
 h += goRow([goCkSel("resp_esito","conforme","Conforme"), goCkSel("resp_esito","integrare","Da integrare"), goCkSel("resp_esito","approfondimenti","Necessari ulteriori approfondimenti")]);
 h += goField("Note", v("resp_note"));
-h += '<div class="go-sign"><div>Firma: '+blank+'</div></div>';
+h += '<div class="go-sign" style="font-family:'+GO_FONT+'"><div>Firma: '+blank+'</div></div>';
 
 h += goLegendaRischio();
 
@@ -1384,7 +1385,7 @@ if(typeof renderAggiornamenti === "function") renderAggiornamenti();
 // ricalcolo: un elenco rigenerato mentre l'utente clicca (es. per il cambio di campo che fa perdere
 // il focus a un attimo prima) altrimenti farebbe sparire proprio il pulsante appena cliccato.
 const AML_DATI_KEY = "calcolomediazione_aml_dati";
-const AML_AUTOSAVE_EXCLUDE = new Set(["agg_data","agg_testo","import_dati_file"]);
+const AML_AUTOSAVE_EXCLUDE = new Set(["agg_data","agg_testo","import_dati_file","assist_files","assist_folder"]);
 // Campi della procedura/organismo, condivisi tra tutte le parti: non vengono azzerati da "+ Nuova parte".
 const AML_PROCEDURE_SHARED_IDS = new Set(["odm_nome","odm_iscr","odm_sede","odm_lr","proc_n","proc_data_dep_istanza","proc_data_dep_adesione","proc_data","proc_med","proc_ogg"]);
 let amlAutosaveTimer = null;
@@ -1440,11 +1441,13 @@ const saved = all[procKey] && all[procKey][partyKey];
 if(!saved){ toast("Nessun dato salvato trovato per questa parte."); return; }
 Object.keys(saved.campi||{}).forEach(id=>{
 const el = $(id);
-if(!el) return;
+if(!el || el.type==="file") return;
+try{
 if(el.type==="checkbox") el.checked = !!saved.campi[id];
 else el.value = saved.campi[id];
 el.dispatchEvent(new Event("input",{bubbles:true}));
 el.dispatchEvent(new Event("change",{bubbles:true}));
+}catch(e){ /* campo non ripristinabile: si prosegue con gli altri */ }
 });
 if(saved.role){
 document.querySelectorAll(".role").forEach(r=>r.classList.remove("active"));
@@ -2016,6 +2019,7 @@ function printOne(id){
 const node = $(id).cloneNode(true);
 node.querySelectorAll(".acts").forEach(a=>a.remove());
 const w = window.open("","_blank");
+if(!w){ toast("Il browser ha bloccato la finestra di stampa: consenti i popup per questo sito e riprova."); return; }
 w.document.write('<html><head><title>'+id+'</title><style>body{font-family:Segoe UI,Arial,sans-serif;color:#13161b;padding:24px}table{width:100%;border-collapse:collapse}td{padding:6px 8px;border-bottom:1px solid #eee;vertical-align:top}.k{width:42%;color:#373b40;font-weight:600}.dh{background:none;color:#13161b;padding:6px 0 8px;font-weight:700;font-size:15px;border-bottom:2px solid #a03317}.dc{border:none;padding:10px 0 14px}.legalref{font-size:12px;color:#373b40}.sign{display:flex;justify-content:space-between;margin-top:18px;color:#373b40;font-size:13px}'+PAGE_NUM_CSS+'</style></head><body>'+node.outerHTML+'</body></html>');
 w.document.close(); w.focus(); setTimeout(()=>w.print(),250);
 }
@@ -2051,8 +2055,17 @@ const out = $("out");
 const originale = out.innerHTML;
 out.innerHTML = fascicoloAccumuloBodyHtml();
 document.body.classList.add("print-doc-only");
+const ripristina = ()=>{
+out.innerHTML = originale;
+document.body.classList.remove("print-doc-only");
+window.removeEventListener("afterprint", ripristina);
+};
+window.addEventListener("afterprint", ripristina);
 window.print();
-setTimeout(()=>{ out.innerHTML = originale; document.body.classList.remove("print-doc-only"); }, 500);
+// Rete di sicurezza: alcuni browser non emettono sempre "afterprint" in modo affidabile
+// (es. stampa annullata in certi contesti); un fallback più lungo del precedente evita
+// che il contenuto resti bloccato sul fascicolo stampato se l'evento non arriva mai.
+setTimeout(ripristina, 5000);
 }
 
 function scaricaTutto(){
@@ -2060,7 +2073,7 @@ if(!$("out").innerHTML) genera();
 const css = '<style>body{font-family:Segoe UI,Arial,sans-serif;color:#13161b;max-width:820px;margin:24px auto;padding:0 16px;background:#f4f1ee}.doc{border:none;border-bottom:1px solid #ddd6d1;border-radius:0;margin:0 0 18px;overflow:hidden;background:#fff;page-break-inside:avoid}#mSVR{page-break-before:always;break-before:page}.dh{background:none;color:#13161b;padding:0 0 8px;font-weight:700;font-size:15px;border-bottom:2px solid #a03317}.acts{display:none}.dc{padding:10px 0 14px}.docgroup h4{font-size:14px;color:#861600;border-bottom:1px solid #a03317;padding-bottom:4px;margin:18px 0 2px}.docgroup p{font-size:11.5px;color:#5b6066;margin:0 0 6px}table{width:100%;border-collapse:collapse}td{padding:6px 8px;border-bottom:1px solid #eee;vertical-align:top}.k{width:42%;color:#373b40;font-weight:600}.legalref{font-size:12px;color:#373b40}.sign{display:flex;justify-content:space-between;margin-top:18px;color:#373b40;font-size:13px}h1{color:#a03317;font-size:18px}'+PAGE_NUM_CSS+'</style>';
 const bodyHtml = fascicoloAccumuloBodyHtml();
 const nParti = fascicoloAccumuloDellaProcedura().length || 1;
-const html = '<!doctype html><html lang="it"><head><meta charset="utf-8"><title>Modelli antiriciclaggio — '+(v("proc_n")||"procedura")+'</title>'+css+'</head><body><h1>Modelli antiriciclaggio — fascicolo riservato</h1><p style="color:#5b6675;font-size:13px">'+esc(v("odm_nome"))+' · procedura '+esc(v("proc_n"))+' · '+nParti+' part'+(nParti===1?'e':'i')+' · generato il '+today()+'</p>'+bodyHtml+'</body></html>';
+const html = '<!doctype html><html lang="it"><head><meta charset="utf-8"><title>Modelli antiriciclaggio — '+esc(v("proc_n")||"procedura")+'</title>'+css+'</head><body><h1>Modelli antiriciclaggio — fascicolo riservato</h1><p style="color:#5b6675;font-size:13px">'+esc(v("odm_nome"))+' · procedura '+esc(v("proc_n"))+' · '+nParti+' part'+(nParti===1?'e':'i')+' · generato il '+today()+'</p>'+bodyHtml+'</body></html>';
 const blob = new Blob([html],{type:"text/html"});
 const a = document.createElement("a");
 a.href = URL.createObjectURL(blob);
@@ -2095,7 +2108,8 @@ wrap.querySelectorAll(".dh").forEach(el=>{
 el.setAttribute("style","font-weight:bold;font-size:15px;color:#13161b;border-bottom:2px solid #a03317;padding:0 0 8px 0;margin:0;");
 });
 wrap.querySelectorAll(".dc").forEach(el=>{
-el.setAttribute("style","padding:10px 0 14px 0;");
+const fontActuale = (el.getAttribute("style")||"").match(/font-family:[^;"]+/);
+el.setAttribute("style","padding:10px 0 14px 0;"+(fontActuale ? fontActuale[0]+";" : ""));
 });
 wrap.querySelectorAll(".docgroup h4").forEach(el=>{
 el.setAttribute("style","font-weight:bold;font-size:14px;color:#861600;border-bottom:1px solid #a03317;padding-bottom:4px;margin:18px 0 2px 0;");
@@ -2136,7 +2150,7 @@ const mso = '<!--[if gte mso 9]><xml><w:WordDocument><w:View>Print</w:View><w:Zo
 const bodyStyle = 'font-family:Segoe UI,Arial,sans-serif;color:#13161b;max-width:820px;margin:24px auto;padding:0 16px;background:#ffffff';
 const bodyHtml = wordizzaHtml(fascicoloAccumuloBodyHtml());
 const nParti = fascicoloAccumuloDellaProcedura().length || 1;
-const html = '<!doctype html><html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40" lang="it"><head><meta charset="utf-8"><title>Modelli antiriciclaggio — '+(v("proc_n")||"procedura")+'</title>'+mso+'</head><body style="'+bodyStyle+'"><h1 style="color:#a03317;font-size:18px;margin:0 0 4px">Modelli antiriciclaggio — fascicolo riservato</h1><p style="color:#5b6675;font-size:13px">'+esc(v("odm_nome"))+' · procedura '+esc(v("proc_n"))+' · '+nParti+' part'+(nParti===1?'e':'i')+' · generato il '+today()+'</p>'+bodyHtml+'</body></html>';
+const html = '<!doctype html><html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40" lang="it"><head><meta charset="utf-8"><title>Modelli antiriciclaggio — '+esc(v("proc_n")||"procedura")+'</title>'+mso+'</head><body style="'+bodyStyle+'"><h1 style="color:#a03317;font-size:18px;margin:0 0 4px">Modelli antiriciclaggio — fascicolo riservato</h1><p style="color:#5b6675;font-size:13px">'+esc(v("odm_nome"))+' · procedura '+esc(v("proc_n"))+' · '+nParti+' part'+(nParti===1?'e':'i')+' · generato il '+today()+'</p>'+bodyHtml+'</body></html>';
 const blob = new Blob([' '+html],{type:"application/msword"});
 const a = document.createElement("a");
 a.href = URL.createObjectURL(blob);
@@ -2359,6 +2373,7 @@ h += title('CHECKLIST — Contenuto minimo del fascicolo riservato','🔒 Riserv
 ['Informativa AML/privacy consegnata e sottoscritta','Copia documento d\'identità di ciascuna parte e dell\'esecutore','Dichiarazione titolare effettivo per le persone giuridiche','Modulo di Adeguata Verifica (Sez. A-H) datato e sottoscritto','Scheda di valutazione del rischio (anche se basso) sottoscritta','Dichiarazione del cliente ex art. 22','Foglio di annotazione AML allegato al fascicolo','Tracciabilità dei pagamenti (rispetto art. 49)','Eventuale Modulo SI-AML/01 e prova della SOS (separati e riservati)','Attestati di formazione aggiornati','Conservazione decennale, separata dal fascicolo ordinario'].forEach(x => h += ck(x));
 const css = '<style>body{font-family:Segoe UI,Arial,sans-serif;color:#13161b;max-width:780px;margin:20px auto;padding:0 14px}h1{color:#a03317;font-size:18px;margin-bottom:4px}button{font-size:14px;padding:8px 14px;border:1px solid #a03317;background:#a03317;color:#fff;border-radius:8px;cursor:pointer}@media print{.np{display:none}}'+PAGE_NUM_CSS+'</style>';
 const w = window.open('','_blank');
+if(!w){ toast("Il browser ha bloccato la finestra: consenti i popup per questo sito e riprova."); return; }
 w.document.write('<!doctype html><html lang="it"><head><meta charset="utf-8"><title>Moduli antiriciclaggio in bianco</title>'+css+'</head><body><h1>Moduli antiriciclaggio in bianco</h1><p style="font-size:12px;color:#555">Da stampare e compilare a mano. Inserire nel fascicolo riservato dell\'Organismo (conservazione 10 anni, art. 31 D.Lgs. 231/2007).</p>'+h+'<div class="np" style="margin:20px 0"><button onclick="window.print()">🖨️ Stampa</button></div></body></html>');
 w.document.close(); w.focus();
 }
