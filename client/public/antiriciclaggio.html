@@ -1626,13 +1626,71 @@ a.click(); URL.revokeObjectURL(a.href);
 // Word lo apra e lo tratti come un documento Word, mantenendo titoli, tabelle e testo. Utile perché il
 // fascicolo, comprese le eventuali comunicazioni del mediatore registrate qui sopra, deve restare
 // comunque scaricabile e modificabile in Word e non solo consultabile a schermo.
+// Word (Microsoft/LibreOffice) legge i file .doc con un filtro HTML molto meno affidabile di un
+// browser: le regole CSS basate su classi (".dh", ".k", ".sign", ecc.) nel <style> spesso vengono
+// ignorate su elementi generici come <div> o <td>, anche se lo stesso foglio funziona perfettamente
+// a schermo. L'unico modo per avere una resa coerente in Word è scrivere lo stile direttamente
+// nell'attributo style="" di ciascun elemento: questa funzione prende l'HTML già generato (identico
+// a quello mostrato a schermo e usato per l'export .html) e lo "traduce" in versione con stili inline,
+// sostituendo anche le righe firma basate su flexbox (non supportato da Word) con una vera tabella
+// a due colonne, cosi' "Luogo e data" e "Firma" restano affiancati anche in Word.
+function wordizzaHtml(bodyHtml){
+const wrap = document.createElement("div");
+wrap.innerHTML = bodyHtml;
+
+wrap.querySelectorAll(".doc").forEach(el=>{
+el.querySelectorAll(".acts").forEach(a=>a.remove());
+el.setAttribute("style","border:none;border-bottom:1px solid #ddd6d1;margin:0 0 18px 0;background:#ffffff;");
+});
+wrap.querySelectorAll("#mSVR").forEach(el=>{
+el.setAttribute("style", (el.getAttribute("style")||"") + ";page-break-before:always;");
+});
+wrap.querySelectorAll(".dh").forEach(el=>{
+el.setAttribute("style","font-weight:bold;font-size:15px;color:#13161b;border-bottom:2px solid #a03317;padding:0 0 8px 0;margin:0;");
+});
+wrap.querySelectorAll(".dc").forEach(el=>{
+el.setAttribute("style","padding:10px 0 14px 0;");
+});
+wrap.querySelectorAll(".docgroup h4").forEach(el=>{
+el.setAttribute("style","font-weight:bold;font-size:14px;color:#861600;border-bottom:1px solid #a03317;padding-bottom:4px;margin:18px 0 2px 0;");
+});
+wrap.querySelectorAll(".docgroup p").forEach(el=>{
+el.setAttribute("style","font-size:11.5px;color:#5b6066;margin:0 0 6px 0;");
+});
+wrap.querySelectorAll("table").forEach(el=>{
+el.setAttribute("style","width:100%;border-collapse:collapse;");
+});
+wrap.querySelectorAll("td.k").forEach(el=>{
+el.setAttribute("style","width:42%;color:#373b40;font-weight:bold;padding:6px 8px;border-bottom:1px solid #eeeeee;vertical-align:top;");
+});
+wrap.querySelectorAll("td:not(.k)").forEach(el=>{
+el.setAttribute("style","padding:6px 8px;border-bottom:1px solid #eeeeee;vertical-align:top;");
+});
+wrap.querySelectorAll(".legalref").forEach(el=>{
+el.setAttribute("style","font-size:12px;color:#373b40;");
+});
+wrap.querySelectorAll("h1").forEach(el=>{
+el.setAttribute("style","color:#a03317;font-size:18px;margin:0 0 4px;");
+});
+wrap.querySelectorAll(".sign").forEach(el=>{
+const celle = Array.from(el.children).map(c=>c.innerHTML);
+while(celle.length<2) celle.push("&nbsp;");
+const tavola = document.createElement("table");
+tavola.setAttribute("style","width:100%;border-collapse:collapse;margin-top:18px;");
+tavola.innerHTML = "<tr><td style=\"width:50%;color:#373b40;font-size:13px;padding:0;border:none;vertical-align:top;\">"+celle[0]+"</td><td style=\"width:50%;color:#373b40;font-size:13px;padding:0;border:none;vertical-align:top;\">"+celle[1]+"</td></tr>";
+el.replaceWith(tavola);
+});
+
+return wrap.innerHTML;
+}
+
 function scaricaWord(){
 if(!$("out").innerHTML) genera();
-const css = '<style>body{font-family:Segoe UI,Arial,sans-serif;color:#13161b;max-width:820px;margin:24px auto;padding:0 16px;background:#f4f1ee}.doc{border:none;border-bottom:1px solid #ddd6d1;border-radius:0;margin:0 0 18px;overflow:hidden;background:#fff;page-break-inside:avoid}#mSVR{page-break-before:always;break-before:page}.dh{background:none;color:#13161b;padding:0 0 8px;font-weight:700;font-size:15px;border-bottom:2px solid #a03317}.acts{display:none}.dc{padding:10px 0 14px}.docgroup h4{font-size:14px;color:#861600;border-bottom:1px solid #a03317;padding-bottom:4px;margin:18px 0 2px}.docgroup p{font-size:11.5px;color:#5b6066;margin:0 0 6px}table{width:100%;border-collapse:collapse}td{padding:6px 8px;border-bottom:1px solid #eee;vertical-align:top}.k{width:42%;color:#373b40;font-weight:600}.legalref{font-size:12px;color:#373b40}.sign{display:flex;justify-content:space-between;margin-top:18px;color:#373b40;font-size:13px}h1{color:#a03317;font-size:18px}</style>';
 const mso = '<!--[if gte mso 9]><xml><w:WordDocument><w:View>Print</w:View><w:Zoom>100</w:Zoom><w:DoNotOptimizeForBrowser/></w:WordDocument></xml><![endif]-->';
-const bodyHtml = fascicoloAccumuloBodyHtml();
+const bodyStyle = 'font-family:Segoe UI,Arial,sans-serif;color:#13161b;max-width:820px;margin:24px auto;padding:0 16px;background:#ffffff';
+const bodyHtml = wordizzaHtml(fascicoloAccumuloBodyHtml());
 const nParti = fascicoloAccumuloDellaProcedura().length || 1;
-const html = '<!doctype html><html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40" lang="it"><head><meta charset="utf-8"><title>Modelli antiriciclaggio — '+(v("proc_n")||"procedura")+'</title>'+mso+css+'</head><body><h1>Modelli antiriciclaggio — fascicolo riservato</h1><p style="color:#5b6675;font-size:13px">'+esc(v("odm_nome"))+' · procedura '+esc(v("proc_n"))+' · '+nParti+' part'+(nParti===1?'e':'i')+' · generato il '+today()+'</p>'+bodyHtml+'</body></html>';
+const html = '<!doctype html><html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40" lang="it"><head><meta charset="utf-8"><title>Modelli antiriciclaggio — '+(v("proc_n")||"procedura")+'</title>'+mso+'</head><body style="'+bodyStyle+'"><h1 style="color:#a03317;font-size:18px;margin:0 0 4px">Modelli antiriciclaggio — fascicolo riservato</h1><p style="color:#5b6675;font-size:13px">'+esc(v("odm_nome"))+' · procedura '+esc(v("proc_n"))+' · '+nParti+' part'+(nParti===1?'e':'i')+' · generato il '+today()+'</p>'+bodyHtml+'</body></html>';
 const blob = new Blob([' '+html],{type:"application/msword"});
 const a = document.createElement("a");
 a.href = URL.createObjectURL(blob);
