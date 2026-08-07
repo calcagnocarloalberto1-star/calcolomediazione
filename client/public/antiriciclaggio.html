@@ -53,7 +53,7 @@ button{font-family:inherit;font-size:14px;font-weight:600;border-radius:9px;bord
 .btn-ghost:hover{border-color:var(--blue)}
 .riskbar{display:flex;align-items:center;gap:10px;margin-top:8px;font-size:13.5px}
 .badge{font-weight:700;padding:3px 12px;border-radius:999px;color:#fff}
-.b-basso{background:var(--ok)} .b-medio{background:var(--warn);color:#3a2e00} .b-alto{background:var(--bad)}
+.b-basso{background:var(--ok)} .b-medio{background:var(--warn);color:#3a2e00} .b-alto{background:var(--bad)} .b-nd{background:#8a8f98}
 .out{margin-top:14px;display:none}
 .doc{border:1px solid var(--line);border-left:4px solid var(--blue);border-radius:12px;background:#fff;padding:0;margin:16px 0;overflow:hidden;box-shadow:0 2px 10px rgba(19,22,27,.05)}
 .doc .dh{display:flex;align-items:center;gap:10px;background:#faf6f4;color:var(--navy);padding:13px 16px;font-weight:700;font-size:14.5px;border-bottom:1px solid var(--line)}
@@ -209,6 +209,8 @@ margin-bottom:2cm;
 <h3 class="grouph">Procedure con dati salvati su questo browser</h3>
 <p class="sub">Se hai già iniziato a compilare questa scheda per una procedura in una sessione precedente, la trovi qui: apri per richiamarne il numero e proporre il caricamento dei dati salvati.</p>
 <div id="procedure_salvate_lista"></div>
+<p class="sub" style="margin-top:10px">Su un computer condiviso (es. dello studio), chiunque usi questo stesso browser può vedere l'elenco sopra. Per cancellare tutto:</p>
+<button type="button" class="btn-ghost" style="color:#a03317;border-color:#a03317" onclick="amlCancellaTuttiIDati()">🗑️ Cancella tutti i dati salvati su questo browser</button>
 </div>
 <h3 class="grouph">1 — Dati del procedimento</h3><div class="grid"><div class="field"><label>Denominazione Organismo</label><div class="hint">Nome dell'Organismo di mediazione (ODM) presso cui pende la procedura.</div><input id="odm_nome" type="text" placeholder="Organismo di Mediazione ..." ></div><div class="field"><label>N. iscrizione registro Min. Giustizia</label><div class="hint">Numero di iscrizione dell'ODM nel registro tenuto dal Ministero della Giustizia.</div><input id="odm_iscr" type="text" placeholder="n. ..." ></div><div class="field"><label>Sede</label><div class="hint">Indirizzo della sede dell'Organismo.</div><input id="odm_sede" type="text" placeholder="Via ..., Città" ></div><div class="field"><label>Legale rappresentante</label><div class="hint">Nome e cognome del legale rappresentante dell'Organismo.</div><input id="odm_lr" type="text" placeholder="Nome Cognome" ></div><div class="field"><label>N. procedura / R.G. mediazione</label><div class="hint">Numero identificativo della procedura assegnato dall'Organismo.</div><input id="proc_n" type="text" placeholder="n. .../20.." ></div></div>
 <div class="field" style="grid-column:1/-1;background:#f6f8ff;border:1px solid #c7d6f5;border-radius:8px;padding:10px 12px;margin:8px 0">
@@ -348,6 +350,13 @@ syncToggles();
 // ---------- rischio (suggerimento automatico orientativo) ----------
 let riskLivelloManual = false;
 let avTipoManual = false;
+// Diventa vero alla prima interazione dell'utente con uno dei campi che
+// concorrono al calcolo del rischio (o al caricamento di dati salvati/estratti
+// per questa parte). Serve a distinguere "rischio valutato come basso" da
+// "nessun dato ancora inserito": senza questa distinzione, un fascicolo
+// generato a campi vuoti risulterebbe indistinguibile da uno effettivamente
+// valutato a basso rischio (badge verde "BASSO" in entrambi i casi).
+let rischioValutato = false;
 $("risk_livello").addEventListener("change",()=>{ riskLivelloManual = true; });
 $("av_tipo").addEventListener("change",()=>{ avTipoManual = true; });
 
@@ -369,21 +378,22 @@ if(v("anomalie_presenti")==="si" && v("anomalie_spiegate")==="no") s += 2;
 if(["trust","estera"].includes(v("p_natgiur"))) s += 1;
 
 let lvl, cls, note;
-if(s===0){lvl="basso";cls="b-basso";note="(monitoraggio ordinario; conservazione della scheda)";}
+if(!rischioValutato){lvl="nd";cls="b-nd";note="(nessun dato ancora inserito per la valutazione del rischio: compilare i campi delle sezioni 7-11)";}
+else if(s===0){lvl="basso";cls="b-basso";note="(monitoraggio ordinario; conservazione della scheda)";}
 else if(s<=2){lvl="medio";cls="b-medio";note="(intensificazione delle verifiche e monitoraggio)";}
 else {lvl="alto";cls="b-alto";note="(misure rafforzate; valutare la segnalazione SOS alla UIF)";}
-const b=$("riskBadge"); b.textContent=lvl.toUpperCase(); b.className="badge "+cls; $("riskNote").textContent=note;
+const b=$("riskBadge"); b.textContent=(lvl==="nd"?"DA VALUTARE":lvl.toUpperCase()); b.className="badge "+cls; $("riskNote").textContent=note;
 
-if(!riskLivelloManual) $("risk_livello").value = lvl;
+if(!riskLivelloManual) $("risk_livello").value = (lvl==="nd" ? "basso" : lvl);
 if(!avTipoManual){
 const rl = v("risk_livello");
 $("av_tipo").value = rl==="basso" ? "semplificata" : (rl==="alto" ? "rafforzata" : "ordinaria");
 }
-return v("risk_livello").toUpperCase();
+return lvl==="nd" ? "DA VALUTARE (dati insufficienti)" : v("risk_livello").toUpperCase();
 }
 ["p_area","pep_parte","pep_te","pep_rappr","pep_esito","te_esito","anomalie_presenti","anomalie_spiegate","p_natgiur","risk_livello"]
-.forEach(id=>$(id).addEventListener("change",calcRisk));
-document.querySelectorAll('[id^="cb_an_"]').forEach(cb=>cb.addEventListener("change",calcRisk));
+.forEach(id=>$(id).addEventListener("change",()=>{ rischioValutato = true; calcRisk(); }));
+document.querySelectorAll('[id^="cb_an_"]').forEach(cb=>cb.addEventListener("change",()=>{ rischioValutato = true; calcRisk(); }));
 calcRisk();
 (function(){
 const cb = $("usa_formato_genova");
@@ -757,7 +767,13 @@ kv([
 }
 function modAnnotazione(){
 const lvl = calcRisk();
-const esito = lvl==="ALTO" ? "anomalia rilevata → redatto Modulo SI-AML/01 e trasmesso al RAR" : "nessuna anomalia rilevata";
+// Nota: questo campo descrive solo l'esito del calcolo automatico del rischio,
+// non attesta che il Modulo SI-AML/01 sia stato effettivamente redatto o
+// trasmesso al RAR — quello resta un atto separato, da compiere e verbalizzare
+// a parte (☐/☑ nel modulo cartaceo "Moduli in bianco").
+const esito = lvl==="ALTO" ? "fattore di rischio elevato rilevato dal calcolo automatico → valutare la redazione del Modulo SI-AML/01 e la trasmissione al RAR"
+: lvl.indexOf("DA VALUTARE")===0 ? "valutazione del rischio non ancora effettuata (compilare le sezioni 7-11 della Scheda rischio)"
+: "nessuna anomalia rilevata dal calcolo automatico";
 return docBlock("m6","FOGLIO DI ANNOTAZIONE AML — allegato riservato al fascicolo (NON inserire nel verbale)",
 kv([
 ["N. procedura / parti", val("proc_n")+" — "+val("p_nome")],
@@ -1174,7 +1190,18 @@ return docBlockGO("mSVR", h);
 // che lo scarico/la stampa finali possano includere TUTTE le parti trattate finora
 // (non solo l'ultima): senza questo, ogni "Genera" sovrascriveva il precedente e allo
 // scarico finale compariva solo l'ultima parte applicata.
-let fascicoloAccumulo = {};
+// Salvato su questo browser (come gli altri dati AML) cosi' non si perde se la pagina
+// si ricarica per errore prima di "Scarica tutto"/"Stampa tutto": senza questo, un
+// aggiornamento involontario della pagina dopo aver generato i modelli di piu' parti
+// obbligava a rigenerarli tutti da capo per ricostruire il fascicolo combinato.
+const AML_FASCICOLO_KEY = "calcolomediazione_aml_fascicolo";
+function fascicoloAccumuloLoadAll(){
+try{ const raw = localStorage.getItem(AML_FASCICOLO_KEY); return raw ? JSON.parse(raw) : {}; } catch(e){ return {}; }
+}
+function fascicoloAccumuloSaveAll(){
+try{ localStorage.setItem(AML_FASCICOLO_KEY, JSON.stringify(fascicoloAccumulo)); } catch(e){ /* storage non disponibile: si prosegue senza persistenza */ }
+}
+let fascicoloAccumulo = fascicoloAccumuloLoadAll();
 
 function fascicoloAccumuloChiave(procKey, partyKey){ return procKey + "||" + partyKey; }
 
@@ -1185,7 +1212,7 @@ return Object.values(fascicoloAccumulo)
 .sort((a,b) => a.ordine - b.ordine);
 }
 
-let fascicoloAccumuloContatore = 0;
+let fascicoloAccumuloContatore = Object.values(fascicoloAccumulo).reduce((max,e)=>Math.max(max,(e&&typeof e.ordine==="number"?e.ordine:-1)+1),0);
 
 function genera(){
 const out = $("out");
@@ -1217,7 +1244,15 @@ label: partyKey + (ruoloLbl ? " — " + ruoloLbl : ""),
 html: html,
 ordine: esistente ? esistente.ordine : (fascicoloAccumuloContatore++)
 };
+fascicoloAccumuloSaveAll();
 }
+// Avviso non bloccante: lo strumento consente volutamente di generare (e stampare)
+// modelli parzialmente compilati, da completare a mano — quindi qui non si blocca
+// la generazione, ma si segnala se mancano i due dati identificativi essenziali,
+// che altrimenti restano un placeholder in bianco in tutti i documenti generati.
+if(!procKey && partyKey==="(parte senza nome)") toast("Attenzione: numero di procedura e nome della parte non compilati — restano in bianco nei documenti generati.");
+else if(!procKey) toast("Attenzione: numero di procedura non compilato — resta in bianco nei documenti generati.");
+else if(partyKey==="(parte senza nome)") toast("Attenzione: nome/denominazione della parte non compilato — resta in bianco nei documenti generati.");
 }
 
 function reset(){
@@ -1231,11 +1266,13 @@ role = "odm";
 document.querySelectorAll(".role").forEach(r=>r.classList.remove("active"));
 const odmCard = document.querySelector('.role[data-role="odm"]');
 if(odmCard) odmCard.classList.add("active");
-riskLivelloManual = false; avTipoManual = false;
+riskLivelloManual = false; avTipoManual = false; rischioValutato = false;
+amlPartyKeyIniziale = amlPartyKey(); amlNomeAvvisoUltimo = null;
 syncToggles();
 $("out").style.display="none"; $("out").innerHTML="";
 fascicoloAccumulo = {};
 fascicoloAccumuloContatore = 0;
+fascicoloAccumuloSaveAll();
 calcRisk();
 mediatoreLog = [];
 if(typeof renderAggiornamenti === "function") renderAggiornamenti();
@@ -1390,6 +1427,34 @@ const AML_AUTOSAVE_EXCLUDE = new Set(["agg_data","agg_testo","import_dati_file",
 const AML_PROCEDURE_SHARED_IDS = new Set(["odm_nome","odm_iscr","odm_sede","odm_lr","proc_n","proc_data_dep_istanza","proc_data_dep_adesione","proc_data","proc_med","proc_ogg"]);
 let amlAutosaveTimer = null;
 
+// Avviso di omonimia: il salvataggio automatico usa il nome/denominazione della
+// parte come chiave. Se due parti diverse della stessa procedura hanno (o
+// finiscono per avere, anche per un refuso) lo stesso nome, la seconda
+// sovrascrive silenziosamente i dati salvati della prima. "amlPartyKeyIniziale"
+// tiene traccia del nome con cui si è iniziata la compilazione di QUESTA parte,
+// per poter avvisare se il nome digitato coincide con quello di un'altra parte
+// già salvata per la stessa procedura.
+let amlPartyKeyIniziale = amlPartyKey();
+let amlNomeAvvisoTimer = null;
+let amlNomeAvvisoUltimo = null;
+if($("p_nome")){
+$("p_nome").addEventListener("input", ()=>{
+clearTimeout(amlNomeAvvisoTimer);
+amlNomeAvvisoTimer = setTimeout(()=>{
+const procKey = amlProcKey();
+const partyKey = amlPartyKey();
+if(!procKey || partyKey === amlPartyKeyIniziale){ amlNomeAvvisoUltimo = null; return; }
+const parti = amlDatiLoadAll()[procKey] || {};
+if(parti[partyKey] && partyKey !== amlNomeAvvisoUltimo){
+amlNomeAvvisoUltimo = partyKey;
+toast("Attenzione: esiste già una parte salvata con questo nome per la procedura n. " + procKey + ". Continuando, al prossimo salvataggio automatico i suoi dati verranno sovrascritti. Se si tratta di due persone diverse, usa un nome che le distingua (es. un'iniziale in più).");
+} else if(!parti[partyKey]){
+amlNomeAvvisoUltimo = null;
+}
+}, 700);
+});
+}
+
 function amlDatiLoadAll(){
 try{ const raw = localStorage.getItem(AML_DATI_KEY); return raw ? JSON.parse(raw) : {}; } catch(e){ return {}; }
 }
@@ -1439,6 +1504,7 @@ function amlDatiCarica(procKey, partyKey){
 const all = amlDatiLoadAll();
 const saved = all[procKey] && all[procKey][partyKey];
 if(!saved){ toast("Nessun dato salvato trovato per questa parte."); return; }
+amlPartyKeyIniziale = partyKey; amlNomeAvvisoUltimo = null;
 Object.keys(saved.campi||{}).forEach(id=>{
 const el = $(id);
 if(!el || el.type==="file") return;
@@ -1539,6 +1605,8 @@ const procKey = amlProcKey();
 if(!procKey){ toast("Inserisci prima il numero di procedura."); return; }
 if(!confirm("Verranno azzerati i campi relativi alla parte attuale (identificazione, titolare effettivo, PEP, operazione, rischio, dichiarazioni), mantenendo i dati della procedura già inseriti (organismo, numero, date, mediatore). Salva prima eventuali modifiche non ancora salvate. Continuare?")) return;
 amlClearPartyFields();
+rischioValutato = false;
+amlPartyKeyIniziale = amlPartyKey(); amlNomeAvvisoUltimo = null;
 syncToggles();
 calcRisk();
 renderStorico();
@@ -1609,6 +1677,20 @@ amlDatiSaveAll(all);
 renderDatiSuggerimento();
 renderProcedureSalvate();
 toast("Dati compilati cancellati per questa parte.");
+}
+
+function amlCancellaTuttiIDati(){
+if(!confirm("Cancellare TUTTI i dati salvati su questo browser da questo strumento — tutte le procedure, tutte le parti, storico delle generazioni e comunicazioni del mediatore? Il fascicolo mostrato ora a schermo non viene toccato finché non ricarichi la pagina, ma tutto ciò che è salvato per riprendere in seguito verrà perso. L'operazione non è reversibile.")) return;
+try{
+localStorage.removeItem(AML_DATI_KEY);
+localStorage.removeItem(AML_STORICO_KEY);
+localStorage.removeItem(AML_MEDLOG_KEY);
+localStorage.removeItem(AML_FASCICOLO_KEY);
+}catch(e){ /* storage non disponibile */ }
+renderDatiSuggerimento();
+renderProcedureSalvate();
+if(typeof renderStorico === "function") renderStorico();
+toast("Tutti i dati salvati su questo browser sono stati cancellati.");
 }
 
 function renderAggiornamenti(){
