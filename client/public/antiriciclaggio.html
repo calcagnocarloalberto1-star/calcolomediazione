@@ -828,7 +828,14 @@ return '<div style="font-size:12.5px;margin:4px 0;line-height:1.8;font-family:'+
 }
 function goField(label, value){
 const has = value && String(value).trim();
-return '<div style="font-size:12.5px;margin:4px 0;line-height:1.5;font-family:'+GO_FONT+'"><span style="font-weight:bold">'+esc(label)+':</span> '+(has?esc(value):'<span style="border-bottom:1px solid #999;display:inline-block;min-width:160px">&nbsp;</span>')+'</div>';
+// Nota: il valore vuoto usa lo stesso segnaposto testuale "blank" (trattino basso
+// ripetuto) impiegato nel resto del documento (vedi val()), non un CSS a base di
+// border-bottom/display:inline-block/min-width su uno <span> vuoto. Word, aprendo
+// l'HTML esportato, non supporta quelle proprietà CSS sugli span e collassa la riga
+// vuota a un trattino appena visibile sotto il singolo spazio non-interrompibile,
+// facendo sembrare il modulo "non compilato" anche quando i dati inseriti altrove
+// sono corretti. Il segnaposto testuale è semplice testo: sopravvive sempre.
+return '<div style="font-size:12.5px;margin:4px 0;line-height:1.5;font-family:'+GO_FONT+'"><span style="font-weight:bold">'+esc(label)+':</span> '+(has?esc(value):'<span style="color:#9aa6b6">'+blank+'</span>')+'</div>';
 }
 function goNote(text){
 return '<p style="font-size:12px;color:#555555;font-style:italic;font-family:'+GO_FONT+'">'+esc(text)+'</p>';
