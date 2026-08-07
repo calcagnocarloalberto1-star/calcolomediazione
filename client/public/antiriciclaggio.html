@@ -126,6 +126,19 @@ tendina e le caselle) e lascia visibili solo i modelli generati in #out. Senza q
 stampa anche l'intero modulo (decine di campi vuoti), gonfiando inutilmente il numero di pagine. */
 body.print-doc-only .body>*:not(#out){display:none!important}
 }
+/* Sostituisce l'intestazione/piè di pagina che il browser aggiunge di default in stampa (titolo,
+data, indirizzo, "1/5" in basso a destra) con un semplice numero di pagina centrato: senza questa
+regola, quando la pagina viene stampata da una finestra popup (Stampa singola, moduli in bianco) il
+browser mostra "about:blank" al posto dell'indirizzo, perché quelle finestre non hanno un URL vero. */
+@page{
+margin-bottom:2cm;
+@top-left{content:""}
+@top-center{content:""}
+@top-right{content:""}
+@bottom-left{content:""}
+@bottom-center{content:"Pag. " counter(page) " di " counter(pages);font-size:10px;color:#666666}
+@bottom-right{content:""}
+}
 </style>
 </head>
 <body>
@@ -804,7 +817,7 @@ function goNote(text){
 return '<p style="font-size:12px;color:#555555;font-style:italic;font-family:'+GO_FONT+'">'+esc(text)+'</p>';
 }
 function goHeader(){
-return '<div style="display:flex;align-items:center;margin-bottom:4px"><img src="'+LOGO_GENOVA_B64+'" alt="Organismo di Mediazione — Ordine degli Avvocati di Genova" style="height:38px"></div>'+
+return '<div style="display:flex;align-items:center;justify-content:center;margin-bottom:4px"><img src="'+LOGO_GENOVA_B64+'" alt="Organismo di Mediazione — Ordine degli Avvocati di Genova" style="height:38px"></div>'+
 '<p style="font-weight:bold;font-size:11px;text-align:center;margin:2px 0 14px;font-family:'+GO_FONT+'">Organismo di Mediazione aut. Ministero della Giustizia — P.D.G. 14.3.2011 reg. 172</p>';
 }
 function goTitle(title, subtitle){
@@ -1993,11 +2006,17 @@ assistSetStatus("");
 assistRecognized = [];
 }
 
+// Queste finestre di stampa sono popup aperti su "about:blank" (nessun URL vero): senza questa
+// regola @page, l'intestazione/piè di pagina che il browser aggiunge di default in stampa
+// mostrerebbe "about:blank" al posto dell'indirizzo. La sostituiamo con un numero di pagina
+// centrato in fondo, senza null'altro (vedi anche il blocco @page nel <style> principale della
+// pagina, usato invece da "Stampa tutto").
+const PAGE_NUM_CSS = '@page{margin-bottom:2cm;@top-left{content:""}@top-center{content:""}@top-right{content:""}@bottom-left{content:""}@bottom-center{content:"Pag. " counter(page) " di " counter(pages);font-size:10px;color:#666666}@bottom-right{content:""}}';
 function printOne(id){
 const node = $(id).cloneNode(true);
 node.querySelectorAll(".acts").forEach(a=>a.remove());
 const w = window.open("","_blank");
-w.document.write('<html><head><title>'+id+'</title><style>body{font-family:Segoe UI,Arial,sans-serif;color:#13161b;padding:24px}table{width:100%;border-collapse:collapse}td{padding:6px 8px;border-bottom:1px solid #eee;vertical-align:top}.k{width:42%;color:#373b40;font-weight:600}.dh{background:none;color:#13161b;padding:6px 0 8px;font-weight:700;font-size:15px;border-bottom:2px solid #a03317}.dc{border:none;padding:10px 0 14px}.legalref{font-size:12px;color:#373b40}.sign{display:flex;justify-content:space-between;margin-top:18px;color:#373b40;font-size:13px}</style></head><body>'+node.outerHTML+'</body></html>');
+w.document.write('<html><head><title>'+id+'</title><style>body{font-family:Segoe UI,Arial,sans-serif;color:#13161b;padding:24px}table{width:100%;border-collapse:collapse}td{padding:6px 8px;border-bottom:1px solid #eee;vertical-align:top}.k{width:42%;color:#373b40;font-weight:600}.dh{background:none;color:#13161b;padding:6px 0 8px;font-weight:700;font-size:15px;border-bottom:2px solid #a03317}.dc{border:none;padding:10px 0 14px}.legalref{font-size:12px;color:#373b40}.sign{display:flex;justify-content:space-between;margin-top:18px;color:#373b40;font-size:13px}'+PAGE_NUM_CSS+'</style></head><body>'+node.outerHTML+'</body></html>');
 w.document.close(); w.focus(); setTimeout(()=>w.print(),250);
 }
 function copyOne(id){
@@ -2038,7 +2057,7 @@ setTimeout(()=>{ out.innerHTML = originale; document.body.classList.remove("prin
 
 function scaricaTutto(){
 if(!$("out").innerHTML) genera();
-const css = '<style>body{font-family:Segoe UI,Arial,sans-serif;color:#13161b;max-width:820px;margin:24px auto;padding:0 16px;background:#f4f1ee}.doc{border:none;border-bottom:1px solid #ddd6d1;border-radius:0;margin:0 0 18px;overflow:hidden;background:#fff;page-break-inside:avoid}#mSVR{page-break-before:always;break-before:page}.dh{background:none;color:#13161b;padding:0 0 8px;font-weight:700;font-size:15px;border-bottom:2px solid #a03317}.acts{display:none}.dc{padding:10px 0 14px}.docgroup h4{font-size:14px;color:#861600;border-bottom:1px solid #a03317;padding-bottom:4px;margin:18px 0 2px}.docgroup p{font-size:11.5px;color:#5b6066;margin:0 0 6px}table{width:100%;border-collapse:collapse}td{padding:6px 8px;border-bottom:1px solid #eee;vertical-align:top}.k{width:42%;color:#373b40;font-weight:600}.legalref{font-size:12px;color:#373b40}.sign{display:flex;justify-content:space-between;margin-top:18px;color:#373b40;font-size:13px}h1{color:#a03317;font-size:18px}</style>';
+const css = '<style>body{font-family:Segoe UI,Arial,sans-serif;color:#13161b;max-width:820px;margin:24px auto;padding:0 16px;background:#f4f1ee}.doc{border:none;border-bottom:1px solid #ddd6d1;border-radius:0;margin:0 0 18px;overflow:hidden;background:#fff;page-break-inside:avoid}#mSVR{page-break-before:always;break-before:page}.dh{background:none;color:#13161b;padding:0 0 8px;font-weight:700;font-size:15px;border-bottom:2px solid #a03317}.acts{display:none}.dc{padding:10px 0 14px}.docgroup h4{font-size:14px;color:#861600;border-bottom:1px solid #a03317;padding-bottom:4px;margin:18px 0 2px}.docgroup p{font-size:11.5px;color:#5b6066;margin:0 0 6px}table{width:100%;border-collapse:collapse}td{padding:6px 8px;border-bottom:1px solid #eee;vertical-align:top}.k{width:42%;color:#373b40;font-weight:600}.legalref{font-size:12px;color:#373b40}.sign{display:flex;justify-content:space-between;margin-top:18px;color:#373b40;font-size:13px}h1{color:#a03317;font-size:18px}'+PAGE_NUM_CSS+'</style>';
 const bodyHtml = fascicoloAccumuloBodyHtml();
 const nParti = fascicoloAccumuloDellaProcedura().length || 1;
 const html = '<!doctype html><html lang="it"><head><meta charset="utf-8"><title>Modelli antiriciclaggio — '+(v("proc_n")||"procedura")+'</title>'+css+'</head><body><h1>Modelli antiriciclaggio — fascicolo riservato</h1><p style="color:#5b6675;font-size:13px">'+esc(v("odm_nome"))+' · procedura '+esc(v("proc_n"))+' · '+nParti+' part'+(nParti===1?'e':'i')+' · generato il '+today()+'</p>'+bodyHtml+'</body></html>';
@@ -2338,7 +2357,7 @@ h += '<div style="font-size:13px;margin:6px 0"><b>Esito complessivo:</b> ☐ nes
 h += '<p style="font-size:13px;margin-bottom:0"><b>Annotazioni neutre (senza contenuti coperti dal segreto):</b></p>'+line+line+line+sign;
 h += title('CHECKLIST — Contenuto minimo del fascicolo riservato','🔒 Riservato Organismo — verifica di completezza del fascicolo');
 ['Informativa AML/privacy consegnata e sottoscritta','Copia documento d\'identità di ciascuna parte e dell\'esecutore','Dichiarazione titolare effettivo per le persone giuridiche','Modulo di Adeguata Verifica (Sez. A-H) datato e sottoscritto','Scheda di valutazione del rischio (anche se basso) sottoscritta','Dichiarazione del cliente ex art. 22','Foglio di annotazione AML allegato al fascicolo','Tracciabilità dei pagamenti (rispetto art. 49)','Eventuale Modulo SI-AML/01 e prova della SOS (separati e riservati)','Attestati di formazione aggiornati','Conservazione decennale, separata dal fascicolo ordinario'].forEach(x => h += ck(x));
-const css = '<style>body{font-family:Segoe UI,Arial,sans-serif;color:#13161b;max-width:780px;margin:20px auto;padding:0 14px}h1{color:#a03317;font-size:18px;margin-bottom:4px}button{font-size:14px;padding:8px 14px;border:1px solid #a03317;background:#a03317;color:#fff;border-radius:8px;cursor:pointer}@media print{.np{display:none}}</style>';
+const css = '<style>body{font-family:Segoe UI,Arial,sans-serif;color:#13161b;max-width:780px;margin:20px auto;padding:0 14px}h1{color:#a03317;font-size:18px;margin-bottom:4px}button{font-size:14px;padding:8px 14px;border:1px solid #a03317;background:#a03317;color:#fff;border-radius:8px;cursor:pointer}@media print{.np{display:none}}'+PAGE_NUM_CSS+'</style>';
 const w = window.open('','_blank');
 w.document.write('<!doctype html><html lang="it"><head><meta charset="utf-8"><title>Moduli antiriciclaggio in bianco</title>'+css+'</head><body><h1>Moduli antiriciclaggio in bianco</h1><p style="font-size:12px;color:#555">Da stampare e compilare a mano. Inserire nel fascicolo riservato dell\'Organismo (conservazione 10 anni, art. 31 D.Lgs. 231/2007).</p>'+h+'<div class="np" style="margin:20px 0"><button onclick="window.print()">🖨️ Stampa</button></div></body></html>');
 w.document.close(); w.focus();
