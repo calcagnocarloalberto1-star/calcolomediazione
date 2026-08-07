@@ -1193,78 +1193,12 @@ box.innerHTML = mediatoreLog.map((e,i)=>
 ).join("");
 }
 
-// ---------- OCR: compilazione automatica da documenti ----------
-// ---------- Conversione documenti in immagini per l'assistente AI ----------
-const OCR_PDFJS_URL = "https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/legacy/build/pdf.min.js";
-const OCR_PDFJS_WORKER_URL = "https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/legacy/build/pdf.worker.min.js";
-
-function ocrLoadScript(src){
-return new Promise((resolve,reject)=>{
-if(document.querySelector('script[data-ocrlib="'+src+'"]')){ resolve(); return; }
-const s = document.createElement("script");
-s.src = src; s.dataset.ocrlib = src;
-s.onload = () => resolve();
-s.onerror = () => reject(new Error("Impossibile caricare la libreria di riconoscimento ("+src+"): verifica la connessione e riprova"));
-document.head.appendChild(s);
-});
-}
-
-// Carica pdf.js (serve a rendere le pagine dei PDF in immagini per l'assistente AI).
-async function ocrEnsureLibs(){
-if(typeof window.pdfjsLib === "undefined"){
-await ocrLoadScript(OCR_PDFJS_URL);
-window.pdfjsLib.GlobalWorkerOptions.workerSrc = OCR_PDFJS_WORKER_URL;
-}
-}
-
-// Rileva un canvas "vuoto" (praticamente un unico colore): sintomo tipico di
-// un'immagine che il browser non e' riuscito a decodificare (es. foto HEIC di iPhone
-// non supportate da Chrome), dove la conversione non genera errore ma produce
-// un'immagine bianca/nera senza contenuto.
-function ocrCanvasSembraVuoto(canvas){
-try{
-const ctx = canvas.getContext("2d");
-const w = canvas.width, h = canvas.height;
-if(!w || !h) return true;
-const step = Math.max(1, Math.floor(Math.min(w,h)/60));
-const img = ctx.getImageData(0, 0, w, h);
-const d = img.data;
-let sum=0, sumSq=0, n=0;
-for(let y=0; y<h; y+=step){
-for(let x=0; x<w; x+=step){
-const i = (y*w+x)*4;
-const g = (d[i]+d[i+1]+d[i+2])/3;
-sum += g; sumSq += g*g; n++;
-}
-}
-if(!n) return true;
-const mean = sum/n;
-const variance = sumSq/n - mean*mean;
-return variance < 4; // quasi nessuna variazione di colore = immagine vuota
-}catch(e){ return false; } // se il controllo stesso fallisce, non blocchiamo l'invio
-}
-
-// Rende TUTTE le pagine di un PDF in immagini JPEG (una per pagina, max ~1560px
-// lato lungo), cosi' la modalita' AI puo' leggere documenti di qualsiasi lunghezza.
-async function ocrPdfAllPagesToJpegBlobs(file){
-await ocrEnsureLibs();
-const buf = await file.arrayBuffer();
-const pdf = await window.pdfjsLib.getDocument({data: buf}).promise;
-const blobs = [];
-for(let p=1; p<=pdf.numPages; p++){
-const page = await pdf.getPage(p);
-const base = page.getViewport({scale: 1});
-const scale = Math.min(2, 1560 / Math.max(base.width, base.height));
-const viewport = page.getViewport({scale});
-const canvas = document.createElement("canvas");
-canvas.width = Math.round(viewport.width);
-canvas.height = Math.round(viewport.height);
-await page.render({canvasContext: canvas.getContext("2d"), viewport}).promise;
-const blob = await new Promise((res) => canvas.toBlob(res, "image/jpeg", 0.9));
-if(blob){ blob.ocrVuoto = ocrCanvasSembraVuoto(canvas); blobs.push(blob); }
-}
-return blobs;
-}
+// ---------- Conversione documenti per l'assistente AI ----------
+// I PDF vengono inviati COSI' COME SONO (nessuna conversione in immagine nel
+// browser): il backend li passa al modello come documento nativo (stesso
+// meccanismo con cui Claude legge un PDF allegato direttamente in chat), che
+// legge tutte le pagine internamente. Solo le immagini vengono ancora
+// ridimensionate/compresse qui nel browser prima dell'invio.
 
 // Ridimensiona l'immagine a max 1600px lato lungo e la comprime in JPEG,
 // per un invio leggero e dentro i limiti del servizio AI.
@@ -1504,45 +1438,55 @@ $("assist_review").style.display = "none";
 const ansEl = $("assist_answer"); if(ansEl){ ansEl.style.display = "none"; ansEl.textContent = ""; }
 assistSetStatus(files.length > 1 ? "Invio dei documenti e lettura AI in corso…" : "Invio del documento e lettura AI in corso…");
 try{
-let blobs = [];
+// I PDF vengono inviati COSI' COME SONO (documento nativo, letto dal modello
+// pagina per pagina come farebbe con un PDF allegato in chat): solo le
+// immagini passano dalla compressione JPEG lato browser.
+let docs = [];
 for(const f of files){
 const fIsPdf = /\.pdf$/i.test(f.name) || f.type === "application/pdf";
-const parte = fIsPdf ? await ocrPdfAllPagesToJpegBlobs(f) : [await ocrAImgToJpegBlob(f)];
-blobs = blobs.concat(parte);
+if(fIsPdf){
+docs.push({ blob: f, ext: "pdf", vuoto: false });
+} else {
+const img = await ocrAImgToJpegBlob(f);
+docs.push({ blob: img, ext: "jpg", vuoto: img ? !!img.ocrVuoto : true });
 }
-// Anthropic accetta al massimo 20 immagini per richiesta
-if(blobs.length > 20){ blobs = blobs.slice(0, 20); }
-const totKb = Math.round(blobs.reduce((s,b)=>s+(b?b.size:0),0)/1024);
-const vuote = blobs.filter(b=>!b || b.size < 500 || b.ocrVuoto).length;
+}
+// Limite prudenziale sul numero di documenti per richiesta (il backend ne accetta al massimo 20)
+if(docs.length > 20){ docs = docs.slice(0, 20); }
+const totKb = Math.round(docs.reduce((s,d)=>s+(d.blob?d.blob.size:0),0)/1024);
+const vuote = docs.filter(d=>d.ext==="jpg" && (!d.blob || d.blob.size < 500 || d.vuoto)).length;
 if(vuote){
 assistSetStatus("ATTENZIONE: " + vuote + " immagine/i risultano vuote o non decodificate correttamente (probabile foto in formato HEIC non supportato dal browser). Su iPhone: Impostazioni > Fotocamera > Formati > \"Massima compatibilita'\", poi rifai la foto o riseleziona il file; oppure usa un file JPG/PNG.");
 if(btn) btn.disabled = false;
 return;
 }
-assistSetStatus("Preparati " + blobs.length + " documento/i (" + totKb + " KB totali). Invio in corso…");
+assistSetStatus("Preparati " + docs.length + " documento/i (" + totKb + " KB totali). Invio in corso…");
 await new Promise(r=>setTimeout(r, 400));
 const fd = new FormData();
-blobs.forEach((b, i) => fd.append("files", b, "documento-" + (i + 1) + ".jpg"));
+docs.forEach((d, i) => fd.append("files", d.blob, "documento-" + (i + 1) + "." + d.ext));
 fd.append("richiesta", richiesta || "");
 const resp = await fetch("/api/aml-assist", { method:"POST", body: fd });
 const data = await resp.json().catch(()=>({}));
 if(!resp.ok){ throw new Error((data && data.error) ? data.error : "Errore del servizio AI"); }
 const rawEl = $("assist_raw"); if(rawEl) rawEl.textContent = JSON.stringify(data, null, 2);
 if(ansEl){ ansEl.style.display = "block"; ansEl.textContent = data.risposta || ""; }
+const notaScartati = (Array.isArray(data.scartati) && data.scartati.length)
+? " ATTENZIONE: " + data.scartati.length + " file scartato/i perche' di formato non supportato (" + data.scartati.join(", ") + ") — formati accettati: JPG, PNG, WEBP, GIF, PDF."
+: "";
 if(Array.isArray(data.parti)){
 // Nuovo formato: procedura + elenco di TUTTE le parti individuate (istanti e aderenti).
 assistRenderPartiMultiple(data.campi || {}, data.parti);
-assistSetStatus(data.parti.length
+assistSetStatus((data.parti.length
 ? "Lettura AI completata: individuate " + data.parti.length + " parte/i. Applica ciascuna parte una alla volta."
-: "Lettura AI completata, ma nessuna parte individuata: leggi la risposta sopra e compila a mano.");
+: "Lettura AI completata, ma nessuna parte individuata: leggi la risposta sopra e compila a mano.") + notaScartati);
 } else {
 // Formato precedente (compatibilita'): un unico set di campi piatto.
 const campi = data.campi || {};
 assistRenderReview(campi);
 const n = Object.keys(campi).length;
-assistSetStatus(n
+assistSetStatus((n
 ? "Lettura AI completata: controlla i dati sotto prima di applicarli."
-: "Lettura AI completata, ma nessun campo individuato: leggi la risposta sopra e compila a mano.");
+: "Lettura AI completata, ma nessun campo individuato: leggi la risposta sopra e compila a mano.") + notaScartati);
 }
 }catch(err){
 console.error(err);
