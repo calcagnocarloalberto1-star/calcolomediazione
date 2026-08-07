@@ -115,11 +115,16 @@ body{background:#fff}
 .wrap{max-width:none;padding:0}
 .no-print,.head .brand{display:none!important}
 .card{border:none;box-shadow:none}
-.doc{break-inside:avoid;page-break-inside:avoid;border:1px solid #999;margin:0 0 18px}
+.doc{border:1px solid #999;margin:0 0 18px}
+.doc table{break-inside:avoid;page-break-inside:avoid}
 #mSVR{page-break-before:always;break-before:page}
 .doc .dh .acts{display:none}
 .doc .dh{color:#000;background:#e9eef6}
 h2,details:not([data-print]){display:none}
+/* "Stampa tutto": durante la stampa, nasconde il modulo di compilazione (tutti i campi, i menu a
+tendina e le caselle) e lascia visibili solo i modelli generati in #out. Senza questa regola window.print()
+stampa anche l'intero modulo (decine di campi vuoti), gonfiando inutilmente il numero di pagine. */
+body.print-doc-only .body>*:not(#out){display:none!important}
 }
 </style>
 </head>
@@ -2006,15 +2011,17 @@ return '<div '+pageBreak+'><h2 style="color:#a03317;font-size:16px;border-bottom
 }
 
 // "Stampa tutto": mostra temporaneamente TUTTE le parti accumulate della procedura
-// (non solo l'ultima generata) in #out, avvia la stampa del browser, poi ripristina
-// a schermo la sola parte corrente com'era prima.
+// (non solo l'ultima generata) in #out, nasconde il modulo di compilazione (altrimenti finirebbe
+// anch'esso in stampa, coi suoi campi e menu a tendina, gonfiando inutilmente le pagine), avvia la
+// stampa del browser, poi ripristina tutto com'era prima a schermo.
 function stampaTuttoAccumulo(){
 if(!$("out").innerHTML) genera();
 const out = $("out");
 const originale = out.innerHTML;
 out.innerHTML = fascicoloAccumuloBodyHtml();
+document.body.classList.add("print-doc-only");
 window.print();
-setTimeout(()=>{ out.innerHTML = originale; }, 500);
+setTimeout(()=>{ out.innerHTML = originale; document.body.classList.remove("print-doc-only"); }, 500);
 }
 
 function scaricaTutto(){
