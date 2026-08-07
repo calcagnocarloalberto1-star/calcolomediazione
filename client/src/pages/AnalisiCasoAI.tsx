@@ -264,21 +264,82 @@ export default function AnalisiCasoAI() {
     setTeorieSelezionate(prev => prev.includes(id) ? prev.filter(t => t !== id) : [...prev, id]);
   };
 
-  // ─── UPLOAD PDF ───────────────────────────────────────────────────────────
+  // ─── UPLOAD PDF (singoli file, o un'intera cartella) ───────────────────────
+  const isPdfFile = (f: File) => f.type === "application/pdf" || /\.pdf$/i.test(f.name);
+
+  // Avvisa quanti file sono stati ignorati perche' non PDF, invece di farli sparire in silenzio.
+  const segnalaScartati = (totale: number, accettati: number) => {
+    const scartati = totale - accettati;
+    if (scartati > 0) {
+      toast({ title: `${scartati} file ignorato/i`, description: "Solo i PDF vengono caricati; gli altri formati non sono supportati qui." });
+    }
+  };
+
+  // Legge ricorsivamente il contenuto di una cartella trascinata (drag & drop):
+  // FileSystemDirectoryEntry non e' un File, va esplorato voce per voce.
+  const leggiEntryRicorsivo = (entry: any): Promise<File[]> => {
+    return new Promise((resolve) => {
+      if (!entry) { resolve([]); return; }
+      if (entry.isFile) {
+        entry.file((file: File) => resolve([file]), () => resolve([]));
+      } else if (entry.isDirectory) {
+        const reader = entry.createReader();
+        const raccolti: File[] = [];
+        const leggiProssimoBatch = () => {
+          reader.readEntries(async (entries: any[]) => {
+            if (!entries.length) { resolve(raccolti); return; }
+            for (const e of entries) {
+              raccolti.push(...(await leggiEntryRicorsivo(e)));
+            }
+            leggiProssimoBatch(); // readEntries va richiamato finche' non restituisce array vuoto
+          }, () => resolve(raccolti));
+        };
+        leggiProssimoBatch();
+      } else {
+        resolve([]);
+      }
+    });
+  };
+
   const handleDrag = (e: React.DragEvent) => {
     e.preventDefault(); e.stopPropagation();
     if (e.type === "dragenter" || e.type === "dragover") setDragActive(true);
     else if (e.type === "dragleave") setDragActive(false);
   };
-  const handleDrop = (e: React.DragEvent) => {
+  const handleDrop = async (e: React.DragEvent) => {
     e.preventDefault(); e.stopPropagation(); setDragActive(false);
-    const dropped = Array.from(e.dataTransfer.files).filter(f => f.type === "application/pdf");
+    const items = e.dataTransfer.items;
+    let tutti: File[] = [];
+    const entrySupportato = items && items.length > 0 && typeof (items[0] as any).webkitGetAsEntry === "function";
+    if (entrySupportato) {
+      // Il browser supporta la lettura di cartelle trascinate: le esplora ricorsivamente.
+      const entries = Array.from(items).map(it => (it as any).webkitGetAsEntry()).filter(Boolean);
+      const gruppi = await Promise.all(entries.map(leggiEntryRicorsivo));
+      tutti = gruppi.flat();
+    } else {
+      tutti = Array.from(e.dataTransfer.files);
+    }
+    const dropped = tutti.filter(isPdfFile);
     if (dropped.length > 0) { setFiles(prev => [...prev, ...dropped]); uploadPdfFiles(dropped); }
+    segnalaScartati(tutti.length, dropped.length);
   };
   const handleFileInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
-      const selected = Array.from(e.target.files).filter(f => f.type === "application/pdf");
+      const tutti = Array.from(e.target.files);
+      const selected = tutti.filter(isPdfFile);
       if (selected.length > 0) { setFiles(prev => [...prev, ...selected]); uploadPdfFiles(selected); }
+      segnalaScartati(tutti.length, selected.length);
+    }
+  };
+  // Selezione esplicita di un'intera cartella (bottone "Carica una cartella"): il browser
+  // restituisce TUTTI i file al suo interno (anche nelle sottocartelle), li filtriamo qui.
+  const handleFolderInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      const tutti = Array.from(e.target.files);
+      const selected = tutti.filter(isPdfFile);
+      if (selected.length > 0) { setFiles(prev => [...prev, ...selected]); uploadPdfFiles(selected); }
+      segnalaScartati(tutti.length, selected.length);
+      e.target.value = "";
     }
   };
   const uploadPdfFiles = async (newFiles: File[]) => {
@@ -891,8 +952,17 @@ export default function AnalisiCasoAI() {
                 onDragEnter={handleDrag} onDragLeave={handleDrag} onDragOver={handleDrag} onDrop={handleDrop}
                 onClick={() => document.getElementById("file-input")?.click()} data-testid="dropzone-files">
                 <Upload className="w-8 h-8 mx-auto mb-2 text-muted-foreground" />
-                <p className="text-sm text-muted-foreground">Trascina i file PDF qui o <span className="text-primary font-semibold">sfoglia</span></p>
+                <p className="text-sm text-muted-foreground">Trascina i file PDF (o un'intera cartella) qui, oppure <span className="text-primary font-semibold">sfoglia</span></p>
                 <input id="file-input" type="file" accept=".pdf" multiple onChange={handleFileInput} className="hidden" />
+              </div>
+              <div className="text-center">
+                <Button type="button" variant="ghost" size="sm"
+                  onClick={(e) => { e.stopPropagation(); document.getElementById("folder-input")?.click(); }}
+                  data-testid="button-upload-folder">
+                  📁 Oppure carica una cartella intera
+                </Button>
+                <input id="folder-input" type="file" multiple onChange={handleFolderInput} className="hidden"
+                  {...({ webkitdirectory: "", directory: "" } as any)} />
               </div>
               {files.length > 0 && (
                 <div className="flex flex-wrap gap-2 mt-2">
