@@ -192,7 +192,12 @@ h2,details:not([data-print]){display:none}
 <p class="sub">Se hai già iniziato a compilare questa scheda per una procedura in una sessione precedente, la trovi qui: apri per richiamarne il numero e proporre il caricamento dei dati salvati.</p>
 <div id="procedure_salvate_lista"></div>
 </div>
-<h3 class="grouph">1 — Dati del procedimento</h3><div class="grid"><div class="field"><label>Denominazione Organismo</label><div class="hint">Nome dell'Organismo di mediazione (ODM) presso cui pende la procedura.</div><input id="odm_nome" type="text" placeholder="Organismo di Mediazione ..." ></div><div class="field"><label>N. iscrizione registro Min. Giustizia</label><div class="hint">Numero di iscrizione dell'ODM nel registro tenuto dal Ministero della Giustizia.</div><input id="odm_iscr" type="text" placeholder="n. ..." ></div><div class="field"><label>Sede</label><div class="hint">Indirizzo della sede dell'Organismo.</div><input id="odm_sede" type="text" placeholder="Via ..., Città" ></div><div class="field"><label>Legale rappresentante</label><div class="hint">Nome e cognome del legale rappresentante dell'Organismo.</div><input id="odm_lr" type="text" placeholder="Nome Cognome" ></div><div class="field"><label>N. procedura / R.G. mediazione</label><div class="hint">Numero identificativo della procedura assegnato dall'Organismo.</div><input id="proc_n" type="text" placeholder="n. .../20.." ></div>
+<h3 class="grouph">1 — Dati del procedimento</h3><div class="grid"><div class="field"><label>Denominazione Organismo</label><div class="hint">Nome dell'Organismo di mediazione (ODM) presso cui pende la procedura.</div><input id="odm_nome" type="text" placeholder="Organismo di Mediazione ..." ></div><div class="field"><label>N. iscrizione registro Min. Giustizia</label><div class="hint">Numero di iscrizione dell'ODM nel registro tenuto dal Ministero della Giustizia.</div><input id="odm_iscr" type="text" placeholder="n. ..." ></div><div class="field"><label>Sede</label><div class="hint">Indirizzo della sede dell'Organismo.</div><input id="odm_sede" type="text" placeholder="Via ..., Città" ></div><div class="field"><label>Legale rappresentante</label><div class="hint">Nome e cognome del legale rappresentante dell'Organismo.</div><input id="odm_lr" type="text" placeholder="Nome Cognome" ></div><div class="field"><label>N. procedura / R.G. mediazione</label><div class="hint">Numero identificativo della procedura assegnato dall'Organismo.</div><input id="proc_n" type="text" placeholder="n. .../20.." ></div></div>
+<div class="field" style="grid-column:1/-1;background:#f6f8ff;border:1px solid #c7d6f5;border-radius:8px;padding:10px 12px;margin:8px 0">
+<label class="cbrow" style="font-weight:600"><input type="checkbox" id="usa_formato_genova"> Sono iscritto all'Organismo di Mediazione dell'Ordine degli Avvocati di Genova</label>
+<div class="hint">Se selezioni questa opzione, il Modulo di Adeguata Verifica e la Scheda di valutazione del rischio vengono generati nel formato ufficiale di quell'Organismo (stessa intestazione, logo e struttura a sezioni dei moduli PDF), con gli stessi dati che compili qui sotto. Lasciala deselezionata se appartieni a un altro Organismo: in tal caso resta il formato generico di questo strumento.</div>
+</div>
+<div class="grid">
 <div class="field" style="grid-column:1/-1">
 <div id="dati_hint"></div>
 <label>Salvataggio automatico e storico — per procedura e per parte</label>
@@ -273,6 +278,14 @@ const today = () => new Date().toLocaleDateString("it-IT");
 
 // ---------- role ----------
 let role = "odm";
+
+// Formato di generazione del Modulo di Adeguata Verifica e della Scheda di valutazione del rischio:
+// chi è iscritto all'Organismo di Mediazione dell'Ordine degli Avvocati di Genova può attivare qui il
+// formato ufficiale identico ai moduli di quell'Organismo (stessi dati, sola presentazione diversa).
+// Chi non ne fa parte lascia il formato generico, che resta quello di default per tutti gli altri utenti
+// del sito. La scelta è personale e resta salvata su questo browser.
+const USA_FORMATO_GENOVA_KEY = "calcolomediazione_aml_formato_genova";
+let usaFormatoGenova = localStorage.getItem(USA_FORMATO_GENOVA_KEY) === "1";
 // Cronologia delle comunicazioni/aggiornamenti ricevuti dal mediatore in corso di procedura
 // (es. rinvii, nuovi elementi, variazioni comunicate in una sessione successiva alla prima).
 // Resta in memoria per la sola sessione del browser, come il resto del modulo, e viene riportata
@@ -353,6 +366,17 @@ return v("risk_livello").toUpperCase();
 .forEach(id=>$(id).addEventListener("change",calcRisk));
 document.querySelectorAll('[id^="cb_an_"]').forEach(cb=>cb.addEventListener("change",calcRisk));
 calcRisk();
+(function(){
+const cb = $("usa_formato_genova");
+if(cb){
+cb.checked = usaFormatoGenova;
+cb.addEventListener("change", ()=>{
+usaFormatoGenova = cb.checked;
+try{ localStorage.setItem(USA_FORMATO_GENOVA_KEY, usaFormatoGenova ? "1" : "0"); } catch(e){ /* storage non disponibile: si prosegue senza persistenza */ }
+if($("out").innerHTML) genera();
+});
+}
+})();
 if(typeof renderAggiornamenti === "function") renderAggiornamenti();
 if(typeof renderStorico === "function"){
 amlMediatoreLogAutoload();
@@ -743,6 +767,390 @@ return docBlock("m7","CHECKLIST — Contenuto minimo del fascicolo riservato",
 '<div style="line-height:1.9">'+items.map(x=>'☐ '+x).join('<br>')+'</div>');
 }
 
+// ===================== FORMATO UFFICIALE — ORDINE DEGLI AVVOCATI DI GENOVA =====================
+// Su richiesta di chi usa questo tool ed è iscritto all'Organismo di Mediazione dell'Ordine degli
+// Avvocati di Genova: riproduce fedelmente intestazione, logo, barre di sezione e struttura esatta
+// dei moduli ufficiali di quell'Organismo, con GLI STESSI dati già raccolti dal form — cambia solo
+// la presentazione. Chi non è di quell'Organismo continua a vedere il formato generico esistente
+// (si veda il toggle "usaFormatoGenova" più sotto). Stili scritti inline (non in classi CSS) per lo
+// stesso motivo per cui l'export Word usa wordizzaHtml(): il filtro HTML di Word onora in modo
+// affidabile solo gli stili inline, non le regole con selettori di classe.
+const GO_FONT = "'Times New Roman',Georgia,serif";
+const LOGO_GENOVA_B64 = "data:image/png;base64,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";
+
+function goCk(checked, label){
+return '<span style="margin-right:4px">'+(checked?"☑":"☐")+" "+esc(label)+'</span>';
+}
+function goCkSel(selectId, matchValue, label){
+return goCk(v(selectId) === matchValue, label);
+}
+function goCkBox(cbId, label){
+const el = $(cbId);
+return goCk(!!(el && el.checked), label);
+}
+function goRow(items){
+return '<div style="font-size:12.5px;margin:4px 0;line-height:1.8;font-family:'+GO_FONT+'">'+items.join(" &nbsp; &nbsp; ")+'</div>';
+}
+function goField(label, value){
+const has = value && String(value).trim();
+return '<div style="font-size:12.5px;margin:4px 0;line-height:1.5;font-family:'+GO_FONT+'"><span style="font-weight:bold">'+esc(label)+':</span> '+(has?esc(value):'<span style="border-bottom:1px solid #999;display:inline-block;min-width:160px">&nbsp;</span>')+'</div>';
+}
+function goNote(text){
+return '<p style="font-size:12px;color:#555555;font-style:italic;font-family:'+GO_FONT+'">'+esc(text)+'</p>';
+}
+function goHeader(){
+return '<div style="display:flex;align-items:center;margin-bottom:4px"><img src="'+LOGO_GENOVA_B64+'" alt="Organismo di Mediazione — Ordine degli Avvocati di Genova" style="height:38px"></div>'+
+'<p style="font-weight:bold;font-size:11px;text-align:center;margin:2px 0 14px;font-family:'+GO_FONT+'">Organismo di Mediazione aut. Ministero della Giustizia — P.D.G. 14.3.2011 reg. 172</p>';
+}
+function goTitle(title, subtitle){
+return '<h2 style="font-size:16px;font-weight:bold;text-align:center;margin:6px 0 2px;font-family:'+GO_FONT+';color:#111111">'+esc(title)+'</h2>'+
+(subtitle?'<p style="font-style:italic;text-align:center;font-size:12.5px;margin:0 0 14px;color:#333333;font-family:'+GO_FONT+'">'+esc(subtitle)+'</p>':'');
+}
+function goBar(text){
+return '<div style="background:#1F3864;color:#ffffff;font-weight:bold;font-size:13px;padding:6px 10px;margin:16px 0 10px;font-family:'+GO_FONT+'">'+esc(text)+'</div>';
+}
+function goSub(text){
+return '<p style="font-style:italic;font-weight:bold;font-size:13px;margin:12px 0 4px;font-family:'+GO_FONT+'">'+esc(text)+'</p>';
+}
+function docBlockGO(id, inner){
+return '<div class="doc go-doc" id="'+id+'"><div class="acts" style="text-align:right"><button class="btn-ghost" onclick="printOne(\''+id+'\')">Stampa</button>'+
+'<button class="btn-ghost" onclick="copyOne(\''+id+'\')">Copia</button></div><div class="dc" style="font-family:'+GO_FONT+'">'+inner+'</div></div>';
+}
+function goRiskTable(rows, includeNA){
+// classi "go-td"/"go-table": servono solo a farle riconoscere ed escludere da wordizzaHtml(),
+// che altrimenti sovrascriverebbe questi stili inline con quelli generici delle tabelle kv().
+// Il font-family va ripetuto su ogni singola cella (non basta sul <table>): il convertitore
+// HTML->Word di LibreOffice/Word non eredita sempre font-family dal <table> alle celle figlie.
+const goCellStyle = "border:1px solid #cccccc;padding:4px 6px;font-family:"+GO_FONT+";";
+let out = '<table class="go-table" style="width:100%;border-collapse:collapse;margin:6px 0 10px;font-size:12px;font-family:'+GO_FONT+'"><tr>'+
+'<th class="go-td" style="'+goCellStyle+'text-align:left">Elemento</th>'+
+'<th class="go-td" style="'+goCellStyle+'text-align:center">Basso</th>'+
+'<th class="go-td" style="'+goCellStyle+'text-align:center">Medio</th>'+
+'<th class="go-td" style="'+goCellStyle+'text-align:center">Alto</th>'+
+(includeNA?'<th class="go-td" style="'+goCellStyle+'text-align:center">Non applicabile</th>':'')+'</tr>';
+rows.forEach(r=>{
+const cur = v(r[1]);
+out += '<tr><td class="go-td" style="'+goCellStyle+'">'+esc(r[0])+'</td>'+
+'<td class="go-td" style="'+goCellStyle+'text-align:center">'+(cur==="basso"?"☑":"☐")+'</td>'+
+'<td class="go-td" style="'+goCellStyle+'text-align:center">'+(cur==="medio"?"☑":"☐")+'</td>'+
+'<td class="go-td" style="'+goCellStyle+'text-align:center">'+(cur==="alto"?"☑":"☐")+'</td>'+
+(includeNA?'<td class="go-td" style="'+goCellStyle+'text-align:center">'+(cur==="na"?"☑":"☐")+'</td>':'')+'</tr>';
+});
+out += '</table>';
+return out;
+}
+function goLegendaPEP(){
+return '<div style="font-size:10.5px;color:#444444;line-height:1.5;margin-top:16px;border-top:1px solid #cccccc;padding-top:8px;font-family:'+GO_FONT+'"><p><b>Legenda — persone politicamente esposte</b></p>'+
+'<p>Sono persone politicamente esposte, ai sensi dell\'art. 1, co. 2, lett. dd) del D.Lgs. 231/2007, le persone fisiche che occupano o hanno cessato di occupare da meno di un anno importanti cariche pubbliche, nonché i loro familiari e coloro che con i predetti soggetti intrattengono notoriamente stretti legami.</p>'+
+'<p>1) Presidente della Repubblica, Presidente del Consiglio, Ministro, Vice-Ministro e Sottosegretario, Presidente di Regione, assessore regionale, Sindaco di capoluogo di provincia o città metropolitana, Sindaco di comune con popolazione non inferiore a 15.000 abitanti; deputato, senatore, parlamentare europeo, consigliere regionale; membro degli organi direttivi centrali di partiti politici; giudice della Corte Costituzionale, magistrato della Corte di Cassazione o della Corte dei conti, consigliere di Stato; membro degli organi direttivi delle banche centrali e delle autorità indipendenti; ambasciatore, incaricato d\'affari, ufficiale di grado apicale delle forze armate; componente degli organi di amministrazione, direzione o controllo delle imprese controllate dallo Stato; direttore generale di ASL e di azienda ospedaliera; direttore, vicedirettore di organizzazioni internazionali (nonché cariche analoghe in Stati esteri).</p>'+
+'<p>2) Familiari di PEP: genitori, coniuge o persona legata in unione civile/convivenza, figli e i loro coniugi o persone legate in unione civile/convivenza.</p>'+
+'<p>3) Soggetti con stretti legami: chi detiene congiuntamente alla PEP la titolarità effettiva di enti giuridici, trust e istituti affini, o intrattiene stretti rapporti d\'affari con la PEP; chi detiene solo formalmente il controllo totalitario di un\'entità costituita nell\'interesse della PEP.</p></div>';
+}
+function goLegendaRischio(){
+return '<div style="font-size:10.5px;color:#444444;line-height:1.5;margin-top:16px;border-top:1px solid #cccccc;padding-top:8px;font-family:'+GO_FONT+'"><p><b>Legenda</b></p>'+
+'<p><b>(1) Criteri orientativi per la classificazione</b> — Natura giuridica: persona fisica/ente semplice e trasparente (basso), società con struttura ordinaria (ordinario), trust/società estera/struttura articolata non trasparente (elevato). Area geografica: Italia/UE priva di fattori di rischio (basso), Stato terzo con presìdi equivalenti (ordinario), Paese ad alto rischio o interessato da misure restrittive (elevato). Titolarità effettiva: immediatamente individuabile e verificata (basso), partecipazioni indirette ma ricostruibili (ordinario), assetto opaco o ingiustificatamente complesso (elevato). PEP: nessuna qualifica (basso), elementi che richiedono approfondimento (ordinario), PEP o soggetto collegato con ulteriori fattori di rischio (elevato). Operazione: coerente con la controversia e il profilo della parte (basso), non ordinaria ma giustificata (ordinario), sproporzionata, opaca o priva di apparente giustificazione (elevato).</p>'+
+'<p><b>(2) Criteri orientativi</b> — Rischio basso: assenza di indicatori significativi. Rischio medio: presenza di elementi che richiedono attenzione ma non tali da giustificare misure rafforzate. Rischio alto: presenza di uno o più indicatori rilevanti che richiedono misure rafforzate o ulteriori approfondimenti.</p></div>';
+}
+// -------- Modulo di Adeguata Verifica (formato Genova) --------
+function modAVGenova(){
+const isPG = v("p_tipo")==="pg";
+let h = goHeader() + goTitle("DICHIARAZIONI PER L'ADEGUATA VERIFICA DELLA PARTE IN MEDIAZIONE", "ai sensi del D.Lgs. n. 231/2007");
+
+h += goBar("SEZIONE A — TIPO DI PARTE");
+h += goRow([goCkSel("p_ruolo","istante","Istante"), goCkSel("p_ruolo","aderente","Aderente")]);
+if(v("p_ruolo")==="terzo" || v("p_ruolo")==="altro") h += goField("Ruolo", selText("p_ruolo")+(v("p_ruolo")==="altro"?" — "+v("p_ruolo_altro"):""));
+h += goSub("Natura giuridica");
+h += goRow([goCkSel("p_natgiur","pf","persona fisica"), goCkSel("p_natgiur","sp","società di persone")]);
+h += goRow([goCkSel("p_natgiur","srl","società a responsabilità limitata"), goCkSel("p_natgiur","spa","società per azioni")]);
+h += goRow([goCkSel("p_natgiur","coop","società cooperativa"), goCkSel("p_natgiur","trust","trust, fondazioni e altri enti")]);
+h += goRow([goCkSel("p_natgiur","estera","società straniera"), goCkSel("p_natgiur","asd","associazione sportiva - ASD")]);
+h += goField("Altro", v("p_natgiur")==="altro" ? v("p_natgiur_altro") : "");
+
+h += goBar("SEZIONE B — DATI DELLA PARTE");
+if(!isPG){
+h += goSub("Persona fisica");
+h += goField("Nome e cognome", v("p_nome"));
+h += goField("Luogo e data di nascita", v("p_nascita"));
+h += goField("Codice fiscale", v("p_cf"));
+h += goField("Residenza", v("p_res"));
+h += goField("Cittadinanza", v("p_cittadinanza"));
+h += goField("Telefono", v("p_tel"));
+h += goField("PEC", v("p_pec"));
+h += goField("E-mail", v("p_email"));
+h += goField("Documento di identità", v("p_doc"));
+h += goField("N. documento / Rilasciato il", v("p_doc")+(v("p_doc_rilasciato_il")?" — "+dateIt("p_doc_rilasciato_il"):""));
+h += goField("Da (autorità/comune)", v("p_doc_rilasciato_da"));
+h += goField("Scadenza", v("p_doc_scadenza")?dateIt("p_doc_scadenza"):"");
+h += goField("Professione o attività economica prevalente", v("p_prof"));
+h += goField("Settore di attività", v("p_settore"));
+} else {
+h += goSub("Persona giuridica");
+h += goField("Denominazione", v("p_nome"));
+h += goField("Forma giuridica", v("p_forma_giuridica"));
+h += goField("Sede legale", v("p_nascita"));
+h += goField("Capitale sociale (ove applicabile)", v("p_capitale_sociale"));
+h += goField("C.F./P. IVA", v("p_cf"));
+h += goField("PEC", v("p_pec"));
+h += goField("E-mail", v("p_email"));
+}
+
+h += goBar("SEZIONE C — RAPPRESENTANTE O SOGGETTO AUTORIZZATO AD AGIRE IN NOME E PER CONTO DELLA PARTE");
+const rappr = v("rappr_ruolo");
+if(rappr && rappr!=="nessuno"){
+h += goRow([goCkSel("rappr_ruolo","legale_rapp","Legale rappresentante della società o dell'ente")]);
+h += goField("Nome e cognome", v("rappr_nome"));
+h += goField("Luogo e data di nascita", v("rappr_nascita"));
+h += goField("Codice fiscale", v("rappr_cf"));
+h += goField("Residenza", v("rappr_res"));
+h += goField("Cittadinanza", v("rappr_cittadinanza"));
+h += goField("Documento di identità", v("rappr_doc"));
+h += goField("Professione o attività economica prevalente", v("rappr_prof"));
+h += goRow([goCkSel("rappr_ruolo","difensore","Difensore"), goCkSel("rappr_ruolo","procuratore","Procuratore speciale per la partecipazione alla mediazione")]);
+h += goRow([goCkSel("rappr_ruolo","esecutore","Esecutore ai sensi dell'art. 1, comma 2, lett. p), D.Lgs. 231/2007"), goCk(rappr==="altro", "Altro"+(rappr==="altro"?": "+v("rappr_ruolo_altro"):""))]);
+h += goField("Legame con la parte/con l'ente", v("rappr_legame"));
+h += goSub("Titolo in forza del quale il soggetto agisce");
+h += goRow([goCkBox("cb_rappr_titolo_statuto","Statuto"), goCkBox("cb_rappr_titolo_visura","Visura camerale"), goCkBox("cb_rappr_titolo_procnot","Procura notarile")]);
+h += goRow([goCkBox("cb_rappr_titolo_procsp","Procura speciale per la mediazione"), goCkBox("cb_rappr_titolo_altro","Altro"+($("cb_rappr_titolo_altro")&&$("cb_rappr_titolo_altro").checked?": "+v("rappr_titolo_altro_txt"):""))]);
+h += goSub("Poteri conferiti");
+h += goRow([goCkBox("cb_rappr_poteri_rappresentare","Rappresentare la parte nella procedura di mediazione")]);
+h += goRow([goCkBox("cb_rappr_poteri_proposte","Formulare e ricevere proposte conciliative"), goCkBox("cb_rappr_poteri_disporre","Disporre del diritto controverso")]);
+h += goRow([goCkBox("cb_rappr_poteri_sottoscrivere","Sottoscrivere l'accordo di conciliazione"), goCkBox("cb_rappr_poteri_altro","Altro"+($("cb_rappr_poteri_altro")&&$("cb_rappr_poteri_altro").checked?": "+v("rappr_poteri_altro_txt"):""))]);
+} else {
+h += '<p class="go-note">La parte agisce personalmente; non risulta alcun rappresentante o soggetto autorizzato.</p>';
+}
+
+h += goBar("SEZIONE D — PERSONA POLITICAMENTE ESPOSTA (PEP)");
+h += goRow([goCkSel("pep_parte","no","Non essere PEP"), goCkSel("pep_parte","pep","Essere PEP")]);
+h += goRow([goCkSel("pep_parte","familiare","Essere familiare di PEP"), goCkSel("pep_parte","collegato","Essere soggetto strettamente collegato ad una PEP")]);
+h += goField("Carica pubblica ricoperta", v("pep_carica"));
+h += goField("Stato, ente od organizzazione", v("pep_stato_ente"));
+h += goField("Data di cessazione della carica", v("pep_cessazione")?dateIt("pep_cessazione"):"");
+h += goField("Se familiare/collegato, rapporto", v("pep_rapporto"));
+h += goSub("Verifica effettuata mediante");
+h += goRow([goCkBox("cb_pep_dichparte","Dichiarazione della parte"), goCkBox("cb_pep_banca","Banca dati PEP"), goCkBox("cb_pep_altro","Altro"+($("cb_pep_altro")&&$("cb_pep_altro").checked?": "+v("pep_altro_txt"):""))]);
+h += goField("Esito", optText("pep_esito", v("pep_esito")));
+
+h += goBar("SEZIONE E — TITOLARE EFFETTIVO");
+if(!isPG){
+h += goRow([goCkSel("te_pf_opzione","proprio","Di agire nel proprio esclusivo interesse e che non è individuabile un titolare effettivo diverso dalla parte medesima")]);
+h += goRow([goCkSel("te_pf_opzione","terzo","Di agire nell'interesse o per conto del seguente soggetto:")]);
+if(v("te_pf_opzione")==="terzo"){
+h += goField("Nome e cognome", v("te3_nome"));
+h += goField("Luogo e data di nascita", v("te3_nascita"));
+h += goField("Codice fiscale", v("te3_cf"));
+h += goField("Residenza", v("te3_res"));
+h += goField("Cittadinanza", v("te3_cittadinanza"));
+h += goField("Documento di identità", v("te3_doc"));
+}
+} else {
+h += goSub("Il titolare effettivo è individuato mediante:");
+h += goRow([goCkBox("cb_tecrit_propdiretta","Proprietà diretta"), goCkBox("cb_tecrit_propindiretta","Proprietà indiretta"), goCkBox("cb_tecrit_controllo","Controllo")]);
+h += goRow([goCkBox("cb_tecrit_poteri","Poteri di amministrazione o direzione"), goCk(!!v("te_percentuale"), "% di partecipazione"+(v("te_percentuale")?": "+v("te_percentuale"):""))]);
+h += goSub("Fonte documentale utilizzata");
+h += goRow([goCkBox("cb_tefonte_visura","Visura camerale"), goCkBox("cb_tefonte_statuto","Statuto"), goCkBox("cb_tefonte_libro","Libro soci")]);
+h += goRow([goCkBox("cb_tefonte_assetto","Assetto proprietario dichiarato"), goCkBox("cb_tefonte_docsoc","Documentazione societaria"), goCkBox("cb_tefonte_altro","Altro"+($("cb_tefonte_altro")&&$("cb_tefonte_altro").checked?": "+v("tefonte_altro_txt"):""))]);
+h += '<p class="go-note">Aggiungere sezione in caso di più titolari effettivi.</p>';
+}
+
+h += goBar("SEZIONE F — NATURA, VALORE E FONDI DELLA PRESTAZIONE");
+h += goField("Oggetto della mediazione", v("proc_ogg"));
+h += goField("Breve descrizione", v("op_descrizione"));
+h += goField("Valore della controversia", v("op_valore"));
+h += goSub("L'eventuale accordo potrà prevedere");
+h += goRow([goCkBox("cb_accordo_farenonfare","Obblighi di fare o non fare"), goCkBox("cb_accordo_pagamento","Pagamento di somme di denaro")]);
+h += goRow([goCkBox("cb_accordo_immobile","Trasferimento di beni immobili"), goCkBox("cb_accordo_quote","Trasferimento di quote societarie")]);
+h += goRow([goCkBox("cb_accordo_azienda","Trasferimento di aziende"), goCkBox("cb_accordo_dirittireali","Costituzione o trasferimento di diritti reali")]);
+h += goRow([goCkBox("cb_accordo_nessuntrasf","Nessun trasferimento patrimoniale"), goCkBox("cb_accordo_altro","Altro"+($("cb_accordo_altro")&&$("cb_accordo_altro").checked?": "+v("accordo_altro_txt"):""))]);
+h += goSub("Provenienza delle somme o delle risorse economiche destinate all'esecuzione dell'accordo");
+h += goRow([goCkBox("cb_provenienza_redditolav","Reddito da lavoro dipendente"), goCkBox("cb_provenienza_redditoauton","Reddito da lavoro autonomo"), goCkBox("cb_provenienza_redditoimpresa","Reddito d'impresa")]);
+h += goRow([goCkBox("cb_provenienza_disponente","Disponibilità dell'ente/società"), goCkBox("cb_provenienza_finanziamento","Finanziamento bancario"), goCkBox("cb_provenienza_mutuo","Mutuo")]);
+h += goRow([goCkBox("cb_provenienza_donazione","Donazione"), goCkBox("cb_provenienza_eredita","Eredità"), goCkBox("cb_provenienza_venditabeni","Vendita beni"), goCkBox("cb_provenienza_investimenti","Investimenti")]);
+h += goRow([goCkBox("cb_provenienza_altro","Altro"+($("cb_provenienza_altro")&&$("cb_provenienza_altro").checked?": "+v("provenienza_altro_txt"):""))]);
+h += goSub("Le somme saranno corrisposte mediante");
+h += goRow([goCkBox("cb_pagamento_bonifico","Bonifico bancario"), goCkBox("cb_pagamento_assegnocirc","Assegno circolare"), goCkBox("cb_pagamento_assegnobanc","Assegno bancario")]);
+h += goRow([goCkBox("cb_pagamento_altro","Altro"+($("cb_pagamento_altro")&&$("cb_pagamento_altro").checked?": "+v("pagamento_altro_txt"):""))]);
+
+h += goBar("SEZIONE G — DICHIARAZIONI");
+h += goRow([goCkBox("cb_dich_veritieri","Che i dati sono veritieri, completi e aggiornati")]);
+h += goRow([goCkBox("cb_dich_impegno","Di impegnarsi a comunicare all'Organismo eventuali variazioni rilevanti entro 30 giorni")]);
+h += goRow([goCkSel("dich_carichi","nessuno","Che non sono in corso carichi pendenti per reati in materia economica/tributaria/societaria")]);
+if(v("dich_carichi")==="presenti") h += goField("Specificare", v("dich_carichi_dettaglio"));
+h += goRow([goCkBox("cb_dich_privacy","Di aver ricevuto e preso visione dell'informativa sul trattamento dei dati personali (artt. 13-14 Reg. UE 2016/679)")]);
+
+h += goBar("SEZIONE H — DOCUMENTI");
+h += '<p class="go-note">Il dichiarante allega:</p>';
+h += goRow([goCkBox("cb_docacq_identita","Documento identità"), goCkBox("cb_docacq_cf","Codice fiscale"), goCkBox("cb_docacq_visura","Visura camerale")]);
+h += goRow([goCkBox("cb_docacq_procalliti","Procura alle liti"), goCkBox("cb_docacq_procspec","Procura sostanziale"), goCkBox("cb_docacq_procnot","Procura notarile")]);
+h += goRow([goCkBox("cb_docacq_statuto","Statuto"), goCkBox("cb_docacq_attocost","Atto costitutivo"), goCkBox("cb_docacq_modulomav","Modulo di Adeguata Verifica")]);
+
+h += '<div class="go-sign"><div>Luogo e Data: '+blank+'</div><div style="margin-top:10px">Firma della parte o del legale rappresentante: '+blank+'</div><div style="margin-top:10px">Firma del procuratore o esecutore: '+blank+'</div></div>';
+h += goLegendaPEP();
+
+return docBlockGO("mAV", h);
+}
+
+// -------- Scheda di valutazione del rischio (formato Genova) --------
+function modSchedaRischioGenova(){
+const lvl = calcRisk();
+const isPG = v("p_tipo")==="pg";
+let h = goHeader() + goTitle("SCHEDA DI VALUTAZIONE DEL RISCHIO ANTIRICICLAGGIO", "(artt. 17, 20 e ss. D.Lgs. 231/2007)");
+
+h += goBar("1 – DATI DEL PROCEDIMENTO");
+h += goField("N. Procedimento", v("proc_n"));
+h += goField("Data deposito istanza", v("proc_data_dep_istanza")?dateIt("proc_data_dep_istanza"):"");
+h += goField("Data deposito adesione", v("proc_data_dep_adesione")?dateIt("proc_data_dep_adesione"):"");
+h += goField("Data primo incontro", v("proc_data")?dateIt("proc_data"):"");
+h += goField("Mediatore incaricato", v("proc_med"));
+h += goField("Data della valutazione iniziale", v("scheda_data_val_iniziale")?dateIt("scheda_data_val_iniziale"):today());
+h += goField("Data ultimo aggiornamento", v("scheda_data_ultimo_agg")?dateIt("scheda_data_ultimo_agg"):"");
+h += goField("Motivo aggiornamento", v("scheda_motivo_agg"));
+if(mediatoreLog.length){
+h += goSub("Cronologia degli aggiornamenti comunicati dal mediatore");
+mediatoreLog.forEach(e=>{ h += goField(e.data?new Date(e.data).toLocaleDateString("it-IT"):"", e.testo); });
+}
+
+h += goBar("2 – DATI DELLA PARTE");
+h += goSub("1. Ruolo nella procedura");
+h += goRow([goCkSel("p_ruolo","istante","Istante"), goCkSel("p_ruolo","aderente","Aderente"), goCkSel("p_ruolo","terzo","Terzo Chiamato"), goCk(v("p_ruolo")==="altro","Altro"+(v("p_ruolo")==="altro"?": "+v("p_ruolo_altro"):""))]);
+h += goSub("2. Tipologia");
+h += goRow([goCk(!isPG,"Persona fisica"), goCk(isPG,"Persona giuridica")]);
+h += goSub("3. Natura giuridica");
+h += goRow([goCkSel("p_natgiur","sp","Società di persone"), goCkSel("p_natgiur","srl","Società a responsabilità limitata"), goCkSel("p_natgiur","spa","Società per azioni")]);
+h += goRow([goCkSel("p_natgiur","coop","Società cooperativa"), goCkSel("p_natgiur","trust","Trust, fondazioni e altri enti"), goCkSel("p_natgiur","estera","Società straniera")]);
+h += goRow([goCkSel("p_natgiur","asd","Associazione sportiva - ASD"), goCk(v("p_natgiur")==="altro","Altro"+(v("p_natgiur")==="altro"?": "+v("p_natgiur_altro"):""))]);
+h += goSub("4. Attività esercitata");
+h += goField("Professione o attività economica prevalente", v("p_prof"));
+h += goField("Settore di attività (ove applicabile)", v("p_settore"));
+h += goSub("5. Area geografica");
+h += goRow([goCkSel("p_area","italia","Italia"), goCkSel("p_area","ue","Stato membro UE"), goCkSel("p_area","extraue","Stato extra UE"), goCkSel("p_area","altorischio","Paese ad alto rischio")]);
+if(v("p_area_stato")) h += goField("Specificare lo Stato", v("p_area_stato"));
+h += goSub("6. Modalità di identificazione");
+h += goRow([goCkSel("p_ident_modalita","presenza","In presenza fisica"), goCkSel("p_ident_modalita","video","Mediante videocollegamento con esibizione e verifica del documento")]);
+h += goRow([goCkSel("p_ident_modalita","digitale","Mediante firma digitale, CIE, SPID o altro sistema di identificazione idoneo"), goCkSel("p_ident_modalita","terzo","Mediante soggetto terzo ammesso ai sensi degli artt. 26 e ss. D.Lgs. 231/2007")]);
+h += goField("Documento verificato e in corso di validità", v("p_doc_valido")==="si"?"Sì":(v("p_doc_valido")==="no"?"No":""));
+h += goSub("Fonte o modalità di riscontro");
+h += goRow([goCkBox("cb_identfonte_originale","Documento originale"), goCkBox("cb_identfonte_cie","CIE"), goCkBox("cb_identfonte_spid","SPID"), goCkBox("cb_identfonte_firmadig","Firma digitale"), goCkBox("cb_identfonte_registro","Registro Imprese")]);
+
+h += goBar("3 – TITOLARE EFFETTIVO");
+h += goRow([goCk(!isPG && v("te_pf_opzione")==="proprio", "Persona fisica che agisce nel proprio interesse (non è individuabile un titolare effettivo diverso dalla parte)"), goCk(isPG,"Persona giuridica o ente con titolare effettivo individuato"), goCk(!isPG && v("te_pf_opzione")==="terzo", "Non applicabile")]);
+h += goSub("Fonti utilizzate per la verifica");
+if(!isPG){
+h += goRow([goCkBox("cb_tefonte_dichparte","Dichiarazione della parte")]);
+} else {
+h += goRow([goCkBox("cb_tefonte_dichparte","Dichiarazione della parte"), goCkBox("cb_tefonte_visura","Visura camerale"), goCkBox("cb_tefonte_statuto","Statuto")]);
+h += goRow([goCkBox("cb_tefonte_libro","Libro soci"), goCkBox("cb_tefonte_assetto","Assetto proprietario"), goCkBox("cb_tefonte_docsoc","Documentazione societaria")]);
+}
+h += goField("Numero dei titolari effettivi individuati", v("te_numero"));
+h += goField("Motivazione della valutazione", v("te_motivazione"));
+h += goField("Esito", isPG||v("te_pf_opzione")==="terzo" ? optText("te_esito", v("te_esito")) : "Non applicabile");
+
+h += goBar("4 – PERSONA POLITICAMENTE ESPOSTA (PEP)");
+h += goField("La parte è PEP?", v("pep_parte")==="no"?"No":"Sì");
+h += goField("Il titolare effettivo è PEP?", optText("pep_te", v("pep_te")));
+h += goField("Il rappresentante è PEP?", optText("pep_rappr", v("pep_rappr")));
+h += goSub("Verifica effettuata mediante");
+h += goRow([goCkBox("cb_pep_dichparte","Dichiarazione della parte"), goCkBox("cb_pep_banca","Banca dati PEP")]);
+h += goField("Esito", optText("pep_esito", v("pep_esito")));
+h += goField("Motivazione della valutazione", v("pep_motivazione"));
+
+h += goBar("5 – PRESTAZIONE");
+h += goField("Oggetto della mediazione", v("proc_ogg"));
+h += goField("Materia", v("op_materia"));
+h += goField("Valore della controversia", v("op_valore"));
+h += goSub("L'eventuale accordo potrà prevedere");
+h += goRow([goCkBox("cb_accordo_nessuntrasf","Nessun trasferimento patrimoniale"), goCkBox("cb_accordo_pagamento","Pagamento di somme"), goCkBox("cb_accordo_immobile","Trasferimento immobiliare")]);
+h += goRow([goCkBox("cb_accordo_quote","Trasferimento quote sociali"), goCkBox("cb_accordo_azienda","Trasferimento azienda"), goCkBox("cb_accordo_dirittireali","Costituzione o trasferimento di diritti reali")]);
+h += goSub("Provenienza delle somme");
+h += goRow([goCkBox("cb_provenienza_redditolav","Redditi"), goCkBox("cb_provenienza_risparmi","Risparmi"), goCkBox("cb_provenienza_venditabeni","Vendita beni"), goCkBox("cb_provenienza_mutuo","Mutuo"), goCkBox("cb_provenienza_finanziamento","Finanziamento")]);
+h += goRow([goCkBox("cb_provenienza_eredita","Eredità"), goCkBox("cb_provenienza_donazione","Donazione")]);
+h += goSub("Modalità di pagamento previste");
+h += goRow([goCkBox("cb_pagamento_bonifico","Bonifico"), goCkBox("cb_pagamento_assegnocirc","Assegno circolare"), goCkBox("cb_pagamento_assegnobanc","Assegno bancario")]);
+
+h += goBar("6 – DOCUMENTAZIONE ACQUISITA");
+h += goRow([goCkBox("cb_docacq_identita","Documento di identità"), goCkBox("cb_docacq_cf","Codice fiscale"), goCkBox("cb_docacq_visura","Visura camerale"), goCkBox("cb_docacq_statuto","Statuto")]);
+h += goRow([goCkBox("cb_docacq_procspec","Procura speciale o sostanziale"), goCkBox("cb_docacq_procnot","Procura notarile"), goCkBox("cb_docacq_modulomav","Modulo di Adeguata Verifica")]);
+h += goField("Il Mediatore", v("proc_med"));
+
+h += goBar("7 - VALUTAZIONE DEL RISCHIO DELLA PARTE");
+h += goRiskTable([
+["Natura giuridica","rp_naturagiur"],["Attività svolta","rp_attivita"],
+["Coerenza dichiarazioni/documentazione","rp_coerenza"],["Area geografica","rp_areageo"],
+["Trasparenza titolare effettivo","rp_trasparenza_te"],["Qualifica PEP","rp_pep"]
+], false);
+
+h += goBar("8 – VALUTAZIONE DELLA PRESTAZIONE");
+h += goRiskTable([
+["Tipologia della controversia","vp_tipologia"],["Valore economico","vp_valore"],
+["Modalità operative","vp_modalita"],["Coerenza controversia/profilo della parte","vp_coerenza"],
+["Complessità dell'operazione","vp_complessita"]
+], true);
+
+h += goBar("9 – ESAME DELLE ANOMALIE");
+h += goField("Sono emersi indicatori di anomalia?", v("anomalie_presenti")==="si"?"Sì":"No");
+const anLabels = {
+1:"Informazioni contraddittorie o incoerenti",
+2:"Documentazione incompleta o incoerente rispetto alle dichiarazioni rese",
+3:"Rifiuto di fornire i dati o la documentazione necessari per l'adeguata verifica",
+4:"Utilizzo di soggetti interposti o di strutture societarie non adeguatamente trasparenti",
+5:"Movimentazioni economiche non coerenti con il valore della controversia o con il profilo economico della parte",
+6:"Reticenza o ingiustificato rifiuto di fornire informazioni rilevanti ai fini dell'adeguata verifica",
+7:"Controversia apparentemente artificiosa o priva di reale contrapposizione",
+8:"Accordo manifestamente sproporzionato rispetto all'oggetto della controversia",
+9:"Pagamento o trasferimento a favore di un soggetto estraneo alla controversia",
+10:"Pagamento effettuato da un terzo privo di apparente collegamento con la procedura",
+11:"Modifiche frequenti e non giustificate del beneficiario o delle modalità di pagamento",
+12:"Trasferimento di immobili, aziende o partecipazioni a valori apparentemente incongrui",
+13:"Utilizzo ingiustificato di contanti, conti esteri, cripto-attività o strumenti non ordinari",
+14:"Utilizzo di società, trust o soggetti interposti non coerente con la controversia",
+15:"Ripetute procedure di mediazione tra soggetti collegati",
+16:"Rifiuto di chiarire la titolarità effettiva o la provenienza dei fondi",
+17:"Richieste anomale e ingiustificate di occultamento dell'identità dei soggetti coinvolti, del beneficiario, della provenienza dei fondi o delle condizioni economiche dell'accordo"
+};
+for(let i=1;i<=17;i++) h += goRow([goCkBox("cb_an_"+i, anLabels[i])]);
+h += goRow([goCkBox("cb_an_altro","Altro"+($("cb_an_altro")&&$("cb_an_altro").checked?": "+v("an_altro_txt"):""))]);
+h += goField("Le anomalie hanno ricevuto una spiegazione ragionevole e documentata?", optText("anomalie_spiegate", v("anomalie_spiegate")));
+h += goField("Approfondimenti svolti", v("anomalie_approfondimenti"));
+h += goField("Documentazione acquisita a giustificazione", v("anomalie_documentazione"));
+
+h += goBar("10 – VALUTAZIONE COMPLESSIVA DEL RISCHIO");
+h += goRow([goCk(lvl==="BASSO","Basso"), goCk(lvl==="MEDIO","Medio"), goCk(lvl==="ALTO","Alto")]);
+h += goField("Motivazione", v("risk_motivazione"));
+
+h += goBar("11 – MISURE DI ADEGUATA VERIFICA");
+h += goRow([goCkSel("av_tipo","semplificata","Adeguata verifica semplificata (art. 23 D.Lgs. 231/2007)")]);
+h += goRow([goCkSel("av_tipo","ordinaria","Adeguata verifica ordinaria (art. 18 D.Lgs. 231/2007)")]);
+h += goRow([goCkSel("av_tipo","rafforzata","Adeguata verifica rafforzata (artt. 24-25 D.Lgs. 231/2007)")]);
+h += goSub("Misure rafforzate adottate");
+h += goRow([goCkBox("cb_avmis_docint","Acquisizione di ulteriore documentazione"), goCkBox("cb_avmis_approftit","Approfondimento sul titolare effettivo")]);
+h += goRow([goCkBox("cb_avmis_provfondi","Verifica della provenienza dei fondi"), goCkBox("cb_avmis_benef","Verifica del beneficiario dell'operazione")]);
+h += goRow([goCkBox("cb_avmis_terzi","Verifica di eventuali soggetti terzi coinvolti"), goCkBox("cb_avmis_altro","Altro"+($("cb_avmis_altro")&&$("cb_avmis_altro").checked?": "+v("avmis_altro_txt"):""))]);
+
+h += goBar("12 – ESITO COMPLESSIVO SULLA PARTE E DETERMINAZIONI FINALI");
+h += goRow([goCkBox("cb_esito_nessuno","Nessun elemento di anomalia")]);
+h += goRow([goCkBox("cb_esito_monitoraggio","Monitoraggio nel corso della procedura")]);
+h += goRow([goCkBox("cb_esito_rafforzata","Adeguata verifica rafforzata")]);
+h += goRow([goCkBox("cb_esito_ulteriori","Valutazione di eventuali ulteriori adempimenti previsti dalla normativa")]);
+h += goField("Osservazioni finali", v("esito_osservazioni"));
+
+h += goBar("13 – TRASMISSIONE INTERNA");
+h += goRow([goCkSel("trasm_tipo","non_necessaria","Non necessaria"), goCkSel("trasm_tipo","effettuata","Effettuata in data:"+(v("trasm_tipo")==="effettuata"&&v("trasm_data")?" "+dateIt("trasm_data"):""))]);
+h += goField("Destinatario", v("trasm_destinatario"));
+h += goField("Motivo della trasmissione", v("trasm_motivo"));
+h += goField("Annotazioni riservate", v("trasm_annotazioni"));
+h += '<div class="go-sign"><div>Luogo e data: '+blank+'</div><div style="margin-top:10px">Il Mediatore: '+blank+'</div></div>';
+
+h += goSub("VERIFICA DEL RESPONSABILE DELL'ORGANISMO / RAR");
+h += goField("Data", v("resp_data")?dateIt("resp_data"):"");
+h += goRow([goCkSel("resp_esito","conforme","Conforme"), goCkSel("resp_esito","integrare","Da integrare"), goCkSel("resp_esito","approfondimenti","Necessari ulteriori approfondimenti")]);
+h += goField("Note", v("resp_note"));
+h += '<div class="go-sign"><div>Firma: '+blank+'</div></div>';
+
+h += goLegendaRischio();
+
+return docBlockGO("mSVR", h);
+}
+
+
 // Accumula il fascicolo generato per CIASCUNA parte della procedura corrente, cosi'
 // che lo scarico/la stampa finali possano includere TUTTE le parti trattate finora
 // (non solo l'ultima): senza questo, ogni "Genera" sovrascriveva il precedente e allo
@@ -769,7 +1177,7 @@ html += '<div class="note no-print"><b>Nota.</b> L\'assistenza in mediazione è 
 html += '<div class="docgroup"><h4>📄 Per le parti</h4><p>Da consegnare e far firmare a chi partecipa alla mediazione (e al suo avvocato, se coinvolto in un\'operazione ex art. 3 c.4 lett. c).</p></div>';
 html += modInformativa() + modDich();
 html += '<div class="docgroup"><h4>🗂️ Carte di lavoro del Mediatore</h4><p>Compilate al tavolo dal mediatore designato; vanno nel fascicolo riservato dell\'Organismo.</p></div>';
-html += modAV() + modSchedaRischio() + modAnnotazione();
+html += (usaFormatoGenova ? modAVGenova() : modAV()) + (usaFormatoGenova ? modSchedaRischioGenova() : modSchedaRischio()) + modAnnotazione();
 html += '<div class="docgroup"><h4>🔒 Riservato all\'Organismo / RAR</h4><p>Promemoria per il Responsabile Antiriciclaggio (solo se il rischio è alto) e checklist di completezza del fascicolo.</p></div>';
 html += modSOS() + modChecklist();
 html += '<div class="note no-print" data-print><b>Conservazione.</b> Stampa o salva questi modelli e inseriscili nel fascicolo riservato dell\'Organismo, separato dal fascicolo ordinario, per 10 anni (art. 31 D.Lgs. 231/2007).</div>';
@@ -1657,13 +2065,13 @@ el.setAttribute("style","font-weight:bold;font-size:14px;color:#861600;border-bo
 wrap.querySelectorAll(".docgroup p").forEach(el=>{
 el.setAttribute("style","font-size:11.5px;color:#5b6066;margin:0 0 6px 0;");
 });
-wrap.querySelectorAll("table").forEach(el=>{
+wrap.querySelectorAll("table:not(.go-table)").forEach(el=>{
 el.setAttribute("style","width:100%;border-collapse:collapse;");
 });
 wrap.querySelectorAll("td.k").forEach(el=>{
 el.setAttribute("style","width:42%;color:#373b40;font-weight:bold;padding:6px 8px;border-bottom:1px solid #eeeeee;vertical-align:top;");
 });
-wrap.querySelectorAll("td:not(.k)").forEach(el=>{
+wrap.querySelectorAll("td:not(.k):not(.go-td)").forEach(el=>{
 el.setAttribute("style","padding:6px 8px;border-bottom:1px solid #eeeeee;vertical-align:top;");
 });
 wrap.querySelectorAll(".legalref").forEach(el=>{
