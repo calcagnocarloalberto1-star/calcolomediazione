@@ -10,7 +10,7 @@ import { SeoHead } from "@/components/SeoHead";
 // il browser può continuare a servire dalla cache una copia vecchia del file
 // anche dopo che il resto del sito (bundle React) si è aggiornato, perché
 // l'indirizzo dell'iframe altrimenti non cambia mai da una modifica all'altra.
-const ASSET_VERSION = "2";
+const ASSET_VERSION = "3";
 
 export default function AntiriciclaggioGuida() {
   const frameRef = useRef<HTMLIFrameElement>(null);
