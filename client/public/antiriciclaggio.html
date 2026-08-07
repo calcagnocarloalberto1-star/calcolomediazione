@@ -151,9 +151,14 @@ h2,details:not([data-print]){display:none}
 <textarea id="assist_richiesta" rows="2" placeholder="Es. Mi compili il modulo AV e la scheda di valutazione del rischio alla luce di questi documenti?">Mi compili il modulo AV e la scheda di valutazione del rischio alla luce di questi documenti?</textarea>
 </div>
 <div class="field">
-<label>Documenti del fascicolo (anche più file insieme)</label>
-<div class="hint">Immagini (JPG/PNG) o PDF, anche di tipo diverso tra loro. Se i documenti riguardano più parti, l'assistente compila la prima parte istante e ti segnala nella risposta come gestire le altre (pulsante «+ Nuova parte per questa procedura» più sotto nel modulo).</div>
-<input type="file" id="assist_files" accept="image/*,.pdf" multiple>
+<label>Documenti del fascicolo (anche più file insieme, o un'intera cartella)</label>
+<div class="hint">Immagini (JPG/PNG) o PDF, anche di tipo diverso tra loro. Puoi selezionare i singoli file oppure caricare direttamente una cartella: tutti i documenti al suo interno (anche nelle sottocartelle) vengono aggiunti automaticamente, i file di altro formato vengono ignorati e segnalati. Se i documenti riguardano più parti, l'assistente compila la prima parte istante e ti segnala nella risposta come gestire le altre (pulsante «+ Nuova parte per questa procedura» più sotto nel modulo).</div>
+<input type="file" id="assist_files" accept="image/*,.pdf" multiple onchange="assistAggiungiFile(this.files)">
+<input type="file" id="assist_folder" webkitdirectory directory multiple style="display:none" onchange="assistAggiungiFile(this.files)">
+<div class="row-btns" style="margin-top:8px">
+<button class="btn-ghost" type="button" onclick="document.getElementById('assist_folder').click()">📁 Carica una cartella</button>
+</div>
+<div id="assist_filelist" class="hint" style="margin-top:6px"></div>
 </div>
 <div class="row-btns">
 <button class="btn-primary" type="button" id="assist_btn" onclick="assistEstrai()">Chiedi all'assistente e compila</button>
@@ -1300,6 +1305,30 @@ cb_docacq_procspec:"Acquisito: procura speciale/sostanziale",cb_docacq_procnot:"
 
 function assistSetStatus(msg){ const el = $("assist_status"); if(el) el.textContent = msg || ""; }
 
+// ─── Selezione documenti: singoli file O un'intera cartella (drag "webkitdirectory") ───
+// Accumula in un array unico i file scelti dall'input normale e da quello cartella,
+// cosi' l'utente puo' combinare piu' selezioni senza perdere quelle precedenti.
+let assistSelectedFiles = [];
+function assistFileAccettato(f){
+return f.type === "application/pdf" || /\.pdf$/i.test(f.name) || (f.type && f.type.indexOf("image/") === 0);
+}
+function assistRenderFileList(){
+const el = $("assist_filelist"); if(!el) return;
+if(!assistSelectedFiles.length){ el.textContent = ""; return; }
+el.textContent = assistSelectedFiles.length + " documento/i pronto/i: " + assistSelectedFiles.map(f=>f.name).join(", ");
+}
+function assistAggiungiFile(fileList){
+const arr = Array.from(fileList || []);
+if(!arr.length) return;
+const accettati = arr.filter(assistFileAccettato);
+const scartati = arr.length - accettati.length;
+assistSelectedFiles = assistSelectedFiles.concat(accettati);
+assistRenderFileList();
+assistSetStatus(scartati
+? scartati + " file ignorato/i perche' di formato non supportato (accettati: JPG, PNG, WEBP, GIF, PDF). " + accettati.length + " documento/i aggiunto/i."
+: accettati.length + " documento/i aggiunto/i.");
+}
+
 // ─── Assistente unico: elenco delle parti individuate, applicabili una alla volta ───
 // Stessa logica gia' collaudata nella sezione "Alta precisione (AI)" dedicata:
 // qui pero' ogni parte porta con se' un set MOLTO piu' ricco di campi (anagrafica,
@@ -1422,7 +1451,7 @@ $("assist_review").style.display = "block";
 }
 
 async function assistEstrai(){
-const files = Array.from(($("assist_files")||{}).files || []);
+const files = assistSelectedFiles.slice();
 const richiesta = v("assist_richiesta");
 if(!files.length){ assistSetStatus("Carica almeno un documento del fascicolo prima di procedere."); return; }
 const ok = confirm(
@@ -1525,6 +1554,9 @@ if(el) el.style.display = (el.style.display==="none" ? "block" : "none");
 
 function assistReset(){
 const f = $("assist_files"); if(f) f.value = "";
+const fold = $("assist_folder"); if(fold) fold.value = "";
+assistSelectedFiles = [];
+assistRenderFileList();
 const rev = $("assist_review"); if(rev) rev.style.display = "none";
 const fl = $("assist_fields"); if(fl) fl.innerHTML = "";
 const raw = $("assist_raw"); if(raw){ raw.textContent = ""; raw.style.display = "none"; }
