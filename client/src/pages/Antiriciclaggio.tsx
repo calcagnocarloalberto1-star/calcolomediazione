@@ -5,16 +5,22 @@ import { SeoHead } from "@/components/SeoHead";
 // Incorpora lo strumento statico /antiriciclaggio.html (servito da client/public)
 // con auto-ridimensionamento dell'altezza (stessa origine, nessun bordo/scroll interno).
 //
-// ASSET_VERSION: da incrementare ad ogni modifica di /antiriciclaggio.html.
-// Il file statico viene richiesto con "?v=ASSET_VERSION": senza questo parametro
-// il browser può continuare a servire dalla cache una copia vecchia del file
-// anche dopo che il resto del sito (bundle React) si è aggiornato, perché
-// l'indirizzo dell'iframe altrimenti non cambia mai da una modifica all'altra.
-const ASSET_VERSION = "11";
-
+// Cache-busting automatico: l'indirizzo dell'iframe include un parametro "?v="
+// univoco per ogni caricamento della pagina (calcolato una sola volta al mount,
+// non ad ogni render). Così il browser richiede sempre una copia mai vista prima
+// di /antiriciclaggio.html e non può restare bloccato su una versione vecchia in
+// cache — prima qui c'era un numero (ASSET_VERSION) da incrementare a mano ad
+// ogni modifica del file statico, ma è un passaggio facile da dimenticare (è
+// successo più volte) e quando succede gli utenti che hanno già visitato la
+// pagina restano bloccati sulla versione precedente finché non lo si nota. Il
+// costo di questo approccio è che il file (circa 250 KB) viene sempre
+// riscaricato invece di essere servito dalla cache del browser: accettabile per
+// uno strumento di compilazione visitato occasionalmente, dove la correttezza
+// del contenuto conta più del risparmio di banda.
 export default function Antiriciclaggio() {
   const frameRef = useRef<HTMLIFrameElement>(null);
   const [height, setHeight] = useState<number>(1600);
+  const [cacheBust] = useState<number>(() => Date.now());
 
   useEffect(() => {
     const frame = frameRef.current;
@@ -91,7 +97,7 @@ export default function Antiriciclaggio() {
       />
       <iframe
         ref={frameRef}
-        src={`/antiriciclaggio.html?v=${ASSET_VERSION}`}
+        src={`/antiriciclaggio.html?v=${cacheBust}`}
         title="Antiriciclaggio in mediazione — obblighi e modelli"
         loading="lazy"
         scrolling="no"

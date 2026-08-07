@@ -5,16 +5,15 @@ import { SeoHead } from "@/components/SeoHead";
 // Incorpora la pagina statica /antiriciclaggio-guida.html (servita da client/public)
 // con auto-ridimensionamento dell'altezza (stessa origine, nessun bordo/scroll interno).
 //
-// ASSET_VERSION: da incrementare ad ogni modifica di /antiriciclaggio-guida.html.
-// Il file statico viene richiesto con "?v=ASSET_VERSION": senza questo parametro
-// il browser può continuare a servire dalla cache una copia vecchia del file
-// anche dopo che il resto del sito (bundle React) si è aggiornato, perché
-// l'indirizzo dell'iframe altrimenti non cambia mai da una modifica all'altra.
-const ASSET_VERSION = "3";
-
+// Cache-busting automatico: vedi il commento equivalente in Antiriciclaggio.tsx.
+// Il parametro "?v=" è calcolato una sola volta al mount (non ad ogni render) ed
+// è sempre diverso, così il browser non può restare bloccato su una copia vecchia
+// di /antiriciclaggio-guida.html in cache — non serve più incrementare a mano un
+// numero di versione ad ogni modifica del file statico.
 export default function AntiriciclaggioGuida() {
   const frameRef = useRef<HTMLIFrameElement>(null);
   const [height, setHeight] = useState<number>(1800);
+  const [cacheBust] = useState<number>(() => Date.now());
 
   useEffect(() => {
     const frame = frameRef.current;
@@ -100,7 +99,7 @@ export default function AntiriciclaggioGuida() {
       />
       <iframe
         ref={frameRef}
-        src={`/antiriciclaggio-guida.html?v=${ASSET_VERSION}`}
+        src={`/antiriciclaggio-guida.html?v=${cacheBust}`}
         title="Antiriciclaggio in mediazione — guida in linguaggio semplice"
         loading="lazy"
         scrolling="no"
