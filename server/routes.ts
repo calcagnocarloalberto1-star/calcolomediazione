@@ -541,26 +541,42 @@ res.status(500).json({ error: "Errore nell'elaborazione dei file" });
 }
 });
 
-// ─── ESTRAZIONE AI DA IMMAGINE (tool antiriciclaggio, modalita' alta precisione) ─
+// Tipi di file accettati dagli endpoint AML: immagini (lette in visione nativa)
+// e PDF (letti come documento nativo dal modello, pagina per pagina — stesso
+// meccanismo con cui si legge un PDF allegato direttamente in una chat).
+const AML_ALLOWED_TYPES = ["image/jpeg", "image/png", "image/webp", "image/gif", "application/pdf"];
+
+// Divide i file caricati in documenti validi (da inviare al modello) e file
+// scartati (tipo non supportato o corpo mancante), cosi' l'utente viene
+// avvisato esplicitamente invece che il file sparisca in silenzio.
+function smistaFileAml(files: Array<{ buffer: Buffer; mimetype: string; originalname?: string }>) {
+const documenti: Array<{ base64: string; mediaType: string }> = [];
+const scartati: string[] = [];
+for (const f of files) {
+const mediaType = (f.mimetype || "").toLowerCase();
+if (!AML_ALLOWED_TYPES.includes(mediaType) || !f.buffer) {
+scartati.push(f.originalname || mediaType || "file sconosciuto");
+continue;
+}
+documenti.push({ base64: f.buffer.toString("base64"), mediaType });
+}
+return { documenti, scartati };
+}
+
+// ─── ESTRAZIONE AI DA DOCUMENTO (tool antiriciclaggio, modalita' alta precisione) ─
 app.post("/api/aml-extract", aiRateLimit, upload.array("files", 50), async (req, res) => {
 try {
-const files = ((req as any).files as Array<{ buffer: Buffer; mimetype: string }>) || [];
+const files = ((req as any).files as Array<{ buffer: Buffer; mimetype: string; originalname?: string }>) || [];
 const doctype = (req.body?.doctype || "id").toString();
 if (!files.length) {
 return res.status(400).json({ error: "Nessun file ricevuto." });
 }
-const allowed = ["image/jpeg", "image/png", "image/webp", "image/gif"];
-const immagini: Array<{ base64: string; mediaType: string }> = [];
-for (const f of files) {
-const mediaType = (f.mimetype || "").toLowerCase();
-if (!allowed.includes(mediaType) || !f.buffer) continue;
-immagini.push({ base64: f.buffer.toString("base64"), mediaType });
+const { documenti, scartati } = smistaFileAml(files);
+if (!documenti.length) {
+return res.status(400).json({ error: "Nessun documento valido ricevuto (formati accettati: JPG, PNG, WEBP, GIF, PDF).", scartati });
 }
-if (!immagini.length) {
-return res.status(400).json({ error: "Nessuna immagine valida ricevuta." });
-}
-const fields = await estraiDocumentoAI(immagini, doctype);
-res.json({ fields });
+const fields = await estraiDocumentoAI(documenti, doctype);
+res.json({ fields, scartati: scartati.length ? scartati : undefined });
 } catch (e: any) {
 console.error("Errore /api/aml-extract:", e);
 res.status(500).json({ error: (e && e.message) ? e.message : "Errore durante l'estrazione AI." });
@@ -570,23 +586,17 @@ res.status(500).json({ error: (e && e.message) ? e.message : "Errore durante l'e
 // ─── ASSISTENTE AI DI COMPILAZIONE (tool antiriciclaggio, piu' documenti + richiesta libera) ─
 app.post("/api/aml-assist", aiRateLimit, upload.array("files", 20), async (req, res) => {
 try {
-const files = ((req as any).files as Array<{ buffer: Buffer; mimetype: string }>) || [];
+const files = ((req as any).files as Array<{ buffer: Buffer; mimetype: string; originalname?: string }>) || [];
 const richiesta = (req.body?.richiesta || "").toString().slice(0, 4000);
 if (!files.length) {
 return res.status(400).json({ error: "Nessun file ricevuto." });
 }
-const allowed = ["image/jpeg", "image/png", "image/webp", "image/gif"];
-const immagini: Array<{ base64: string; mediaType: string }> = [];
-for (const f of files) {
-const mediaType = (f.mimetype || "").toLowerCase();
-if (!allowed.includes(mediaType) || !f.buffer) continue;
-immagini.push({ base64: f.buffer.toString("base64"), mediaType });
+const { documenti, scartati } = smistaFileAml(files);
+if (!documenti.length) {
+return res.status(400).json({ error: "Nessun documento valido ricevuto (formati accettati: JPG, PNG, WEBP, GIF, PDF).", scartati });
 }
-if (!immagini.length) {
-return res.status(400).json({ error: "Nessuna immagine valida ricevuta." });
-}
-const result = await assistenteCompilazioneAI(immagini, richiesta);
-res.json(result);
+const result = await assistenteCompilazioneAI(documenti, richiesta);
+res.json({ ...result, scartati: scartati.length ? scartati : undefined });
 } catch (e: any) {
 console.error("Errore /api/aml-assist:", e);
 res.status(500).json({ error: (e && e.message) ? e.message : "Errore durante l'elaborazione dell'assistente AI." });
