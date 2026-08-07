@@ -18,7 +18,7 @@ import {
   Brain, Plus, Trash2, Upload, FileText, Send, Loader2,
   CheckCircle, Clock, Download, RotateCcw, FileDown, Home,
   Shield, EyeOff, ChevronDown, ChevronUp, Eye, Scale, Award,
-  History, FolderOpen, Trash, CalendarDays,
+  History, FolderOpen, Trash, CalendarDays, AlertCircle,
 } from "lucide-react";
 import MarkdownRenderer from "@/components/MarkdownRenderer";
 import { apiRequest } from "@/lib/queryClient";
@@ -198,6 +198,70 @@ export default function AnalisiCasoAI() {
   const [venditoreImpresaIva, setVenditoreImpresaIva] = useState(false);
   const [dragActive, setDragActive] = useState(false);
   const [files, setFiles] = useState<File[]>([]);
+
+  // Documenti richiesti — elenco personalizzato che l'utente definisce (es. "carta d'identità",
+  // "visura camerale", un modulo specifico nel proprio formato) per ricordarsi cosa allegare per
+  // questo tipo di pratica. Persistito in localStorage così resta pronto anche per le pratiche future.
+  const DOCUMENTI_RICHIESTI_KEY = "analisi_documenti_richiesti_template";
+  const [documentiRichiesti, setDocumentiRichiesti] = useState<string[]>(() => {
+    try {
+      const raw = localStorage.getItem(DOCUMENTI_RICHIESTI_KEY);
+      const parsed = raw ? JSON.parse(raw) : [];
+      return Array.isArray(parsed) ? parsed.filter((x): x is string => typeof x === "string") : [];
+    } catch { return []; }
+  });
+  const [nuovoDocumentoRichiesto, setNuovoDocumentoRichiesto] = useState("");
+  const [documentiRichiestiOverride, setDocumentiRichiestiOverride] = useState<Record<string, boolean>>({});
+
+  useEffect(() => {
+    try { localStorage.setItem(DOCUMENTI_RICHIESTI_KEY, JSON.stringify(documentiRichiesti)); } catch { /* storage non disponibile */ }
+  }, [documentiRichiesti]);
+
+  const normalizzaTesto = (s: string) => s
+    .toLowerCase()
+    .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9\s]/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+
+  const documentoRisultaCaricato = (nomeRichiesto: string): boolean => {
+    if (Object.prototype.hasOwnProperty.call(documentiRichiestiOverride, nomeRichiesto)) {
+      return documentiRichiestiOverride[nomeRichiesto];
+    }
+    const target = normalizzaTesto(nomeRichiesto);
+    if (!target) return false;
+    const nomiFile = files.map(f => normalizzaTesto(f.name));
+    const paroleChiave = target.split(" ").filter(p => p.length >= 4);
+    return nomiFile.some(nomeFile =>
+      nomeFile.includes(target) || target.includes(nomeFile) ||
+      (paroleChiave.length > 0 && paroleChiave.every(p => nomeFile.includes(p)))
+    );
+  };
+
+  const aggiungiDocumentoRichiesto = () => {
+    const nome = nuovoDocumentoRichiesto.trim();
+    if (!nome) return;
+    if (documentiRichiesti.some(d => normalizzaTesto(d) === normalizzaTesto(nome))) {
+      setNuovoDocumentoRichiesto("");
+      return;
+    }
+    setDocumentiRichiesti(prev => [...prev, nome]);
+    setNuovoDocumentoRichiesto("");
+  };
+
+  const rimuoviDocumentoRichiesto = (nome: string) => {
+    setDocumentiRichiesti(prev => prev.filter(d => d !== nome));
+    setDocumentiRichiestiOverride(prev => {
+      const next = { ...prev };
+      delete next[nome];
+      return next;
+    });
+  };
+
+  const toggleDocumentoOverride = (nome: string) => {
+    const statoAttuale = documentoRisultaCaricato(nome);
+    setDocumentiRichiestiOverride(prev => ({ ...prev, [nome]: !statoAttuale }));
+  };
 
   // Analysis state
   const [isRunning, setIsRunning] = useState(false);
@@ -943,6 +1007,52 @@ export default function AnalisiCasoAI() {
                   )}
                 </div>
               ))}
+            </div>
+
+            {/* Documenti richiesti (checklist personalizzata) */}
+            <div className="space-y-2">
+              <Label className="text-sm font-semibold">Documenti richiesti per questa pratica</Label>
+              <p className="text-xs text-muted-foreground">
+                Se per il tuo formato di lavoro serve sempre una modulistica specifica (es. carta d'identità, visura camerale, un tuo modulo), inseriscila qui: resta salvata anche per le prossime pratiche e ti ricorda cosa manca ancora da allegare.
+              </p>
+              <div className="flex gap-2">
+                <Input value={nuovoDocumentoRichiesto} onChange={e => setNuovoDocumentoRichiesto(e.target.value)}
+                  onKeyDown={e => { if (e.key === "Enter") { e.preventDefault(); aggiungiDocumentoRichiesto(); } }}
+                  placeholder="Es. carta d'identità, visura camerale…" className="border-2 border-foreground"
+                  data-testid="input-documento-richiesto" />
+                <Button type="button" variant="outline" onClick={aggiungiDocumentoRichiesto}
+                  className="border-2 border-foreground flex-shrink-0" data-testid="button-aggiungi-documento-richiesto">
+                  <Plus className="w-4 h-4" />
+                </Button>
+              </div>
+              {documentiRichiesti.length > 0 && (
+                <div className="space-y-1.5 mt-2" data-testid="lista-documenti-richiesti">
+                  {documentiRichiesti.map((nome, i) => {
+                    const caricato = documentoRisultaCaricato(nome);
+                    return (
+                      <div key={i}
+                        className={`flex items-center gap-2 border p-2 text-sm cursor-pointer select-none ${caricato ? "border-green-600/40 bg-green-600/5" : "border-amber-500/50 bg-amber-500/5"}`}
+                        onClick={() => toggleDocumentoOverride(nome)}
+                        data-testid={`row-documento-richiesto-${i}`}>
+                        {caricato
+                          ? <CheckCircle className="w-4 h-4 text-green-600 flex-shrink-0" />
+                          : <AlertCircle className="w-4 h-4 text-amber-600 flex-shrink-0" />}
+                        <span className="flex-1">{nome}</span>
+                        <span className="text-xs text-muted-foreground">{caricato ? "allegato" : "manca ancora"}</span>
+                        <button onClick={e => { e.stopPropagation(); rimuoviDocumentoRichiesto(nome); }}
+                          className="ml-1 hover:text-destructive flex-shrink-0" data-testid={`button-rimuovi-documento-richiesto-${i}`}>
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+                    );
+                  })}
+                  {documentiRichiesti.every(d => documentoRisultaCaricato(d))
+                    ? <p className="text-xs text-green-700 font-medium">✅ Tutti i documenti richiesti risultano allegati.</p>
+                    : <p className="text-xs text-amber-700 font-medium">
+                        Mancano ancora: {documentiRichiesti.filter(d => !documentoRisultaCaricato(d)).join(", ")}
+                      </p>}
+                </div>
+              )}
             </div>
 
             {/* File Upload */}
