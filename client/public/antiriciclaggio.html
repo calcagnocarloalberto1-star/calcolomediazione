@@ -1722,8 +1722,14 @@ function assistSetStatus(msg){ const el = $("assist_status"); if(el) el.textCont
 // Accumula in un array unico i file scelti dall'input normale e da quello cartella,
 // cosi' l'utente puo' combinare piu' selezioni senza perdere quelle precedenti.
 let assistSelectedFiles = [];
+// Oltre al MIME type, controlliamo anche l'estensione: alcuni browser/sistemi operativi (in
+// particolare quando si seleziona un'intera cartella) non riescono a determinare il MIME type di
+// ogni file e restituiscono f.type vuoto — senza questo controllo di riserva, tutte le immagini di
+// quella cartella verrebbero scartate in silenzio e l'elenco risulterebbe vuoto.
+const ASSIST_EXT_IMMAGINE = /\.(jpe?g|png|webp|gif)$/i;
 function assistFileAccettato(f){
-return f.type === "application/pdf" || /\.pdf$/i.test(f.name) || (f.type && f.type.indexOf("image/") === 0);
+return f.type === "application/pdf" || /\.pdf$/i.test(f.name)
+|| (f.type && f.type.indexOf("image/") === 0) || ASSIST_EXT_IMMAGINE.test(f.name);
 }
 function assistRenderFileList(){
 const el = $("assist_filelist"); if(!el) return;
@@ -1732,7 +1738,13 @@ el.textContent = assistSelectedFiles.length + " documento/i pronto/i: " + assist
 }
 function assistAggiungiFile(fileList){
 const arr = Array.from(fileList || []);
-if(!arr.length) return;
+if(!arr.length){
+// Nessun file ricevuto dal selettore: cartella vuota, selezione annullata, oppure (soprattutto
+// su OneDrive/Google Drive/iCloud) file "online-only" non ancora scaricati sul dispositivo.
+// Senza questo avviso lo schermo resta invariato e sembra che "non sia successo nulla".
+assistSetStatus("Nessun file trovato nella cartella selezionata. Se i file sono su OneDrive, Google Drive o iCloud, verifica che siano scaricati sul dispositivo (non solo \"online\") e riprova; in alternativa seleziona i singoli file con il primo pulsante.");
+return;
+}
 const accettati = arr.filter(assistFileAccettato);
 const scartati = arr.length - accettati.length;
 assistSelectedFiles = assistSelectedFiles.concat(accettati);
