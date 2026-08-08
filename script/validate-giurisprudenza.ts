@@ -108,6 +108,44 @@ export function validateGiurisprudenza(data: Sentenza[] = sentenze): ValidationE
         ids: [s.id],
       });
     }
+
+    // DATA-02: campo "data" deve essere una data reale in formato ISO (YYYY-MM-DD).
+    // Individua valori placeholder/non validi come "None", stringhe vuote o date
+    // impossibili (es. "2026-13-45") che a runtime producevano "Invalid Date".
+    const isoDateMatch = /^(\d{4})-(\d{2})-(\d{2})$/.exec(s.data ?? "");
+    if (!isoDateMatch) {
+      errors.push({
+        type: "invalid_value",
+        message: `Sentenza id ${s.id}: campo "data" ("${s.data}") non è in formato ISO YYYY-MM-DD`,
+        ids: [s.id],
+      });
+    } else {
+      const [, y, m, d] = isoDateMatch;
+      const parsed = new Date(`${y}-${m}-${d}T00:00:00Z`);
+      const valid =
+        !Number.isNaN(parsed.getTime()) &&
+        parsed.getUTCFullYear() === Number(y) &&
+        parsed.getUTCMonth() + 1 === Number(m) &&
+        parsed.getUTCDate() === Number(d);
+      if (!valid) {
+        errors.push({
+          type: "invalid_value",
+          message: `Sentenza id ${s.id}: campo "data" ("${s.data}") non è una data di calendario valida`,
+          ids: [s.id],
+        });
+      }
+    }
+
+    // DATA-02: per le pronunce più recenti (dal 2020 in poi) il numero di
+    // provvedimento è sempre reperibile dalla fonte; un numero mancante indica
+    // una scheda incompleta, non una sentenza storica priva di numero pubblicato.
+    if (s.anno >= 2020 && (!s.numero || s.numero.trim() === "")) {
+      errors.push({
+        type: "missing_field",
+        message: `Sentenza id ${s.id} (${s.organo}, ${s.anno}): campo "numero" mancante per una pronuncia recente`,
+        ids: [s.id],
+      });
+    }
   }
 
   return errors;
