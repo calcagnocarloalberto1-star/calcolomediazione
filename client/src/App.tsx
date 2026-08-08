@@ -30,6 +30,7 @@ import AntiriciclaggioGuida from "@/pages/AntiriciclaggioGuida";
 import NotFound from "@/pages/not-found";
 import Admin from "@/pages/Admin";
 import StrategieNegoziazione from "@/pages/StrategieNegoziazione";
+import MediazioneObbligatoriaCosti from "@/pages/MediazioneObbligatoriaCosti";
 import { usePageTracker } from "@/hooks/use-page-tracker";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { installGlobalErrorHandlers } from "@/lib/error-logger";
@@ -85,6 +86,7 @@ function AppRouter() {
       <Route path="/giurisprudenza/:slug" component={SentenzaDetail} />
       <Route path="/credito-imposta" component={CreditoImposta} />
       <Route path="/strategie-negoziazione" component={StrategieNegoziazione} />
+      <Route path="/mediazione-obbligatoria-quanto-costa" component={MediazioneObbligatoriaCosti} />
       <Route path="/antiriciclaggio">
         <Boundary tag="antiriciclaggio" section="lo strumento antiriciclaggio">
           <Antiriciclaggio />
