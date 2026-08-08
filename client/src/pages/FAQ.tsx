@@ -387,7 +387,7 @@ export default function FAQ() {
           </h3>
           <p className="text-muted-foreground mb-6 max-w-lg mx-auto">
             Prova i nostri calcolatori per ottenere calcoli precisi delle indennità e del credito d'imposta,
-            oppure avvia un\u2019analisi AI del tuo caso.
+            oppure avvia un'analisi AI del tuo caso.
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <Link href="/calcolatore">
