@@ -39,6 +39,7 @@ const PAGES = [
 { path: "/giurisprudenza", title: "Giurisprudenza Mediazione - Database Sentenze", desc: "Database di giurisprudenza sulla mediazione civile e commerciale. Sentenze di Cassazione, Tribunali e Corti d'Appello con ricerca avanzata.", priority: "0.7", changefreq: "weekly" },
 { path: "/credito-imposta", title: "Credito d'Imposta e Gratuito Patrocinio in Mediazione", desc: "Guida completa al credito d'imposta per la mediazione civile (D.M. 1° agosto 2023) e al gratuito patrocinio. Requisiti, importi e procedura.", priority: "0.7", changefreq: "monthly" },
 { path: "/strategie-negoziazione", title: "Strategie di Negoziazione per la Mediazione Civile", desc: "Guida alle principali strategie e tecniche di negoziazione nella mediazione civile: MAAN/BATNA, negoziazione integrativa, zone of possible agreement, ancoraggio e tecniche di comunicazione.", priority: "0.7", changefreq: "monthly" },
+{ path: "/mediazione-obbligatoria-quanto-costa", title: "Mediazione Obbligatoria: Quanto Costa Davvero nel 2026 (Guida con Esempi)", desc: "Quanto costa la mediazione civile obbligatoria: tabella ufficiale D.M. 150/2023, riduzione del 20%, esempi di calcolo reali e confronto con le spese di un giudizio.", priority: "0.6", changefreq: "monthly" },
 { path: "/glossario", title: "Glossario della Mediazione Civile", desc: "Glossario completo dei termini utilizzati nella mediazione civile e commerciale. Definizioni chiare e riferimenti normativi.", priority: "0.5", changefreq: "monthly" },
 { path: "/chi-siamo", title: "Chi Siamo - CalcoloMediazione", desc: "Scopri il team dietro CalcoloMediazione, la piattaforma professionale per mediatori civili e commerciali.", priority: "0.4", changefreq: "yearly" },
 { path: "/contatti", title: "Contatti - CalcoloMediazione", desc: "Contatta il team di CalcoloMediazione per informazioni, supporto tecnico e collaborazioni.", priority: "0.4", changefreq: "yearly" },
@@ -246,6 +247,18 @@ const PAGE_CONTENT: Record<string, string> = {
 <li>Tecnica del caucus (sessioni separate)</li>
 <li>Gestione dei bias cognitivi in negoziazione</li>
 <li>Comunicazione non verbale e ascolto attivo</li>
+</ul>`,
+
+"/mediazione-obbligatoria-quanto-costa": `
+<h1>Mediazione Obbligatoria: Quanto Costa Davvero nel 2026 (Guida con Esempi)</h1>
+<p>Quanto costa la mediazione civile obbligatoria? Tabella ufficiale D.M. 150/2023, riduzione del 20% per la mediazione obbligatoria e demandata, esempi di calcolo reali e confronto con le spese di un giudizio ordinario.</p>
+<h2>Contenuto dell'articolo</h2>
+<ul>
+<li>Tabella delle spese di avvio e del primo incontro (D.M. 150/2023)</li>
+<li>Esempio di calcolo: controversia condominiale da €30.000 con accordo al primo incontro</li>
+<li>Esempio di calcolo: primo incontro senza accordo</li>
+<li>Gratuito patrocinio ed esenzione totale dall'indennità</li>
+<li>Confronto con i costi di un giudizio ordinario</li>
 </ul>`,
 
 "/glossario": `
