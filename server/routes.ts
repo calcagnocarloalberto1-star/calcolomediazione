@@ -20,6 +20,7 @@ import { registerClientErrorRoute } from "./client-errors.js";
 import { sentenze, ORGANI_GIUDIZIARI } from "../client/src/data/giurisprudenza-db.js";
 import { generaSlugSentenza, trovaSentenzaPerSlug, urlSentenza } from "../shared/sentenza-slug.js";
 import { buildSentenzaHtml, buildGiurisprudenzaSitemap } from "./sentenza-bot-html.js";
+import lastmodMap from "./lastmod-generated.json" with { type: "json" };
 
 const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 20 * 1024 * 1024 } });
 
@@ -902,7 +903,12 @@ res.json(calcoli);
 
 app.get("/sitemap.xml", (req, res) => {
 const siteUrl = getSiteUrl(req);
+// SEO-03: lastmod per pagina = data dell'ultimo commit git che ha toccato il
+// relativo sorgente (generata a build time in server/lastmod-generated.json),
+// non più la data odierna per ogni URL. Fallback su "oggi" solo se una pagina
+// manca dalla mappa (non dovrebbe accadere, ma evita un lastmod assente).
 const today = new Date().toISOString().slice(0, 10);
+const lastmodFor = (p: string): string => (lastmodMap as Record<string, string>)[p] || today;
 let xml = `<?xml version="1.0" encoding="UTF-8"?>\n`;
 xml += `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"\n xmlns:xhtml="http://www.w3.org/1999/xhtml">\n`;
 for (const page of PAGES) {
@@ -910,21 +916,22 @@ const fullUrl = `${siteUrl}${page.path === "/" ? "/" : page.path}`;
 xml += ` <url>\n`;
 xml += ` <loc>${fullUrl}</loc>\n`;
 xml += ` <xhtml:link rel="alternate" hreflang="it-IT" href="${fullUrl}"/>\n`;
-xml += ` <lastmod>${today}</lastmod>\n`;
+xml += ` <lastmod>${lastmodFor(page.path)}</lastmod>\n`;
 xml += ` <changefreq>${page.changefreq}</changefreq>\n`;
 xml += ` <priority>${page.priority}</priority>\n`;
 xml += ` </url>\n`;
 }
 // Pagine istituzionali non incluse in PAGES
 for (const p of ["/privacy-policy", "/cookie-policy", "/termini-condizioni"]) {
-xml += ` <url>\n <loc>${siteUrl}${p}</loc>\n <changefreq>yearly</changefreq>\n <priority>0.3</priority>\n </url>\n`;
+xml += ` <url>\n <loc>${siteUrl}${p}</loc>\n <lastmod>${lastmodFor(p)}</lastmod>\n <changefreq>yearly</changefreq>\n <priority>0.3</priority>\n </url>\n`;
 }
 // Sezione statica esterna (calcolo assegni)
-xml += ` <url>\n <loc>${siteUrl}/calcolo-assegni/</loc>\n <xhtml:link rel="alternate" hreflang="it-IT" href="${siteUrl}/calcolo-assegni/"/>\n <changefreq>monthly</changefreq>\n <priority>0.8</priority>\n </url>\n`;
-// Pagine dedicate sentenze (tutte le pronunce)
+xml += ` <url>\n <loc>${siteUrl}/calcolo-assegni/</loc>\n <xhtml:link rel="alternate" hreflang="it-IT" href="${siteUrl}/calcolo-assegni/"/>\n <lastmod>${lastmodFor("/calcolo-assegni/")}</lastmod>\n <changefreq>monthly</changefreq>\n <priority>0.8</priority>\n </url>\n`;
+// Pagine dedicate sentenze (tutte le pronunce): lastmod = data reale della
+// pronuncia (campo "data" del dataset), stabile finché la scheda non cambia.
 for (const s of sentenze) {
 const url = `${siteUrl}${urlSentenza(s)}`;
-xml += ` <url>\n <loc>${url}</loc>\n <xhtml:link rel="alternate" hreflang="it-IT" href="${url}"/>\n <lastmod>${today}</lastmod>\n <changefreq>yearly</changefreq>\n <priority>0.6</priority>\n </url>\n`;
+xml += ` <url>\n <loc>${url}</loc>\n <xhtml:link rel="alternate" hreflang="it-IT" href="${url}"/>\n <lastmod>${s.data}</lastmod>\n <changefreq>yearly</changefreq>\n <priority>0.6</priority>\n </url>\n`;
 }
 xml += `</urlset>`;
 res.setHeader("Content-Type", "application/xml");
