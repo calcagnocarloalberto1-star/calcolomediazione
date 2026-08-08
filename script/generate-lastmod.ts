@@ -50,6 +50,7 @@ const PAGE_SOURCES: Record<string, string[]> = {
   "/cookie-policy": ["client/src/pages/CookiePolicy.tsx"],
   "/termini-condizioni": ["client/src/pages/TerminiCondizioni.tsx"],
   "/calcolo-assegni/": ["client/public/calcolo-assegni"],
+  "/mediazione-obbligatoria-quanto-costa": ["client/src/pages/MediazioneObbligatoriaCosti.tsx"],
 };
 
 // Ritorna null (anziché una data fissa) se git non è disponibile o nessuno
