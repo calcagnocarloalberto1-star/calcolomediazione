@@ -470,21 +470,6 @@ export const sentenze: Sentenza[] = [
     fonteUrl: "https://www.laleggepertutti.it/amp/758184_mediazione-condominiale-blocca-i-termini-per-impugnare-la-delibera",
   },
 
-  {
-    id: 27,
-    organo: "Trib. Udine",
-    tipoOrgano: "tribunale",
-    numero: "",
-    anno: 2026,
-    data: "2026-04-01",
-    titolo: "Sanzione art. 12-bis autonoma dall'esito del giudizio: chi vince ma diserta la mediazione è comunque condannato",
-    categoria: "Mancata partecipazione",
-    massima: "La sanzione prevista dall'art. 12-bis D.Lgs. 28/2010 per la mancata partecipazione ingiustificata alla mediazione ha natura autonoma rispetto all'esito del giudizio. Il presupposto della condanna è la condotta di mancata partecipazione, non la soccombenza nel merito. Anche la parte che risulta vincitrice nella causa principale può essere condannata al pagamento della sanzione se ha disertato senza giustificato motivo il procedimento di mediazione.",
-    nota: "Conferma Trib. Milano 9925/2025. Il messaggio alle parti è chiaro: la mediazione non può essere ignorata strategicamente.",
-    riferimentiNormativi: ["Art. 12-bis D.Lgs. 28/2010", "D.Lgs. 149/2022"],
-    temiChiave: ["art. 12-bis", "sanzione autonoma", "mancata partecipazione", "vincitore condannato", "giustificato motivo"],
-    fonteUrl: "https://www.adrprogestitalia.it/post/sanzione-mediazione-prescrizione-mutuo",
-  },
 
   {
     id: 28,
@@ -577,36 +562,7 @@ export const sentenze: Sentenza[] = [
     fonteUrl: "https://www.osservatorioconflitticonciliazione.it/lavvocato-in-mediazione-deve-avere-la-procura-sostanziale/",
   },
 
-  {
-    id: 34,
-    organo: "Trib. Firenze",
-    tipoOrgano: "tribunale",
-    numero: "",
-    anno: 2015,
-    data: "2015-06-01",
-    titolo: "Prime pronunce fiorentine sulla procura sostanziale e partecipazione effettiva in mediazione",
-    categoria: "Condizione di procedibilità",
-    massima: "Il Tribunale di Firenze, con orientamento anticipatore poi recepito dalla Cassazione (n. 8473/2019) e dalla Riforma Cartabia, ha affermato che la partecipazione alla mediazione deve essere effettiva e non formale. La parte deve presentarsi personalmente o tramite soggetto munito di pieni poteri dispositivi. La semplice presenza di un avvocato senza procura sostanziale non soddisfa la condizione di procedibilità.",
-    nota: "Giurisprudenza fiorentina precorritrice. I principi elaborati sono stati poi recepiti dalla Cassazione nel 2019 e dal legislatore con la Riforma Cartabia nel 2022.",
-    riferimentiNormativi: ["Art. 5 D.Lgs. 28/2010", "Art. 8 D.Lgs. 28/2010"],
-    temiChiave: ["Firenze", "giurisprudenza precorritrice", "partecipazione effettiva", "procura sostanziale", "formalismo"],
-    fonteUrl: "https://www.mondoadr.it",
-  },
 
-  {
-    id: 35,
-    organo: "Trib. Varese",
-    tipoOrgano: "tribunale",
-    numero: "",
-    anno: 2016,
-    data: "2016-01-01",
-    titolo: "Elenco materie obbligatorie tassativo: no estensione analogica",
-    categoria: "Condizione di procedibilità",
-    massima: "L'elenco delle materie soggette a mediazione obbligatoria ex art. 5 D.Lgs. 28/2010 è tassativo e non può essere esteso ad altre ipotesi per analogia. Per ogni controversia non rientrante nell'elenco, la mediazione resta facoltativa e non costituisce condizione di procedibilità. Lo confermano varie sentenze di tribunali del Nord Italia (Varese, Pavia, Bergamo).",
-    riferimentiNormativi: ["Art. 5, co. 1, D.Lgs. 28/2010"],
-    temiChiave: ["materie obbligatorie", "elenco tassativo", "analogia", "mediazione facoltativa", "procedibilità"],
-    fonteUrl: "https://www.avvocatoticozzi.it",
-  },
 
   {
     id: 36,
@@ -623,36 +579,7 @@ export const sentenze: Sentenza[] = [
     fonteUrl: "https://www.mondoadr.it/giurisprudenza_art/opposizione-a-di-senza-mediazione-domanda-monitoria-improcedibile/",
   },
 
-  {
-    id: 37,
-    organo: "Trib. Trani",
-    tipoOrgano: "tribunale",
-    numero: "",
-    anno: 2025,
-    data: "2025-06-19",
-    titolo: "Art. 12-bis: sanzione verso lo Stato applicata; indennità alla controparte esclusa per soccombenza parziale",
-    categoria: "Mancata partecipazione",
-    massima: "La sanzione prevista dall'art. 12-bis D.Lgs. 28/2010 verso lo Stato (doppio c.u.) è applicata al soggetto assente in mediazione senza giustificato motivo. La sanzione a favore della controparte (somma equitativa) non viene concessa quando vi è una soccombenza solo parziale nel merito, richiedendo questo tipo di sanzione anche l'elemento della soccombenza.",
-    nota: "Chiarisce la distinzione tra le due sanzioni dell'art. 12-bis: quella verso lo Stato è automatica; quella verso la parte richiede anche la soccombenza.",
-    riferimentiNormativi: ["Art. 12-bis D.Lgs. 28/2010", "Art. 116, co. 2, c.p.c."],
-    temiChiave: ["art. 12-bis", "sanzione allo Stato", "soccombenza parziale", "sanzione equitativa", "distinguo"],
-    fonteUrl: "https://www.osservatorioconflitticonciliazione.it/mediazione-civile-le-conseguenze-della-mancata-partecipazione/",
-  },
 
-  {
-    id: 38,
-    organo: "Trib. Genova",
-    tipoOrgano: "tribunale",
-    numero: "",
-    anno: 2024,
-    data: "2024-12-01",
-    titolo: "Sanzioni mancata partecipazione: applicazione rigorosa art. 12-bis post-Cartabia",
-    categoria: "Mancata partecipazione",
-    massima: "Il Tribunale di Genova applica rigorosamente le sanzioni previste dall'art. 12-bis D.Lgs. 28/2010 nei confronti della parte che non si è presentata senza giustificato motivo al primo incontro di mediazione. La riforma Cartabia ha inteso rafforzare l'effettività della mediazione mediante un regime sanzionatorio significativo, applicabile a prescindere dall'esito della causa.",
-    riferimentiNormativi: ["Art. 12-bis D.Lgs. 28/2010", "D.Lgs. 149/2022"],
-    temiChiave: ["Genova", "sanzioni", "art. 12-bis", "mancata partecipazione", "primo incontro"],
-    fonteUrl: "https://www.mondoadr.it",
-  },
 
   {
     id: 39,
@@ -1213,22 +1140,6 @@ export const sentenze: Sentenza[] = [
     fonteUrl: "https://www.mondoadr.it/giurisprudenza_art/controversie-di-lavoro-escluse-dalla-mediazione-obbligatoria-la-riforma-cartabia-non-cambia-il-rito-del-lavoro/",
   },
 
-  {
-    id: 72,
-    organo: "Tribunale di Salerno",
-    tipoOrgano: "tribunale",
-    numero: "664",
-    anno: 2026,
-    data: "None",
-    titolo: "Partecipazione meramente delegata al difensore senza giustificato motivo equivale a mancata comparizione: domanda improcedibile",
-    categoria: "Partecipazione personale",
-    massima: "Nel procedimento di mediazione obbligatoria, la presenza personale delle parti non rappresenta una formalità, bensì un requisito essenziale. La delega al difensore è ammessa solo in presenza di impedimenti concreti e adeguatamente documentati; in mancanza di tali ragioni, essa non è sufficiente a ritenere validamente svolto il tentativo di conciliazione. La mediazione si considera come non effettuata e la domanda giudiziale diventa improcedibile.",
-    principioDiDiritto: "La sola delega al difensore, senza giustificato motivo documentato, equivale a mancata comparizione e rende improcedibile la domanda giudiziale: la partecipazione personale è requisito essenziale.",
-    nota: "Citato da studiolegalemp.info (29/05/2026) in relazione alla Cass. 9608/2026. Numero e data non verificati da fonte primaria ufficiale; inserito con nota di cautela. Conferma il filone rigoroso sulla partecipazione personale inaugurato da Cass. 9608/2026.",
-    riferimentiNormativi: ["Art. 8 D.Lgs. 28/2010", "Art. 5 D.Lgs. 28/2010"],
-    temiChiave: ["partecipazione personale", "delega al difensore", "giustificato motivo", "improcedibilità", "mediazione obbligatoria"],
-    fonteUrl: "https://www.studiolegalemp.info/blog/ente-pubblico-mediazione-civile-difesa.html",
-  },
 
   {
     id: 73,
