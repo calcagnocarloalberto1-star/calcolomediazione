@@ -122,6 +122,11 @@ export const SEO_CONTENT: Record<string, string> = {
 <p>Guida alle principali strategie e tecniche di negoziazione nella mediazione civile: MAAN/BATNA, negoziazione integrativa, Zone of Possible Agreement (ZOPA), ancoraggio e tecniche di comunicazione.</p>
 </div>`,
 
+  "/mediazione-obbligatoria-quanto-costa": `<div style="max-width:900px;margin:0 auto;padding:40px 20px;font-family:Inter,sans-serif;color:#2d2926">
+<h1 style="font-size:2rem;font-family:'Space Grotesk',sans-serif">Mediazione Obbligatoria: Quanto Costa Davvero nel 2026 (Guida con Esempi)</h1>
+<p>Quanto costa la mediazione civile obbligatoria? Tabella ufficiale D.M. 150/2023, riduzione del 20% per la mediazione obbligatoria e demandata, esempi di calcolo reali e confronto con le spese di un giudizio ordinario.</p>
+</div>`,
+
   "/glossario": `<div style="max-width:900px;margin:0 auto;padding:40px 20px;font-family:Inter,sans-serif;color:#2d2926">
 <h1 style="font-size:2rem;font-family:'Space Grotesk',sans-serif">Glossario della Mediazione Civile</h1>
 <p>Glossario completo dei termini utilizzati nella mediazione civile e commerciale. Definizioni chiare e riferimenti normativi per avvocati, mediatori e parti.</p>
