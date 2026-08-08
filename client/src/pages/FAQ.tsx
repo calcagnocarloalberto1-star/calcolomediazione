@@ -23,7 +23,7 @@ const faqSections: FAQSection[] = [
     title: "Mediazione Civile - Domande Generali",
     questions: [
       {
-        q: "Cos\u00e8 la mediazione civile e commerciale?",
+        q: "Cos'\u00e8 la mediazione civile e commerciale?",
         a: "La mediazione civile e commerciale \u00e8 un procedimento stragiudiziale di risoluzione delle controversie, disciplinato dal D.Lgs. 28/2010, in cui un terzo imparziale (il mediatore) assiste le parti nel trovare un accordo amichevole. Il mediatore non decide la controversia, ma facilita la comunicazione tra le parti per raggiungere una soluzione condivisa. La mediazione pu\u00f2 essere volontaria, obbligatoria (come condizione di procedibilit\u00e0 della domanda giudiziale) o demandata dal giudice.",
       },
       {
@@ -327,7 +327,7 @@ export default function FAQ() {
             Domande Frequenti
           </h1>
           <p className="text-lg text-muted-foreground max-w-2xl">
-            Tutto quello che c&apos;\u00e8 da sapere sulla mediazione civile, i costi previsti dal D.M. 150/2023,
+            Tutto quello che c'è da sapere sulla mediazione civile, i costi previsti dal D.M. 150/2023,
             il credito d&apos;imposta (art. 20 D.Lgs. 28/2010), il gratuito patrocinio (artt. 15-bis/15-undecies)
             e il funzionamento della nostra piattaforma con analisi AI.
           </p>
@@ -386,13 +386,13 @@ export default function FAQ() {
             Non hai trovato la risposta?
           </h3>
           <p className="text-muted-foreground mb-6 max-w-lg mx-auto">
-            Prova i nostri calcolatori per ottenere calcoli precisi delle indennit&apos;\u00e0 e del credito d&apos;imposta,
+            Prova i nostri calcolatori per ottenere calcoli precisi delle indennità e del credito d'imposta,
             oppure avvia un\u2019analisi AI del tuo caso.
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <Link href="/calcolatore">
               <span className="inline-flex items-center px-6 py-3 text-sm font-bold bg-primary text-primary-foreground border-2 border-foreground shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] transition-all duration-150 cursor-pointer">
-                Calcola Indennit&apos;\u00e0
+                Calcola Indennità
               </span>
             </Link>
             <Link href="/credito-imposta">
