@@ -22,9 +22,45 @@ const SEO_PAGES: Record<string, { title: string; description: string }> = {
   "/contatti": { title: "Contatti - CalcoloMediazione", description: "Contatta il team di CalcoloMediazione per informazioni, supporto tecnico e collaborazioni." },
   "/antiriciclaggio": { title: "Antiriciclaggio in Mediazione \u2014 Obblighi e Modelli per Avvocati e Organismi", description: "Guida agli obblighi antiriciclaggio in mediazione (D.Lgs. 231/2007) e compilazione automatica dei modelli del fascicolo: adeguata verifica, titolare effettivo, scheda di rischio, segnalazione operazioni sospette." },
   "/antiriciclaggio-guida": { title: "Guida Semplice all'Antiriciclaggio in Mediazione \u2014 D.Lgs. 231/2007", description: "Guida in linguaggio semplice agli obblighi antiriciclaggio per mediatori e Organismi di mediazione: chi \u00e8 obbligato, cosa fare al tavolo, segnalazione operazioni sospette." },
+  "/privacy-policy": { title: "Privacy Policy \u2014 CalcoloMediazione", description: "Informativa sul trattamento dei dati personali di CalcoloMediazione.it: titolare del trattamento, dati raccolti, finalit\u00e0 e modalit\u00e0 di utilizzo, diritti dell'utente ai sensi del GDPR (Regolamento UE 2016/679)." },
+  "/cookie-policy": { title: "Cookie Policy \u2014 CalcoloMediazione", description: "Informativa sui cookie di CalcoloMediazione.it: cookie tecnici necessari e cookie analitici (Google Analytics), installati solo previo consenso esplicito dell'utente tramite il banner del Sito." },
+  "/termini-condizioni": { title: "Termini e Condizioni \u2014 CalcoloMediazione", description: "Termini e condizioni d'uso di CalcoloMediazione.it: descrizione dei servizi gratuiti offerti, natura indicativa dei risultati dei calcolatori e limitazioni di responsabilit\u00e0." },
 };
 
 const PRIMARY_URL = "https://calcolomediazione.it";
+
+// Route effettivamente registrate lato client in client/src/App.tsx.
+// Usato per distinguere un 404 reale da una pagina esistente, cosi' da
+// evitare i soft-404 (status 200 su URL inesistenti) segnalati in SEO-01.
+const VALID_CLIENT_ROUTES = new Set<string>([
+  "/",
+  "/calcolatore",
+  "/analisi-caso-ai",
+  "/faq",
+  "/guida-dm-150",
+  "/confronto-costi",
+  "/costi-notarili",
+  "/privacy-policy",
+  "/cookie-policy",
+  "/termini-condizioni",
+  "/chi-siamo",
+  "/contatti",
+  "/glossario",
+  "/generatore-procura",
+  "/giurisprudenza",
+  "/credito-imposta",
+  "/strategie-negoziazione",
+  "/antiriciclaggio",
+  "/antiriciclaggio-guida",
+  "/admin",
+]);
+
+function isKnownRoute(reqPath: string): boolean {
+  if (VALID_CLIENT_ROUTES.has(reqPath)) return true;
+  // Route dinamica /giurisprudenza/:slug
+  if (/^\/giurisprudenza\/[^/]+$/.test(reqPath)) return true;
+  return false;
+}
 
 function getSiteUrl(req: any): string {
   const host = req.hostname || req.headers.host?.split(':')[0] || 'calcolomediazione.it';
@@ -62,7 +98,17 @@ export function serveStatic(app: Express) {
   // fall through to index.html if the file doesn't exist
   // For SEO: inject proper meta tags for known pages
   app.use("/{*path}", (req, res) => {
-    const reqPath = req.params["path"] ? `/${req.params["path"]}` : "/";
+    // Express 5 con pattern "/{*path}" restituisce req.params["path"] come
+    // array di segmenti (non stringa) per i path con piu' livelli — es.
+    // /giurisprudenza/:slug diventa ["giurisprudenza","slug"]. Un semplice
+    // template literal produrrebbe "/giurisprudenza,slug" (join con virgola),
+    // rompendo sia il lookup SEO_PAGES/SEO_CONTENT sia il nuovo controllo
+    // isKnownRoute() di SEO-01. Ricostruiamo quindi il path unendo i segmenti
+    // con "/".
+    const pathParam = req.params["path"];
+    const reqPath = pathParam
+      ? `/${Array.isArray(pathParam) ? pathParam.join("/") : pathParam}`
+      : "/";
     const indexPath = path.resolve(distPath, "index.html");
     let html = fs.readFileSync(indexPath, "utf-8");
 
@@ -99,6 +145,14 @@ export function serveStatic(app: Express) {
         '<div id="root"></div>',
         `<div id="root">${seoHtml}</div>`
       );
+    }
+
+    // SEO-01: le URL che non corrispondono a nessuna route reale dell'app
+    // devono restituire HTTP 404 (soft-404 fix), mantenendo invariati il
+    // markup e il design della pagina "Pagina non trovata" (not-found.tsx),
+    // che viene comunque renderizzata lato client da React su qualunque path.
+    if (!isKnownRoute(reqPath)) {
+      res.status(404);
     }
 
     res.setHeader("Content-Type", "text/html");
