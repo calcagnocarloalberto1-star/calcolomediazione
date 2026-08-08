@@ -2,7 +2,6 @@ import { build as esbuild } from "esbuild";
 import { build as viteBuild } from "vite";
 import { rm, readFile } from "fs/promises";
 import { runValidation } from "./validate-giurisprudenza.js";
-import { execSync } from "child_process";
 
 // server deps to bundle to reduce openat(2) syscalls
 // which helps cold start times
@@ -39,10 +38,12 @@ async function buildAll() {
   // duplicati (per id o per organo+numero+anno) o campi obbligatori mancanti.
   runValidation(true);
 
-  // SEO-03: genera server/lastmod-generated.json dalla history git, così la
-  // sitemap riporta la data reale di ultima modifica invece della data odierna.
-  console.log("generating sitemap lastmod map...");
-  execSync("npx tsx script/generate-lastmod.ts", { stdio: "inherit" });
+  // SEO-03: server/lastmod-generated.json NON viene rigenerato qui.
+  // È un artefatto committato, mantenuto manualmente con `npm run generate:lastmod`
+  // in locale (dove la history git completa è garantita), perché l'ambiente di
+  // build di produzione (Render) non garantisce accesso a git/alla history .git.
+  // Rigenerarlo automaticamente ad ogni build farebbe cadere silenziosamente su
+  // un fallback e sovrascriverebbe le date reali con date sbagliate/uniformi.
 
   await rm("dist", { recursive: true, force: true });
 
