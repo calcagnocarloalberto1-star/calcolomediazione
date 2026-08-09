@@ -40,6 +40,7 @@ const PAGES = [
 { path: "/credito-imposta", title: "Credito d'Imposta e Gratuito Patrocinio in Mediazione", desc: "Guida completa al credito d'imposta per la mediazione civile (D.M. 1° agosto 2023) e al gratuito patrocinio. Requisiti, importi e procedura.", priority: "0.7", changefreq: "monthly" },
 { path: "/strategie-negoziazione", title: "Strategie di Negoziazione per la Mediazione Civile", desc: "Guida alle principali strategie e tecniche di negoziazione nella mediazione civile: MAAN/BATNA, negoziazione integrativa, zone of possible agreement, ancoraggio e tecniche di comunicazione.", priority: "0.7", changefreq: "monthly" },
 { path: "/mediazione-obbligatoria-quanto-costa", title: "Mediazione Obbligatoria: Quanto Costa Davvero nel 2026 (Guida con Esempi)", desc: "Quanto costa la mediazione civile obbligatoria: tabella ufficiale D.M. 150/2023, riduzione del 20%, esempi di calcolo reali e confronto con le spese di un giudizio.", priority: "0.6", changefreq: "monthly" },
+{ path: "/mediazione-condominiale-delibera-assembleare", title: "Mediazione Condominiale: Quando è Obbligatoria e Come Funziona la Delibera Assembleare", desc: "Mediazione condominio e delibera assembleare dopo la Riforma Cartabia: quando è obbligatoria, cosa può fare l'amministratore senza delibera (art. 5-ter D.Lgs. 28/2010) e quando serve invece l'assemblea.", priority: "0.6", changefreq: "monthly" },
 { path: "/glossario", title: "Glossario della Mediazione Civile", desc: "Glossario completo dei termini utilizzati nella mediazione civile e commerciale. Definizioni chiare e riferimenti normativi.", priority: "0.5", changefreq: "monthly" },
 { path: "/chi-siamo", title: "Chi Siamo - CalcoloMediazione", desc: "Scopri il team dietro CalcoloMediazione, la piattaforma professionale per mediatori civili e commerciali.", priority: "0.4", changefreq: "yearly" },
 { path: "/contatti", title: "Contatti - CalcoloMediazione", desc: "Contatta il team di CalcoloMediazione per informazioni, supporto tecnico e collaborazioni.", priority: "0.4", changefreq: "yearly" },
@@ -259,6 +260,17 @@ const PAGE_CONTENT: Record<string, string> = {
 <li>Esempio di calcolo: primo incontro senza accordo</li>
 <li>Gratuito patrocinio ed esenzione totale dall'indennità</li>
 <li>Confronto con i costi di un giudizio ordinario</li>
+</ul>`,
+
+"/mediazione-condominiale-delibera-assembleare": `
+<h1>Mediazione Condominiale: Quando è Obbligatoria e Come Funziona la Delibera Assembleare</h1>
+<p>Mediazione condominio e delibera assembleare dopo la Riforma Cartabia: quando è obbligatoria, cosa può fare l'amministratore senza delibera (art. 5-ter D.Lgs. 28/2010) e quando serve invece l'assemblea.</p>
+<h2>Contenuto dell'articolo</h2>
+<ul>
+<li>Perché il condominio è materia di mediazione obbligatoria (art. 5 D.Lgs. 28/2010)</li>
+<li>Art. 5-ter D.Lgs. 28/2010: l'amministratore può attivare, aderire e partecipare senza delibera preventiva</li>
+<li>Quando serve davvero la delibera assembleare (approvazione dell'accordo, maggioranze art. 1136 c.c.)</li>
+<li>Giurisprudenza di Cassazione sull'applicazione della norma</li>
 </ul>`,
 
 "/glossario": `
