@@ -53,6 +53,7 @@ const PAGES = [
 { path: "/antiriciclaggio", title: "Antiriciclaggio in Mediazione — Obblighi e Modelli per Avvocati e Organismi", desc: "Guida agli obblighi antiriciclaggio in mediazione (D.Lgs. 231/2007) e compilazione automatica dei modelli del fascicolo: adeguata verifica, titolare effettivo, scheda di rischio, segnalazione operazioni sospette.", priority: "0.7", changefreq: "monthly" },
 { path: "/antiriciclaggio-guida", title: "Guida Semplice all'Antiriciclaggio in Mediazione — D.Lgs. 231/2007", desc: "Guida in linguaggio semplice agli obblighi antiriciclaggio per mediatori e Organismi di mediazione: chi è obbligato, cosa fare al tavolo, segnalazione operazioni sospette.", priority: "0.6", changefreq: "monthly" },
 { path: "/antiriciclaggio-mediazione-obblighi", title: "Antiriciclaggio Mediazione: Obblighi D.Lgs. 231/2007 per Mediatori e Avvocati", desc: "Antiriciclaggio mediazione obblighi: chi è tenuto all'adeguata verifica del mediatore, quando l'avvocato è esente, quali documenti produrre e conservare, come riconoscere un'operazione sospetta. Guida pratica D.Lgs. 231/2007.", priority: "0.6", changefreq: "monthly" },
+{ path: "/trasferimento-immobiliare-mediazione", title: "Trasferimento Immobiliare in Mediazione: Quanto si Risparmia (Guida)", desc: "Trasferimento immobiliare in mediazione: imposta di registro esente fino a €100.000, quando serve il notaio, quanto si risparmia sulla prima casa rispetto alla compravendita ordinaria. Guida con esempi di calcolo.", priority: "0.6", changefreq: "monthly" },
 ];
 
 function getSiteUrl(req: any): string {
@@ -367,6 +368,17 @@ const PAGE_CONTENT: Record<string, string> = {
 <li>L'adeguata verifica della clientela: identificazione, titolare effettivo, PEP, misure semplificata/ordinaria/rafforzata</li>
 <li>Il fascicolo: i sei documenti da produrre e la conservazione decennale (art. 31 D.Lgs. 231/2007)</li>
 <li>Come riconoscere un'operazione sospetta e perché non va mai riportata nel verbale</li>
+</ul>`,
+
+"/trasferimento-immobiliare-mediazione": `
+<h1>Trasferimento immobiliare in mediazione: quanto si risparmia su notaio e imposte</h1>
+<p>Trasferimento immobiliare in mediazione: imposta di registro esente fino a €100.000, quando serve il notaio, quanto si risparmia sulla prima casa rispetto alla compravendita ordinaria. Guida con esempi di calcolo.</p>
+<h2>Contenuto dell'articolo</h2>
+<ul>
+<li>Quando serve il notaio: gli atti soggetti a trascrizione ex art. 2643 c.c.</li>
+<li>Le agevolazioni fiscali dell'art. 17 D.Lgs. 28/2010: bollo esente, registro esente fino a €100.000</li>
+<li>Esempio di calcolo: prima casa da €120.000, risparmio di circa €2.000 sulle imposte indirette</li>
+<li>Il costo complessivo della pratica notarile e il limite del valore catastale dichiarato</li>
 </ul>`,
 
 "/chi-siamo": `
