@@ -157,6 +157,11 @@ export const SEO_CONTENT: Record<string, string> = {
 <p>MAAN e ZOPA applicate a un caso reale di mediazione: come calcolare la propria alternativa economica al giudizio e individuare la zona di possibile accordo per chiudere la trattativa.</p>
 </div>`,
 
+  "/assegno-mantenimento-divorzile-calcolo": `<div style="max-width:900px;margin:0 auto;padding:40px 20px;font-family:Inter,sans-serif;color:#2d2926">
+<h1 style="font-size:2rem;font-family:'Space Grotesk',sans-serif">Assegno di Mantenimento e Assegno Divorzile: Come si Calcolano (Guida)</h1>
+<p>Assegno di mantenimento e assegno divorzile dopo Cass. SU 18287/2018: quali criteri considera il giudice, cosa cambia tra separazione e divorzio, e come funziona il mantenimento dei figli ex art. 337-ter c.c.</p>
+</div>`,
+
   "/glossario": `<div style="max-width:900px;margin:0 auto;padding:40px 20px;font-family:Inter,sans-serif;color:#2d2926">
 <h1 style="font-size:2rem;font-family:'Space Grotesk',sans-serif">Glossario della Mediazione Civile</h1>
 <p>Glossario completo dei termini utilizzati nella mediazione civile e commerciale. Definizioni chiare e riferimenti normativi per avvocati, mediatori e parti.</p>
