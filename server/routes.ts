@@ -43,6 +43,8 @@ const PAGES = [
 { path: "/mediazione-condominiale-delibera-assembleare", title: "Mediazione Condominiale: Quando è Obbligatoria e Come Funziona la Delibera Assembleare", desc: "Mediazione condominio e delibera assembleare dopo la Riforma Cartabia: quando è obbligatoria, cosa può fare l'amministratore senza delibera (art. 5-ter D.Lgs. 28/2010) e quando serve invece l'assemblea.", priority: "0.6", changefreq: "monthly" },
 { path: "/procura-sostanziale-mediazione", title: "Procura Sostanziale per la Mediazione: Guida Aggiornata 2026 (Cass. 9608 e 10978)", desc: "Procura sostanziale mediazione e procura speciale art. 8 D.Lgs. 28/2010: chi può rappresentare la parte, forma richiesta e la recente evoluzione della Cassazione (Cass. 9608/2026 e 10978/2026).", priority: "0.6", changefreq: "monthly" },
 { path: "/mediazione-vs-causa-civile", title: "Mediazione vs Causa Civile: la Vera Differenza di Costi e Tempi", desc: "Mediazione o causa civile conviene? Confronto reale dei costi tra processo civile e mediazione: contributo unificato, compensi avvocato D.M. 55/2014, CTU, con un esempio di calcolo aggiornato.", priority: "0.6", changefreq: "monthly" },
+{ path: "/credito-imposta-mediazione-domanda", title: "Credito d'Imposta Mediazione: Come Richiederlo e Quanto Vale (Guida)", desc: "Guida pratica al credito d'imposta per la mediazione civile: importi (fino a €1.118 per procedura), requisiti, scadenza del 31 marzo e procedura di domanda su lsg.giustizia.it.", priority: "0.6", changefreq: "monthly" },
+{ path: "/gratuito-patrocinio-mediazione", title: "Gratuito Patrocinio in Mediazione: Requisiti e Procedura (Guida)", desc: "Gratuito patrocinio mediazione: chi può richiederlo, requisiti di reddito, come presentare l'istanza al COA e cosa succede se l'accordo non si raggiunge. Guida aggiornata artt. 15-bis/15-undecies D.Lgs. 28/2010.", priority: "0.6", changefreq: "monthly" },
 { path: "/glossario", title: "Glossario della Mediazione Civile", desc: "Glossario completo dei termini utilizzati nella mediazione civile e commerciale. Definizioni chiare e riferimenti normativi.", priority: "0.5", changefreq: "monthly" },
 { path: "/chi-siamo", title: "Chi Siamo - CalcoloMediazione", desc: "Scopri il team dietro CalcoloMediazione, la piattaforma professionale per mediatori civili e commerciali.", priority: "0.4", changefreq: "yearly" },
 { path: "/contatti", title: "Contatti - CalcoloMediazione", desc: "Contatta il team di CalcoloMediazione per informazioni, supporto tecnico e collaborazioni.", priority: "0.4", changefreq: "yearly" },
@@ -295,6 +297,28 @@ const PAGE_CONTENT: Record<string, string> = {
 <li>Esempio di calcolo su una controversia da €30.000: mediazione vs primo grado di giudizio</li>
 <li>Perché il divario di costi è così ampio (CTU, gradi di giudizio successivi, vantaggi fiscali)</li>
 <li>Il calcolo dei costi come strumento di negoziazione (MAAN)</li>
+</ul>`,
+
+"/credito-imposta-mediazione-domanda": `
+<h1>Credito d'Imposta Mediazione: Come Richiederlo e Quanto Vale (Guida)</h1>
+<p>Guida pratica al credito d'imposta per la mediazione civile: importi (fino a €1.118 per procedura), requisiti, scadenza del 31 marzo e procedura di domanda su lsg.giustizia.it.</p>
+<h2>Contenuto dell'articolo</h2>
+<ul>
+<li>Importi del credito d'imposta: indennità organismo, compenso avvocato, contributo unificato</li>
+<li>Chi può richiederlo e requisiti (mediazioni concluse dopo il 30 giugno 2023)</li>
+<li>Scadenza del 31 marzo per la presentazione della domanda</li>
+<li>Come si presenta la domanda su lsg.giustizia.it e come si utilizza il credito riconosciuto (F24)</li>
+</ul>`,
+
+"/gratuito-patrocinio-mediazione": `
+<h1>Gratuito Patrocinio in Mediazione: Requisiti e Procedura (Guida)</h1>
+<p>Gratuito patrocinio mediazione: chi può richiederlo, requisiti di reddito, come presentare l'istanza al COA e cosa succede se l'accordo non si raggiunge. Guida aggiornata artt. 15-bis/15-undecies D.Lgs. 28/2010.</p>
+<h2>Contenuto dell'articolo</h2>
+<ul>
+<li>Evoluzione giuridica: da Cass. 18123/2020 a Corte Cost. 10/2022 alla Riforma Cartabia</li>
+<li>Requisiti per l'ammissione (mediazione obbligatoria, accordo, limiti di reddito)</li>
+<li>Come si presenta l'istanza al COA e tempi di risposta (20 giorni)</li>
+<li>Effetti dell'ammissione e cosa succede con o senza accordo</li>
 </ul>`,
 
 "/glossario": `
