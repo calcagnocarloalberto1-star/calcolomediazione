@@ -152,6 +152,11 @@ export const SEO_CONTENT: Record<string, string> = {
 <p>Gratuito patrocinio mediazione: chi puo richiederlo, requisiti di reddito, come presentare l'istanza al COA e cosa succede se l'accordo non si raggiunge. Guida aggiornata artt. 15-bis/15-undecies D.Lgs. 28/2010.</p>
 </div>`,
 
+  "/maan-zopa-mediazione": `<div style="max-width:900px;margin:0 auto;padding:40px 20px;font-family:Inter,sans-serif;color:#2d2926">
+<h1 style="font-size:2rem;font-family:'Space Grotesk',sans-serif">MAAN e ZOPA in Mediazione: Come Chiudere l'Accordo con i Numeri</h1>
+<p>MAAN e ZOPA applicate a un caso reale di mediazione: come calcolare la propria alternativa economica al giudizio e individuare la zona di possibile accordo per chiudere la trattativa.</p>
+</div>`,
+
   "/glossario": `<div style="max-width:900px;margin:0 auto;padding:40px 20px;font-family:Inter,sans-serif;color:#2d2926">
 <h1 style="font-size:2rem;font-family:'Space Grotesk',sans-serif">Glossario della Mediazione Civile</h1>
 <p>Glossario completo dei termini utilizzati nella mediazione civile e commerciale. Definizioni chiare e riferimenti normativi per avvocati, mediatori e parti.</p>
