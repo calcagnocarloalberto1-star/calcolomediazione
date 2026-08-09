@@ -46,6 +46,7 @@ const PAGES = [
 { path: "/credito-imposta-mediazione-domanda", title: "Credito d'Imposta Mediazione: Come Richiederlo e Quanto Vale (Guida)", desc: "Guida pratica al credito d'imposta per la mediazione civile: importi (fino a €1.118 per procedura), requisiti, scadenza del 31 marzo e procedura di domanda su lsg.giustizia.it.", priority: "0.6", changefreq: "monthly" },
 { path: "/gratuito-patrocinio-mediazione", title: "Gratuito Patrocinio in Mediazione: Requisiti e Procedura (Guida)", desc: "Gratuito patrocinio mediazione: chi può richiederlo, requisiti di reddito, come presentare l'istanza al COA e cosa succede se l'accordo non si raggiunge. Guida aggiornata artt. 15-bis/15-undecies D.Lgs. 28/2010.", priority: "0.6", changefreq: "monthly" },
 { path: "/maan-zopa-mediazione", title: "MAAN e ZOPA in Mediazione: Come Chiudere l'Accordo con i Numeri", desc: "MAAN e ZOPA applicate a un caso reale di mediazione: come calcolare la propria alternativa economica al giudizio e individuare la zona di possibile accordo per chiudere la trattativa.", priority: "0.6", changefreq: "monthly" },
+{ path: "/assegno-mantenimento-divorzile-calcolo", title: "Assegno di Mantenimento e Assegno Divorzile: Come si Calcolano (Guida)", desc: "Assegno di mantenimento e assegno divorzile dopo Cass. SU 18287/2018: quali criteri considera il giudice, cosa cambia tra separazione e divorzio, e come funziona il mantenimento dei figli ex art. 337-ter c.c.", priority: "0.6", changefreq: "monthly" },
 { path: "/glossario", title: "Glossario della Mediazione Civile", desc: "Glossario completo dei termini utilizzati nella mediazione civile e commerciale. Definizioni chiare e riferimenti normativi.", priority: "0.5", changefreq: "monthly" },
 { path: "/chi-siamo", title: "Chi Siamo - CalcoloMediazione", desc: "Scopri il team dietro CalcoloMediazione, la piattaforma professionale per mediatori civili e commerciali.", priority: "0.4", changefreq: "yearly" },
 { path: "/contatti", title: "Contatti - CalcoloMediazione", desc: "Contatta il team di CalcoloMediazione per informazioni, supporto tecnico e collaborazioni.", priority: "0.4", changefreq: "yearly" },
@@ -331,6 +332,16 @@ const PAGE_CONTENT: Record<string, string> = {
 <li>Come individuare la ZOPA a partire dai prezzi di riserva delle parti</li>
 <li>Come usare i numeri per chiudere l'accordo in trattativa</li>
 <li>Link alla trattazione teorica completa (bias cognitivi, Prospect Theory)</li>
+</ul>`,
+
+"/assegno-mantenimento-divorzile-calcolo": `
+<h1>Assegno di Mantenimento e Assegno Divorzile: Come si Calcolano (Guida)</h1>
+<p>Assegno di mantenimento e assegno divorzile dopo Cass. SU 18287/2018: quali criteri considera il giudice, cosa cambia tra separazione e divorzio, e come funziona il mantenimento dei figli ex art. 337-ter c.c.</p>
+<h2>Contenuto dell'articolo</h2>
+<ul>
+<li>Assegno di mantenimento del coniuge in separazione: i criteri di modulazione</li>
+<li>Assegno divorzile dopo Cass. SU 18287/2018: funzione assistenziale, compensativa e perequativa</li>
+<li>Mantenimento dei figli ex art. 337-ter c.c. e principio di proporzionalità</li>
 </ul>`,
 
 "/glossario": `
