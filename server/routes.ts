@@ -42,6 +42,7 @@ const PAGES = [
 { path: "/mediazione-obbligatoria-quanto-costa", title: "Mediazione Obbligatoria: Quanto Costa Davvero nel 2026 (Guida con Esempi)", desc: "Quanto costa la mediazione civile obbligatoria: tabella ufficiale D.M. 150/2023, riduzione del 20%, esempi di calcolo reali e confronto con le spese di un giudizio.", priority: "0.6", changefreq: "monthly" },
 { path: "/mediazione-condominiale-delibera-assembleare", title: "Mediazione Condominiale: Quando è Obbligatoria e Come Funziona la Delibera Assembleare", desc: "Mediazione condominio e delibera assembleare dopo la Riforma Cartabia: quando è obbligatoria, cosa può fare l'amministratore senza delibera (art. 5-ter D.Lgs. 28/2010) e quando serve invece l'assemblea.", priority: "0.6", changefreq: "monthly" },
 { path: "/procura-sostanziale-mediazione", title: "Procura Sostanziale per la Mediazione: Guida Aggiornata 2026 (Cass. 9608 e 10978)", desc: "Procura sostanziale mediazione e procura speciale art. 8 D.Lgs. 28/2010: chi può rappresentare la parte, forma richiesta e la recente evoluzione della Cassazione (Cass. 9608/2026 e 10978/2026).", priority: "0.6", changefreq: "monthly" },
+{ path: "/mediazione-vs-causa-civile", title: "Mediazione vs Causa Civile: la Vera Differenza di Costi e Tempi", desc: "Mediazione o causa civile conviene? Confronto reale dei costi tra processo civile e mediazione: contributo unificato, compensi avvocato D.M. 55/2014, CTU, con un esempio di calcolo aggiornato.", priority: "0.6", changefreq: "monthly" },
 { path: "/glossario", title: "Glossario della Mediazione Civile", desc: "Glossario completo dei termini utilizzati nella mediazione civile e commerciale. Definizioni chiare e riferimenti normativi.", priority: "0.5", changefreq: "monthly" },
 { path: "/chi-siamo", title: "Chi Siamo - CalcoloMediazione", desc: "Scopri il team dietro CalcoloMediazione, la piattaforma professionale per mediatori civili e commerciali.", priority: "0.4", changefreq: "yearly" },
 { path: "/contatti", title: "Contatti - CalcoloMediazione", desc: "Contatta il team di CalcoloMediazione per informazioni, supporto tecnico e collaborazioni.", priority: "0.4", changefreq: "yearly" },
@@ -283,6 +284,17 @@ const PAGE_CONTENT: Record<string, string> = {
 <li>I tre scenari possibili per la procura sostanziale dopo Cass. 9608/2026 e Cass. 10978/2026</li>
 <li>Nota di prudenza operativa sull'orientamento più recente</li>
 <li>Forma richiesta per la procura (scrittura privata non autenticata, salvo eccezioni)</li>
+</ul>`,
+
+"/mediazione-vs-causa-civile": `
+<h1>Mediazione vs Causa Civile: la Vera Differenza di Costi e Tempi</h1>
+<p>Mediazione o causa civile conviene? Confronto reale dei costi tra processo civile e mediazione: contributo unificato, compensi avvocato D.M. 55/2014, CTU, con un esempio di calcolo aggiornato.</p>
+<h2>Contenuto dell'articolo</h2>
+<ul>
+<li>Confronto tempi: mediazione 1-6 mesi vs causa civile fino a 12 anni sui tre gradi</li>
+<li>Esempio di calcolo su una controversia da €30.000: mediazione vs primo grado di giudizio</li>
+<li>Perché il divario di costi è così ampio (CTU, gradi di giudizio successivi, vantaggi fiscali)</li>
+<li>Il calcolo dei costi come strumento di negoziazione (MAAN)</li>
 </ul>`,
 
 "/glossario": `
