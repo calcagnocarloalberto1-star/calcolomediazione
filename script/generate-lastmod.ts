@@ -46,6 +46,7 @@ const PAGE_SOURCES: Record<string, string[]> = {
   "/contatti": ["client/src/pages/Contatti.tsx"],
   "/antiriciclaggio": ["client/src/pages/Antiriciclaggio.tsx"],
   "/antiriciclaggio-guida": ["client/src/pages/AntiriciclaggioGuida.tsx"],
+  "/antiriciclaggio-mediazione-obblighi": ["client/src/pages/AntiriciclaggioMediazioneObblighi.tsx"],
   "/privacy-policy": ["client/src/pages/PrivacyPolicy.tsx"],
   "/cookie-policy": ["client/src/pages/CookiePolicy.tsx"],
   "/termini-condizioni": ["client/src/pages/TerminiCondizioni.tsx"],
