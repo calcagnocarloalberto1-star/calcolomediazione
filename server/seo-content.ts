@@ -142,6 +142,16 @@ export const SEO_CONTENT: Record<string, string> = {
 <p>Mediazione o causa civile conviene? Confronto reale dei costi tra processo civile e mediazione: contributo unificato, compensi avvocato D.M. 55/2014, CTU, con un esempio di calcolo aggiornato.</p>
 </div>`,
 
+  "/credito-imposta-mediazione-domanda": `<div style="max-width:900px;margin:0 auto;padding:40px 20px;font-family:Inter,sans-serif;color:#2d2926">
+<h1 style="font-size:2rem;font-family:'Space Grotesk',sans-serif">Credito d'Imposta Mediazione: Come Richiederlo e Quanto Vale (Guida)</h1>
+<p>Guida pratica al credito d'imposta per la mediazione civile: importi (fino a &euro;1.118 per procedura), requisiti, scadenza del 31 marzo e procedura di domanda su lsg.giustizia.it.</p>
+</div>`,
+
+  "/gratuito-patrocinio-mediazione": `<div style="max-width:900px;margin:0 auto;padding:40px 20px;font-family:Inter,sans-serif;color:#2d2926">
+<h1 style="font-size:2rem;font-family:'Space Grotesk',sans-serif">Gratuito Patrocinio in Mediazione: Requisiti e Procedura (Guida)</h1>
+<p>Gratuito patrocinio mediazione: chi puo richiederlo, requisiti di reddito, come presentare l'istanza al COA e cosa succede se l'accordo non si raggiunge. Guida aggiornata artt. 15-bis/15-undecies D.Lgs. 28/2010.</p>
+</div>`,
+
   "/glossario": `<div style="max-width:900px;margin:0 auto;padding:40px 20px;font-family:Inter,sans-serif;color:#2d2926">
 <h1 style="font-size:2rem;font-family:'Space Grotesk',sans-serif">Glossario della Mediazione Civile</h1>
 <p>Glossario completo dei termini utilizzati nella mediazione civile e commerciale. Definizioni chiare e riferimenti normativi per avvocati, mediatori e parti.</p>
