@@ -194,4 +194,9 @@ export const SEO_CONTENT: Record<string, string> = {
 <h1 style="font-size:2rem;font-family:'Space Grotesk',sans-serif">Antiriciclaggio per mediatori e avvocati: la guida pratica agli obblighi D.Lgs. 231/2007</h1>
 <p>Antiriciclaggio mediazione obblighi: chi è tenuto all'adeguata verifica del mediatore, quando l'avvocato è esente, quali documenti produrre e conservare, come riconoscere un'operazione sospetta. Guida pratica D.Lgs. 231/2007.</p>
 </div>`,
+
+  "/trasferimento-immobiliare-mediazione": `<div style="max-width:900px;margin:0 auto;padding:40px 20px;font-family:Inter,sans-serif;color:#2d2926">
+<h1 style="font-size:2rem;font-family:'Space Grotesk',sans-serif">Trasferimento immobiliare in mediazione: quanto si risparmia su notaio e imposte</h1>
+<p>Trasferimento immobiliare in mediazione: imposta di registro esente fino a €100.000, quando serve il notaio, quanto si risparmia sulla prima casa rispetto alla compravendita ordinaria. Guida con esempi di calcolo.</p>
+</div>`,
 };
