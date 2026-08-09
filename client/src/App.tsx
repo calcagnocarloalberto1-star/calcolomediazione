@@ -34,6 +34,7 @@ import MediazioneObbligatoriaCosti from "@/pages/MediazioneObbligatoriaCosti";
 import MediazioneCondominialeDelibera from "@/pages/MediazioneCondominialeDelibera";
 import ProcuraSostanzialeMediazione from "@/pages/ProcuraSostanzialeMediazione";
 import MediazioneVsCausaCivile from "@/pages/MediazioneVsCausaCivile";
+import CreditoImpostaMediazioneDomanda from "@/pages/CreditoImpostaMediazioneDomanda";
 import { usePageTracker } from "@/hooks/use-page-tracker";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { installGlobalErrorHandlers } from "@/lib/error-logger";
@@ -93,6 +94,7 @@ function AppRouter() {
       <Route path="/mediazione-condominiale-delibera-assembleare" component={MediazioneCondominialeDelibera} />
       <Route path="/procura-sostanziale-mediazione" component={ProcuraSostanzialeMediazione} />
       <Route path="/mediazione-vs-causa-civile" component={MediazioneVsCausaCivile} />
+      <Route path="/credito-imposta-mediazione-domanda" component={CreditoImpostaMediazioneDomanda} />
       <Route path="/antiriciclaggio">
         <Boundary tag="antiriciclaggio" section="lo strumento antiriciclaggio">
           <Antiriciclaggio />
