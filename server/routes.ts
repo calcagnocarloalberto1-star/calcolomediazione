@@ -52,6 +52,7 @@ const PAGES = [
 { path: "/contatti", title: "Contatti - CalcoloMediazione", desc: "Contatta il team di CalcoloMediazione per informazioni, supporto tecnico e collaborazioni.", priority: "0.4", changefreq: "yearly" },
 { path: "/antiriciclaggio", title: "Antiriciclaggio in Mediazione — Obblighi e Modelli per Avvocati e Organismi", desc: "Guida agli obblighi antiriciclaggio in mediazione (D.Lgs. 231/2007) e compilazione automatica dei modelli del fascicolo: adeguata verifica, titolare effettivo, scheda di rischio, segnalazione operazioni sospette.", priority: "0.7", changefreq: "monthly" },
 { path: "/antiriciclaggio-guida", title: "Guida Semplice all'Antiriciclaggio in Mediazione — D.Lgs. 231/2007", desc: "Guida in linguaggio semplice agli obblighi antiriciclaggio per mediatori e Organismi di mediazione: chi è obbligato, cosa fare al tavolo, segnalazione operazioni sospette.", priority: "0.6", changefreq: "monthly" },
+{ path: "/antiriciclaggio-mediazione-obblighi", title: "Antiriciclaggio Mediazione: Obblighi D.Lgs. 231/2007 per Mediatori e Avvocati", desc: "Antiriciclaggio mediazione obblighi: chi è tenuto all'adeguata verifica del mediatore, quando l'avvocato è esente, quali documenti produrre e conservare, come riconoscere un'operazione sospetta. Guida pratica D.Lgs. 231/2007.", priority: "0.6", changefreq: "monthly" },
 ];
 
 function getSiteUrl(req: any): string {
@@ -355,6 +356,17 @@ const PAGE_CONTENT: Record<string, string> = {
 <li>Indennità, spese di avvio, onorario</li>
 <li>Mediazione obbligatoria, mediazione delegata, mediazione volontaria</li>
 <li>Accordo di mediazione, verbale, esecutività</li>
+</ul>`,
+
+"/antiriciclaggio-mediazione-obblighi": `
+<h1>Antiriciclaggio per mediatori e avvocati: la guida pratica agli obblighi D.Lgs. 231/2007</h1>
+<p>Antiriciclaggio mediazione obblighi: chi è tenuto all'adeguata verifica del mediatore, quando l'avvocato è esente, quali documenti produrre e conservare, come riconoscere un'operazione sospetta. Guida pratica D.Lgs. 231/2007.</p>
+<h2>Contenuto dell'articolo</h2>
+<ul>
+<li>Chi è obbligato: Organismo di mediazione, mediatore designato e avvocato (di regola esente)</li>
+<li>L'adeguata verifica della clientela: identificazione, titolare effettivo, PEP, misure semplificata/ordinaria/rafforzata</li>
+<li>Il fascicolo: i sei documenti da produrre e la conservazione decennale (art. 31 D.Lgs. 231/2007)</li>
+<li>Come riconoscere un'operazione sospetta e perché non va mai riportata nel verbale</li>
 </ul>`,
 
 "/chi-siamo": `
