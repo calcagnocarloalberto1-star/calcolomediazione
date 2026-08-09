@@ -22,6 +22,7 @@ export default function Footer() {
               <li><FooterLink href="/confronto-costi">Confronto Costi</FooterLink></li>
               <li><FooterLink href="/strategie-negoziazione">Strategie di Negoziazione</FooterLink></li>
               <li><FooterLink href="/mediazione-obbligatoria-quanto-costa">Mediazione Obbligatoria: Quanto Costa</FooterLink></li>
+              <li><FooterLink href="/mediazione-condominiale-delibera-assembleare">Mediazione Condominiale e Delibera</FooterLink></li>
             </ul>
           </div>
 
