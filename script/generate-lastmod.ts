@@ -54,6 +54,8 @@ const PAGE_SOURCES: Record<string, string[]> = {
   "/mediazione-condominiale-delibera-assembleare": ["client/src/pages/MediazioneCondominialeDelibera.tsx"],
   "/procura-sostanziale-mediazione": ["client/src/pages/ProcuraSostanzialeMediazione.tsx"],
   "/mediazione-vs-causa-civile": ["client/src/pages/MediazioneVsCausaCivile.tsx"],
+  "/credito-imposta-mediazione-domanda": ["client/src/pages/CreditoImpostaMediazioneDomanda.tsx"],
+  "/gratuito-patrocinio-mediazione": ["client/src/pages/GratuitoPatrocinioMediazione.tsx"],
 };
 
 // Ritorna null (anziché una data fissa) se git non è disponibile o nessuno
