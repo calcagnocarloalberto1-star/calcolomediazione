@@ -189,4 +189,9 @@ export const SEO_CONTENT: Record<string, string> = {
 <h2>Compilazione automatica dei modelli</h2>
 <p>Lo strumento genera in automatico i modelli del fascicolo riservato (informativa, modulo di adeguata verifica, scheda di valutazione del rischio, dichiarazione del cliente, foglio di annotazione) a partire dai dati inseriti, con anche una modalita' di lettura assistita dei documenti (identita', visura camerale, istanza di mediazione).</p>
 </div>`,
+
+  "/antiriciclaggio-mediazione-obblighi": `<div style="max-width:900px;margin:0 auto;padding:40px 20px;font-family:Inter,sans-serif;color:#2d2926">
+<h1 style="font-size:2rem;font-family:'Space Grotesk',sans-serif">Antiriciclaggio per mediatori e avvocati: la guida pratica agli obblighi D.Lgs. 231/2007</h1>
+<p>Antiriciclaggio mediazione obblighi: chi è tenuto all'adeguata verifica del mediatore, quando l'avvocato è esente, quali documenti produrre e conservare, come riconoscere un'operazione sospetta. Guida pratica D.Lgs. 231/2007.</p>
+</div>`,
 };
