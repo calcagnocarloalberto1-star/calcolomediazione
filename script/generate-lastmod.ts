@@ -57,6 +57,7 @@ const PAGE_SOURCES: Record<string, string[]> = {
   "/credito-imposta-mediazione-domanda": ["client/src/pages/CreditoImpostaMediazioneDomanda.tsx"],
   "/gratuito-patrocinio-mediazione": ["client/src/pages/GratuitoPatrocinioMediazione.tsx"],
   "/maan-zopa-mediazione": ["client/src/pages/MaanZopaMediazione.tsx"],
+  "/assegno-mantenimento-divorzile-calcolo": ["client/src/pages/AssegnoMantenimentoDivorzileCalcolo.tsx"],
 };
 
 // Ritorna null (anziché una data fissa) se git non è disponibile o nessuno
