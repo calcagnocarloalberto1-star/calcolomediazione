@@ -137,6 +137,11 @@ export const SEO_CONTENT: Record<string, string> = {
 <p>Procura sostanziale mediazione e procura speciale art. 8 D.Lgs. 28/2010: chi puo rappresentare la parte, forma richiesta e la recente evoluzione della Cassazione (Cass. 9608/2026 e 10978/2026).</p>
 </div>`,
 
+  "/mediazione-vs-causa-civile": `<div style="max-width:900px;margin:0 auto;padding:40px 20px;font-family:Inter,sans-serif;color:#2d2926">
+<h1 style="font-size:2rem;font-family:'Space Grotesk',sans-serif">Mediazione vs Causa Civile: la Vera Differenza di Costi e Tempi</h1>
+<p>Mediazione o causa civile conviene? Confronto reale dei costi tra processo civile e mediazione: contributo unificato, compensi avvocato D.M. 55/2014, CTU, con un esempio di calcolo aggiornato.</p>
+</div>`,
+
   "/glossario": `<div style="max-width:900px;margin:0 auto;padding:40px 20px;font-family:Inter,sans-serif;color:#2d2926">
 <h1 style="font-size:2rem;font-family:'Space Grotesk',sans-serif">Glossario della Mediazione Civile</h1>
 <p>Glossario completo dei termini utilizzati nella mediazione civile e commerciale. Definizioni chiare e riferimenti normativi per avvocati, mediatori e parti.</p>
