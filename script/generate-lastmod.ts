@@ -51,6 +51,7 @@ const PAGE_SOURCES: Record<string, string[]> = {
   "/termini-condizioni": ["client/src/pages/TerminiCondizioni.tsx"],
   "/calcolo-assegni/": ["client/public/calcolo-assegni"],
   "/mediazione-obbligatoria-quanto-costa": ["client/src/pages/MediazioneObbligatoriaCosti.tsx"],
+  "/mediazione-condominiale-delibera-assembleare": ["client/src/pages/MediazioneCondominialeDelibera.tsx"],
 };
 
 // Ritorna null (anziché una data fissa) se git non è disponibile o nessuno
