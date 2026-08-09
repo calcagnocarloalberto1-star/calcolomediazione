@@ -29,6 +29,7 @@ export default function Footer() {
               <li><FooterLink href="/gratuito-patrocinio-mediazione">Gratuito Patrocinio in Mediazione</FooterLink></li>
               <li><FooterLink href="/maan-zopa-mediazione">MAAN e ZOPA in Mediazione</FooterLink></li>
               <li><FooterLink href="/assegno-mantenimento-divorzile-calcolo">Assegno di Mantenimento e Divorzile</FooterLink></li>
+              <li><FooterLink href="/antiriciclaggio-mediazione-obblighi">Antiriciclaggio in Mediazione: gli Obblighi</FooterLink></li>
             </ul>
           </div>
 
