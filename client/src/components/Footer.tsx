@@ -25,6 +25,7 @@ export default function Footer() {
               <li><FooterLink href="/mediazione-condominiale-delibera-assembleare">Mediazione Condominiale e Delibera</FooterLink></li>
               <li><FooterLink href="/procura-sostanziale-mediazione">Procura Sostanziale in Mediazione</FooterLink></li>
               <li><FooterLink href="/mediazione-vs-causa-civile">Mediazione vs Causa Civile</FooterLink></li>
+              <li><FooterLink href="/credito-imposta-mediazione-domanda">Credito d'Imposta: Come Richiederlo</FooterLink></li>
             </ul>
           </div>
 
