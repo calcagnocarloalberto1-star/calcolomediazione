@@ -127,6 +127,11 @@ export const SEO_CONTENT: Record<string, string> = {
 <p>Quanto costa la mediazione civile obbligatoria? Tabella ufficiale D.M. 150/2023, riduzione del 20% per la mediazione obbligatoria e demandata, esempi di calcolo reali e confronto con le spese di un giudizio ordinario.</p>
 </div>`,
 
+  "/mediazione-condominiale-delibera-assembleare": `<div style="max-width:900px;margin:0 auto;padding:40px 20px;font-family:Inter,sans-serif;color:#2d2926">
+<h1 style="font-size:2rem;font-family:'Space Grotesk',sans-serif">Mediazione Condominiale: Quando è Obbligatoria e Come Funziona la Delibera Assembleare</h1>
+<p>Mediazione condominio e delibera assembleare dopo la Riforma Cartabia: quando è obbligatoria, cosa puo fare l'amministratore senza delibera (art. 5-ter D.Lgs. 28/2010) e quando serve invece l'assemblea.</p>
+</div>`,
+
   "/glossario": `<div style="max-width:900px;margin:0 auto;padding:40px 20px;font-family:Inter,sans-serif;color:#2d2926">
 <h1 style="font-size:2rem;font-family:'Space Grotesk',sans-serif">Glossario della Mediazione Civile</h1>
 <p>Glossario completo dei termini utilizzati nella mediazione civile e commerciale. Definizioni chiare e riferimenti normativi per avvocati, mediatori e parti.</p>
