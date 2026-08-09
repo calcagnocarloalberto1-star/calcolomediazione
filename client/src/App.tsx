@@ -38,6 +38,7 @@ import CreditoImpostaMediazioneDomanda from "@/pages/CreditoImpostaMediazioneDom
 import GratuitoPatrocinioMediazione from "@/pages/GratuitoPatrocinioMediazione";
 import MaanZopaMediazione from "@/pages/MaanZopaMediazione";
 import AssegnoMantenimentoDivorzileCalcolo from "@/pages/AssegnoMantenimentoDivorzileCalcolo";
+import AntiriciclaggioMediazioneObblighi from "@/pages/AntiriciclaggioMediazioneObblighi";
 import { usePageTracker } from "@/hooks/use-page-tracker";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { installGlobalErrorHandlers } from "@/lib/error-logger";
@@ -107,6 +108,7 @@ function AppRouter() {
         </Boundary>
       </Route>
       <Route path="/antiriciclaggio-guida" component={AntiriciclaggioGuida} />
+      <Route path="/antiriciclaggio-mediazione-obblighi" component={AntiriciclaggioMediazioneObblighi} />
       <Route path="/admin" component={Admin} />
       <Route component={NotFound} />
     </Switch>
