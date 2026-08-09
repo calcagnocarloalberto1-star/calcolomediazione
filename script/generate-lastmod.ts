@@ -47,6 +47,7 @@ const PAGE_SOURCES: Record<string, string[]> = {
   "/antiriciclaggio": ["client/src/pages/Antiriciclaggio.tsx"],
   "/antiriciclaggio-guida": ["client/src/pages/AntiriciclaggioGuida.tsx"],
   "/antiriciclaggio-mediazione-obblighi": ["client/src/pages/AntiriciclaggioMediazioneObblighi.tsx"],
+  "/trasferimento-immobiliare-mediazione": ["client/src/pages/TrasferimentoImmobiliareMediazione.tsx"],
   "/privacy-policy": ["client/src/pages/PrivacyPolicy.tsx"],
   "/cookie-policy": ["client/src/pages/CookiePolicy.tsx"],
   "/termini-condizioni": ["client/src/pages/TerminiCondizioni.tsx"],
