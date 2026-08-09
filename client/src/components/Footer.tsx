@@ -26,6 +26,7 @@ export default function Footer() {
               <li><FooterLink href="/procura-sostanziale-mediazione">Procura Sostanziale in Mediazione</FooterLink></li>
               <li><FooterLink href="/mediazione-vs-causa-civile">Mediazione vs Causa Civile</FooterLink></li>
               <li><FooterLink href="/credito-imposta-mediazione-domanda">Credito d'Imposta: Come Richiederlo</FooterLink></li>
+              <li><FooterLink href="/gratuito-patrocinio-mediazione">Gratuito Patrocinio in Mediazione</FooterLink></li>
             </ul>
           </div>
 
