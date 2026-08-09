@@ -37,6 +37,7 @@ import MediazioneVsCausaCivile from "@/pages/MediazioneVsCausaCivile";
 import CreditoImpostaMediazioneDomanda from "@/pages/CreditoImpostaMediazioneDomanda";
 import GratuitoPatrocinioMediazione from "@/pages/GratuitoPatrocinioMediazione";
 import MaanZopaMediazione from "@/pages/MaanZopaMediazione";
+import AssegnoMantenimentoDivorzileCalcolo from "@/pages/AssegnoMantenimentoDivorzileCalcolo";
 import { usePageTracker } from "@/hooks/use-page-tracker";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { installGlobalErrorHandlers } from "@/lib/error-logger";
@@ -99,6 +100,7 @@ function AppRouter() {
       <Route path="/credito-imposta-mediazione-domanda" component={CreditoImpostaMediazioneDomanda} />
       <Route path="/gratuito-patrocinio-mediazione" component={GratuitoPatrocinioMediazione} />
       <Route path="/maan-zopa-mediazione" component={MaanZopaMediazione} />
+      <Route path="/assegno-mantenimento-divorzile-calcolo" component={AssegnoMantenimentoDivorzileCalcolo} />
       <Route path="/antiriciclaggio">
         <Boundary tag="antiriciclaggio" section="lo strumento antiriciclaggio">
           <Antiriciclaggio />
