@@ -43,13 +43,26 @@ import { SeoHead } from "@/components/SeoHead";
 // e usati dagli organismi di mediazione — cambia solo il meccanismo con cui
 // vengono mostrati nella pagina.
 
+// NB: questo elenco deve restare sincronizzato con le funzioni richiamate da
+// onclick="…"/onchange="…" nel markup di client/public/antiriciclaggio.html.
+// Un nome qui che non esiste più nello script (o uno nuovo mancante) rompe
+// SILENZIOSAMENTE l'intero embedding: l'oggetto window.__acEmbed viene
+// costruito con la sintassi abbreviata "{ nome, nome2, ... }", quindi un solo
+// nome non più dichiarato nello script fa fallire con ReferenceError l'intera
+// assegnazione — nessuna delle funzioni definite PRIMA di quel punto viene
+// esposta, e ogni pulsante della pagina smette di rispondere (bug osservato
+// in produzione dopo la rimozione di printOne/copyOne/stampaTuttoAccumulo/
+// scaricaTutto/reset/assistToggleRaw/amlEsportaDati/amlImportaDatiFile senza
+// aggiornare questo elenco). Verificare con:
+//   grep -oE 'on(click|change)="[^"]*"' client/public/antiriciclaggio.html \
+//     | grep -oE '\b[a-zA-Z_][a-zA-Z0-9_]*\(' | sort -u
+// dopo ogni modifica ai pulsanti/onclick dello strumento.
 const HANDLER_FNS = [
-  "printOne", "copyOne", "assistAggiungiFile", "toggleTrig", "stampaTuttoAccumulo",
-  "scaricaWord", "scaricaTutto", "rimuoviAggiornamento", "resetTrigger", "reset",
-  "moduliBianco", "genera", "copyMot", "cancellaStoricoProcedura", "assistToggleRaw",
-  "assistReset", "assistEstrai", "assistApplica", "analizzaTrigger", "amlNuovaParte",
-  "amlEsportaDati", "amlCancellaTuttiIDati", "amlCancellaDatiProcedura",
-  "aggiungiAggiornamento", "amlImportaDatiFile",
+  "aggiungiAggiornamento", "amlCancellaDatiProcedura", "amlCancellaTuttiIDati",
+  "amlNuovaParte", "analizzaTrigger", "assistAggiungiFile", "assistEstrai",
+  "assistReset", "cancellaStoricoProcedura", "copyMot", "generaFormato",
+  "moduliBianco", "resetTrigger", "rimuoviAggiornamento", "scaricaWord",
+  "stampaVideoGenova", "toggleTrig",
 ];
 const HANDLER_FN_PATTERN = new RegExp(`\\b(${HANDLER_FNS.join("|")})\\(`, "g");
 
