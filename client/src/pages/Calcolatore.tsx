@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "wouter";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -593,6 +594,25 @@ export default function Calcolatore() {
                       <span className="text-sm font-semibold">Totale Primo Incontro</span>
                       <span className="font-mono font-bold" style={{ fontFamily: "'JetBrains Mono', monospace" }} data-testid="text-totale-primo">
                         {formatEuro(risultato.totalePrimoIncontro)}
+                      </span>
+                    </div>
+
+                    {/* UX-01: questo importo è più basso di quello che compare
+                        nella Tabella A per lo stesso scaglione di valore — non
+                        è un errore, ma l'effetto delle spese ridotte del primo
+                        incontro previste dall'art. 28, co. 5-6, D.M. 150/2023.
+                        Spiegazione contestuale + link alla guida completa. */}
+                    <div className="flex items-start gap-2 py-1 text-xs text-muted-foreground">
+                      <Info className="w-3.5 h-3.5 mt-0.5 flex-shrink-0" />
+                      <span>
+                        Questo importo è inferiore al valore pieno di Tabella A: per il primo incontro l'art. 28,
+                        co. 5-6, D.M. 150/2023 prevede spese ridotte, dovute solo se non si raggiunge un accordo o se
+                        la mediazione si ferma qui. Il resto dell'indennità (Tabella A) è dovuto solo se la procedura
+                        prosegue oltre il primo incontro.{" "}
+                        <Link href="/guida-dm-150">
+                          <span className="underline cursor-pointer text-foreground">Approfondisci nella guida</span>
+                        </Link>
+                        .
                       </span>
                     </div>
 
