@@ -220,7 +220,7 @@ export default function Glossario() {
         </p>
         {/* DATA-04 / PRIV-07: data dell'ultima verifica normativa, aggiornata
             manualmente ad ogni revisione periodica (v. processo PRIV-07). */}
-        <p className="text-sm opacity-50 mb-6">Ultima verifica normativa: agosto 2026</p>
+        <p className="text-sm opacity-60 mb-6">Ultima verifica normativa: agosto 2026</p>
 
         <div className="relative mb-6">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 opacity-40" />
@@ -277,7 +277,7 @@ export default function Glossario() {
                     </h3>
                     <p className="text-xs leading-relaxed opacity-85">{entry.definition}</p>
                     {entry.references && (
-                      <p className="text-xs mt-2 opacity-50" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
+                      <p className="text-xs mt-2 opacity-60" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
                         Rif.: {entry.references}
                       </p>
                     )}
@@ -289,7 +289,7 @@ export default function Glossario() {
         </div>
 
         {filtered.length === 0 && (
-          <div className="text-center py-12 opacity-50">
+          <div className="text-center py-12 opacity-60">
             <BookOpen className="w-12 h-12 mx-auto mb-4 opacity-30" />
             <p className="text-sm">Nessun termine trovato per &quot;{search}&quot;</p>
           </div>

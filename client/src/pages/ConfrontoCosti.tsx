@@ -632,7 +632,7 @@ export default function ConfrontoCosti() {
                     <div className="mt-3 pt-3 border-t border-red-300">
                       <div className="text-xs font-bold text-green-800 mb-1">Risparmio con mediazione:</div>
                       <div className="text-lg font-bold text-green-800 font-mono" style={{ fontFamily: "'JetBrains Mono', monospace" }}>{formatEuro(risultato.risparmioMediazioneTreGradi)}</div>
-                      <p className="text-xs text-green-700">{risultato.percentualeRisparmioTreGradi}% vs tre gradi</p>
+                      <p className="text-xs text-green-800">{risultato.percentualeRisparmioTreGradi}% vs tre gradi</p>
                     </div>
                   </div>
                 </div>
@@ -652,17 +652,17 @@ export default function ConfrontoCosti() {
                       <tbody className="font-mono" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
                         <tr className="bg-green-100 border-b border-foreground/10">
                           <td className="py-2 px-3 font-bold text-green-900" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>Mediazione</td>
-                          <td className="text-right py-2 px-3 text-green-900 font-bold">{formatEuro(risultato.costiMediazione.totaleNettoPerParte)} <span className="text-[10px] font-normal opacity-70">iva incl.</span></td>
+                          <td className="text-right py-2 px-3 text-green-900 font-bold">{formatEuro(risultato.costiMediazione.totaleNettoPerParte)} <span className="text-[10px] font-normal opacity-80">iva incl.</span></td>
                           <td className="text-right py-2 px-3 text-xs">{risultato.durataMediaStimata.mediazione}</td>
                         </tr>
                         <tr className="bg-amber-50 border-b border-foreground/10">
                           <td className="py-2 px-3 font-bold text-amber-900" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>Arbitrato CAM</td>
-                          <td className="text-right py-2 px-3 text-amber-900 font-bold">{formatEuro(risultato.costiArbitrato.totalePerParte)} <span className="text-[10px] font-normal opacity-70">iva incl.</span></td>
+                          <td className="text-right py-2 px-3 text-amber-900 font-bold">{formatEuro(risultato.costiArbitrato.totalePerParte)} <span className="text-[10px] font-normal opacity-80">iva incl.</span></td>
                           <td className="text-right py-2 px-3 text-xs">{risultato.costiArbitrato.durataStimata}</td>
                         </tr>
                         <tr className="bg-orange-50 border-b border-foreground/10">
                           <td className="py-2 px-3 font-bold text-orange-900" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>{medyaproLabel}</td>
-                          <td className="text-right py-2 px-3 text-orange-900 font-bold">{formatEuro(risultatoMedyaPro.costiArbitrato.totalePerParte)} <span className="text-[10px] font-normal opacity-70">iva incl.</span></td>
+                          <td className="text-right py-2 px-3 text-orange-900 font-bold">{formatEuro(risultatoMedyaPro.costiArbitrato.totalePerParte)} <span className="text-[10px] font-normal opacity-80">iva incl.</span></td>
                           <td className="text-right py-2 px-3 text-xs">{risultatoMedyaPro.costiArbitrato.durataStimata}</td>
                         </tr>
                         <tr className="bg-red-50/50 border-b border-foreground/10">
@@ -677,7 +677,7 @@ export default function ConfrontoCosti() {
                         </tr>
                         <tr className="bg-red-100 border-t-2 border-foreground font-bold">
                           <td className="py-3 px-3" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>TOTALE 3 GRADI</td>
-                          <td className="text-right py-3 px-3 text-red-900">{formatEuro(risultato.totaleCausaTreGradi)} <span className="text-[10px] font-normal opacity-70">iva incl.</span></td>
+                          <td className="text-right py-3 px-3 text-red-900">{formatEuro(risultato.totaleCausaTreGradi)} <span className="text-[10px] font-normal opacity-80">iva incl.</span></td>
                           <td className="text-right py-3 px-3 text-xs">6-12 anni</td>
                         </tr>
                       </tbody>

@@ -240,7 +240,7 @@ export default function GuidaDM150() {
                 <div className="border-2 border-foreground p-4 bg-green-50 dark:bg-green-950/20">
                   <div className="flex items-start gap-3">
                     <span
-                      className="inline-block px-2 py-1 bg-green-600 text-white text-xs font-bold border border-foreground"
+                      className="inline-block px-2 py-1 bg-green-700 text-white text-xs font-bold border border-foreground"
                       style={{ fontFamily: "'JetBrains Mono', monospace" }}
                     >
                       +10% / +25%
@@ -582,7 +582,7 @@ function ExampleRow({ label, value, bold, highlight }: { label: string; value: s
       <span className={`text-sm ${bold ? "font-bold text-foreground" : "text-muted-foreground"}`}>{label}</span>
       <span
         className={`text-sm font-semibold ${
-          highlight === "reduction" ? "text-red-600" : highlight === "increase" ? "text-green-600" : "text-foreground"
+          highlight === "reduction" ? "text-red-600" : highlight === "increase" ? "text-green-700" : "text-foreground"
         } ${bold ? "text-base" : ""}`}
         style={{ fontFamily: "'JetBrains Mono', monospace" }}
       >

@@ -361,7 +361,14 @@ export default function Home() {
           >
             Inizia Subito
           </h2>
-          <p className="text-primary-foreground/80 text-lg mb-8 max-w-xl mx-auto">
+          {/* ACC-04: "text-primary-foreground/80" non produce alcuna regola CSS
+              (Tailwind non può applicare un modificatore di opacità a un
+              colore definito come funzione oklch() completa in --primary-foreground),
+              quindi il testo ereditava il colore --foreground quasi nero,
+              illeggibile su questo sfondo arancio (2.79:1). Stesso risultato
+              visivo voluto (bianco all'80%) ottenuto qui con due utility
+              indipendenti, entrambe supportate: 5.07:1. */}
+          <p className="text-primary-foreground opacity-80 text-lg mb-8 max-w-xl mx-auto">
             Calcola le indennità di mediazione in pochi secondi o avvia un'analisi completa del tuo caso con l'AI.
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">

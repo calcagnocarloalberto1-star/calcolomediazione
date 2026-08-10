@@ -102,7 +102,7 @@ function getOrganoBadgeClass(tipoOrgano: string): string {
     case "cassazione_su":
       return "bg-amber-700 text-white border-amber-900";
     case "cassazione":
-      return "bg-amber-600 text-white border-amber-800";
+      return "bg-amber-700 text-white border-amber-800";
     case "corte_appello":
       return "bg-blue-600 text-white border-blue-800";
     case "tribunale":
@@ -274,7 +274,7 @@ function StatisticheBrief() {
         { label: "Totale", value: totale, color: "bg-foreground text-background" },
         { label: "Corte Cost.", value: corteCostituzionale, color: "bg-red-700 text-white" },
         { label: "Cass. SS.UU.", value: cassazioneSU, color: "bg-amber-700 text-white" },
-        { label: "Cassazione", value: cassazione, color: "bg-amber-600 text-white" },
+        { label: "Cassazione", value: cassazione, color: "bg-amber-700 text-white" },
         { label: "Merito", value: merito, color: "bg-slate-600 text-white" },
       ].map((stat) => (
         <div key={stat.label} className="flex items-center gap-2.5 p-3 border-2 border-foreground/10">
@@ -542,7 +542,7 @@ export default function Giurisprudenza() {
               <span>Cass. SS.UU.</span>
             </span>
             <span className="flex items-center gap-1.5">
-              <span className="w-3 h-3 bg-amber-600 border border-amber-800" />
+              <span className="w-3 h-3 bg-amber-700 border border-amber-800" />
               <span>Cassazione</span>
             </span>
             <span className="flex items-center gap-1.5">
