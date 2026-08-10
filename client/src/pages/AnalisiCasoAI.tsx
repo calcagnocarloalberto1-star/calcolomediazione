@@ -652,7 +652,12 @@ export default function AnalisiCasoAI() {
 
           {/* Progress */}
           {isRunning && (
-            <Card className="border-2 border-foreground shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] mb-6" data-testid="card-progress">
+            <Card
+              className="border-2 border-foreground shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] mb-6"
+              data-testid="card-progress"
+              role="status"
+              aria-live="polite"
+            >
               <CardContent className="py-6">
                 <div className="flex items-center justify-between mb-3">
                   <span className="text-sm font-bold" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>Analisi in corso...</span>
@@ -703,7 +708,7 @@ export default function AnalisiCasoAI() {
                 <Card className="border-2 border-foreground shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
                   <CardContent className="pt-6">
                     {tab.content ? <MarkdownRenderer content={anonymizeText(tab.content)} />
-                      : <div className="flex items-center gap-2 text-muted-foreground py-8 justify-center"><Loader2 className="w-5 h-5 animate-spin" /><span>{tab.label}</span></div>}
+                      : <div className="flex items-center gap-2 text-muted-foreground py-8 justify-center" role="status" aria-live="polite"><Loader2 className="w-5 h-5 animate-spin" /><span>{tab.label}</span></div>}
                   </CardContent>
                 </Card>
               </TabsContent>
@@ -721,7 +726,7 @@ export default function AnalisiCasoAI() {
                 </CardHeader>
                 <CardContent className="pt-6">
                   {analisi.analisiEconomica ? <MarkdownRenderer content={anonymizeText(analisi.analisiEconomica)} />
-                    : <div className="flex items-center gap-2 text-muted-foreground py-8 justify-center"><Loader2 className="w-5 h-5 animate-spin" /><span>Analisi economica comparativa in corso...</span></div>}
+                    : <div className="flex items-center gap-2 text-muted-foreground py-8 justify-center" role="status" aria-live="polite"><Loader2 className="w-5 h-5 animate-spin" /><span>Analisi economica comparativa in corso...</span></div>}
                 </CardContent>
               </Card>
             </TabsContent>
@@ -744,7 +749,12 @@ export default function AnalisiCasoAI() {
                     </Button>
                   ))}
                 </div>
-                <div className="min-h-[200px] max-h-[400px] overflow-y-auto border-2 border-foreground p-4 mb-4 space-y-4 bg-muted/30">
+                <div
+                  className="min-h-[200px] max-h-[400px] overflow-y-auto border-2 border-foreground p-4 mb-4 space-y-4 bg-muted/30"
+                  role="log"
+                  aria-live="polite"
+                  aria-label="Cronologia della conversazione con l'AI"
+                >
                   {chatMessages.length === 0 && (
                     <p className="text-sm text-muted-foreground text-center py-8">Fai una domanda o usa le azioni rapide sopra per approfondire l'analisi.</p>
                   )}
