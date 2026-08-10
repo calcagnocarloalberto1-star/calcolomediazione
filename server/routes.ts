@@ -786,7 +786,7 @@ res.status(500).json({ error: (e && e.message) ? e.message : "Errore durante l'e
 });
 
 // ─── ASSISTENTE AI DI COMPILAZIONE (tool antiriciclaggio, piu' documenti + richiesta libera) ─
-app.post("/api/aml-assist", aiRateLimit, upload.array("files", 20), async (req, res) => {
+app.post("/api/aml-assist", aiRateLimit, upload.array("files", 40), async (req, res) => {
 try {
 const files = ((req as any).files as Array<{ buffer: Buffer; mimetype: string; originalname?: string }>) || [];
 const richiesta = (req.body?.richiesta || "").toString().slice(0, 4000);
