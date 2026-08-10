@@ -390,7 +390,8 @@ const PAGE_CONTENT: Record<string, string> = {
 <h1>Contatti - CalcoloMediazione</h1>
 <p>Per informazioni, segnalazioni di errori o collaborazioni, contatta il team di CalcoloMediazione.</p>
 <p>Email: calcagnocarloalberto1@gmail.com</p>
-<p>Il sito è gestito da Carlo Alberto Calcagno, avvocato e mediatore, Genova.</p>`,
+<p>Il sito è gestito da Carlo Alberto Calcagno, avvocato e mediatore, Genova.</p>
+<p>Indirizzo: Via Trieste 4/9, 16011 Arenzano (GE). P.IVA 03718420106. Iscrizione Ordine degli Avvocati di Genova, n. 2127.</p>`,
 };
 
 function buildBotHtml(page: { path: string; title: string; desc: string }, siteUrl: string): string {
