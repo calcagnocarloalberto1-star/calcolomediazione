@@ -375,7 +375,11 @@ export default function ConfrontoCosti() {
               })}
             />
             {/* Summary Cards — 5 colonne */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 mb-4">
+            <div
+              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 mb-4"
+              role="status"
+              aria-live="polite"
+            >
               <Card className="border-2 border-foreground shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] bg-green-50">
                 <CardContent className="pt-4 pb-4">
                   <div className="flex items-center gap-2 mb-1">
