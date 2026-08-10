@@ -5,8 +5,9 @@
  * lavorare sempre sui risultati più recenti.
  */
 
+import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
-import { Download, FileDown } from "lucide-react";
+import { Download, FileDown, MessageCircleQuestion } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useState } from "react";
 import {
@@ -87,31 +88,46 @@ export function ExportButtons({
       : `flex flex-wrap gap-2 ${className}`;
 
   return (
-    <div className={wrapperClass} data-testid={`${testIdPrefix}-buttons`}>
-      <Button
-        type="button"
-        variant="outline"
-        size="sm"
-        onClick={handlePdf}
-        disabled={loadingPdf}
-        className="border-2 border-foreground shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] transition-all"
-        data-testid={`${testIdPrefix}-pdf`}
-      >
-        <FileDown className="w-4 h-4 mr-2" />
-        {loadingPdf ? "Generazione..." : "Scarica PDF"}
-      </Button>
-      <Button
-        type="button"
-        variant="outline"
-        size="sm"
-        onClick={handleDocx}
-        disabled={loadingDocx}
-        className="border-2 border-foreground shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] transition-all"
-        data-testid={`${testIdPrefix}-docx`}
-      >
-        <Download className="w-4 h-4 mr-2" />
-        {loadingDocx ? "Generazione..." : "Scarica Word"}
-      </Button>
+    <div className={variant === "vertical" ? "flex flex-col gap-3" : "flex flex-col gap-2"}>
+      <div className={wrapperClass} data-testid={`${testIdPrefix}-buttons`}>
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          onClick={handlePdf}
+          disabled={loadingPdf}
+          className="border-2 border-foreground shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] transition-all"
+          data-testid={`${testIdPrefix}-pdf`}
+        >
+          <FileDown className="w-4 h-4 mr-2" />
+          {loadingPdf ? "Generazione..." : "Scarica PDF"}
+        </Button>
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          onClick={handleDocx}
+          disabled={loadingDocx}
+          className="border-2 border-foreground shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] transition-all"
+          data-testid={`${testIdPrefix}-docx`}
+        >
+          <Download className="w-4 h-4 mr-2" />
+          {loadingDocx ? "Generazione..." : "Scarica Word"}
+        </Button>
+      </div>
+
+      {/* UX-03: CTA secondaria post-calcolo, subordinata visivamente alle
+          azioni primarie (download PDF/Word) qui sopra — link testuale, non
+          un bottone pieno, per non competere con l'azione principale. */}
+      <Link href="/contatti">
+        <span
+          className="inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground underline decoration-dotted underline-offset-2 cursor-pointer transition-colors w-fit"
+          data-testid={`${testIdPrefix}-cta-contatti`}
+        >
+          <MessageCircleQuestion className="w-3.5 h-3.5" />
+          Hai bisogno di supporto per questa pratica? Contattaci
+        </span>
+      </Link>
     </div>
   );
 }
