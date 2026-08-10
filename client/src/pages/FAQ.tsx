@@ -96,8 +96,8 @@ const faqSections: FAQSection[] = [
         a: "La questione ha avuto un\u2019evoluzione giurisprudenziale. L\u2019Agenzia delle Entrate, con la Risposta n. 235 del 31 luglio 2020, ha confermato che l\u2019esenzione di cui all\u2019art. 17 del D.Lgs. 28/2010 si estende anche alle imposte ipotecarie e catastali. Tuttavia, alcune Conservatorie dei Registri Immobiliari hanno talvolta rifiutato la trascrizione in assenza del pagamento. La giurisprudenza tributaria recente ha dato ragione ai contribuenti: l\u2019atto notarile necessario a garantire la trascrizione dell\u2019accordo di mediazione beneficia dell\u2019agevolazione tributaria generalizzata di cui al comma 1 dell\u2019art. 17, trattandosi di un necessario e conseguente atto del procedimento di mediazione.",
       },
       {
-        q: "Cos\u2019\u00e8 la verifica di congruит\u00e0 del valore catastale e a cosa serve?",
-        a: "La verifica di congruит\u00e0 (art. 29 D.M. 150/2023) consente di confrontare il valore dichiarato nella domanda di mediazione o nell\u2019accordo con il valore catastale dell\u2019immobile. Il valore catastale si calcola moltiplicando la rendita catastale per coefficienti specifici: x115,5 per la prima casa, x126 per altri fabbricati (cat. A e C escluse A/10 e C/1), x176,4 per cat. B, x63 per cat. A/10 e D, x42,84 per cat. C/1 ed E, x112,5 per terreni agricoli. Se il valore dichiarato \u00e8 inferiore al valore catastale, l\u2019Agenzia delle Entrate potrebbe contestare il valore ai fini fiscali. Il nostro calcolatore permette di effettuare questa verifica immediatamente, segnalando il livello di rischio.",
+        q: "Cos\u2019\u00e8 la verifica di congruit\u00e0 del valore catastale e a cosa serve?",
+        a: "La verifica di congruit\u00e0 (art. 29 D.M. 150/2023) consente di confrontare il valore dichiarato nella domanda di mediazione o nell\u2019accordo con il valore catastale dell\u2019immobile. Il valore catastale si calcola moltiplicando la rendita catastale per coefficienti specifici: x115,5 per la prima casa, x126 per altri fabbricati (cat. A e C escluse A/10 e C/1), x176,4 per cat. B, x63 per cat. A/10 e D, x42,84 per cat. C/1 ed E, x112,5 per terreni agricoli. Se il valore dichiarato \u00e8 inferiore al valore catastale, l\u2019Agenzia delle Entrate potrebbe contestare il valore ai fini fiscali. Il nostro calcolatore permette di effettuare questa verifica immediatamente, segnalando il livello di rischio.",
       },
       {
         q: "Quanto costa complessivamente trascrivere un accordo di mediazione immobiliare?",
@@ -195,7 +195,7 @@ const faqSections: FAQSection[] = [
       },
       {
         q: "L\u2019avvocato come ottiene il pagamento del compenso?",
-        a: "Quando la mediazione si conclude con accordo, l\u2019ammissione anticipata al patrocinio viene confermata su istanza dell\u2019avvocato dal COA che ha deliberato l\u2019ammissione, mediante apposizione del visto di congruит\u00e0 sulla parcella (art. 15-septies, co. 3 e 4). Il COA verifica la completezza della documentazione e la congruит\u00e0 del compenso in base al valore dell\u2019accordo. Successivamente, il COA trasmette la parcella vistata al Ministero della Giustizia tramite la piattaforma ministeriale.",
+        a: "Quando la mediazione si conclude con accordo, l\u2019ammissione anticipata al patrocinio viene confermata su istanza dell\u2019avvocato dal COA che ha deliberato l\u2019ammissione, mediante apposizione del visto di congruit\u00e0 sulla parcella (art. 15-septies, co. 3 e 4). Il COA verifica la completezza della documentazione e la congruit\u00e0 del compenso in base al valore dell\u2019accordo. Successivamente, il COA trasmette la parcella vistata al Ministero della Giustizia tramite la piattaforma ministeriale.",
       },
       {
         q: "Cosa succede se la mediazione non si conclude con accordo?",
