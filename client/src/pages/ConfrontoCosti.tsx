@@ -78,9 +78,9 @@ function buildReportConfronto(
     mediazioneRows.push({ label: `Imposte immobiliari (registro ${ii.aliquotaRegistro})`, value: formatEuro(ii.totaleImposte) });
   }
   if (m.costoNotaio > 0) mediazioneRows.push({ label: "Costo notarile (onorario + IVA + cassa + visure)", value: formatEuro(m.costoNotaio) });
-  mediazioneRows.push({ label: "Totale per parte", value: formatEuro(m.totalePerParte), bold: true });
+  mediazioneRows.push({ label: "Totale per parte (IVA inclusa)", value: formatEuro(m.totalePerParte), bold: true });
   if (m.creditoImposta > 0) mediazioneRows.push({ label: "Credito d'imposta", value: `- ${formatEuro(m.creditoImposta)}` });
-  mediazioneRows.push({ label: "Totale netto per parte", value: formatEuro(m.totaleNettoPerParte), bold: true });
+  mediazioneRows.push({ label: "Totale netto per parte (IVA inclusa, al netto del credito d'imposta)", value: formatEuro(m.totaleNettoPerParte), bold: true });
 
   const causaRows: { label: string; value: string; bold?: boolean }[] = [
     { label: "Contributo unificato", value: formatEuro(c.contributoUnificato) },
@@ -92,7 +92,7 @@ function buildReportConfronto(
     { label: "IVA 22% avvocato", value: formatEuro(c.iva22Avvocato) },
     { label: "Imposta di registro sentenza", value: formatEuro(c.impostaRegistroSentenza) },
     { label: "Stima CTU", value: formatEuro(c.stimaCTU) },
-    { label: "Totale per parte (I grado)", value: formatEuro(c.totalePerParte), bold: true },
+    { label: "Totale per parte (I grado, IVA inclusa)", value: formatEuro(c.totalePerParte), bold: true },
   ];
 
   const arbCamRows: { label: string; value: string; bold?: boolean }[] = [
@@ -106,7 +106,7 @@ function buildReportConfronto(
     { label: "Bollo", value: formatEuro(a.bollo) },
     { label: "Stima CTU", value: formatEuro(a.stimaCTU) },
     { label: "Imposta di registro lodo", value: formatEuro(a.impostaRegistroLodo) },
-    { label: `Totale per parte - ${a.durataStimata}`, value: formatEuro(a.totalePerParte), bold: true },
+    { label: `Totale per parte - ${a.durataStimata} (IVA inclusa)`, value: formatEuro(a.totalePerParte), bold: true },
   ];
 
   const arbMedyaRows: { label: string; value: string; bold?: boolean }[] = [
@@ -120,15 +120,15 @@ function buildReportConfronto(
     { label: "Bollo", value: formatEuro(a2.bollo) },
     { label: "Stima CTU", value: formatEuro(a2.stimaCTU) },
     { label: "Imposta di registro lodo", value: formatEuro(a2.impostaRegistroLodo) },
-    { label: `Totale per parte - ${a2.durataStimata}`, value: formatEuro(a2.totalePerParte), bold: true },
+    { label: `Totale per parte - ${a2.durataStimata} (IVA inclusa)`, value: formatEuro(a2.totalePerParte), bold: true },
   ];
 
   const riepilogoRows = [
-    { label: "Mediazione - totale netto per parte", value: formatEuro(m.totaleNettoPerParte), bold: true },
-    { label: "Arbitrato CAM - totale per parte", value: formatEuro(a.totalePerParte), bold: true },
-    { label: `${params.medyaproLabel} - totale per parte`, value: formatEuro(a2.totalePerParte), bold: true },
-    { label: "Causa Civile I grado - totale per parte", value: formatEuro(c.totalePerParte), bold: true },
-    { label: "Causa Civile tre gradi (I+II+Cass.) - stima", value: formatEuro(cam.totaleCausaTreGradi), bold: true },
+    { label: "Mediazione - totale netto per parte (IVA inclusa)", value: formatEuro(m.totaleNettoPerParte), bold: true },
+    { label: "Arbitrato CAM - totale per parte (IVA inclusa)", value: formatEuro(a.totalePerParte), bold: true },
+    { label: `${params.medyaproLabel} - totale per parte (IVA inclusa)`, value: formatEuro(a2.totalePerParte), bold: true },
+    { label: "Causa Civile I grado - totale per parte (IVA inclusa)", value: formatEuro(c.totalePerParte), bold: true },
+    { label: "Causa Civile tre gradi (I+II+Cass.) - stima (IVA inclusa)", value: formatEuro(cam.totaleCausaTreGradi), bold: true },
     { label: "Risparmio mediazione vs causa I grado", value: `${formatEuro(cam.risparmioMediazione)} (${cam.percentualeRisparmio}%)`, bold: true },
     { label: "Risparmio mediazione vs tre gradi", value: `${formatEuro(cam.risparmioMediazioneTreGradi)} (${cam.percentualeRisparmioTreGradi}%)`, bold: true },
   ];
@@ -379,7 +379,7 @@ export default function ConfrontoCosti() {
                   <div className="text-xl font-bold text-green-900 font-mono" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
                     {formatEuro(risultato.costiMediazione.totaleNettoPerParte)}
                   </div>
-                  <p className="text-xs text-green-700 mt-1">per parte (netto credito)</p>
+                  <p className="text-xs text-green-700 mt-1">per parte (IVA inclusa, netto credito d'imposta)</p>
                 </CardContent>
               </Card>
 
@@ -392,7 +392,7 @@ export default function ConfrontoCosti() {
                   <div className="text-xl font-bold text-amber-900 font-mono" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
                     {formatEuro(risultato.costiArbitrato.totalePerParte)}
                   </div>
-                  <p className="text-xs text-amber-700 mt-1">per parte — {risultato.costiArbitrato.durataStimata}</p>
+                  <p className="text-xs text-amber-700 mt-1">per parte — {risultato.costiArbitrato.durataStimata} · IVA inclusa</p>
                 </CardContent>
               </Card>
 
@@ -405,7 +405,7 @@ export default function ConfrontoCosti() {
                   <div className="text-xl font-bold text-orange-900 font-mono" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
                     {formatEuro(risultatoMedyaPro.costiArbitrato.totalePerParte)}
                   </div>
-                  <p className="text-xs text-orange-700 mt-1">per parte — {risultatoMedyaPro.costiArbitrato.durataStimata}</p>
+                  <p className="text-xs text-orange-700 mt-1">per parte — {risultatoMedyaPro.costiArbitrato.durataStimata} · IVA inclusa</p>
                 </CardContent>
               </Card>
 
@@ -418,7 +418,7 @@ export default function ConfrontoCosti() {
                   <div className="text-xl font-bold text-red-900 font-mono" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
                     {formatEuro(risultato.costiCausaCivile.totalePerParte)}
                   </div>
-                  <p className="text-xs text-red-700 mt-1">per parte (I grado)</p>
+                  <p className="text-xs text-red-700 mt-1">per parte (I grado, IVA inclusa)</p>
                 </CardContent>
               </Card>
 
@@ -557,7 +557,7 @@ export default function ConfrontoCosti() {
                             );
                           })}
                           <tr className="border-t-2 border-foreground font-bold">
-                            <td className="py-3 px-3" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>TOTALE costi arbitrali puri</td>
+                            <td className="py-3 px-3" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>TOTALE costi arbitrali puri (IVA inclusa sui compensi arbitrali, esclude compenso avvocato)</td>
                             <td className="text-right py-3 px-3 bg-amber-100 text-amber-900">{formatEuro(camPuro)}</td>
                             <td className="text-right py-3 px-3 bg-orange-100 text-orange-900">{formatEuro(medPuro)}</td>
                             <td className={`text-right py-3 px-3 bg-muted/30 font-bold ${diff > 0 ? "text-red-600" : diff < 0 ? "text-green-600" : "text-muted-foreground"}`}>
@@ -592,7 +592,7 @@ export default function ConfrontoCosti() {
                       <span className="text-sm font-bold text-red-700" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>Corte d'Appello</span>
                     </div>
                     <div className="text-xl font-bold text-red-800 font-mono" style={{ fontFamily: "'JetBrains Mono', monospace" }}>{formatEuro(risultato.costiAppello.totalePerParte)}</div>
-                    <p className="text-xs text-red-600 mt-1">per parte — {risultato.costiAppello.durataStimata}</p>
+                    <p className="text-xs text-red-600 mt-1">per parte — {risultato.costiAppello.durataStimata} · IVA inclusa</p>
                     <div className="mt-2 space-y-1 text-xs text-muted-foreground">
                       <div className="flex justify-between"><span>CU +50%</span><span className="font-mono">{formatEuro(risultato.costiAppello.contributoUnificato)}</span></div>
                       <div className="flex justify-between"><span>Compenso avv. (Tab. 12)</span><span className="font-mono">{formatEuro(risultato.costiAppello.compensoAvvocato)}</span></div>
@@ -605,7 +605,7 @@ export default function ConfrontoCosti() {
                       <span className="text-sm font-bold text-red-800" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>Corte di Cassazione</span>
                     </div>
                     <div className="text-xl font-bold text-red-900 font-mono" style={{ fontFamily: "'JetBrains Mono', monospace" }}>{formatEuro(risultato.costiCassazione.totalePerParte)}</div>
-                    <p className="text-xs text-red-600 mt-1">per parte — {risultato.costiCassazione.durataStimata}</p>
+                    <p className="text-xs text-red-600 mt-1">per parte — {risultato.costiCassazione.durataStimata} · IVA inclusa</p>
                     <div className="mt-2 space-y-1 text-xs text-muted-foreground">
                       <div className="flex justify-between"><span>CU raddoppiato</span><span className="font-mono">{formatEuro(risultato.costiCassazione.contributoUnificato)}</span></div>
                       <div className="flex justify-between"><span>Compenso avv. (Tab. 13)</span><span className="font-mono">{formatEuro(risultato.costiCassazione.compensoAvvocato)}</span></div>
@@ -618,7 +618,7 @@ export default function ConfrontoCosti() {
                       <span className="text-sm font-bold text-red-900" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>Totale 3 Gradi</span>
                     </div>
                     <div className="text-xl font-bold text-red-900 font-mono" style={{ fontFamily: "'JetBrains Mono', monospace" }}>{formatEuro(risultato.totaleCausaTreGradi)}</div>
-                    <p className="text-xs text-red-700 mt-1">per parte — 6-12 anni</p>
+                    <p className="text-xs text-red-700 mt-1">per parte — 6-12 anni · IVA inclusa</p>
                     <div className="mt-3 pt-3 border-t border-red-300">
                       <div className="text-xs font-bold text-green-800 mb-1">Risparmio con mediazione:</div>
                       <div className="text-lg font-bold text-green-800 font-mono" style={{ fontFamily: "'JetBrains Mono', monospace" }}>{formatEuro(risultato.risparmioMediazioneTreGradi)}</div>
@@ -635,39 +635,39 @@ export default function ConfrontoCosti() {
                       <thead>
                         <tr className="border-b-2 border-foreground">
                           <th className="text-left py-2 px-3 font-bold" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>Procedura</th>
-                          <th className="text-right py-2 px-3 font-bold" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>Totale per parte</th>
+                          <th className="text-right py-2 px-3 font-bold" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>Totale per parte (IVA inclusa)</th>
                           <th className="text-right py-2 px-3 font-bold" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>Durata</th>
                         </tr>
                       </thead>
                       <tbody className="font-mono" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
                         <tr className="bg-green-100 border-b border-foreground/10">
                           <td className="py-2 px-3 font-bold text-green-900" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>Mediazione</td>
-                          <td className="text-right py-2 px-3 text-green-900 font-bold">{formatEuro(risultato.costiMediazione.totaleNettoPerParte)}</td>
+                          <td className="text-right py-2 px-3 text-green-900 font-bold">{formatEuro(risultato.costiMediazione.totaleNettoPerParte)} <span className="text-[10px] font-normal opacity-70">iva incl.</span></td>
                           <td className="text-right py-2 px-3 text-xs">{risultato.durataMediaStimata.mediazione}</td>
                         </tr>
                         <tr className="bg-amber-50 border-b border-foreground/10">
                           <td className="py-2 px-3 font-bold text-amber-900" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>Arbitrato CAM</td>
-                          <td className="text-right py-2 px-3 text-amber-900 font-bold">{formatEuro(risultato.costiArbitrato.totalePerParte)}</td>
+                          <td className="text-right py-2 px-3 text-amber-900 font-bold">{formatEuro(risultato.costiArbitrato.totalePerParte)} <span className="text-[10px] font-normal opacity-70">iva incl.</span></td>
                           <td className="text-right py-2 px-3 text-xs">{risultato.costiArbitrato.durataStimata}</td>
                         </tr>
                         <tr className="bg-orange-50 border-b border-foreground/10">
                           <td className="py-2 px-3 font-bold text-orange-900" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>{medyaproLabel}</td>
-                          <td className="text-right py-2 px-3 text-orange-900 font-bold">{formatEuro(risultatoMedyaPro.costiArbitrato.totalePerParte)}</td>
+                          <td className="text-right py-2 px-3 text-orange-900 font-bold">{formatEuro(risultatoMedyaPro.costiArbitrato.totalePerParte)} <span className="text-[10px] font-normal opacity-70">iva incl.</span></td>
                           <td className="text-right py-2 px-3 text-xs">{risultatoMedyaPro.costiArbitrato.durataStimata}</td>
                         </tr>
                         <tr className="bg-red-50/50 border-b border-foreground/10">
                           <td className="py-2 px-3 text-sm" style={{ fontFamily: "Inter, sans-serif" }}>I grado (Tribunale)</td>
-                          <td className="text-right py-2 px-3">{formatEuro(risultato.costiCausaCivile.totalePerParte)}</td>
+                          <td className="text-right py-2 px-3">{formatEuro(risultato.costiCausaCivile.totalePerParte)} <span className="text-[10px] opacity-70">iva incl.</span></td>
                           <td className="text-right py-2 px-3 text-xs">{risultato.durataMediaStimata.causaCivile}</td>
                         </tr>
                         <tr className="bg-red-50/70 border-b border-foreground/10">
                           <td className="py-2 px-3 text-sm" style={{ fontFamily: "Inter, sans-serif" }}>I + II grado</td>
-                          <td className="text-right py-2 px-3">{formatEuro(risultato.costiCausaCivile.totalePerParte + risultato.costiAppello.totalePerParte)}</td>
+                          <td className="text-right py-2 px-3">{formatEuro(risultato.costiCausaCivile.totalePerParte + risultato.costiAppello.totalePerParte)} <span className="text-[10px] opacity-70">iva incl.</span></td>
                           <td className="text-right py-2 px-3 text-xs">+{risultato.durataMediaStimata.appello}</td>
                         </tr>
                         <tr className="bg-red-100 border-t-2 border-foreground font-bold">
                           <td className="py-3 px-3" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>TOTALE 3 GRADI</td>
-                          <td className="text-right py-3 px-3 text-red-900">{formatEuro(risultato.totaleCausaTreGradi)}</td>
+                          <td className="text-right py-3 px-3 text-red-900">{formatEuro(risultato.totaleCausaTreGradi)} <span className="text-[10px] font-normal opacity-70">iva incl.</span></td>
                           <td className="text-right py-3 px-3 text-xs">6-12 anni</td>
                         </tr>
                       </tbody>
@@ -844,7 +844,7 @@ export default function ConfrontoCosti() {
                             </tr>
                           ))}
                           <tr className="border-t-2 border-foreground font-bold text-sm">
-                            <td className="py-3 px-2" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>TOTALE</td>
+                            <td className="py-3 px-2" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>TOTALE <span className="text-[10px] font-normal opacity-70">(IVA inclusa)</span></td>
                             <td className="text-right py-3 px-2 bg-green-100 text-green-900">{formatEuro(risultato.costiMediazione.totaleNettoPerParte)}</td>
                             <td className="text-right py-3 px-2 bg-amber-100 text-amber-900">{formatEuro(risultato.costiArbitrato.totalePerParte)}</td>
                             <td className="text-right py-3 px-2 bg-orange-100 text-orange-900">{formatEuro(risultatoMedyaPro.costiArbitrato.totalePerParte)}</td>
@@ -864,9 +864,9 @@ export default function ConfrontoCosti() {
                       <DetailItem label="CPA 4%" value={risultato.costiMediazione.cpa4Avvocato} note="4% su compenso + spese generali" />
                       <DetailItem label="IVA 22%" value={risultato.costiMediazione.iva22Avvocato} note="22% su compenso + spese generali + CPA" />
                       <DetailItem label="Imposta di registro" value={risultato.costiMediazione.impostaRegistro} note={risultato.costiMediazione.impostaRegistro === 0 ? "ESENTE — valore ≤ €100.000 (art. 17 D.Lgs. 28/2010)" : "3% sulla parte eccedente €100.000"} highlight={risultato.costiMediazione.impostaRegistro === 0} />
-                      <div className="border-t-2 border-foreground pt-3 flex justify-between"><span className="font-bold">Totale</span><span className="font-bold font-mono">{formatEuro(risultato.costiMediazione.totalePerParte)}</span></div>
+                      <div className="border-t-2 border-foreground pt-3 flex justify-between"><span className="font-bold">Totale (IVA inclusa)</span><span className="font-bold font-mono">{formatEuro(risultato.costiMediazione.totalePerParte)}</span></div>
                       <div className="flex justify-between text-green-700"><span className="text-sm">Credito d'imposta</span><span className="font-mono text-sm">-{formatEuro(risultato.costiMediazione.creditoImposta)}</span></div>
-                      <div className="border-t-2 border-foreground pt-3 flex justify-between"><span className="font-bold text-green-800">Totale netto</span><span className="font-bold font-mono text-green-800">{formatEuro(risultato.costiMediazione.totaleNettoPerParte)}</span></div>
+                      <div className="border-t-2 border-foreground pt-3 flex justify-between"><span className="font-bold text-green-800">Totale netto (IVA inclusa, netto credito d'imposta)</span><span className="font-bold font-mono text-green-800">{formatEuro(risultato.costiMediazione.totaleNettoPerParte)}</span></div>
                     </div>
                   </TabsContent>
 
@@ -878,7 +878,7 @@ export default function ConfrontoCosti() {
                       <DetailItem label="Spese gen. + CPA + IVA" value={risultato.costiCausaCivile.speseGenerali15 + risultato.costiCausaCivile.cpa4Avvocato + risultato.costiCausaCivile.iva22Avvocato} note="15% spese generali + 4% CPA + 22% IVA" />
                       <DetailItem label="Imposta di registro sentenza" value={risultato.costiCausaCivile.impostaRegistroSentenza} note="3% sul valore della condanna (art. 8 lett. b Tariffa DPR 131/1986)" />
                       <DetailItem label="Stima CTU" value={risultato.costiCausaCivile.stimaCTU} note="Stima indicativa (variabile per materia)" />
-                      <div className="border-t-2 border-foreground pt-3 flex justify-between"><span className="font-bold text-red-800">Totale I grado</span><span className="font-bold font-mono text-red-800">{formatEuro(risultato.costiCausaCivile.totalePerParte)}</span></div>
+                      <div className="border-t-2 border-foreground pt-3 flex justify-between"><span className="font-bold text-red-800">Totale I grado (IVA inclusa)</span><span className="font-bold font-mono text-red-800">{formatEuro(risultato.costiCausaCivile.totalePerParte)}</span></div>
                     </div>
                   </TabsContent>
 
@@ -888,7 +888,7 @@ export default function ConfrontoCosti() {
                       <DetailItem label="Compenso avvocato (Tab. 12)" value={risultato.costiAppello.compensoAvvocato} note="D.M. 55/2014 mod. D.M. 147/2022 — Tab. 12" />
                       <DetailItem label="Spese gen. + CPA + IVA" value={risultato.costiAppello.speseGenerali15 + risultato.costiAppello.cpa4Avvocato + risultato.costiAppello.iva22Avvocato} note="15% + 4% + 22%" />
                       <DetailItem label="Stima CTU" value={risultato.costiAppello.stimaCTU} note="Eventuale rinnovo CTU (art. 356 c.p.c.)" />
-                      <div className="border-t-2 border-foreground pt-3 flex justify-between"><span className="font-bold text-red-800">Totale Appello</span><span className="font-bold font-mono text-red-800">{formatEuro(risultato.costiAppello.totalePerParte)}</span></div>
+                      <div className="border-t-2 border-foreground pt-3 flex justify-between"><span className="font-bold text-red-800">Totale Appello (IVA inclusa)</span><span className="font-bold font-mono text-red-800">{formatEuro(risultato.costiAppello.totalePerParte)}</span></div>
                     </div>
                   </TabsContent>
 
@@ -905,7 +905,7 @@ export default function ConfrontoCosti() {
                       <DetailItem label="Bollo" value={risultato.costiArbitrato.bollo} note="Stima €150 forfettario (DPR 642/1972)" />
                       <DetailItem label="Stima CTU" value={risultato.costiArbitrato.stimaCTU} note="Variabile per materia" />
                       <DetailItem label="Imposta di registro sul lodo" value={risultato.costiArbitrato.impostaRegistroLodo} note="3% (art. 8 Tariffa DPR 131/1986 — lodo ha efficacia di sentenza ex art. 824-bis c.p.c.)" />
-                      <div className="border-t-2 border-foreground pt-3 flex justify-between"><span className="font-bold text-amber-800">Totale CAM</span><span className="font-bold font-mono text-amber-800">{formatEuro(risultato.costiArbitrato.totalePerParte)}</span></div>
+                      <div className="border-t-2 border-foreground pt-3 flex justify-between"><span className="font-bold text-amber-800">Totale CAM (IVA inclusa)</span><span className="font-bold font-mono text-amber-800">{formatEuro(risultato.costiArbitrato.totalePerParte)}</span></div>
                     </div>
                   </TabsContent>
 
@@ -923,7 +923,7 @@ export default function ConfrontoCosti() {
                       <DetailItem label="Bollo" value={risultatoMedyaPro.costiArbitrato.bollo} note="Imposta di bollo su tutti gli atti e provvedimenti del procedimento (art. 33 Regolamento)" />
                       <DetailItem label="Stima CTU" value={risultatoMedyaPro.costiArbitrato.stimaCTU} note="Costi CTU determinati su base tabelle giudiziali (art. 23.5 Regolamento)" />
                       <DetailItem label="Imposta di registro sul lodo" value={risultatoMedyaPro.costiArbitrato.impostaRegistroLodo} note="3% (art. 8 Tariffa DPR 131/1986)" />
-                      <div className="border-t-2 border-foreground pt-3 flex justify-between"><span className="font-bold text-orange-800">Totale MedyaPro</span><span className="font-bold font-mono text-orange-800">{formatEuro(risultatoMedyaPro.costiArbitrato.totalePerParte)}</span></div>
+                      <div className="border-t-2 border-foreground pt-3 flex justify-between"><span className="font-bold text-orange-800">Totale MedyaPro (IVA inclusa)</span><span className="font-bold font-mono text-orange-800">{formatEuro(risultatoMedyaPro.costiArbitrato.totalePerParte)}</span></div>
                       <p className="text-xs text-muted-foreground italic">Pagamento: IBAN IT77X0503411716000000007462 — Banco Popolare di Verona — intestato a MedyaPro Srl. Causale: numero procedura e nome parte.</p>
                     </div>
                   </TabsContent>
@@ -934,7 +934,7 @@ export default function ConfrontoCosti() {
                       <DetailItem label="Compenso avvocato (Tab. 13)" value={risultato.costiCassazione.compensoAvvocato} note="D.M. 55/2014 — Tab. 13: studio + introduttiva + decisionale (no istruttoria)" />
                       <DetailItem label="Spese gen. + CPA + IVA" value={risultato.costiCassazione.speseGenerali15 + risultato.costiCassazione.cpa4Avvocato + risultato.costiCassazione.iva22Avvocato} note="15% + 4% + 22%" />
                       <DetailItem label="CTU" value={0} note="Non prevista (giudizio di legittimità)" />
-                      <div className="border-t-2 border-foreground pt-3 flex justify-between"><span className="font-bold text-red-800">Totale Cassazione</span><span className="font-bold font-mono text-red-800">{formatEuro(risultato.costiCassazione.totalePerParte)}</span></div>
+                      <div className="border-t-2 border-foreground pt-3 flex justify-between"><span className="font-bold text-red-800">Totale Cassazione (IVA inclusa)</span><span className="font-bold font-mono text-red-800">{formatEuro(risultato.costiCassazione.totalePerParte)}</span></div>
                     </div>
                   </TabsContent>
                 </Tabs>
