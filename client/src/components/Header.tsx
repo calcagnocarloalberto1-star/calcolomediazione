@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef, useCallback } from "react";
 import { Link, useLocation } from "wouter";
 import { Scale, Menu, X, Brain, Calculator, ChevronDown, BarChart3, FileText, BookOpen, TrendingUp, Shield } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -7,6 +7,30 @@ export default function Header() {
   const [location] = useLocation();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [strumentiOpen, setStrumentiOpen] = useState(false);
+  // UX-04: la chiusura del menu "Strumenti" al solo onMouseLeave era
+  // immediata, quindi un movimento del mouse leggermente diagonale (es.
+  // dal bottone verso una voce del menu più larga) poteva far uscire il
+  // cursore dal rettangolo del trigger un istante prima di rientrare nel
+  // pannello, chiudendo il menu per errore. Il ref tiene il timer di
+  // chiusura "posticipata" (hover-intent): onMouseLeave non chiude subito
+  // ma programma la chiusura fra 250ms; onMouseEnter (bottone o pannello,
+  // essendo entrambi dentro lo stesso wrapper) annulla il timer se il
+  // cursore rientra in tempo.
+  const closeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const openStrumenti = useCallback(() => {
+    if (closeTimerRef.current) {
+      clearTimeout(closeTimerRef.current);
+      closeTimerRef.current = null;
+    }
+    setStrumentiOpen(true);
+  }, []);
+  const scheduleCloseStrumenti = useCallback(() => {
+    if (closeTimerRef.current) clearTimeout(closeTimerRef.current);
+    closeTimerRef.current = setTimeout(() => {
+      setStrumentiOpen(false);
+      closeTimerRef.current = null;
+    }, 250);
+  }, []);
   return (
     <header className="sticky top-0 z-50 w-full border-b-[3px] border-foreground bg-card" data-testid="header">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -27,8 +51,8 @@ export default function Header() {
             {/* Dropdown Strumenti — FIX: aria-expanded + aria-haspopup */}
             <div
               className="relative"
-              onMouseEnter={() => setStrumentiOpen(true)}
-              onMouseLeave={() => setStrumentiOpen(false)}
+              onMouseEnter={openStrumenti}
+              onMouseLeave={scheduleCloseStrumenti}
             >
               <button
                 className="flex items-center gap-1 px-3 py-2 text-sm font-medium hover:bg-muted transition-colors duration-150"
