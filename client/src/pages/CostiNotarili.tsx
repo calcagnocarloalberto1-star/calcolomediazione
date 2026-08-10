@@ -294,7 +294,7 @@ export default function CostiNotarili() {
               <div>
                 <Label htmlFor="regime">Regime fiscale</Label>
                 <Select value={regime} onValueChange={(v) => setRegime(v as RegimeFiscale)}>
-                  <SelectTrigger className="border-2 border-foreground">
+                  <SelectTrigger className="border-2 border-foreground" aria-label="Regime fiscale">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -310,6 +310,7 @@ export default function CostiNotarili() {
                 <Switch
                   checked={usaPrezzoValore}
                   onCheckedChange={setUsaPrezzoValore}
+                  aria-label='Usa "prezzo-valore"'
                 />
                 <div>
                   <Label className="cursor-pointer">Usa &quot;prezzo-valore&quot;</Label>
@@ -322,6 +323,7 @@ export default function CostiNotarili() {
                 <Switch
                   checked={venditoreImpresaIva}
                   onCheckedChange={setVenditoreImpresaIva}
+                  aria-label="Cessione da impresa con IVA"
                 />
                 <div>
                   <Label className="cursor-pointer">Cessione da impresa con IVA</Label>
@@ -349,7 +351,7 @@ export default function CostiNotarili() {
                 <div>
                   <Label htmlFor="tipologia">Tipologia catastale</Label>
                   <Select value={tipologia} onValueChange={(v) => setTipologia(v as TipologiaCatastale)}>
-                    <SelectTrigger className="border-2 border-foreground">
+                    <SelectTrigger className="border-2 border-foreground" aria-label="Tipologia catastale">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -389,6 +391,11 @@ export default function CostiNotarili() {
             </div>
           </CardHeader>
           <CardContent>
+            <div className="sr-only" role="status" aria-live="polite">
+              Totale stimato con mediazione: {fmtEuro(confronto.con_mediazione.totale)}.
+              Totale stimato con sentenza: {fmtEuro(confronto.con_sentenza.totale)}.
+              {confronto.risparmio > 0 && ` Risparmio stimato: ${fmtEuro(confronto.risparmio)}.`}
+            </div>
             <div className="overflow-x-auto border-2 border-foreground">
               <table className="w-full text-sm">
                 <thead>
