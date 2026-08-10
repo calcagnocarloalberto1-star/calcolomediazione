@@ -1,6 +1,15 @@
 import { Link } from "wouter";
-import { ArrowLeft, Mail, Globe, MapPin, ExternalLink } from "lucide-react";
+import { ArrowLeft, Mail, Globe, MapPin, ExternalLink, FileText, Scale } from "lucide-react";
 import { SeoHead } from "@/components/SeoHead";
+
+// PRIV-03/PRIV-04: l'audit ha rilevato l'assenza di P.IVA, numero di
+// iscrizione all'albo professionale e indirizzo preciso nella pagina
+// Contatti, con dubbio sull'obbligo di indicarli ex art. 7 D.Lgs. 70/2003 e
+// deontologia forense per un sito che offre strumenti di orientamento
+// pratico. Il Titolare ha deciso di aggiungerli comunque, a prescindere
+// dall'esito della verifica, per trasparenza verso l'utente professionale.
+// Corretto anche il riferimento al dominio (calcolomediazione.com ->
+// calcolomediazione.it, l'unico dominio realmente in uso dal sito).
 
 export default function Contatti() {
   return (
@@ -41,14 +50,24 @@ export default function Contatti() {
               <ContactItem
                 icon={Globe}
                 label="Sito Web"
-                value="calcolomediazione.com"
-                href="https://calcolomediazione.com"
+                value="calcolomediazione.it"
+                href="https://calcolomediazione.it"
                 external
               />
               <ContactItem
                 icon={MapPin}
-                label="Sede"
-                value="Genova, Italia"
+                label="Indirizzo"
+                value="Via Trieste 4/9, 16011 Arenzano (GE)"
+              />
+              <ContactItem
+                icon={FileText}
+                label="P.IVA"
+                value="03718420106"
+              />
+              <ContactItem
+                icon={Scale}
+                label="Iscrizione Albo"
+                value="Ordine degli Avvocati di Genova, n. 2127"
               />
             </div>
 
