@@ -309,8 +309,21 @@ export default function Calcolatore() {
                   </Select>
                 </div>
 
-                {/* Art. 31, co. 3 — Maggiorazioni per esperienza/complessità */}
-                {esito === "accordo_successivi" && (
+                {/* Art. 31, co. 3 — Maggiorazioni per esperienza/complessità
+                    UX-04: la sezione resta montata nel DOM e la sua comparsa/
+                    scomparsa è animata (altezza + opacità) invece che
+                    istantanea, per evitare lo spostamento brusco del
+                    pulsante "Calcola Indennità" sottostante (rischio di
+                    click accidentale segnalato in audit). aria-hidden e
+                    tabIndex=-1 sui campi quando non pertinente mantengono
+                    l'accessibilità da tastiera (nessun focus su campi
+                    invisibili). */}
+                <div
+                  className={`overflow-hidden transition-[max-height,opacity] duration-300 ease-in-out ${
+                    esito === "accordo_successivi" ? "max-h-[420px] opacity-100" : "max-h-0 opacity-0"
+                  }`}
+                  aria-hidden={esito !== "accordo_successivi"}
+                >
                   <div className="space-y-3 p-4 border-2 border-foreground/30 bg-muted/30" data-testid="card-art31">
                     <div className="flex items-center gap-2 mb-2">
                       <Scale className="w-4 h-4 text-primary" />
@@ -328,6 +341,7 @@ export default function Calcolatore() {
                         checked={mediatoreEsperto}
                         onCheckedChange={(checked) => setMediatoreEsperto(checked === true)}
                         className="mt-0.5 border-2 border-foreground"
+                        tabIndex={esito === "accordo_successivi" ? undefined : -1}
                         data-testid="checkbox-mediatore-esperto"
                       />
                       <label htmlFor="mediatoreEsperto" className="cursor-pointer">
@@ -347,6 +361,7 @@ export default function Calcolatore() {
                         checked={proceduraComplessa}
                         onCheckedChange={(checked) => setProceduraComplessa(checked === true)}
                         className="mt-0.5 border-2 border-foreground"
+                        tabIndex={esito === "accordo_successivi" ? undefined : -1}
                         data-testid="checkbox-procedura-complessa"
                       />
                       <label htmlFor="proceduraComplessa" className="cursor-pointer">
@@ -360,7 +375,7 @@ export default function Calcolatore() {
                       </label>
                     </div>
                   </div>
-                )}
+                </div>
 
                 <Button
                   onClick={handleCalcola}
