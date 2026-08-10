@@ -1,91 +1,151 @@
 import { useEffect, useRef, useState } from "react";
 import { SeoHead } from "@/components/SeoHead";
 
-// Pagina "Antiriciclaggio in mediazione".
-// Incorpora lo strumento statico /antiriciclaggio.html (servito da client/public)
-// con auto-ridimensionamento dell'altezza (stessa origine, nessun bordo/scroll interno).
+// ACC-01 — fix accessibilità: /antiriciclaggio caricava lo strumento statico
+// /antiriciclaggio.html dentro un <iframe>. L'audit ha rilevato che questo
+// rende l'intero contenuto (form, textarea, bottoni, testo) invisibile
+// all'albero di accessibilità della pagina e ai tool di estrazione testo:
+// read_page vedeva un solo elemento generico al posto del form, perché tutto
+// vive nel document separato dell'iframe.
 //
-// Cache-busting automatico: l'indirizzo dell'iframe include un parametro "?v="
-// univoco per ogni caricamento della pagina (calcolato una sola volta al mount,
-// non ad ogni render). Così il browser richiede sempre una copia mai vista prima
-// di /antiriciclaggio.html e non può restare bloccato su una versione vecchia in
-// cache — prima qui c'era un numero (ASSET_VERSION) da incrementare a mano ad
-// ogni modifica del file statico, ma è un passaggio facile da dimenticare (è
-// successo più volte) e quando succede gli utenti che hanno già visitato la
-// pagina restano bloccati sulla versione precedente finché non lo si nota. Il
-// costo di questo approccio è che il file (circa 250 KB) viene sempre
-// riscaricato invece di essere servito dalla cache del browser: accettabile per
-// uno strumento di compilazione visitato occasionalmente, dove la correttezza
-// del contenuto conta più del risparmio di banda.
+// Fix: il markup di antiriciclaggio.html viene ora iniettato DIRETTAMENTE nel
+// DOM di questa pagina (stesso documento, nessun iframe) dentro un contenitore
+// ".ac-embed" — così form/label/testo diventano DOM reale della pagina,
+// navigabile da tastiera senza il confine dell'iframe ed estraibile da
+// qualunque tool di lettura testo standard, alla pari delle altre pagine del
+// sito.
+//
+// Tre accorgimenti per farlo senza rischi per il resto del sito o per il
+// tool stesso:
+// 1) CSS scoped — il foglio di stile originale usa selettori "nudi" (body,
+//    button, label, input, h2, *, :root) che se iniettati as-is
+//    sovrascriverebbero lo stile dell'INTERO sito (es. --card, --radius del
+//    design system). Si usa invece client/public/antiriciclaggio-embed.css,
+//    la stessa identica dichiarazione con ogni selettore isolato sotto
+//    ".ac-embed" (vedi commento in quel file).
+// 2) Script isolato — lo script originale dichiara ~100 variabili/funzioni
+//    top-level con nomi molto generici ($, v, val, role...). Viene eseguito
+//    dentro una IIFE per non inquinare lo scope globale della pagina, con le
+//    sole funzioni richiamate dagli attributi onclick/onchange del markup
+//    (26, invariate) esposte in modo esplicito e mirato sotto
+//    window.__acEmbed, e gli attributi onclick/onchange del markup riscritti
+//    di conseguenza (rewriteHandlers).
+// 3) Cleanup dei listener globali — lo script registra alcuni listener su
+//    document/window (event delegation su input/change, "afterprint" dopo la
+//    stampa). Con l'iframe questi sparivano automaticamente alla navigazione;
+//    iniettati nel documento principale andrebbero altrimenti accumulandosi
+//    a ogni nuova visita della pagina nella stessa sessione SPA. Si
+//    intercettano temporaneamente document/window.addEventListener per la
+//    durata del mount e si rimuovono all'unmount.
+//
+// Nessuna modifica al file sorgente antiriciclaggio.html: contenuto, campi,
+// logica di calcolo/generazione restano quelli già in produzione, verificati
+// e usati dagli organismi di mediazione — cambia solo il meccanismo con cui
+// vengono mostrati nella pagina.
+
+const HANDLER_FNS = [
+  "printOne", "copyOne", "assistAggiungiFile", "toggleTrig", "stampaTuttoAccumulo",
+  "scaricaWord", "scaricaTutto", "rimuoviAggiornamento", "resetTrigger", "reset",
+  "moduliBianco", "genera", "copyMot", "cancellaStoricoProcedura", "assistToggleRaw",
+  "assistReset", "assistEstrai", "assistApplica", "analizzaTrigger", "amlNuovaParte",
+  "amlEsportaDati", "amlCancellaTuttiIDati", "amlCancellaDatiProcedura",
+  "aggiungiAggiornamento", "amlImportaDatiFile",
+];
+const HANDLER_FN_PATTERN = new RegExp(`\\b(${HANDLER_FNS.join("|")})\\(`, "g");
+
+// Riscrive onclick="genera(...)" -> onclick="window.__acEmbed.genera(...)" (e
+// così via per le 25 funzioni sopra), unico punto di contatto tra il markup
+// iniettato e lo script eseguito nella sua IIFE isolata.
+function rewriteHandlers(markup: string): string {
+  return markup.replace(/on(click|change)="([^"]*)"/g, (_full, evt, body) => {
+    const rewritten = body.replace(HANDLER_FN_PATTERN, "window.__acEmbed.$1(");
+    return `on${evt}="${rewritten}"`;
+  });
+}
+
 export default function Antiriciclaggio() {
-  const frameRef = useRef<HTMLIFrameElement>(null);
-  const [height, setHeight] = useState<number>(1600);
+  const containerRef = useRef<HTMLDivElement>(null);
   const [cacheBust] = useState<number>(() => Date.now());
+  const [error, setError] = useState(false);
 
   useEffect(() => {
-    const frame = frameRef.current;
-    if (!frame) return;
+    let cancelled = false;
+    const container = containerRef.current;
+    if (!container) return;
 
-    let observer: ResizeObserver | null = null;
-    let interval: number | undefined;
-    const settleTimers: number[] = [];
+    // Foglio di stile scoped: aggiunto una sola volta, condiviso se la
+    // pagina viene rimontata nella stessa sessione SPA.
+    const CSS_ID = "ac-embed-styles";
+    if (!document.getElementById(CSS_ID)) {
+      const link = document.createElement("link");
+      link.id = CSS_ID;
+      link.rel = "stylesheet";
+      link.href = `/antiriciclaggio-embed.css?v=${cacheBust}`;
+      document.head.appendChild(link);
+    }
 
-    const sync = () => {
-      try {
-        const doc = frame.contentWindow?.document;
-        if (doc?.body) {
-          // Nota: NON usare doc.documentElement.scrollHeight qui. Dentro un
-          // iframe la cui altezza è impostata via JS (come questo), lo
-          // scrollHeight dell'elemento <html> non scende mai sotto l'altezza
-          // corrente impostata sull'iframe stesso: è un "cricchetto" che può
-          // solo crescere. Questo strumento cambia altezza di continuo (form
-          // che si espandono, "Genera i modelli", intervista T1-T7, dettagli
-          // apribili/richiudibili): se una sola misurazione la sovrastima,
-          // l'iframe resta bloccato più alto del contenuto reale, lasciando
-          // uno spazio vuoto prima del footer del sito. doc.body.scrollHeight
-          // riflette invece sempre l'altezza reale del contenuto.
-          const h = doc.body.scrollHeight;
-          setHeight((prev) => (prev === h + 40 ? prev : h + 40));
+    // Intercetta temporaneamente document/window.addEventListener per poter
+    // rimuovere, all'unmount, i listener globali che lo script del tool
+    // registra (event delegation su input/change, "afterprint"). Senza
+    // questo si accumulerebbero a ogni nuova visita della pagina nella
+    // stessa sessione SPA (con l'iframe sparivano automaticamente).
+    const recorded: { target: Document | Window; type: string; listener: EventListenerOrEventListenerObject; options?: boolean | AddEventListenerOptions }[] = [];
+    const origDocAdd = Document.prototype.addEventListener;
+    const origWinAdd = Window.prototype.addEventListener;
+    document.addEventListener = function (type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions) {
+      recorded.push({ target: document, type, listener, options });
+      return origDocAdd.call(document, type, listener, options as AddEventListenerOptions);
+    } as typeof document.addEventListener;
+    window.addEventListener = function (type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions) {
+      recorded.push({ target: window, type, listener, options });
+      return origWinAdd.call(window, type, listener, options as AddEventListenerOptions);
+    } as typeof window.addEventListener;
+
+    fetch(`/antiriciclaggio.html?v=${cacheBust}`)
+      .then((res) => {
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        return res.text();
+      })
+      .then((html) => {
+        if (cancelled || !containerRef.current) return;
+
+        const bodyStart = html.indexOf("<body>") + "<body>".length;
+        const scriptOpenIdx = html.indexOf("<script", bodyStart);
+        const scriptOpenTagEnd = html.indexOf(">", scriptOpenIdx) + 1;
+        const scriptCloseIdx = html.lastIndexOf("</script>");
+        if (bodyStart <= 0 || scriptOpenIdx < 0 || scriptCloseIdx < 0) {
+          throw new Error("Struttura HTML inattesa");
         }
-      } catch {
-        /* cross-origin: ignora */
-      }
-    };
 
-    const onLoad = () => {
-      requestAnimationFrame(() => requestAnimationFrame(sync));
+        const markup = rewriteHandlers(html.slice(bodyStart, scriptOpenIdx));
+        const scriptCode = html.slice(scriptOpenTagEnd, scriptCloseIdx);
 
-      // Rete di sicurezza: form che si espandono, immagini, generazione dei
-      // modelli e dettagli apribili possono cambiare l'altezza dopo il load.
-      [50, 150, 350, 700, 1200, 2000].forEach((ms) => {
-        settleTimers.push(window.setTimeout(sync, ms));
+        containerRef.current.innerHTML = markup;
+
+        const exportList = HANDLER_FNS.join(", ");
+        const wrapped =
+          "(function(){\n" + scriptCode +
+          `\nwindow.__acEmbed = { ${exportList} };\n})();`;
+
+        const scriptEl = document.createElement("script");
+        scriptEl.textContent = wrapped;
+        containerRef.current.appendChild(scriptEl);
+      })
+      .catch((err) => {
+        console.error("Errore caricamento strumento antiriciclaggio:", err);
+        if (!cancelled) setError(true);
       });
 
-      try {
-        const doc = frame.contentWindow!.document;
-        observer = new ResizeObserver(sync);
-        observer.observe(doc.body);
-      } catch {
-        /* cross-origin: il polling qui sotto resta comunque attivo */
-      }
-
-      // Rete di sicurezza permanente: questo strumento è molto interattivo
-      // (genera/azzera i modelli, apre/chiude dettagli, più parti nella
-      // stessa procedura) e il ResizeObserver, osservando il body di un
-      // documento in un altro iframe, non sempre notifica le riduzioni di
-      // altezza in modo affidabile. Un controllo periodico leggero garantisce
-      // che l'iframe si restringa comunque, entro un secondo, quando il
-      // contenuto si riduce (es. dopo "Azzera").
-      interval = window.setInterval(sync, 900);
-    };
-
-    frame.addEventListener("load", onLoad);
     return () => {
-      frame.removeEventListener("load", onLoad);
-      observer?.disconnect();
-      if (interval) window.clearInterval(interval);
-      settleTimers.forEach((t) => window.clearTimeout(t));
+      cancelled = true;
+      for (const { target, type, listener, options } of recorded) {
+        target.removeEventListener(type, listener, options as EventListenerOptions);
+      }
+      document.addEventListener = origDocAdd as typeof document.addEventListener;
+      window.addEventListener = origWinAdd as typeof window.addEventListener;
+      delete (window as unknown as { __acEmbed?: unknown }).__acEmbed;
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
@@ -95,14 +155,14 @@ export default function Antiriciclaggio() {
         description="Obblighi antiriciclaggio (D.Lgs. 231/2007) nella mediazione civile e compilazione automatica dei modelli del fascicolo: adeguata verifica, titolare effettivo, scheda rischio, dichiarazione cliente, segnalazione operazioni sospette. Per avvocati e organismi di mediazione."
         canonical="https://calcolomediazione.it/antiriciclaggio"
       />
-      <iframe
-        ref={frameRef}
-        src={`/antiriciclaggio.html?v=${cacheBust}`}
-        title="Antiriciclaggio in mediazione — obblighi e modelli"
-        loading="lazy"
-        scrolling="no"
-        style={{ width: "100%", height: `${height}px`, border: 0, display: "block" }}
-      />
+      {error && (
+        <div className="max-w-2xl mx-auto my-12 border-2 border-foreground bg-amber-50 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] p-6 text-center">
+          <p>
+            Non è stato possibile caricare lo strumento. Ricarica la pagina o riprova tra qualche istante.
+          </p>
+        </div>
+      )}
+      <div ref={containerRef} className="ac-embed" />
     </div>
   );
 }
