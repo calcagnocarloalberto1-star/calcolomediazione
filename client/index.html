@@ -54,25 +54,10 @@
          arrivato, eliminando lo spostamento di layout. Le visite successive (font
          gia' in cache) lo mostrano comunque, quasi sempre, senza alcun ritardo. -->
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=optional" rel="stylesheet">
-    <!-- Google Analytics — BLOCKED by default, enabled only after cookie consent -->
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      window.__loadGA = function() {
-        if (window.__gaLoaded) return;
-        window.__gaLoaded = true;
-        var s = document.createElement('script');
-        s.async = true;
-        s.src = 'https://www.googletagmanager.com/gtag/js?id=G-MS9CY7VC3S';
-        document.head.appendChild(s);
-        gtag('js', new Date());
-        gtag('config', 'G-MS9CY7VC3S');
-      };
-      // Auto-load if user already consented (cookie check)
-      if (document.cookie.indexOf('cm_consent=accepted') !== -1) {
-        window.__loadGA();
-      }
-    </script>
+    <!-- Google Analytics — BLOCKED by default, enabled only after cookie consent.
+         CSP: spostato in file esterno /ga-bootstrap.js così script-src non deve
+         permettere 'unsafe-inline' (vedi server/index.ts). -->
+    <script src="/ga-bootstrap.js"></script>
   <script type="application/ld+json">
 {
   "@context": "https://schema.org",
