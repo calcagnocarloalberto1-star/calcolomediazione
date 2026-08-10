@@ -54,6 +54,9 @@ const PAGES = [
 { path: "/antiriciclaggio-guida", title: "Guida Semplice all'Antiriciclaggio in Mediazione — D.Lgs. 231/2007", desc: "Guida in linguaggio semplice agli obblighi antiriciclaggio per mediatori e Organismi di mediazione: chi è obbligato, cosa fare al tavolo, segnalazione operazioni sospette.", priority: "0.6", changefreq: "monthly" },
 { path: "/antiriciclaggio-mediazione-obblighi", title: "Antiriciclaggio Mediazione: Obblighi D.Lgs. 231/2007 per Mediatori e Avvocati", desc: "Antiriciclaggio mediazione obblighi: chi è tenuto all'adeguata verifica del mediatore, quando l'avvocato è esente, quali documenti produrre e conservare, come riconoscere un'operazione sospetta. Guida pratica D.Lgs. 231/2007.", priority: "0.6", changefreq: "monthly" },
 { path: "/trasferimento-immobiliare-mediazione", title: "Trasferimento Immobiliare in Mediazione: Quanto si Risparmia (Guida)", desc: "Trasferimento immobiliare in mediazione: imposta di registro esente fino a €100.000, quando serve il notaio, quanto si risparmia sulla prima casa rispetto alla compravendita ordinaria. Guida con esempi di calcolo.", priority: "0.6", changefreq: "monthly" },
+{ path: "/privacy-policy", title: "Privacy Policy — CalcoloMediazione", desc: "Informativa sul trattamento dei dati personali di CalcoloMediazione.it: titolare del trattamento, dati raccolti, finalità e modalità di utilizzo, diritti dell'utente ai sensi del GDPR (Regolamento UE 2016/679).", priority: "0.3", changefreq: "yearly" },
+{ path: "/cookie-policy", title: "Cookie Policy — CalcoloMediazione", desc: "Informativa sui cookie di CalcoloMediazione.it: cookie tecnici necessari e cookie analitici (Google Analytics), installati solo previo consenso esplicito dell'utente tramite il banner del Sito.", priority: "0.3", changefreq: "yearly" },
+{ path: "/termini-condizioni", title: "Termini e Condizioni — CalcoloMediazione", desc: "Termini e condizioni d'uso di CalcoloMediazione.it: descrizione dei servizi gratuiti offerti, natura indicativa dei risultati dei calcolatori e limitazioni di responsabilità.", priority: "0.3", changefreq: "yearly" },
 ];
 
 function getSiteUrl(req: any): string {
@@ -392,6 +395,83 @@ const PAGE_CONTENT: Record<string, string> = {
 <p>Email: calcagnocarloalberto1@gmail.com</p>
 <p>Il sito è gestito da Carlo Alberto Calcagno, avvocato e mediatore, Genova.</p>
 <p>Indirizzo: Via Trieste 4/9, 16011 Arenzano (GE). P.IVA 03718420106. Iscrizione Ordine degli Avvocati di Genova, n. 2127.</p>`,
+
+"/antiriciclaggio": `
+<h1>Antiriciclaggio in Mediazione — Obblighi e Modelli per Avvocati e Organismi</h1>
+<p>Guida agli obblighi antiriciclaggio nella mediazione civile (D.Lgs. 231/2007) e compilazione automatica dei modelli del fascicolo riservato, per avvocati, mediatori e Organismi di mediazione.</p>
+<h2>Chi è obbligato</h2>
+<p>Ricadono negli obblighi antiriciclaggio in mediazione: l'Organismo di mediazione (soggetto obbligato principale ex art. 3, c. 5, lett. g, D.Lgs. 231/2007), il mediatore designato, l'avvocato che assiste una parte (di regola esente, salvo operazioni economiche autonome ex art. 3, c. 4, lett. c), la negoziazione assistita, gli OCC e il gestore della crisi da sovraindebitamento.</p>
+<h2>I sei obblighi principali</h2>
+<ul>
+<li>Adeguata verifica della clientela (artt. 17-19 D.Lgs. 231/2007)</li>
+<li>Individuazione del titolare effettivo (artt. 18, 20, 22)</li>
+<li>Conservazione del fascicolo riservato per 10 anni (artt. 31-32)</li>
+<li>Segnalazione di operazioni sospette alla UIF (artt. 35-41)</li>
+<li>Autovalutazione e scheda di rischio per ogni pratica (art. 15)</li>
+<li>Formazione e presidi interni</li>
+</ul>
+<h2>Compilazione automatica dei modelli</h2>
+<p>Lo strumento genera automaticamente i modelli del fascicolo riservato (informativa, modulo di adeguata verifica, scheda di valutazione del rischio, dichiarazione del cliente, foglio di annotazione, checklist) a partire dai dati inseriti, con una modalità di lettura assistita dei documenti (documento d'identità, visura camerale, istanza di mediazione) e un motore trigger per i sette segnali di anomalia UIF.</p>`,
+
+"/antiriciclaggio-guida": `
+<h1>Guida Semplice all'Antiriciclaggio in Mediazione — D.Lgs. 231/2007</h1>
+<p>Guida in linguaggio semplice agli obblighi antiriciclaggio per mediatori, Organismi di mediazione e avvocati: chi è obbligato, cosa fare al tavolo di mediazione, come si valuta il rischio e quando scatta la segnalazione di operazioni sospette.</p>
+<h2>Chi è obbligato e chi è escluso</h2>
+<p>L'Organismo di mediazione e il mediatore designato sono soggetti obbligati ai sensi dell'art. 3, c. 5, lett. g), D.Lgs. 231/2007. L'avvocato che assiste o difende una parte in mediazione è invece escluso dagli obblighi, poiché l'attività difensiva non rientra nel perimetro della norma (Regola Tecnica n. 2 CNF; art. 35, c. 5, D.Lgs. 231/2007), salvo che l'incarico sfoci in un'operazione economica autonoma tipica dell'art. 3, c. 4, lett. c).</p>
+<h2>Cosa fare al tavolo di mediazione</h2>
+<ul>
+<li>Identificare la parte e verificare il documento di riconoscimento</li>
+<li>Individuare il titolare effettivo e verificare l'eventuale qualifica di persona politicamente esposta (PEP)</li>
+<li>Valutare il rischio della pratica (natura giuridica, area geografica, titolarità effettiva, tipologia di operazione)</li>
+<li>Applicare le misure di adeguata verifica semplificata, ordinaria o rafforzata in base al rischio rilevato</li>
+</ul>
+<h2>Segnalazione di operazioni sospette</h2>
+<p>Se emergono indicatori di anomalia (tra cui i sette segnali individuati dalla UIF), il mediatore valuta la trasmissione al Responsabile Antiriciclaggio dell'Organismo. Il livello di rischio e l'eventuale segnalazione non vanno mai riportati nel verbale di mediazione, che resta un atto conoscibile dalle parti: restano solo nel fascicolo riservato, conservato per 10 anni ai sensi degli artt. 31-32 D.Lgs. 231/2007.</p>
+<h2>Compilazione dei modelli</h2>
+<p>calcolomediazione.it mette a disposizione uno strumento gratuito che genera automaticamente i sei documenti del fascicolo riservato (informativa, modulo di adeguata verifica, scheda di valutazione del rischio, dichiarazione del cliente, foglio di annotazione, checklist), con guida passo per passo alla compilazione per Organismo, mediatore e avvocato di parte.</p>`,
+
+"/privacy-policy": `
+<h1>Privacy Policy — CalcoloMediazione</h1>
+<p>Informativa sul trattamento dei dati personali degli utenti di CalcoloMediazione.it, ai sensi del Regolamento UE 2016/679 (GDPR).</p>
+<h2>Titolare del trattamento</h2>
+<p>Il titolare del trattamento è Carlo Alberto Calcagno, responsabile del sito CalcoloMediazione.it.</p>
+<h2>Dati raccolti e finalità</h2>
+<ul>
+<li>Dati di navigazione (indirizzo IP, browser, pagine visitate), raccolti automaticamente</li>
+<li>Dati forniti volontariamente nei form di contatto o nei calcolatori</li>
+<li>Dati delle analisi AI, elaborati in tempo reale e non conservati in modo permanente dopo la sessione</li>
+</ul>
+<p>I dati sono trattati per erogare i servizi di calcolo e analisi del sito, rispondere alle richieste di contatto, adempiere a obblighi di legge ed effettuare analisi statistiche aggregate, sulla base del consenso, dell'esecuzione di un contratto, del legittimo interesse o di un obbligo legale (art. 6 GDPR).</p>
+<h2>Compilazione automatica dei modelli antiriciclaggio con AI</h2>
+<p>Su scelta esplicita dell'utente, la modalità ad alta precisione dello strumento antiriciclaggio trasmette il documento caricato all'API di un fornitore di intelligenza artificiale (Anthropic), che non utilizza i dati per addestrare i propri modelli e ne conserva i log tecnici per un massimo di 7 giorni; il sito non conserva il file caricato né i dati estratti.</p>
+<h2>Diritti dell'interessato</h2>
+<p>Ai sensi degli artt. 15-22 GDPR, l'utente ha diritto di accesso, rettifica, cancellazione, limitazione, portabilità e opposizione al trattamento, oltre al diritto di proporre reclamo al Garante per la Protezione dei Dati Personali.</p>`,
+
+"/cookie-policy": `
+<h1>Cookie Policy — CalcoloMediazione</h1>
+<p>Informativa sull'utilizzo dei cookie sul sito CalcoloMediazione.it.</p>
+<h2>Cookie tecnici e analitici</h2>
+<p>Il sito utilizza cookie tecnici (di sessione e funzionali), necessari al funzionamento e che non richiedono consenso preventivo, e cookie analitici di Google Analytics, installati solo dopo che l'utente ha espresso il consenso tramite il banner presente sul sito.</p>
+<h2>Servizi di terze parti</h2>
+<ul>
+<li>Google Analytics — statistiche di navigazione, richiede consenso</li>
+<li>Servizi AI (Anthropic Claude, Google Gemini in fallback) — elaborazione delle analisi AI e, solo su richiesta dell'utente, lettura dei documenti caricati nello strumento antiriciclaggio</li>
+<li>Google Fonts — caricamento dei font tipografici del sito</li>
+</ul>
+<h2>Gestione dei cookie</h2>
+<p>L'utente può gestire le preferenze sui cookie direttamente dal proprio browser; la disattivazione dei cookie tecnici può compromettere il funzionamento di alcune funzionalità del sito.</p>`,
+
+"/termini-condizioni": `
+<h1>Termini e Condizioni — CalcoloMediazione</h1>
+<p>Termini e condizioni d'uso di CalcoloMediazione.it: descrizione dei servizi gratuiti offerti, natura indicativa dei risultati dei calcolatori e limitazioni di responsabilità.</p>
+<h2>Descrizione del servizio</h2>
+<p>CalcoloMediazione.it offre gratuitamente: calcolatore delle indennità di mediazione ai sensi del D.M. 150/2023, confronto costi tra mediazione e processo civile, analisi AI dei casi di mediazione, esportazione PDF dei risultati e risorse informative sulla mediazione civile e commerciale.</p>
+<h2>Natura indicativa dei risultati</h2>
+<p>I calcoli, le analisi e le informazioni fornite hanno carattere indicativo e informativo e non costituiscono consulenza legale, fiscale o professionale. Per calcoli personalizzati è necessario rivolgersi a un professionista qualificato.</p>
+<h2>Proprietà intellettuale e riserva di estrazione di testo e dati</h2>
+<p>Ai sensi dell'art. 70-quater della Legge 633/1941, il Titolare esercita la riserva sull'estrazione di testo e dati dai contenuti del sito per finalità di addestramento di modelli di intelligenza artificiale, resa disponibile in formato leggibile da macchina all'indirizzo /tdm-policy.json e nel file robots.txt.</p>
+<h2>Legge applicabile</h2>
+<p>I presenti Termini sono regolati dalla legge italiana; per qualsiasi controversia è competente in via esclusiva il Foro di Genova.</p>`,
 };
 
 function buildBotHtml(page: { path: string; title: string; desc: string }, siteUrl: string): string {
