@@ -46,7 +46,14 @@
     <link rel="icon" type="image/png" href="/favicon.png" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- SEO-07: "display=swap" causava un CLS scarso (0,292) sulla home — il testo
+         si sposta quando il web font arriva dopo il primo render col fallback di
+         sistema. "display=optional" da' al browser un budget brevissimo (~100ms):
+         se il font non e' pronto in tempo per QUESTO caricamento, la pagina resta
+         sul font di sistema per l'intera visita invece di "saltare" a font gia'
+         arrivato, eliminando lo spostamento di layout. Le visite successive (font
+         gia' in cache) lo mostrano comunque, quasi sempre, senza alcun ritardo. -->
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=optional" rel="stylesheet">
     <!-- Google Analytics — BLOCKED by default, enabled only after cookie consent -->
     <script>
       window.dataLayer = window.dataLayer || [];
