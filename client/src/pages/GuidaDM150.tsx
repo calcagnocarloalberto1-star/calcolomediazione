@@ -31,6 +31,9 @@ export default function GuidaDM150() {
           <p className="text-lg text-muted-foreground max-w-2xl">
             Guida completa al Decreto Ministeriale 150/2023 sulle indennità di mediazione civile e commerciale.
           </p>
+          {/* DATA-04 / PRIV-07: data dell'ultima verifica normativa, aggiornata
+              manualmente ad ogni revisione periodica (v. processo PRIV-07). */}
+          <p className="text-sm text-muted-foreground/70 mt-2">Ultima verifica normativa: agosto 2026</p>
         </div>
 
         {/* Table of contents */}
