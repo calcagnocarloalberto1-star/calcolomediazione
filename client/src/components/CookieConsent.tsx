@@ -61,6 +61,8 @@ export default function CookieConsent() {
       <div
         className="max-w-3xl mx-auto bg-card border-2 border-foreground shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] p-4 sm:p-6"
         style={{ pointerEvents: "auto" }}
+        role="region"
+        aria-label="Preferenze cookie"
         data-testid="cookie-consent-banner"
       >
         <div className="flex items-start gap-4">
