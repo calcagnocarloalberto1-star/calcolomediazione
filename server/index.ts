@@ -4,6 +4,9 @@ import { serveStatic } from "./static";
 import { createServer } from "http";
 
 const app = express();
+// SEO-05: rimuove "X-Powered-By: Express", che rivela pubblicamente lo stack
+// tecnico del server (informazione utile solo a chi cerca vulnerabilità note).
+app.disable("x-powered-by");
 const httpServer = createServer(app);
 
 // Header di sicurezza di base (niente CSP restrittivo: eviterebbe di rompere CDN OCR, Google Fonts e Analytics).
