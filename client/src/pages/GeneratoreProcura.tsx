@@ -707,8 +707,11 @@ export default function GeneratoreProcura() {
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-1.5 block">Prov.</Label>
+                  {/* ACC-02: aria-label esplicito — il testo "Prov." del Label sopra non è
+                      collegato al SelectTrigger e da solo sarebbe comunque ambiguo (delegante
+                      vs delegato) per uno screen reader che lo sentisse fuori contesto. */}
                   <Select value={delegante.provincia} onValueChange={(v) => updateDelegante("provincia", v)}>
-                    <SelectTrigger className="border-2 border-foreground/20 h-10" data-testid="select-delegante-provincia">
+                    <SelectTrigger className="border-2 border-foreground/20 h-10" aria-label="Provincia (delegante)" data-testid="select-delegante-provincia">
                       <SelectValue placeholder="--" />
                     </SelectTrigger>
                     <SelectContent>
@@ -756,7 +759,7 @@ export default function GeneratoreProcura() {
                   Qualifica del Delegato <span className="text-destructive">*</span>
                 </Label>
                 <Select value={delegato.qualifica} onValueChange={(v) => updateDelegato("qualifica", v)}>
-                  <SelectTrigger className="border-2 border-foreground/20 h-10" data-testid="select-delegato-qualifica">
+                  <SelectTrigger className="border-2 border-foreground/20 h-10" aria-label="Qualifica del Delegato" data-testid="select-delegato-qualifica">
                     <SelectValue placeholder="Seleziona..." />
                   </SelectTrigger>
                   <SelectContent>
@@ -794,7 +797,7 @@ export default function GeneratoreProcura() {
                 <div>
                   <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-1.5 block">Prov.</Label>
                   <Select value={delegato.provincia} onValueChange={(v) => updateDelegato("provincia", v)}>
-                    <SelectTrigger className="border-2 border-foreground/20 h-10" data-testid="select-delegato-provincia">
+                    <SelectTrigger className="border-2 border-foreground/20 h-10" aria-label="Provincia (delegato)" data-testid="select-delegato-provincia">
                       <SelectValue placeholder="--" />
                     </SelectTrigger>
                     <SelectContent>
@@ -830,7 +833,7 @@ export default function GeneratoreProcura() {
               <div className="sm:col-span-2">
                 <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-1.5 block">Materia della Mediazione</Label>
                 <Select value={procedimento.materia} onValueChange={(v) => updateProcedimento("materia", v)}>
-                  <SelectTrigger className="border-2 border-foreground/20 h-10" data-testid="select-materia">
+                  <SelectTrigger className="border-2 border-foreground/20 h-10" aria-label="Materia della Mediazione" data-testid="select-materia">
                     <SelectValue placeholder="Seleziona la materia..." />
                   </SelectTrigger>
                   <SelectContent>
