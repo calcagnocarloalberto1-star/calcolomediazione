@@ -221,15 +221,12 @@ margin-bottom:2cm;
 <div class="grid">
 <div class="field" style="grid-column:1/-1">
 <div id="dati_hint"></div>
-<label for="import_dati_file">Salvataggio automatico e storico — per procedura e per parte</label>
-<div class="hint">Una procedura di mediazione coinvolge sempre almeno due parti (istante e invitato/i): ciascuna va verificata separatamente. Mentre compili, i campi di questa scheda vengono salvati automaticamente in questo browser con il numero di procedura <b>e il nome della parte</b> come riferimento, così puoi riprendere il lavoro — anche per una parte alla volta — dopo aver chiuso la pagina. Ogni volta che generi i modelli qui sotto, la data e l'elenco vengono inoltre registrati come storico per quella parte. <b>Tutto resta solo su questo dispositivo/browser</b>: non viene mai inviato a calcolomediazione.it né ad alcun server; cambiando computer o browser non lo ritrovi, e se cancelli i dati di navigazione viene perso — per una conservazione affidabile nel tempo usa comunque «Genera i modelli» e scarica il fascicolo in Word/HTML, oppure esporta qui sotto una copia dei dati in .json.</div>
+<label>Salvataggio automatico e storico — per procedura e per parte</label>
+<div class="hint">Una procedura di mediazione coinvolge sempre almeno due parti (istante e invitato/i): ciascuna va verificata separatamente. Mentre compili, i campi di questa scheda vengono salvati automaticamente in questo browser con il numero di procedura <b>e il nome della parte</b> come riferimento, così puoi riprendere il lavoro — anche per una parte alla volta — dopo aver chiuso la pagina. Ogni volta che generi i modelli qui sotto, la data e l'elenco vengono inoltre registrati come storico per quella parte. <b>Tutto resta solo su questo dispositivo/browser</b>: non viene mai inviato a calcolomediazione.it né ad alcun server; cambiando computer o browser non lo ritrovi, e se cancelli i dati di navigazione viene perso — per una conservazione affidabile nel tempo usa comunque «Genera i modelli» e scarica il fascicolo in Word/HTML.</div>
 <div id="autosave_ind" class="hint" style="font-style:italic" role="status" aria-live="polite"></div>
 <div id="storico_lista"></div>
 <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:6px">
 <button type="button" class="btn-ghost" style="padding:6px 10px;font-size:12.5px" onclick="amlNuovaParte()">+ Nuova parte per questa procedura</button>
-<button type="button" class="btn-ghost" style="padding:6px 10px;font-size:12.5px" onclick="amlEsportaDati()">⇩ Esporta dati procedura (.json)</button>
-<button type="button" class="btn-ghost" style="padding:6px 10px;font-size:12.5px" onclick="$('import_dati_file').click()">⇧ Importa dati procedura (.json)</button>
-<input type="file" id="import_dati_file" accept="application/json" style="display:none" onchange="amlImportaDatiFile(this)">
 <button type="button" class="btn-ghost" style="padding:6px 10px;font-size:12.5px" onclick="amlCancellaDatiProcedura()">Cancella i dati compilati salvati (questa parte)</button>
 <button type="button" class="btn-ghost" style="padding:6px 10px;font-size:12.5px" onclick="cancellaStoricoProcedura()">Cancella lo storico delle generazioni</button>
 </div>
@@ -1462,7 +1459,7 @@ if(typeof renderAggiornamenti === "function") renderAggiornamenti();
 // ricalcolo: un elenco rigenerato mentre l'utente clicca (es. per il cambio di campo che fa perdere
 // il focus a un attimo prima) altrimenti farebbe sparire proprio il pulsante appena cliccato.
 const AML_DATI_KEY = "calcolomediazione_aml_dati";
-const AML_AUTOSAVE_EXCLUDE = new Set(["agg_data","agg_testo","import_dati_file","assist_files","assist_folder"]);
+const AML_AUTOSAVE_EXCLUDE = new Set(["agg_data","agg_testo","assist_files","assist_folder"]);
 // Campi della procedura/organismo, condivisi tra tutte le parti: non vengono azzerati da "+ Nuova parte".
 const AML_PROCEDURE_SHARED_IDS = new Set(["odm_nome","odm_iscr","odm_sede","odm_lr","proc_n","proc_data_dep_istanza","proc_data_dep_adesione","proc_data","proc_med","proc_ogg"]);
 let amlAutosaveTimer = null;
@@ -1654,53 +1651,6 @@ renderDatiSuggerimento();
 toast("Pronto per una nuova parte di questa procedura: compila i suoi dati, verranno salvati separatamente.");
 }
 
-function amlEsportaDati(){
-const procKey = amlProcKey();
-if(!procKey){ toast("Inserisci prima il numero di procedura da esportare."); return; }
-const dati = amlDatiLoadAll()[procKey] || null;
-const storico = amlStoricoLoad()[procKey] || null;
-const comunicazioni = amlMediatoreLogLoadAll()[procKey] || [];
-if(!dati && !storico){ toast("Nessun dato salvato per questa procedura."); return; }
-const pacchetto = { procedura: procKey, esportatoIl: new Date().toISOString(), parti: dati, storico: storico, comunicazioniMediatore: comunicazioni };
-const blob = new Blob([JSON.stringify(pacchetto, null, 2)], {type:"application/json"});
-const a = document.createElement("a");
-a.href = URL.createObjectURL(blob);
-a.download = "dati_procedura_"+procKey.replace(/[^\w]/g,"_")+".json";
-a.click(); URL.revokeObjectURL(a.href);
-}
-
-function amlImportaDatiFile(input){
-const file = input.files && input.files[0];
-if(!file) return;
-const reader = new FileReader();
-reader.onload = () => {
-try{
-const pacchetto = JSON.parse(reader.result);
-if(!pacchetto || !pacchetto.procedura){ toast("File non riconosciuto: manca il numero di procedura."); return; }
-if(pacchetto.parti){
-const all = amlDatiLoadAll();
-all[pacchetto.procedura] = pacchetto.parti;
-amlDatiSaveAll(all);
-}
-if(pacchetto.storico){
-const allS = amlStoricoLoad();
-allS[pacchetto.procedura] = pacchetto.storico;
-amlStoricoSaveAll(allS);
-}
-if(pacchetto.comunicazioniMediatore){
-const allM = amlMediatoreLogLoadAll();
-allM[pacchetto.procedura] = pacchetto.comunicazioniMediatore;
-amlMediatoreLogSaveAll(allM);
-}
-const el = $("proc_n");
-if(el){ el.value = pacchetto.procedura; el.dispatchEvent(new Event("input",{bubbles:true})); }
-renderStorico(); renderDatiSuggerimento(); renderProcedureSalvate();
-toast("Dati importati per la procedura n. " + pacchetto.procedura + ". Usa «Carica questa parte» per applicarli al modulo.");
-} catch(e){ toast("Errore nella lettura del file: formato non valido."); }
-input.value = "";
-};
-reader.readAsText(file);
-}
 
 function amlCancellaDatiProcedura(){
 clearTimeout(amlAutosaveTimer);
