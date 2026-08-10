@@ -1,0 +1,398 @@
+================================================================================
+UX-05 — VERIFICA CASI LIMITE — CALCOLATORE INDENNITÀ MEDIAZIONE
+================================================================================
+
+### C1a — Cambio scaglione €1.000 — appena SOTTO
+Input: valoreLite=1000 tipoValore=determinato tipoMediazione=volontaria esito=nessuno_primo modalitaTariffaria=nazionale mediatoreEsperto=false proceduraComplessa=false
+  Scaglione: Fino a €1.000
+  Spese avvio (ridotte): €40,00
+  Spese primo incontro (ridotte): €60,00
+  Riduzione obbligatoria (primo incontro): €0,00
+  TOTALE primo incontro: €100,00
+  Spese base (Tab.A / Indennità base, piena): €60,00
+  Detrazione (art. 34 co.2): €0,00
+  Maggiorazione accordo (+10%/+25%): €0,00
+  Maggiorazione art.31 co.3 (max +20%): €0,00
+  Riduzione obbligatoria (ulteriori spese): €0,00
+  Ulteriori spese nette: €0,00
+  >>> TOTALE PER PARTE (IVA esclusa): €100,00
+  IVA 22%: €22,00
+  >>> TOTALE PER PARTE (IVA inclusa): €122,00
+  TOTALE COMPLESSIVO (entrambe le parti, IVA escl.): €200,00
+  Esenzione art.17: esenteBollo=true esenteRegistro=false impostaRegistroRisparmiata=€0,00
+
+### C1b — Cambio scaglione €1.000 — appena SOPRA
+Input: valoreLite=1000.01 tipoValore=determinato tipoMediazione=volontaria esito=nessuno_primo modalitaTariffaria=nazionale mediatoreEsperto=false proceduraComplessa=false
+  Scaglione: €1.001 - €5.000
+  Spese avvio (ridotte): €75,00
+  Spese primo incontro (ridotte): €120,00
+  Riduzione obbligatoria (primo incontro): €0,00
+  TOTALE primo incontro: €195,00
+  Spese base (Tab.A / Indennità base, piena): €120,00
+  Detrazione (art. 34 co.2): €0,00
+  Maggiorazione accordo (+10%/+25%): €0,00
+  Maggiorazione art.31 co.3 (max +20%): €0,00
+  Riduzione obbligatoria (ulteriori spese): €0,00
+  Ulteriori spese nette: €0,00
+  >>> TOTALE PER PARTE (IVA esclusa): €195,00
+  IVA 22%: €42,90
+  >>> TOTALE PER PARTE (IVA inclusa): €237,90
+  TOTALE COMPLESSIVO (entrambe le parti, IVA escl.): €390,00
+  Esenzione art.17: esenteBollo=true esenteRegistro=false impostaRegistroRisparmiata=€0,00
+  NOTA: Verificare che il salto (spese avvio 40→75, spese primo incontro 60→120) sia corretto per un aumento di 1 centesimo di valore della lite — è un effetto voluto della norma (scaglioni), non un bug, ma va confermato che gli scaglioni riportati corrispondano esattamente al testo dell'art. 28 co. 4-5 D.M. 150/2023.
+
+### C2a — Cambio scaglione €50.000 (Tabella A) — appena SOTTO
+Input: valoreLite=50000 tipoValore=determinato tipoMediazione=volontaria esito=accordo_successivi modalitaTariffaria=nazionale mediatoreEsperto=false proceduraComplessa=false
+  Scaglione: €25.001 - €50.000
+  Spese avvio (ridotte): €75,00
+  Spese primo incontro (ridotte): €120,00
+  Riduzione obbligatoria (primo incontro): €0,00
+  TOTALE primo incontro: €195,00
+  Spese base (Tab.A / Indennità base, piena): €720,00
+  Detrazione (art. 34 co.2): €120,00
+  Maggiorazione accordo (+10%/+25%): €180,00
+  Maggiorazione art.31 co.3 (max +20%): €0,00
+  Riduzione obbligatoria (ulteriori spese): €0,00
+  Ulteriori spese nette: €780,00
+  >>> TOTALE PER PARTE (IVA esclusa): €975,00
+  IVA 22%: €214,50
+  >>> TOTALE PER PARTE (IVA inclusa): €1189,50
+  TOTALE COMPLESSIVO (entrambe le parti, IVA escl.): €1950,00
+  Esenzione art.17: esenteBollo=true esenteRegistro=true impostaRegistroRisparmiata=€1500,00
+
+### C2b — Cambio scaglione €50.000 (Tabella A) — appena SOPRA
+Input: valoreLite=50000.01 tipoValore=determinato tipoMediazione=volontaria esito=accordo_successivi modalitaTariffaria=nazionale mediatoreEsperto=false proceduraComplessa=false
+  Scaglione: €50.001 - €150.000
+  Spese avvio (ridotte): €110,00
+  Spese primo incontro (ridotte): €170,00
+  Riduzione obbligatoria (primo incontro): €0,00
+  TOTALE primo incontro: €280,00
+  Spese base (Tab.A / Indennità base, piena): €1200,00
+  Detrazione (art. 34 co.2): €170,00
+  Maggiorazione accordo (+10%/+25%): €300,00
+  Maggiorazione art.31 co.3 (max +20%): €0,00
+  Riduzione obbligatoria (ulteriori spese): €0,00
+  Ulteriori spese nette: €1330,00
+  >>> TOTALE PER PARTE (IVA esclusa): €1610,00
+  IVA 22%: €354,20
+  >>> TOTALE PER PARTE (IVA inclusa): €1964,20
+  TOTALE COMPLESSIVO (entrambe le parti, IVA escl.): €3220,00
+  Esenzione art.17: esenteBollo=true esenteRegistro=true impostaRegistroRisparmiata=€1500,00
+  NOTA: Qui scattano DUE salti contemporaneamente (spese primo incontro 120->170 E Tabella A minimo 720->1200): verificare che sommandosi non producano un incremento sproporzionato per 1 centesimo di differenza nel valore della lite.
+
+### C3a — Obbligatoria vs Volontaria — VOLONTARIA (tariffa piena)
+Input: valoreLite=25000 tipoValore=determinato tipoMediazione=volontaria esito=accordo_primo modalitaTariffaria=nazionale mediatoreEsperto=false proceduraComplessa=false
+  Scaglione: €10.001 - €25.000
+  Spese avvio (ridotte): €75,00
+  Spese primo incontro (ridotte): €120,00
+  Riduzione obbligatoria (primo incontro): €0,00
+  TOTALE primo incontro: €195,00
+  Spese base (Tab.A / Indennità base, piena): €440,00
+  Detrazione (art. 34 co.2): €120,00
+  Maggiorazione accordo (+10%/+25%): €44,00
+  Maggiorazione art.31 co.3 (max +20%): €0,00
+  Riduzione obbligatoria (ulteriori spese): €0,00
+  Ulteriori spese nette: €364,00
+  >>> TOTALE PER PARTE (IVA esclusa): €559,00
+  IVA 22%: €122,98
+  >>> TOTALE PER PARTE (IVA inclusa): €681,98
+  TOTALE COMPLESSIVO (entrambe le parti, IVA escl.): €1118,00
+  Esenzione art.17: esenteBollo=true esenteRegistro=true impostaRegistroRisparmiata=€750,00
+
+### C3b — Obbligatoria vs Volontaria — OBBLIGATORIA (riduzione 1/5)
+Input: valoreLite=25000 tipoValore=determinato tipoMediazione=obbligatoria esito=accordo_primo modalitaTariffaria=nazionale mediatoreEsperto=false proceduraComplessa=false
+  Scaglione: €10.001 - €25.000
+  Spese avvio (ridotte): €60,00
+  Spese primo incontro (ridotte): €96,00
+  Riduzione obbligatoria (primo incontro): €24,00
+  TOTALE primo incontro: €156,00
+  Spese base (Tab.A / Indennità base, piena): €440,00
+  Detrazione (art. 34 co.2): €96,00
+  Maggiorazione accordo (+10%/+25%): €35,00
+  Maggiorazione art.31 co.3 (max +20%): €0,00
+  Riduzione obbligatoria (ulteriori spese): €88,00
+  Ulteriori spese nette: €291,00
+  >>> TOTALE PER PARTE (IVA esclusa): €447,00
+  IVA 22%: €98,34
+  >>> TOTALE PER PARTE (IVA inclusa): €545,34
+  TOTALE COMPLESSIVO (entrambe le parti, IVA escl.): €894,00
+  Esenzione art.17: esenteBollo=true esenteRegistro=true impostaRegistroRisparmiata=€750,00
+
+### C3c — Obbligatoria vs Volontaria — DEMANDATA (deve == obbligatoria)
+Input: valoreLite=25000 tipoValore=determinato tipoMediazione=demandata esito=accordo_primo modalitaTariffaria=nazionale mediatoreEsperto=false proceduraComplessa=false
+  Scaglione: €10.001 - €25.000
+  Spese avvio (ridotte): €60,00
+  Spese primo incontro (ridotte): €96,00
+  Riduzione obbligatoria (primo incontro): €24,00
+  TOTALE primo incontro: €156,00
+  Spese base (Tab.A / Indennità base, piena): €440,00
+  Detrazione (art. 34 co.2): €96,00
+  Maggiorazione accordo (+10%/+25%): €35,00
+  Maggiorazione art.31 co.3 (max +20%): €0,00
+  Riduzione obbligatoria (ulteriori spese): €88,00
+  Ulteriori spese nette: €291,00
+  >>> TOTALE PER PARTE (IVA esclusa): €447,00
+  IVA 22%: €98,34
+  >>> TOTALE PER PARTE (IVA inclusa): €545,34
+  TOTALE COMPLESSIVO (entrambe le parti, IVA escl.): €894,00
+  Esenzione art.17: esenteBollo=true esenteRegistro=true impostaRegistroRisparmiata=€750,00
+  NOTA: Verificare che 'demandata' produca ESATTAMENTE lo stesso importo di 'obbligatoria' (art. 28 co. 8 — stessa riduzione 1/5) — nel codice le due modalità condividono la stessa funzione isObbligatoria().
+
+### C4a — Maggiorazioni combinate — un solo criterio (mediatore esperto)
+Input: valoreLite=100000 tipoValore=determinato tipoMediazione=obbligatoria esito=accordo_successivi modalitaTariffaria=nazionale mediatoreEsperto=true proceduraComplessa=false
+  Scaglione: €50.001 - €150.000
+  Spese avvio (ridotte): €88,00
+  Spese primo incontro (ridotte): €136,00
+  Riduzione obbligatoria (primo incontro): €34,00
+  TOTALE primo incontro: €224,00
+  Spese base (Tab.A / Indennità base, piena): €1200,00
+  Detrazione (art. 34 co.2): €136,00
+  Maggiorazione accordo (+10%/+25%): €240,00
+  Maggiorazione art.31 co.3 (max +20%): €192,00
+  Riduzione obbligatoria (ulteriori spese): €240,00
+  Ulteriori spese nette: €1256,00
+  >>> TOTALE PER PARTE (IVA esclusa): €1480,00
+  IVA 22%: €325,60
+  >>> TOTALE PER PARTE (IVA inclusa): €1805,60
+  TOTALE COMPLESSIVO (entrambe le parti, IVA escl.): €2960,00
+  Esenzione art.17: esenteBollo=true esenteRegistro=true impostaRegistroRisparmiata=€3000,00
+
+### C4b — Maggiorazioni combinate — ENTRAMBI i criteri (deve restare al max +20%, non +40%)
+Input: valoreLite=100000 tipoValore=determinato tipoMediazione=obbligatoria esito=accordo_successivi modalitaTariffaria=nazionale mediatoreEsperto=true proceduraComplessa=true
+  Scaglione: €50.001 - €150.000
+  Spese avvio (ridotte): €88,00
+  Spese primo incontro (ridotte): €136,00
+  Riduzione obbligatoria (primo incontro): €34,00
+  TOTALE primo incontro: €224,00
+  Spese base (Tab.A / Indennità base, piena): €1200,00
+  Detrazione (art. 34 co.2): €136,00
+  Maggiorazione accordo (+10%/+25%): €240,00
+  Maggiorazione art.31 co.3 (max +20%): €192,00
+  Riduzione obbligatoria (ulteriori spese): €240,00
+  Ulteriori spese nette: €1256,00
+  >>> TOTALE PER PARTE (IVA esclusa): €1480,00
+  IVA 22%: €325,60
+  >>> TOTALE PER PARTE (IVA inclusa): €1805,60
+  TOTALE COMPLESSIVO (entrambe le parti, IVA escl.): €2960,00
+  Esenzione art.17: esenteBollo=true esenteRegistro=true impostaRegistroRisparmiata=€3000,00
+  NOTA: Verificare contro l'art. 31 co. 3 D.M. 150/2023 ("la maggiorazione ... non può superare il 20 per cento") che il cap sia effettivamente al 20% totale e non 20%+20%. Nel codice: se ENTRAMBI i flag sono true, la maggiorazione applicata è UNA SOLA volta il 20% (non sommata) — confermare che sia la lettura corretta della norma.
+
+### C5 — Ordine di applicazione: +25% (accordo successivi) E +20% (art.31) insieme
+Input: valoreLite=200000 tipoValore=determinato tipoMediazione=volontaria esito=accordo_successivi modalitaTariffaria=nazionale mediatoreEsperto=true proceduraComplessa=false
+  Scaglione: €150.001 - €250.000
+  Spese avvio (ridotte): €110,00
+  Spese primo incontro (ridotte): €170,00
+  Riduzione obbligatoria (primo incontro): €0,00
+  TOTALE primo incontro: €280,00
+  Spese base (Tab.A / Indennità base, piena): €1500,00
+  Detrazione (art. 34 co.2): €170,00
+  Maggiorazione accordo (+10%/+25%): €375,00
+  Maggiorazione art.31 co.3 (max +20%): €300,00
+  Riduzione obbligatoria (ulteriori spese): €0,00
+  Ulteriori spese nette: €2005,00
+  >>> TOTALE PER PARTE (IVA esclusa): €2285,00
+  IVA 22%: €502,70
+  >>> TOTALE PER PARTE (IVA inclusa): €2787,70
+  TOTALE COMPLESSIVO (entrambe le parti, IVA escl.): €4570,00
+  Esenzione art.17: esenteBollo=true esenteRegistro=true impostaRegistroRisparmiata=€3000,00
+  NOTA: *** DA VERIFICARE GIURIDICAMENTE *** — Nel codice le due maggiorazioni (+25% art.30 co.2 per accordo agli incontri successivi, +20% art.31 co.3 per mediatore esperto/complessità) sono calcolate INDIPENDENTEMENTE sulla STESSA base (spese ridotte, pre-maggiorazione) e poi sommate (es. base=1200 -> +300 (25%) +240 (20%) = 1740), NON in sequenza/composte (che darebbe 1200 * 1.25 * 1.20 = 1800). Confermare quale delle due letture sia conforme al testo delle norme.
+
+### C6 — COA Genova — possibile AZZERAMENTO indennità successivi (scaglione €1.001-5.000)
+Input: valoreLite=2000 tipoValore=determinato tipoMediazione=volontaria esito=accordo_successivi modalitaTariffaria=coa_genova mediatoreEsperto=false proceduraComplessa=false
+  Scaglione: €1.001 - €5.000
+  Spese avvio (ridotte): €75,00
+  Spese primo incontro (ridotte): €120,00
+  Riduzione obbligatoria (primo incontro): €0,00
+  TOTALE primo incontro: €195,00
+  Spese base (Tab.A / Indennità base, piena): €48,80
+  Detrazione (art. 34 co.2): €0,00
+  Maggiorazione accordo (+10%/+25%): €12,00
+  Maggiorazione art.31 co.3 (max +20%): €0,00
+  Riduzione obbligatoria (ulteriori spese): €0,00
+  Ulteriori spese nette: €60,80
+  >>> TOTALE PER PARTE (IVA esclusa): €255,80
+  IVA 22%: €56,28
+  >>> TOTALE PER PARTE (IVA inclusa): €312,08
+  TOTALE COMPLESSIVO (entrambe le parti, IVA escl.): €511,60
+  Esenzione art.17: esenteBollo=true esenteRegistro=true impostaRegistroRisparmiata=€60,00
+  NOTA: *** VERIFICARE CONTRO IL TARIFFARIO PUBBLICATO *** — l'"indennità base" COA Genova per questo scaglione (€48,80) è INFERIORE alla detrazione delle spese di primo incontro già versate (€120, art. 34 co.2), quindi le "ulteriori spese" nette risultano azzerate (floor a 0) anche in caso di accordo. Significa che, per questo scaglione, concludere l'accordo agli incontri successivi non costa NULLA in più oltre al primo incontro — verificare se è corretto (il tariffario COA Genova potrebbe già scontare il primo incontro nell'indennità base pubblicata, nel qual caso applicare ANCHE la detrazione art.34 potrebbe essere un doppio conteggio) o se invece indica un errore nella tabella TABELLA_INDENNITA_GENOVA.
+
+### C7 — COA Genova — stesso azzeramento, scaglione più basso (fino a €1.000)
+Input: valoreLite=500 tipoValore=determinato tipoMediazione=volontaria esito=accordo_successivi modalitaTariffaria=coa_genova mediatoreEsperto=false proceduraComplessa=false
+  Scaglione: Fino a €1.000
+  Spese avvio (ridotte): €40,00
+  Spese primo incontro (ridotte): €60,00
+  Riduzione obbligatoria (primo incontro): €0,00
+  TOTALE primo incontro: €100,00
+  Spese base (Tab.A / Indennità base, piena): €24,40
+  Detrazione (art. 34 co.2): €0,00
+  Maggiorazione accordo (+10%/+25%): €6,00
+  Maggiorazione art.31 co.3 (max +20%): €0,00
+  Riduzione obbligatoria (ulteriori spese): €0,00
+  Ulteriori spese nette: €30,40
+  >>> TOTALE PER PARTE (IVA esclusa): €130,40
+  IVA 22%: €28,69
+  >>> TOTALE PER PARTE (IVA inclusa): €159,09
+  TOTALE COMPLESSIVO (entrambe le parti, IVA escl.): €260,80
+  Esenzione art.17: esenteBollo=true esenteRegistro=true impostaRegistroRisparmiata=€15,00
+  NOTA: Stesso fenomeno di C6, ancora più marcato: indennità base €24,40 contro detrazione €60.
+
+### C8a — Confronto tariffe — NAZIONALE (valoreLite=20.000, accordo_successivi)
+Input: valoreLite=20000 tipoValore=determinato tipoMediazione=volontaria esito=accordo_successivi modalitaTariffaria=nazionale mediatoreEsperto=false proceduraComplessa=false
+  Scaglione: €10.001 - €25.000
+  Spese avvio (ridotte): €75,00
+  Spese primo incontro (ridotte): €120,00
+  Riduzione obbligatoria (primo incontro): €0,00
+  TOTALE primo incontro: €195,00
+  Spese base (Tab.A / Indennità base, piena): €440,00
+  Detrazione (art. 34 co.2): €120,00
+  Maggiorazione accordo (+10%/+25%): €110,00
+  Maggiorazione art.31 co.3 (max +20%): €0,00
+  Riduzione obbligatoria (ulteriori spese): €0,00
+  Ulteriori spese nette: €430,00
+  >>> TOTALE PER PARTE (IVA esclusa): €625,00
+  IVA 22%: €137,50
+  >>> TOTALE PER PARTE (IVA inclusa): €762,50
+  TOTALE COMPLESSIVO (entrambe le parti, IVA escl.): €1250,00
+  Esenzione art.17: esenteBollo=true esenteRegistro=true impostaRegistroRisparmiata=€600,00
+
+### C8b — Confronto tariffe — COA GENOVA (stesso input)
+Input: valoreLite=20000 tipoValore=determinato tipoMediazione=volontaria esito=accordo_successivi modalitaTariffaria=coa_genova mediatoreEsperto=false proceduraComplessa=false
+  Scaglione: €10.001 - €25.000
+  Spese avvio (ridotte): €75,00
+  Spese primo incontro (ridotte): €120,00
+  Riduzione obbligatoria (primo incontro): €0,00
+  TOTALE primo incontro: €195,00
+  Spese base (Tab.A / Indennità base, piena): €390,40
+  Detrazione (art. 34 co.2): €0,00
+  Maggiorazione accordo (+10%/+25%): €98,00
+  Maggiorazione art.31 co.3 (max +20%): €0,00
+  Riduzione obbligatoria (ulteriori spese): €0,00
+  Ulteriori spese nette: €488,40
+  >>> TOTALE PER PARTE (IVA esclusa): €683,40
+  IVA 22%: €150,35
+  >>> TOTALE PER PARTE (IVA inclusa): €833,75
+  TOTALE COMPLESSIVO (entrambe le parti, IVA escl.): €1366,80
+  Esenzione art.17: esenteBollo=true esenteRegistro=true impostaRegistroRisparmiata=€600,00
+  NOTA: Confrontare C8a/C8b con il testo dei due tariffari per verificare che la differenza tra nazionale e Genova sia quella attesa (non un errore di trascrizione della tabella).
+
+### C9a — Indeterminabile — complessità alta — NAZIONALE
+Input: valoreLite=0 tipoValore=indeterminabile_alto tipoMediazione=obbligatoria esito=accordo_successivi modalitaTariffaria=nazionale mediatoreEsperto=false proceduraComplessa=false
+  Scaglione: €50.001 - €150.000
+  Spese avvio (ridotte): €88,00
+  Spese primo incontro (ridotte): €136,00
+  Riduzione obbligatoria (primo incontro): €34,00
+  TOTALE primo incontro: €224,00
+  Spese base (Tab.A / Indennità base, piena): €1200,00
+  Detrazione (art. 34 co.2): €136,00
+  Maggiorazione accordo (+10%/+25%): €240,00
+  Maggiorazione art.31 co.3 (max +20%): €0,00
+  Riduzione obbligatoria (ulteriori spese): €240,00
+  Ulteriori spese nette: €1064,00
+  >>> TOTALE PER PARTE (IVA esclusa): €1288,00
+  IVA 22%: €283,36
+  >>> TOTALE PER PARTE (IVA inclusa): €1571,36
+  TOTALE COMPLESSIVO (entrambe le parti, IVA escl.): €2576,00
+  Esenzione art.17: esenteBollo=true esenteRegistro=true impostaRegistroRisparmiata=€3000,00
+
+### C9b — Indeterminabile — complessità alta — COA GENOVA
+Input: valoreLite=0 tipoValore=indeterminabile_alto tipoMediazione=obbligatoria esito=accordo_successivi modalitaTariffaria=coa_genova mediatoreEsperto=false proceduraComplessa=false
+  Scaglione: Indeterminabile — alto
+  Spese avvio (ridotte): €88,00
+  Spese primo incontro (ridotte): €136,00
+  Riduzione obbligatoria (primo incontro): €34,00
+  TOTALE primo incontro: €224,00
+  Spese base (Tab.A / Indennità base, piena): €1256,60
+  Detrazione (art. 34 co.2): €0,00
+  Maggiorazione accordo (+10%/+25%): €251,00
+  Maggiorazione art.31 co.3 (max +20%): €0,00
+  Riduzione obbligatoria (ulteriori spese): €251,32
+  Ulteriori spese nette: €1256,28
+  >>> TOTALE PER PARTE (IVA esclusa): €1480,28
+  IVA 22%: €325,66
+  >>> TOTALE PER PARTE (IVA inclusa): €1805,94
+  TOTALE COMPLESSIVO (entrambe le parti, IVA escl.): €2960,56
+  Esenzione art.17: esenteBollo=true esenteRegistro=true impostaRegistroRisparmiata=€3000,00
+  NOTA: Per COA Genova gli indeterminabili usano una tabella dedicata (INDENNITA_GENOVA_PROSECUZIONE_INDETERMINABILI) invece del proxy €250.000 usato per la Tabella A nazionale — verificare che i tre importi (basso/medio/alto) corrispondano al tariffario pubblicato e non solo a una stima per interpolazione.
+
+### C10 — Esenzione art.17 — cap a €100.000 su valore molto superiore (€500.000)
+Input: valoreLite=500000 tipoValore=determinato tipoMediazione=volontaria esito=accordo_primo modalitaTariffaria=nazionale mediatoreEsperto=false proceduraComplessa=false
+  Scaglione: €250.001 - €500.000
+  Spese avvio (ridotte): €110,00
+  Spese primo incontro (ridotte): €170,00
+  Riduzione obbligatoria (primo incontro): €0,00
+  TOTALE primo incontro: €280,00
+  Spese base (Tab.A / Indennità base, piena): €2500,00
+  Detrazione (art. 34 co.2): €170,00
+  Maggiorazione accordo (+10%/+25%): €250,00
+  Maggiorazione art.31 co.3 (max +20%): €0,00
+  Riduzione obbligatoria (ulteriori spese): €0,00
+  Ulteriori spese nette: €2580,00
+  >>> TOTALE PER PARTE (IVA esclusa): €2860,00
+  IVA 22%: €629,20
+  >>> TOTALE PER PARTE (IVA inclusa): €3489,20
+  TOTALE COMPLESSIVO (entrambe le parti, IVA escl.): €5720,00
+  Esenzione art.17: esenteBollo=true esenteRegistro=true impostaRegistroRisparmiata=€3000,00
+  NOTA: Verificare che il risparmio di imposta di registro sia calcolato SOLO sui primi €100.000 (€3.000 = 100.000*3%) e non sull'intero valore di €500.000 (che darebbe €15.000) — il D.Lgs. 28/2010 art.17 co.3 limita l'esenzione a tale soglia.
+
+
+================================================================================
+UX-05 — VERIFICA CASI LIMITE — CONFRONTO COSTI (gratuito patrocinio)
+================================================================================
+
+### C11a — Gratuito patrocinio OFF (obbligatoria, valoreLite=30.000)
+Input: valoreLite=30000 tipoMediazione=obbligatoria gratuitoPatrocinio=false redditoAnnuo=12000
+  Indennità organismo: €636,00
+  Compenso avvocato: €2447,00
+  Spese generali 15%: €367,00
+  CPA 4%: €113,00
+  IVA 22% avvocato: €644,00
+  Imposta di registro: €0,00
+  >>> TOTALE PER PARTE: €4207,00
+  Credito d'imposta applicato: €600,00
+  >>> TOTALE NETTO PER PARTE: €3607,00
+  Ammissibilità GP: true (Reddito 12.000,00 € inferiore al limite di 13.659,64 € (D.M. 22/04/2025). Possibile ammissione al patrocinio a spese dello Stato.)
+
+### C11b — Gratuito patrocinio ON (stesso input, reddito ammissibile)
+Input: valoreLite=30000 tipoMediazione=obbligatoria gratuitoPatrocinio=true redditoAnnuo=12000
+  Indennità organismo: €0,00
+  Compenso avvocato: €0,00
+  Spese generali 15%: €0,00
+  CPA 4%: €0,00
+  IVA 22% avvocato: €0,00
+  Imposta di registro: €0,00
+  >>> TOTALE PER PARTE: €0,00
+  Credito d'imposta applicato: €0,00
+  >>> TOTALE NETTO PER PARTE: €0,00
+  Ammissibilità GP: true (Reddito 12.000,00 € inferiore al limite di 13.659,64 € (D.M. 22/04/2025). Possibile ammissione al patrocinio a spese dello Stato.)
+  NOTA: Verificare che con GP attivo TUTTE le voci a carico della parte (indennità organismo, compenso avvocato, spese generali, CPA, IVA, imposta di registro) siano correttamente azzerate, e che il credito d'imposta risulti anch'esso a €0 (non ha senso un credito d'imposta se il costo è già a carico dello Stato).
+
+### C12a — Ammissibilità GP — reddito appena SOTTO il limite (€13.659)
+Input: valoreLite=15000 tipoMediazione=obbligatoria gratuitoPatrocinio=false redditoAnnuo=13659
+  Indennità organismo: €412,00
+  Compenso avvocato: €1577,00
+  Spese generali 15%: €237,00
+  CPA 4%: €73,00
+  IVA 22% avvocato: €415,00
+  Imposta di registro: €0,00
+  >>> TOTALE PER PARTE: €2714,00
+  Credito d'imposta applicato: €600,00
+  >>> TOTALE NETTO PER PARTE: €2114,00
+  Ammissibilità GP: true (Reddito 13.659,00 € inferiore al limite di 13.659,64 € (D.M. 22/04/2025). Possibile ammissione al patrocinio a spese dello Stato.)
+
+### C12b — Ammissibilità GP — reddito appena SOPRA il limite (€13.660)
+Input: valoreLite=15000 tipoMediazione=obbligatoria gratuitoPatrocinio=false redditoAnnuo=13660
+  Indennità organismo: €412,00
+  Compenso avvocato: €1577,00
+  Spese generali 15%: €237,00
+  CPA 4%: €73,00
+  IVA 22% avvocato: €415,00
+  Imposta di registro: €0,00
+  >>> TOTALE PER PARTE: €2714,00
+  Credito d'imposta applicato: €600,00
+  >>> TOTALE NETTO PER PARTE: €2114,00
+  Ammissibilità GP: false (Reddito 13.660,00 € superiore al limite di 13.659,64 €. Non ammissibile al gratuito patrocinio.)
+  NOTA: Verificare che il limite di €13.659,64 (D.M. 22/04/2025) sia ancora quello vigente al momento della verifica (i limiti reddituali per il gratuito patrocinio vengono aggiornati periodicamente per legge) — questo è esattamente il tipo di dato soggetto a revisione periodica tracciato dal processo PRIV-07.
+
+
+FINE VERIFICA — vedi report allegato per la tabella di sintesi e lo spazio di validazione.
