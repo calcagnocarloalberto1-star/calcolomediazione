@@ -552,7 +552,12 @@ export default function Calcolatore() {
           {/* Results */}
           <div className="lg:col-span-3">
             {risultato ? (
-              <Card className="border-2 border-foreground shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]" data-testid="card-risultato">
+              <Card
+                className="border-2 border-foreground shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
+                data-testid="card-risultato"
+                role="status"
+                aria-live="polite"
+              >
                 <CardHeader className="pb-4">
                   <div className="flex items-center justify-between flex-wrap gap-2">
                     <CardTitle className="text-lg" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
