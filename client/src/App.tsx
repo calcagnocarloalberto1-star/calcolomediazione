@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import { type ReactNode, Suspense, lazy } from "react";
 import { Switch, Route } from "wouter";
 import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
@@ -8,38 +8,49 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import CookieConsent from "@/components/CookieConsent";
 import Assistente from "@/components/Assistente";
-import Home from "@/pages/Home";
-import Calcolatore from "@/pages/Calcolatore";
-import AnalisiCasoAI from "@/pages/AnalisiCasoAI";
-import FAQ from "@/pages/FAQ";
-import GuidaDM150 from "@/pages/GuidaDM150";
-import ConfrontoCosti from "@/pages/ConfrontoCosti";
-import CostiNotarili from "@/pages/CostiNotarili";
-import PrivacyPolicy from "@/pages/PrivacyPolicy";
-import CookiePolicy from "@/pages/CookiePolicy";
-import TerminiCondizioni from "@/pages/TerminiCondizioni";
-import ChiSiamo from "@/pages/ChiSiamo";
-import Contatti from "@/pages/Contatti";
-import Glossario from "@/pages/Glossario";
-import GeneratoreProcura from "@/pages/GeneratoreProcura";
-import Giurisprudenza from "@/pages/Giurisprudenza";
-import SentenzaDetail from "@/pages/SentenzaDetail";
-import CreditoImposta from "@/pages/CreditoImposta";
-import Antiriciclaggio from "@/pages/Antiriciclaggio";
-import AntiriciclaggioGuida from "@/pages/AntiriciclaggioGuida";
-import NotFound from "@/pages/not-found";
-import Admin from "@/pages/Admin";
-import StrategieNegoziazione from "@/pages/StrategieNegoziazione";
-import MediazioneObbligatoriaCosti from "@/pages/MediazioneObbligatoriaCosti";
-import MediazioneCondominialeDelibera from "@/pages/MediazioneCondominialeDelibera";
-import ProcuraSostanzialeMediazione from "@/pages/ProcuraSostanzialeMediazione";
-import MediazioneVsCausaCivile from "@/pages/MediazioneVsCausaCivile";
-import CreditoImpostaMediazioneDomanda from "@/pages/CreditoImpostaMediazioneDomanda";
-import GratuitoPatrocinioMediazione from "@/pages/GratuitoPatrocinioMediazione";
-import MaanZopaMediazione from "@/pages/MaanZopaMediazione";
-import AssegnoMantenimentoDivorzileCalcolo from "@/pages/AssegnoMantenimentoDivorzileCalcolo";
-import AntiriciclaggioMediazioneObblighi from "@/pages/AntiriciclaggioMediazioneObblighi";
-import TrasferimentoImmobiliareMediazione from "@/pages/TrasferimentoImmobiliareMediazione";
+// CODE-SPLITTING (proposta approvata): ogni pagina viene caricata come chunk
+// separato al primo utilizzo, invece di essere inclusa nel bundle principale.
+// Prima di questa modifica un solo file JS da 2,4MB conteneva il codice di
+// tutte le 30+ pagine del sito, causando un LCP mobile di ~5,9s identico su
+// home/calcolatore/analisi AI (misurato con PageSpeed Insights, SEO-07) — non
+// un problema specifico di una pagina, ma il collo di bottiglia del bundle
+// unico che ogni visitatore doveva scaricare ed eseguire per intero. Header,
+// Footer e i componenti condivisi restano nel bundle principale (usati da
+// ogni pagina, devono restare immediati). Il pre-rendering server-side per i
+// crawler (SEO_CONTENT / PAGE_CONTENT) non è toccato: viene iniettato dal
+// server prima che questo bundle venga eseguito.
+const Home = lazy(() => import("@/pages/Home"));
+const Calcolatore = lazy(() => import("@/pages/Calcolatore"));
+const AnalisiCasoAI = lazy(() => import("@/pages/AnalisiCasoAI"));
+const FAQ = lazy(() => import("@/pages/FAQ"));
+const GuidaDM150 = lazy(() => import("@/pages/GuidaDM150"));
+const ConfrontoCosti = lazy(() => import("@/pages/ConfrontoCosti"));
+const CostiNotarili = lazy(() => import("@/pages/CostiNotarili"));
+const PrivacyPolicy = lazy(() => import("@/pages/PrivacyPolicy"));
+const CookiePolicy = lazy(() => import("@/pages/CookiePolicy"));
+const TerminiCondizioni = lazy(() => import("@/pages/TerminiCondizioni"));
+const ChiSiamo = lazy(() => import("@/pages/ChiSiamo"));
+const Contatti = lazy(() => import("@/pages/Contatti"));
+const Glossario = lazy(() => import("@/pages/Glossario"));
+const GeneratoreProcura = lazy(() => import("@/pages/GeneratoreProcura"));
+const Giurisprudenza = lazy(() => import("@/pages/Giurisprudenza"));
+const SentenzaDetail = lazy(() => import("@/pages/SentenzaDetail"));
+const CreditoImposta = lazy(() => import("@/pages/CreditoImposta"));
+const Antiriciclaggio = lazy(() => import("@/pages/Antiriciclaggio"));
+const AntiriciclaggioGuida = lazy(() => import("@/pages/AntiriciclaggioGuida"));
+const NotFound = lazy(() => import("@/pages/not-found"));
+const Admin = lazy(() => import("@/pages/Admin"));
+const StrategieNegoziazione = lazy(() => import("@/pages/StrategieNegoziazione"));
+const MediazioneObbligatoriaCosti = lazy(() => import("@/pages/MediazioneObbligatoriaCosti"));
+const MediazioneCondominialeDelibera = lazy(() => import("@/pages/MediazioneCondominialeDelibera"));
+const ProcuraSostanzialeMediazione = lazy(() => import("@/pages/ProcuraSostanzialeMediazione"));
+const MediazioneVsCausaCivile = lazy(() => import("@/pages/MediazioneVsCausaCivile"));
+const CreditoImpostaMediazioneDomanda = lazy(() => import("@/pages/CreditoImpostaMediazioneDomanda"));
+const GratuitoPatrocinioMediazione = lazy(() => import("@/pages/GratuitoPatrocinioMediazione"));
+const MaanZopaMediazione = lazy(() => import("@/pages/MaanZopaMediazione"));
+const AssegnoMantenimentoDivorzileCalcolo = lazy(() => import("@/pages/AssegnoMantenimentoDivorzileCalcolo"));
+const AntiriciclaggioMediazioneObblighi = lazy(() => import("@/pages/AntiriciclaggioMediazioneObblighi"));
+const TrasferimentoImmobiliareMediazione = lazy(() => import("@/pages/TrasferimentoImmobiliareMediazione"));
 import { usePageTracker } from "@/hooks/use-page-tracker";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { installGlobalErrorHandlers } from "@/lib/error-logger";
@@ -56,6 +67,7 @@ function Boundary({ tag, section, children }: { tag: string; section: string; ch
 function AppRouter() {
   usePageTracker();
   return (
+    <Suspense fallback={null}>
     <Switch>
       <Route path="/" component={Home} />
       <Route path="/calcolatore">
@@ -114,6 +126,7 @@ function AppRouter() {
       <Route path="/admin" component={Admin} />
       <Route component={NotFound} />
     </Switch>
+    </Suspense>
   );
 }
 function App() {
