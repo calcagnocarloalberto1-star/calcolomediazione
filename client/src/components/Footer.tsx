@@ -2,6 +2,13 @@ import { Link } from "wouter";
 import { Scale, HelpCircle, BookOpen, FileText, ExternalLink } from "lucide-react";
 
 export default function Footer() {
+  /* ACC-04: --primary (#a03317) dà solo 2.79:1 sullo sfondo scuro del footer
+     (--foreground), sotto la soglia WCAG AA 4.5:1 per testo normale.
+     Riuso qui il valore già calibrato per --primary in modalità scura
+     (oklch(0.65 0.15 35), 5.72:1 su questo sfondo) — stessa tonalità
+     arancio/mattone del brand, solo più chiara per restare leggibile su
+     una superficie scura all'interno di una pagina altrimenti chiara. */
+  const footerAccent = 'oklch(0.65 0.15 35)';
   return (
     <footer className="bg-foreground text-background border-t-[3px] border-foreground" data-testid="footer">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -9,8 +16,8 @@ export default function Footer() {
           {/* Col 1: Risorse Utili */}
           <div>
             <div className="flex items-center gap-2 mb-4">
-              <HelpCircle className="w-4 h-4" style={{ color: 'var(--primary)' }} />
-              <h4 className="text-sm font-bold uppercase tracking-wider" style={{ fontFamily: "'Space Grotesk', sans-serif", color: 'var(--primary)' }}>
+              <HelpCircle className="w-4 h-4" style={{ color: footerAccent }} />
+              <h4 className="text-sm font-bold uppercase tracking-wider" style={{ fontFamily: "'Space Grotesk', sans-serif", color: footerAccent }}>
                 Risorse Utili
               </h4>
             </div>
@@ -37,8 +44,8 @@ export default function Footer() {
           {/* Col 2: Calcolatori */}
           <div>
             <div className="flex items-center gap-2 mb-4">
-              <Scale className="w-4 h-4" style={{ color: 'var(--primary)' }} />
-              <h4 className="text-sm font-bold uppercase tracking-wider" style={{ fontFamily: "'Space Grotesk', sans-serif", color: 'var(--primary)' }}>
+              <Scale className="w-4 h-4" style={{ color: footerAccent }} />
+              <h4 className="text-sm font-bold uppercase tracking-wider" style={{ fontFamily: "'Space Grotesk', sans-serif", color: footerAccent }}>
                 Calcolatori
               </h4>
             </div>
@@ -55,8 +62,8 @@ export default function Footer() {
           {/* Col 3: Riferimenti Normativi */}
           <div>
             <div className="flex items-center gap-2 mb-4">
-              <BookOpen className="w-4 h-4" style={{ color: 'var(--primary)' }} />
-              <h4 className="text-sm font-bold uppercase tracking-wider" style={{ fontFamily: "'Space Grotesk', sans-serif", color: 'var(--primary)' }}>
+              <BookOpen className="w-4 h-4" style={{ color: footerAccent }} />
+              <h4 className="text-sm font-bold uppercase tracking-wider" style={{ fontFamily: "'Space Grotesk', sans-serif", color: footerAccent }}>
                 Riferimenti Normativi
               </h4>
             </div>
@@ -72,8 +79,8 @@ export default function Footer() {
           {/* Col 4: Legale e Contatti */}
           <div>
             <div className="flex items-center gap-2 mb-4">
-              <FileText className="w-4 h-4" style={{ color: 'var(--primary)' }} />
-              <h4 className="text-sm font-bold uppercase tracking-wider" style={{ fontFamily: "'Space Grotesk', sans-serif", color: 'var(--primary)' }}>
+              <FileText className="w-4 h-4" style={{ color: footerAccent }} />
+              <h4 className="text-sm font-bold uppercase tracking-wider" style={{ fontFamily: "'Space Grotesk', sans-serif", color: footerAccent }}>
                 Legale e Contatti
               </h4>
             </div>
@@ -114,7 +121,7 @@ export default function Footer() {
         <div className="border-t border-background/30 pt-6">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
             <div className="flex items-center gap-2">
-              <Scale className="w-4 h-4" style={{ color: 'var(--primary)' }} />
+              <Scale className="w-4 h-4" style={{ color: footerAccent }} />
               <span className="text-sm font-bold" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
                 CalcoloMediazione &copy; 2026
               </span>
