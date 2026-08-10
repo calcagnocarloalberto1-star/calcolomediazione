@@ -350,8 +350,16 @@ export function calcolaIndennita(input: InputCalcolo): CalcoloRisultato {
     // Maggiorazione +10% per conciliazione al primo incontro (art. 31, co. 1)
     const maggiorazioneSuccesso = Math.round(ulterioriSpeseRidotte * 0.10);
 
-    // Detrazione spese mediazione primo incontro (art. 34, co. 2)
-    const detrazioneSpese = spesePrimoIncontroRidotte;
+    // Detrazione spese mediazione primo incontro (art. 34, co. 2) — SOLO nazionale.
+    // Verificato contro il Tariffario Mediazione 2026 COA Genova (Facoltative/Contrattuali
+    // e Obbligatorie/Demandate, fornito da Carlo il 10/08/2026): la colonna "Saldo
+    // indennità prosecuzione (anche senza accordo)" è testualmente un SALDO, cioè un
+    // importo già netto rispetto a quanto versato al primo incontro — non un importo
+    // lordo da cui detrarre ulteriormente. Applicare anche questa detrazione (come per la
+    // Tabella A nazionale, dove è invece corretta ex art. 34 co. 2) produceva un doppio
+    // conteggio, azzerando le "ulteriori spese" Genova sui valori di lite più bassi
+    // (issue UX-05, casi C6/C7 — confermato, non più solo "da verificare").
+    const detrazioneSpese = modalita === "coa_genova" ? 0 : spesePrimoIncontroRidotte;
 
     const ulterioriSpeseNette = Math.max(0, ulterioriSpeseRidotte + maggiorazioneSuccesso - detrazioneSpese);
 
@@ -396,8 +404,10 @@ export function calcolaIndennita(input: InputCalcolo): CalcoloRisultato {
   const riduzioneObbligatoriaUlteriori = ulterioriSpeseBase * riduzioneRate;
   let ulterioriSpeseCalc = ulterioriSpeseBase - riduzioneObbligatoriaUlteriori;
 
-  // Detrazione spese mediazione primo incontro (art. 34, co. 2)
-  const detrazioneSpese = spesePrimoIncontroRidotte;
+  // Detrazione spese mediazione primo incontro (art. 34, co. 2) — SOLO nazionale, v. nota
+  // identica sopra nel ramo accordo_primo (verificato su Tariffario COA Genova 2026: la
+  // Tabella delle Indennità Genova è già un "Saldo... anche senza accordo", netto).
+  const detrazioneSpese = modalita === "coa_genova" ? 0 : spesePrimoIncontroRidotte;
   ulterioriSpeseCalc -= detrazioneSpese;
 
   // Maggiorazione per accordo: +25% per conciliazione agli incontri successivi (art. 30, co. 2)
