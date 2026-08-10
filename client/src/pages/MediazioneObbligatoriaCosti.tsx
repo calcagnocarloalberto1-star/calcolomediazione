@@ -231,7 +231,7 @@ function ExampleTable({
           <div key={i} className="flex items-center justify-between py-1 text-sm">
             <span>{label}</span>
             <span
-              className={value.startsWith("–") ? "text-red-600 font-semibold" : value.startsWith("+") ? "text-green-600 font-semibold" : "text-foreground font-semibold"}
+              className={value.startsWith("–") ? "text-red-600 font-semibold" : value.startsWith("+") ? "text-green-700 font-semibold" : "text-foreground font-semibold"}
               style={{ fontFamily: "'JetBrains Mono', monospace" }}
             >
               {value}
