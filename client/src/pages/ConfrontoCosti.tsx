@@ -248,10 +248,16 @@ export default function ConfrontoCosti() {
         <Card className="border-2 border-foreground shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] mb-8">
           <CardContent className="pt-6">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {/* ACC-02: nessuno dei Select di questa pagina aveva un nome accessibile
+                  (i <Label> qui non sono collegati al SelectTrigger né con htmlFor/id né
+                  con aria-labelledby — uno screen reader annunciava solo il valore
+                  selezionato, non il campo). Aggiunto aria-label su ogni SelectTrigger e
+                  su ogni Switch della pagina (stesso pattern in Calcolatore.tsx,
+                  AnalisiCasoAI.tsx, GeneratoreProcura.tsx). */}
               <div className="space-y-2">
                 <Label className="text-sm font-semibold">Tipo Valore</Label>
                 <Select value={tipoValore} onValueChange={setTipoValore}>
-                  <SelectTrigger className="border-2 border-foreground"><SelectValue /></SelectTrigger>
+                  <SelectTrigger className="border-2 border-foreground" aria-label="Tipo Valore"><SelectValue /></SelectTrigger>
                   <SelectContent className="border-2 border-foreground">
                     <SelectItem value="determinato">Determinato</SelectItem>
                     <SelectItem value="indeterminabile_basso">Indeterminabile — basso</SelectItem>
@@ -273,7 +279,7 @@ export default function ConfrontoCosti() {
               <div className="space-y-2">
                 <Label className="text-sm font-semibold">Tipo Mediazione</Label>
                 <Select value={tipoMediazione} onValueChange={v => setTipoMediazione(v as InputConfronto["tipoMediazione"])}>
-                  <SelectTrigger className="border-2 border-foreground"><SelectValue /></SelectTrigger>
+                  <SelectTrigger className="border-2 border-foreground" aria-label="Tipo Mediazione"><SelectValue /></SelectTrigger>
                   <SelectContent className="border-2 border-foreground">
                     <SelectItem value="obbligatoria">Obbligatoria</SelectItem>
                     <SelectItem value="volontaria">Volontaria</SelectItem>
@@ -286,7 +292,7 @@ export default function ConfrontoCosti() {
               <div className="space-y-2">
                 <Label className="text-sm font-semibold">Tipo Arbitrato MedyaPro</Label>
                 <Select value={tipoArbitratoMedyaPro} onValueChange={v => setTipoArbitratoMedyaPro(v as TipoArbitrato)}>
-                  <SelectTrigger className="border-2 border-foreground"><SelectValue /></SelectTrigger>
+                  <SelectTrigger className="border-2 border-foreground" aria-label="Tipo Arbitrato MedyaPro"><SelectValue /></SelectTrigger>
                   <SelectContent className="border-2 border-foreground">
                     <SelectItem value="medyapro_ordinario_unico">Ordinario — Arbitro unico</SelectItem>
                     <SelectItem value="medyapro_ordinario_collegio">Ordinario — Collegio (3 arbitri)</SelectItem>
@@ -300,7 +306,7 @@ export default function ConfrontoCosti() {
               <div className="space-y-2">
                 <Label className="text-sm font-semibold">Trasferimento immobiliare</Label>
                 <div className="flex items-center gap-3 h-10">
-                  <Switch checked={materiaImmobiliare} onCheckedChange={setMateriaImmobiliare} />
+                  <Switch checked={materiaImmobiliare} onCheckedChange={setMateriaImmobiliare} aria-label="Trasferimento immobiliare" />
                   <span className="text-sm text-muted-foreground">{materiaImmobiliare ? "Sì (intervento notarile)" : "No"}</span>
                 </div>
               </div>
@@ -309,7 +315,7 @@ export default function ConfrontoCosti() {
                 <div className="space-y-2">
                   <Label className="text-sm font-semibold">Agevolazione prima casa</Label>
                   <div className="flex items-center gap-3 h-10">
-                    <Switch checked={primaCasa} onCheckedChange={setPrimaCasa} />
+                    <Switch checked={primaCasa} onCheckedChange={setPrimaCasa} aria-label="Agevolazione prima casa" />
                     <span className="text-sm text-muted-foreground">{primaCasa ? "Sì — registro 2%" : "No — registro 9%"}</span>
                   </div>
                 </div>
@@ -318,7 +324,7 @@ export default function ConfrontoCosti() {
               <div className="space-y-2">
                 <Label className="text-sm font-semibold">Gratuito Patrocinio</Label>
                 <div className="flex items-center gap-3 h-10">
-                  <Switch checked={gratuitoPatrocinio} onCheckedChange={setGratuitoPatrocinio} />
+                  <Switch checked={gratuitoPatrocinio} onCheckedChange={setGratuitoPatrocinio} aria-label="Gratuito Patrocinio" />
                   <span className="text-sm text-muted-foreground">{gratuitoPatrocinio ? "Attivo — costi a carico erario" : "No"}</span>
                 </div>
               </div>
@@ -327,11 +333,11 @@ export default function ConfrontoCosti() {
                 <Label className="text-sm font-semibold">Maggiorazioni art. 31, co. 3</Label>
                 <div className="flex flex-col gap-2">
                   <div className="flex items-center gap-3 h-10">
-                    <Switch checked={mediatoreEsperto} onCheckedChange={setMediatoreEsperto} />
+                    <Switch checked={mediatoreEsperto} onCheckedChange={setMediatoreEsperto} aria-label="Mediatore esperto" />
                     <span className="text-sm text-muted-foreground">Mediatore esperto {mediatoreEsperto ? "(+20%)" : ""}</span>
                   </div>
                   <div className="flex items-center gap-3 h-10">
-                    <Switch checked={proceduraComplessa} onCheckedChange={setProceduraComplessa} />
+                    <Switch checked={proceduraComplessa} onCheckedChange={setProceduraComplessa} aria-label="Procedura complessa" />
                     <span className="text-sm text-muted-foreground">Procedura complessa {proceduraComplessa ? "(+20%)" : ""}</span>
                   </div>
                 </div>
@@ -949,7 +955,14 @@ export default function ConfrontoCosti() {
                     <FileText className="w-5 h-5 text-primary" />
                     Vantaggi Fiscali della Mediazione
                   </CardTitle>
-                  <Button variant="ghost" size="sm" onClick={() => setShowVantaggi(!showVantaggi)} className="text-xs">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setShowVantaggi(!showVantaggi)}
+                    className="text-xs"
+                    aria-label={showVantaggi ? "Nascondi vantaggi fiscali della mediazione" : "Mostra vantaggi fiscali della mediazione"}
+                    aria-expanded={showVantaggi}
+                  >
                     {showVantaggi ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
                   </Button>
                 </div>
