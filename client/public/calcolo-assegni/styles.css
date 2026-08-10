@@ -9,6 +9,11 @@
   --gold-500: #c2a35a;
   --gold-400: #d4b876;
   --gold-soft: #f3ead4;
+  /* ACC-04: variante più scura di --gold-600, usata solo per testo su
+     sfondo bianco (.module-num, .module-link) dove #a9863b dà solo 3.4:1,
+     sotto la soglia WCAG AA 4.5:1. Non tocca --gold-600/--accent, usati
+     anche come sfondo di pulsanti/pill dove il valore attuale va bene. */
+  --gold-700: #8a6d2e;
 
   --cream: #fbf8f1;
   --cream-2: #f5efe2;
@@ -216,8 +221,9 @@ body {
 .module-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); border-color: rgba(169, 134, 59, 0.4); }
 .module-num {
   font-family: var(--font-display); font-size: 1rem; font-weight: 600;
-  color: var(--accent); letter-spacing: 0.08em;
+  color: var(--gold-700); letter-spacing: 0.08em;
 }
+:root.dark .module-num { color: var(--gold-400); }
 .module-icon { color: var(--primary); }
 :root.dark .module-icon { color: var(--gold-400); }
 .module-icon svg { width: 38px; height: 38px; }
@@ -227,9 +233,10 @@ body {
 }
 .module-desc { font-size: 0.92rem; color: var(--ink-soft); flex: 1; }
 .module-link {
-  font-size: 0.85rem; font-weight: 600; color: var(--accent);
+  font-size: 0.85rem; font-weight: 600; color: var(--gold-700);
   margin-top: 6px; letter-spacing: 0.01em;
 }
+:root.dark .module-link { color: var(--gold-400); }
 
 /* ============ MODULE VIEWS ============ */
 .module-wrap { padding: 48px 0 72px; }
