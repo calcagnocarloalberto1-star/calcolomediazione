@@ -134,6 +134,16 @@ function App() {
         >
           Vai al contenuto principale
         </a>
+        {/*
+          ACC-02: CookieConsent è position:fixed (appare in basso indipendentemente dalla
+          sua posizione nel markup), ma essendo prima renderizzato DOPO l'intero Footer
+          (decine di link) l'ordine di tabulazione da tastiera lo rendeva raggiungibile solo
+          dopo 50+ pressioni di Tab — di fatto irraggiungibile per un utente che naviga solo
+          da tastiera, pur essendo visivamente il primo elemento che vede. Spostato subito
+          dopo lo skip-link, prima dell'header, così un utente da tastiera lo incontra a
+          inizio pagina (l'aspetto visivo non cambia, essendo position:fixed).
+        */}
+        <CookieConsent />
         <div className="min-h-screen flex flex-col bg-background">
           <Header />
           <main
@@ -144,7 +154,6 @@ function App() {
             <AppRouter />
           </main>
           <Footer />
-          <CookieConsent />
           <Assistente />
         </div>
       </TooltipProvider>
