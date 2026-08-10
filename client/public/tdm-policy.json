@@ -16,7 +16,8 @@
       "L. 633/1941 artt. 102-bis e 102-ter (banca dati)"
     ],
     "issued": "2026-07-30",
-    "version": "1.0",
+    "updated": "2026-08-09",
+    "version": "1.1",
     "lang": "it"
   },
   "permission": [
@@ -69,6 +70,33 @@
           ]
         }
       ]
+    },
+    {
+      "target": "https://calcolomediazione.it/*",
+      "action": "read",
+      "constraint": [
+        {
+          "leftOperand": "purpose",
+          "operator": "eq",
+          "rightOperand": "real-time-user-query-answering"
+        }
+      ],
+      "assignee": [
+        "ChatGPT-User", "OAI-SearchBot", "Claude-Web", "Claude-SearchBot",
+        "Perplexity-User", "PerplexityBot", "YouBot", "MistralAI-User"
+      ],
+      "duty": [
+        {
+          "action": "attribute",
+          "constraint": [
+            {
+              "leftOperand": "source",
+              "operator": "eq",
+              "rightOperand": "https://calcolomediazione.it"
+            }
+          ]
+        }
+      ]
     }
   ],
   "prohibition": [
@@ -112,9 +140,10 @@
         {
           "leftOperand": "purpose",
           "operator": "eq",
-          "rightOperand": "rag-retrieval-augmented-generation"
+          "rightOperand": "bulk-rag-index-ingestion"
         }
-      ]
+      ],
+      "_note": "Vietata l'estrazione massiva/automatizzata per costruire o alimentare un indice RAG proprio. Non riguarda la singola risposta in tempo reale a una query utente da parte degli agenti elencati nel permission block 'real-time-user-query-answering' qui sopra, gia' esplicitamente ammessi anche in robots.txt."
     },
     {
       "target": "https://calcolomediazione.it/*",
@@ -125,7 +154,8 @@
           "operator": "eq",
           "rightOperand": "embedding-generation"
         }
-      ]
+      ],
+      "_note": "Vietata la generazione di embedding per la costruzione di indici o dataset propri, distinta dalla lettura in tempo reale ammessa sopra."
     },
     {
       "target": "https://calcolomediazione.it/*",
@@ -146,5 +176,5 @@
   ],
   "tdm-reservation": 1,
   "tdm-policy": "https://calcolomediazione.it/termini-condizioni",
-  "_human_readable_notice": "Tutti i contenuti del portale calcolomediazione.it sono protetti da copyright (L. 633/1941). L'autore esercita espressamente la riserva ex art. 70-quater L. 633/1941 e art. 4 Direttiva 2019/790: VIETATO l'uso dei contenuti per addestramento di modelli di intelligenza artificiale, fine-tuning, RAG, embedding o qualsiasi forma di alimentazione di sistemi AI. Per richieste di licenza: vedi pagina termini-condizioni."
+  "_human_readable_notice": "Tutti i contenuti del portale calcolomediazione.it sono protetti da copyright (L. 633/1941). L'autore esercita espressamente la riserva ex art. 70-quater L. 633/1941 e art. 4 Direttiva 2019/790: VIETATO l'uso dei contenuti per addestramento di modelli di intelligenza artificiale, fine-tuning, o per alimentare in modo massivo/automatizzato indici RAG o dataset di embedding propri di terzi. Restano ammessi la normale indicizzazione dei motori di ricerca e, con obbligo di attribuzione della fonte, la lettura in tempo reale da parte di assistenti AI che rispondono a una query specifica di un utente (es. ChatGPT-User, Claude-Web, PerplexityBot e agenti equivalenti, gia' esplicitamente ammessi in robots.txt) — coerentemente con l'elenco Allow/Disallow del file robots.txt del Sito. Per richieste di licenza relative a usi ulteriori: vedi pagina termini-condizioni."
 }
