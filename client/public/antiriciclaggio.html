@@ -186,11 +186,8 @@ margin-bottom:2cm;
 <div id="assist_status" role="status" aria-live="polite"></div>
 <div id="assist_answer" class="box" style="display:none;margin-top:10px" role="status" aria-live="polite"></div>
 <div id="assist_review" style="display:none">
-<div class="ocr-warn"><b>Verifica prima di applicare.</b> Correggi i campi necessari e deseleziona quelli da non usare, poi premi «Applica ai campi selezionati». Le valutazioni di rischio proposte sono suggerimenti: restano una valutazione professionale da confermare.</div>
+<div class="ocr-warn"><b>Verifica prima di applicare.</b> Per ciascuna parte individuata sotto, correggi il ruolo se necessario e premi il suo pulsante «Applica questa parte ai campi». Le valutazioni di rischio proposte sono suggerimenti: restano una valutazione professionale da confermare.</div>
 <div id="assist_fields"></div>
-<div class="row-btns">
-<button class="btn-primary" type="button" onclick="assistApplica()">Applica ai campi selezionati</button>
-</div>
 </div>
 <!-- ===================== COMPILATORE (motore unico: dati + trigger UIF + rischio) ===================== -->
 <h2 class="no-print">Compila e genera i modelli</h2>
@@ -2018,8 +2015,8 @@ const img = await ocrAImgToJpegBlob(f);
 docs.push({ blob: img, ext: "jpg", vuoto: img ? !!img.ocrVuoto : true });
 }
 }
-// Limite prudenziale sul numero di documenti per richiesta (il backend ne accetta al massimo 20)
-if(docs.length > 20){ docs = docs.slice(0, 20); }
+// Limite prudenziale sul numero di documenti per richiesta (il backend ne accetta al massimo 40)
+if(docs.length > 40){ docs = docs.slice(0, 40); }
 const totKb = Math.round(docs.reduce((s,d)=>s+(d.blob?d.blob.size:0),0)/1024);
 const vuote = docs.filter(d=>d.ext==="jpg" && (!d.blob || d.blob.size < 500 || d.vuoto)).length;
 if(vuote){
