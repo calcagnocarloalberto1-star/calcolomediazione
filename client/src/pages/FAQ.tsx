@@ -331,6 +331,9 @@ export default function FAQ() {
             il credito d&apos;imposta (art. 20 D.Lgs. 28/2010), il gratuito patrocinio (artt. 15-bis/15-undecies)
             e il funzionamento della nostra piattaforma con analisi AI.
           </p>
+          {/* DATA-04 / PRIV-07: data dell'ultima verifica normativa, aggiornata
+              manualmente ad ogni revisione periodica (v. processo PRIV-07). */}
+          <p className="text-sm text-muted-foreground/70 mt-2">Ultima verifica normativa: agosto 2026</p>
         </div>
 
         <div className="space-y-8">
