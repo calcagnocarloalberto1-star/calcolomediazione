@@ -171,4 +171,32 @@ const r10obb = calcolaIndennita(t10obb);
 assert(Math.abs(r10obb.speseBase * 0.8 - 312.32) < 0.01, `Genova indennità base obbligatoria €20.000 *0.8 = €312,32 (got ${r10obb.speseBase * 0.8})`);
 
 // ==========================================
+// TEST 11 — UX-05 (casi C6/C7): la "Tabella delle Indennità" COA Genova è un SALDO
+// (dicitura testuale del Tariffario Mediazione 2026 COA Genova: "Saldo indennità
+// prosecuzione — anche senza accordo") già netto rispetto al primo incontro, quindi NON
+// va detratta ulteriormente la spesa di mediazione primo incontro (a differenza della
+// Tabella A nazionale, dove la detrazione ex art. 34 co. 2 è invece corretta). Verificato
+// contro il Tariffario ufficiale COA Genova (Facoltative/Contrattuali) fornito da Carlo
+// il 10/08/2026: scaglione €1.001-5.000, indennità base €48,80, +25% accordo successivi
+// = €12,20 (arrotondato a €12) → saldo netto atteso €60,80, NON azzerato.
+// ==========================================
+console.log("\n=== TEST 11: COA Genova — nessuna doppia detrazione sul saldo prosecuzione (UX-05 C6/C7) ===");
+
+const t11: InputCalcolo = { tipoMediazione: "volontaria", esito: "accordo_successivi", tipoValore: "determinato", valoreLite: 2000, modalitaTariffaria: "coa_genova" };
+const r11 = calcolaIndennita(t11);
+assert(r11.detrazioneSpese === 0, `Genova: nessuna detrazione del primo incontro sul saldo prosecuzione (got detrazioneSpese=${r11.detrazioneSpese})`);
+assert(Math.abs(r11.ulterioriSpese - 60.80) < 0.01, `Genova €2.000 accordo successivi: ulteriori spese nette = €60,80 (indennità base €48,80 + 25% = €12) (got ${r11.ulterioriSpese})`);
+assert(r11.ulterioriSpese > 0, "Genova: le ulteriori spese NON devono azzerarsi per gli scaglioni bassi (bug corretto UX-05)");
+
+// Verifica anche lo scaglione più basso (fino a €1.000), ancora più esposto al bug prima della correzione
+const t11b: InputCalcolo = { tipoMediazione: "volontaria", esito: "accordo_successivi", tipoValore: "determinato", valoreLite: 500, modalitaTariffaria: "coa_genova" };
+const r11b = calcolaIndennita(t11b);
+assert(Math.abs(r11b.ulterioriSpese - 30.40) < 0.01, `Genova €500 accordo successivi: ulteriori spese nette = €30,40 (indennità base €24,40 + 25% = €6) (got ${r11b.ulterioriSpese})`);
+
+// La detrazione nazionale (Tabella A) resta invece invariata (art. 34 co. 2 si applica)
+const t11nat: InputCalcolo = { tipoMediazione: "volontaria", esito: "accordo_successivi", tipoValore: "determinato", valoreLite: 2000, modalitaTariffaria: "nazionale" };
+const r11nat = calcolaIndennita(t11nat);
+assert(r11nat.detrazioneSpese === 120, `Nazionale: detrazione primo incontro invariata (art. 34 co. 2) = €120 (got ${r11nat.detrazioneSpese})`);
+
+// ==========================================
 console.log("\n✅ TUTTI I TEST SUPERATI ✅\n");
