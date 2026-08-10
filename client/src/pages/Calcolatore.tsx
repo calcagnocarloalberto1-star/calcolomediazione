@@ -237,13 +237,21 @@ export default function Calcolatore() {
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-5">
-                {/* Tipo Mediazione */}
+                {/* Tipo Mediazione
+                    ACC-02: il <Label htmlFor="tipoMediazione"> qui sotto punta a un id
+                    che il componente Select/SelectTrigger di Radix non riceve mai (non è
+                    un <input> nativo), quindi l'associazione è "rotta" e uno screen reader
+                    annuncia solo il valore selezionato, non il nome del campo. Aggiunto
+                    aria-label esplicito su ogni SelectTrigger di questa pagina come fix
+                    diretto e più affidabile dell'associazione id/htmlFor per i combobox
+                    Radix (stesso pattern applicato anche in ConfrontoCosti.tsx,
+                    AnalisiCasoAI.tsx, GeneratoreProcura.tsx). */}
                 <div className="space-y-2">
                   <Label htmlFor="tipoMediazione" className="text-sm font-semibold">
                     Tipo Mediazione
                   </Label>
                   <Select value={tipoMediazione} onValueChange={(v) => setTipoMediazione(v as TipoMediazione)}>
-                    <SelectTrigger className="border-2 border-foreground" data-testid="select-tipo-mediazione">
+                    <SelectTrigger className="border-2 border-foreground" aria-label="Tipo Mediazione" data-testid="select-tipo-mediazione">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent className="border-2 border-foreground">
@@ -260,7 +268,7 @@ export default function Calcolatore() {
                     Tipo Valore
                   </Label>
                   <Select value={tipoValore} onValueChange={(v) => setTipoValore(v as TipoValore)}>
-                    <SelectTrigger className="border-2 border-foreground" data-testid="select-tipo-valore">
+                    <SelectTrigger className="border-2 border-foreground" aria-label="Tipo Valore" data-testid="select-tipo-valore">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent className="border-2 border-foreground">
@@ -297,7 +305,7 @@ export default function Calcolatore() {
                     Esito Mediazione
                   </Label>
                   <Select value={esito} onValueChange={(v) => setEsito(v as EsitoMediazione)}>
-                    <SelectTrigger className="border-2 border-foreground" data-testid="select-esito">
+                    <SelectTrigger className="border-2 border-foreground" aria-label="Esito Mediazione" data-testid="select-esito">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent className="border-2 border-foreground">
@@ -436,7 +444,7 @@ export default function Calcolatore() {
                         Tipologia Immobile
                       </Label>
                       <Select value={categoriaCatastale} onValueChange={(v) => { setCategoriaCatastale(v as CategoriaCatastale); setVerificaResult(null); }}>
-                        <SelectTrigger className="border-2 border-foreground" data-testid="select-categoria-catastale">
+                        <SelectTrigger className="border-2 border-foreground" aria-label="Tipologia Immobile" data-testid="select-categoria-catastale">
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent className="border-2 border-foreground">
