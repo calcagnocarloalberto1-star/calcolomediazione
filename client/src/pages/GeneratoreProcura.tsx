@@ -842,6 +842,18 @@ export default function GeneratoreProcura() {
           </CardContent>
         </Card>
 
+        {/* PRIV-06: stesso avviso di prudenza già presente in testa alla pagina
+            (testo invariato), ripetuto qui perché sia visibile anche nel
+            momento immediatamente precedente alla generazione/download del
+            documento, non solo in testa alla pagina. */}
+        <div className="flex items-start gap-3 bg-amber-50 border-2 border-amber-400 p-4">
+          <AlertTriangle className="w-5 h-5 text-amber-700 mt-0.5 flex-shrink-0" />
+          <p className="text-xs text-amber-900">
+            <strong>Nota di prudenza operativa:</strong> Cass. 10978/2026 è recentissima e potrebbe non essere ancora consolidata in tutti gli organismi di mediazione.
+            Si consiglia di valutare caso per caso e, ove possibile, di documentare con precisione la procura sostanziale e la sua distinzione dalla procura alle liti.
+          </p>
+        </div>
+
         {/* ACTION BUTTONS */}
         <div className="flex flex-col sm:flex-row gap-3">
           <Button onClick={handleAnteprima} variant="outline"
