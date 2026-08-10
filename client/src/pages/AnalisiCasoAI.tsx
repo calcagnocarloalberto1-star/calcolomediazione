@@ -10,6 +10,7 @@ import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { SeoHead } from "@/components/SeoHead";
+import { DisclaimerLegale } from "@/components/DisclaimerLegale";
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
@@ -1130,16 +1131,17 @@ export default function AnalisiCasoAI() {
                 : <><Brain className="w-5 h-5 mr-2" />Avvia Analisi AI</>}
             </Button>
 
-            <div className="mt-6 text-xs text-muted-foreground bg-muted/50 p-4 border border-foreground/10" data-testid="text-disclaimer-ai">
-              <div className="flex items-start gap-2">
-                <Scale className="w-4 h-4 flex-shrink-0 mt-0.5" />
-                <div>
-                  <p className="font-semibold mb-1">Criteri di calcolo e avvertenza legale</p>
-                  <p className="mb-2"><strong>Compensi avvocato:</strong> le stime dei compensi legali nell'analisi economica sono basate sui <strong>valori medi</strong> previsti dal D.M. 55/2014 (aggiornato D.M. 147/2022). Il compenso effettivo può variare significativamente in base alla complessità della causa.</p>
-                  <p><strong>Avvertenza:</strong> l'analisi generata dall'intelligenza artificiale e tutti i calcoli forniti hanno finalità esclusivamente informativa e orientativa. Non costituiscono consulenza legale. Per una valutazione precisa, si raccomanda di consultare un avvocato o un professionista abilitato.</p>
-                </div>
-              </div>
-            </div>
+            {/* SEO-04: blocco "Criteri di calcolo e avvertenza legale" riportato al
+                componente condiviso DisclaimerLegale (già usato da Calcolatore,
+                ConfrontoCosti, CostiNotarili, CreditoImposta) invece di un testo
+                duplicato scritto a mano — la nota sull'origine IA dell'analisi
+                resta specifica di questa pagina tramite noteSpecifiche. */}
+            <DisclaimerLegale
+              variant="full"
+              riferimenti={["D.M. 150/2023", "D.Lgs. 28/2010", "D.M. 55/2014 (D.M. 147/2022)", "art. 17 D.Lgs. 28/2010"]}
+              noteSpecifiche="L'analisi del caso, comprese le stime dei compensi legali e delle indennità di mediazione, è generata dall'intelligenza artificiale sulla base dei dati inseriti dall'utente: resta soggetta agli stessi criteri e agli stessi limiti indicati di seguito."
+              className="mt-6"
+            />
           </CardContent>
         </Card>
       </div>
