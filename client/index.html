@@ -16,7 +16,10 @@
     <meta property="og:see_also" content="https://www.perplexity.ai/computer">
     <link rel="author" href="https://www.perplexity.ai/computer">
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
+    <!-- SEO-07: "maximum-scale=1" impediva lo zoom con le dita su mobile (bloccato
+         da Lighthouse come problema di accessibilità — utenti ipovedenti non
+         potevano ingrandire la pagina). Rimosso il tetto allo zoom. -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>CalcoloMediazione - Calcolatore Indennità Mediazione Civile | Analisi AI e Confronto Costi</title>
     <meta name="description" content="Calcolatore gratuito indennità mediazione civile D.M. 150/2023. Analisi AI del caso, confronto costi mediazione vs processo su tre gradi (primo grado, appello e cassazione), stima CTU, esenzione prima casa, verifica congruità valore catastale, generatore procura. Per avvocati e mediatori." />
     
