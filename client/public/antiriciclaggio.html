@@ -1832,6 +1832,14 @@ let assistSelectedFiles = [];
 // ogni file e restituiscono f.type vuoto — senza questo controllo di riserva, tutte le immagini di
 // quella cartella verrebbero scartate in silenzio e l'elenco risulterebbe vuoto.
 const ASSIST_EXT_IMMAGINE = /\.(jpe?g|png|webp|gif)$/i;
+// PDF firmati digitalmente in busta CAdES (formato ".pdf.p7m" o ".p7m"): non sono
+// PDF veri, sono un involucro crittografico (PKCS#7/CMS) attorno al PDF originale.
+// Molto comuni negli studi legali italiani (atti telematici, PEC, notifiche) mentre
+// non e' un formato che lo strumento sa leggere: senza questo controllo dedicato
+// finivano scartati in silenzio nel conteggio generico "formato non supportato",
+// senza che l'utente capisse perche' — segnalati qui a parte con una spiegazione
+// e un'indicazione pratica su come procedere.
+const ASSIST_EXT_P7M = /\.p7m$/i;
 function assistFileAccettato(f){
 return f.type === "application/pdf" || /\.pdf$/i.test(f.name)
 || (f.type && f.type.indexOf("image/") === 0) || ASSIST_EXT_IMMAGINE.test(f.name);
@@ -1850,13 +1858,20 @@ if(!arr.length){
 assistSetStatus("Nessun file trovato nella cartella selezionata. Se i file sono su OneDrive, Google Drive o iCloud, verifica che siano scaricati sul dispositivo (non solo \"online\") e riprova; in alternativa seleziona i singoli file con il primo pulsante.");
 return;
 }
-const accettati = arr.filter(assistFileAccettato);
-const scartati = arr.length - accettati.length;
+const p7m = arr.filter(f => ASSIST_EXT_P7M.test(f.name));
+const accettati = arr.filter(f => !ASSIST_EXT_P7M.test(f.name) && assistFileAccettato(f));
+const scartatiAltri = arr.length - accettati.length - p7m.length;
 assistSelectedFiles = assistSelectedFiles.concat(accettati);
 assistRenderFileList();
-assistSetStatus(scartati
-? scartati + " file ignorato/i perche' di formato non supportato (accettati: JPG, PNG, WEBP, GIF, PDF). " + accettati.length + " documento/i aggiunto/i."
-: accettati.length + " documento/i aggiunto/i.");
+const parti = [];
+if(accettati.length) parti.push(accettati.length + " documento/i aggiunto/i");
+if(p7m.length) parti.push(
+p7m.length + " file firmato/i digitalmente (" + p7m.map(f=>f.name).join(", ") + ") NON caricato/i: " +
+"e' un file .p7m, un involucro di firma digitale che racchiude il PDF ma non e' esso stesso un PDF leggibile. " +
+"Apri il file con il software di firma (es. Aruba Sign, Dike, FirmaCerta, ArubaKey) o con un lettore .p7m, verifica ed esporta/salva il PDF contenuto, poi carica quel PDF"
+);
+if(scartatiAltri) parti.push(scartatiAltri + " file ignorato/i perche' di formato non supportato (accettati: JPG, PNG, WEBP, GIF, PDF)");
+assistSetStatus(parti.join(". ") + ".");
 }
 
 // ─── Assistente unico: elenco delle parti individuate, applicabili una alla volta ───
