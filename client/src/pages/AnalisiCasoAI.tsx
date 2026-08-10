@@ -839,9 +839,13 @@ export default function AnalisiCasoAI() {
             {/* Tipo + Tariffario + Valore */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <div className="space-y-2">
+                {/* ACC-02: aria-label su ogni Select/Switch di questa pagina — i <Label>
+                    sopra non sono collegati ai relativi controlli, quindi uno screen
+                    reader non annunciava a quale campo appartenessero (stesso pattern
+                    corretto in Calcolatore.tsx, ConfrontoCosti.tsx, GeneratoreProcura.tsx). */}
                 <Label className="text-sm font-semibold">Tipo Analisi</Label>
                 <Select value={tipoAnalisi} onValueChange={setTipoAnalisi}>
-                  <SelectTrigger className="border-2 border-foreground" data-testid="select-tipo-analisi"><SelectValue /></SelectTrigger>
+                  <SelectTrigger className="border-2 border-foreground" aria-label="Tipo Analisi" data-testid="select-tipo-analisi"><SelectValue /></SelectTrigger>
                   <SelectContent className="border-2 border-foreground">
                     <SelectItem value="mediazione">Mediazione</SelectItem>
                     <SelectItem value="negoziazione_assistita">Negoziazione Assistita</SelectItem>
@@ -851,7 +855,7 @@ export default function AnalisiCasoAI() {
               <div className="space-y-2">
                 <Label className="text-sm font-semibold">Tariffario</Label>
                 <Select value={modalitaTariffaria} onValueChange={setModalitaTariffaria}>
-                  <SelectTrigger className="border-2 border-foreground" data-testid="select-analisi-tariffario"><SelectValue /></SelectTrigger>
+                  <SelectTrigger className="border-2 border-foreground" aria-label="Tariffario" data-testid="select-analisi-tariffario"><SelectValue /></SelectTrigger>
                   <SelectContent className="border-2 border-foreground">
                     <SelectItem value="nazionale">Nazionale (D.M. 150/2023)</SelectItem>
                     <SelectItem value="coa_genova">COA Genova</SelectItem>
@@ -861,7 +865,7 @@ export default function AnalisiCasoAI() {
               <div className="space-y-2">
                 <Label className="text-sm font-semibold">Tipo Valore</Label>
                 <Select value={tipoValore} onValueChange={setTipoValore}>
-                  <SelectTrigger className="border-2 border-foreground" data-testid="select-analisi-tipo-valore"><SelectValue /></SelectTrigger>
+                  <SelectTrigger className="border-2 border-foreground" aria-label="Tipo Valore" data-testid="select-analisi-tipo-valore"><SelectValue /></SelectTrigger>
                   <SelectContent className="border-2 border-foreground">
                     <SelectItem value="determinato">Determinato</SelectItem>
                     <SelectItem value="indeterminabile_basso">Indeterminabile — basso</SelectItem>
@@ -886,7 +890,7 @@ export default function AnalisiCasoAI() {
               <Label className="text-sm font-semibold">Opzioni per l'Analisi Economica</Label>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 p-4 border-2 border-foreground/20 bg-muted/30">
                 <div className="flex items-center gap-3">
-                  <Switch checked={materiaImmobiliare} onCheckedChange={setMateriaImmobiliare} data-testid="switch-analisi-immobiliare" />
+                  <Switch checked={materiaImmobiliare} onCheckedChange={setMateriaImmobiliare} aria-label="Materia immobiliare" data-testid="switch-analisi-immobiliare" />
                   <div className="flex items-center gap-1.5">
                     <Home className="w-4 h-4 text-muted-foreground" />
                     <span className="text-sm">{materiaImmobiliare ? "Materia immobiliare" : "Non immobiliare"}</span>
@@ -894,14 +898,14 @@ export default function AnalisiCasoAI() {
                 </div>
                 {materiaImmobiliare && (
                   <div className="flex items-center gap-3">
-                    <Switch checked={primaCasa} onCheckedChange={val => { setPrimaCasa(val); setCategoriaCatastaleAI(val ? "prima_casa" : "altri_fabbricati_ac"); }} data-testid="switch-analisi-prima-casa" />
+                    <Switch checked={primaCasa} onCheckedChange={val => { setPrimaCasa(val); setCategoriaCatastaleAI(val ? "prima_casa" : "altri_fabbricati_ac"); }} aria-label="Agevolazione prima casa" data-testid="switch-analisi-prima-casa" />
                     <span className="text-sm">{primaCasa ? "Prima casa (registro 2%)" : "Seconda casa (registro 9%)"}</span>
                   </div>
                 )}
                 {materiaImmobiliare && (
                   <div className="sm:col-span-3 p-3 border-2 border-foreground/20 bg-muted/20 space-y-3">
                     <div className="flex items-center gap-3">
-                      <Switch checked={attivaCalcoloCostiNotarili} onCheckedChange={setAttivaCalcoloCostiNotarili} data-testid="switch-analisi-costi-notarili" />
+                      <Switch checked={attivaCalcoloCostiNotarili} onCheckedChange={setAttivaCalcoloCostiNotarili} aria-label="Calcolo costi notarili" data-testid="switch-analisi-costi-notarili" />
                       <span className="text-sm font-semibold">{attivaCalcoloCostiNotarili ? "Costi notarili: ATTIVI" : "Calcolo costi notarili"}</span>
                     </div>
                     {attivaCalcoloCostiNotarili && (
@@ -913,11 +917,11 @@ export default function AnalisiCasoAI() {
                             style={{ fontFamily: "'JetBrains Mono', monospace" }} data-testid="input-valore-immobile-ai" />
                         </div>
                         <div className="flex items-center gap-3">
-                          <Switch checked={applicaPrezzoValore} onCheckedChange={setApplicaPrezzoValore} data-testid="switch-prezzo-valore" />
+                          <Switch checked={applicaPrezzoValore} onCheckedChange={setApplicaPrezzoValore} aria-label="Applica prezzo-valore" data-testid="switch-prezzo-valore" />
                           <span className="text-xs">{applicaPrezzoValore ? "Prezzo-valore (L. 296/2006)" : "Base = prezzo"}</span>
                         </div>
                         <div className="flex items-center gap-3">
-                          <Switch checked={venditoreImpresaIva} onCheckedChange={setVenditoreImpresaIva} data-testid="switch-venditore-impresa" />
+                          <Switch checked={venditoreImpresaIva} onCheckedChange={setVenditoreImpresaIva} aria-label="Acquisto da impresa con IVA" data-testid="switch-venditore-impresa" />
                           <span className="text-xs">{venditoreImpresaIva ? "Acquisto da impresa (IVA)" : "Acquisto da privato"}</span>
                         </div>
                       </div>
@@ -937,7 +941,7 @@ export default function AnalisiCasoAI() {
                       <div className="space-y-1">
                         <Label className="text-xs">Tipologia immobile</Label>
                         <Select value={categoriaCatastaleAI} onValueChange={setCategoriaCatastaleAI}>
-                          <SelectTrigger className="border-2 border-foreground/50 text-sm h-9" data-testid="select-categoria-ai"><SelectValue /></SelectTrigger>
+                          <SelectTrigger className="border-2 border-foreground/50 text-sm h-9" aria-label="Tipologia immobile" data-testid="select-categoria-ai"><SelectValue /></SelectTrigger>
                           <SelectContent className="border-2 border-foreground">
                             {Object.entries(COEFFICIENTI_CATASTALI).map(([key, val]) => (
                               <SelectItem key={key} value={key}>{val.label} (×{val.moltiplicatore})</SelectItem>
@@ -949,7 +953,7 @@ export default function AnalisiCasoAI() {
                   </div>
                 )}
                 <div className="flex items-center gap-3">
-                  <Switch checked={gratuitoPatrocinio} onCheckedChange={setGratuitoPatrocinio} data-testid="switch-analisi-gp" />
+                  <Switch checked={gratuitoPatrocinio} onCheckedChange={setGratuitoPatrocinio} aria-label="Gratuito patrocinio" data-testid="switch-analisi-gp" />
                   <div className="flex items-center gap-1.5">
                     <Shield className="w-4 h-4 text-muted-foreground" />
                     <span className="text-sm">{gratuitoPatrocinio ? "Gratuito patrocinio" : "No patrocinio"}</span>
@@ -963,11 +967,11 @@ export default function AnalisiCasoAI() {
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div className="flex items-center gap-3">
-                    <Switch checked={mediatoreEsperto} onCheckedChange={setMediatoreEsperto} data-testid="switch-analisi-mediatore-esperto" />
+                    <Switch checked={mediatoreEsperto} onCheckedChange={setMediatoreEsperto} aria-label="Mediatore esperto" data-testid="switch-analisi-mediatore-esperto" />
                     <div className="flex items-center gap-1.5"><Award className="w-4 h-4 text-muted-foreground" /><span className="text-sm">Mediatore esperto</span></div>
                   </div>
                   <div className="flex items-center gap-3">
-                    <Switch checked={proceduraComplessa} onCheckedChange={setProceduraComplessa} data-testid="switch-analisi-procedura-complessa" />
+                    <Switch checked={proceduraComplessa} onCheckedChange={setProceduraComplessa} aria-label="Procedura complessa" data-testid="switch-analisi-procedura-complessa" />
                     <div className="flex items-center gap-1.5"><Scale className="w-4 h-4 text-muted-foreground" /><span className="text-sm">Procedura complessa</span></div>
                   </div>
                 </div>
@@ -991,7 +995,7 @@ export default function AnalisiCasoAI() {
                   </div>
                   <div className="w-40">
                     <Select value={p.ruolo} onValueChange={v => updateParty(i, "ruolo", v)}>
-                      <SelectTrigger className="border-2 border-foreground" data-testid={`select-party-ruolo-${i}`}><SelectValue /></SelectTrigger>
+                      <SelectTrigger className="border-2 border-foreground" aria-label={`Ruolo di ${p.nome || `parte ${i + 1}`}`} data-testid={`select-party-ruolo-${i}`}><SelectValue /></SelectTrigger>
                       <SelectContent className="border-2 border-foreground">
                         <SelectItem value="istante">Istante</SelectItem>
                         <SelectItem value="convenuto">Convenuto</SelectItem>
@@ -1001,7 +1005,7 @@ export default function AnalisiCasoAI() {
                   </div>
                   {parti.length > 2 && (
                     <Button variant="ghost" size="icon" onClick={() => removeParty(i)}
-                      className="flex-shrink-0 text-destructive" data-testid={`button-remove-party-${i}`}>
+                      className="flex-shrink-0 text-destructive" aria-label={`Rimuovi ${p.nome || `parte ${i + 1}`}`} data-testid={`button-remove-party-${i}`}>
                       <Trash2 className="w-4 h-4" />
                     </Button>
                   )}
@@ -1021,7 +1025,7 @@ export default function AnalisiCasoAI() {
                   placeholder="Es. carta d'identità, visura camerale…" className="border-2 border-foreground"
                   data-testid="input-documento-richiesto" />
                 <Button type="button" variant="outline" onClick={aggiungiDocumentoRichiesto}
-                  className="border-2 border-foreground flex-shrink-0" data-testid="button-aggiungi-documento-richiesto">
+                  className="border-2 border-foreground flex-shrink-0" aria-label="Aggiungi documento richiesto" data-testid="button-aggiungi-documento-richiesto">
                   <Plus className="w-4 h-4" />
                 </Button>
               </div>
@@ -1040,7 +1044,7 @@ export default function AnalisiCasoAI() {
                         <span className="flex-1">{nome}</span>
                         <span className="text-xs text-muted-foreground">{caricato ? "allegato" : "manca ancora"}</span>
                         <button onClick={e => { e.stopPropagation(); rimuoviDocumentoRichiesto(nome); }}
-                          className="ml-1 hover:text-destructive flex-shrink-0" data-testid={`button-rimuovi-documento-richiesto-${i}`}>
+                          className="ml-1 hover:text-destructive flex-shrink-0" aria-label={`Rimuovi "${nome}" dall'elenco documenti richiesti`} data-testid={`button-rimuovi-documento-richiesto-${i}`}>
                           <Trash2 className="w-3.5 h-3.5" />
                         </button>
                       </div>
