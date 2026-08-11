@@ -29,8 +29,7 @@ const SEO_PAGES: Record<string, { title: string; description: string }> = {
   "/chi-siamo": { title: "Chi Siamo \u2014 Avv. Carlo Alberto Calcagno, mediatore e Legal Tech Genova", description: "Avv. Carlo Alberto Calcagno: mediatore familiare e civile ODM Genova, commissario ADR COA Genova, formatore. Legal Tech, AI applicata alla mediazione e ADR. Tutti gli strumenti gratuiti di CalcoloMediazione." },
   "/contatti": { title: "Contatti - CalcoloMediazione", description: "Contatta il team di CalcoloMediazione per informazioni, supporto tecnico e collaborazioni." },
   "/antiriciclaggio": { title: "Antiriciclaggio in Mediazione \u2014 Obblighi e Modelli per Avvocati e Organismi", description: "Guida agli obblighi antiriciclaggio in mediazione (D.Lgs. 231/2007) e compilazione automatica dei modelli del fascicolo: adeguata verifica, titolare effettivo, scheda di rischio, segnalazione operazioni sospette." },
-  "/antiriciclaggio-guida": { title: "Guida Semplice all'Antiriciclaggio in Mediazione \u2014 D.Lgs. 231/2007", description: "Guida in linguaggio semplice agli obblighi antiriciclaggio per mediatori e Organismi di mediazione: chi \u00e8 obbligato, cosa fare al tavolo, segnalazione operazioni sospette." },
-  "/antiriciclaggio-mediazione-obblighi": { title: "Antiriciclaggio Mediazione: Obblighi D.Lgs. 231/2007 per Mediatori e Avvocati", description: "Antiriciclaggio mediazione obblighi: chi \u00e8 tenuto all'adeguata verifica del mediatore, quando l'avvocato \u00e8 esente, quali documenti produrre e conservare, come riconoscere un'operazione sospetta. Guida pratica D.Lgs. 231/2007." },
+  "/antiriciclaggio-guida": { title: "Antiriciclaggio in Mediazione \u2014 Guida agli obblighi e alla compilazione", description: "Due guide in una: gli obblighi antiriciclaggio in mediazione in linguaggio semplice (chi \u00e8 obbligato, adeguata verifica, fascicolo, operazioni sospette) e la guida pratica alla compilazione dello strumento, passo per passo." },
   "/trasferimento-immobiliare-mediazione": { title: "Trasferimento Immobiliare in Mediazione: Quanto si Risparmia (Guida)", description: "Trasferimento immobiliare in mediazione: imposta di registro esente fino a \u20ac100.000, quando serve il notaio, quanto si risparmia sulla prima casa rispetto alla compravendita ordinaria. Guida con esempi di calcolo." },
   "/privacy-policy": { title: "Privacy Policy \u2014 CalcoloMediazione", description: "Informativa sul trattamento dei dati personali di CalcoloMediazione.it: titolare del trattamento, dati raccolti, finalit\u00e0 e modalit\u00e0 di utilizzo, diritti dell'utente ai sensi del GDPR (Regolamento UE 2016/679)." },
   "/cookie-policy": { title: "Cookie Policy \u2014 CalcoloMediazione", description: "Informativa sui cookie di CalcoloMediazione.it: cookie tecnici necessari e cookie analitici (Google Analytics), installati solo previo consenso esplicito dell'utente tramite il banner del Sito." },
@@ -70,7 +69,6 @@ const VALID_CLIENT_ROUTES = new Set<string>([
   "/assegno-mantenimento-divorzile-calcolo",
   "/antiriciclaggio",
   "/antiriciclaggio-guida",
-  "/antiriciclaggio-mediazione-obblighi",
   "/trasferimento-immobiliare-mediazione",
   "/admin",
 ]);

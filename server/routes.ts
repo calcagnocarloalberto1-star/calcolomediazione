@@ -51,8 +51,7 @@ const PAGES = [
 { path: "/chi-siamo", title: "Chi Siamo - CalcoloMediazione", desc: "Scopri il team dietro CalcoloMediazione, la piattaforma professionale per mediatori civili e commerciali.", priority: "0.4", changefreq: "yearly" },
 { path: "/contatti", title: "Contatti - CalcoloMediazione", desc: "Contatta il team di CalcoloMediazione per informazioni, supporto tecnico e collaborazioni.", priority: "0.4", changefreq: "yearly" },
 { path: "/antiriciclaggio", title: "Antiriciclaggio in Mediazione — Obblighi e Modelli per Avvocati e Organismi", desc: "Guida agli obblighi antiriciclaggio in mediazione (D.Lgs. 231/2007) e compilazione automatica dei modelli del fascicolo: adeguata verifica, titolare effettivo, scheda di rischio, segnalazione operazioni sospette.", priority: "0.7", changefreq: "monthly" },
-{ path: "/antiriciclaggio-guida", title: "Guida Semplice all'Antiriciclaggio in Mediazione — D.Lgs. 231/2007", desc: "Guida in linguaggio semplice agli obblighi antiriciclaggio per mediatori e Organismi di mediazione: chi è obbligato, cosa fare al tavolo, segnalazione operazioni sospette.", priority: "0.6", changefreq: "monthly" },
-{ path: "/antiriciclaggio-mediazione-obblighi", title: "Antiriciclaggio Mediazione: Obblighi D.Lgs. 231/2007 per Mediatori e Avvocati", desc: "Antiriciclaggio mediazione obblighi: chi è tenuto all'adeguata verifica del mediatore, quando l'avvocato è esente, quali documenti produrre e conservare, come riconoscere un'operazione sospetta. Guida pratica D.Lgs. 231/2007.", priority: "0.6", changefreq: "monthly" },
+{ path: "/antiriciclaggio-guida", title: "Antiriciclaggio in Mediazione — Guida agli obblighi e alla compilazione", desc: "Due guide in una: gli obblighi antiriciclaggio in mediazione in linguaggio semplice (chi è obbligato, adeguata verifica, fascicolo, operazioni sospette) e la guida pratica alla compilazione dello strumento, passo per passo.", priority: "0.6", changefreq: "monthly" },
 { path: "/trasferimento-immobiliare-mediazione", title: "Trasferimento Immobiliare in Mediazione: Quanto si Risparmia (Guida)", desc: "Trasferimento immobiliare in mediazione: imposta di registro esente fino a €100.000, quando serve il notaio, quanto si risparmia sulla prima casa rispetto alla compravendita ordinaria. Guida con esempi di calcolo.", priority: "0.6", changefreq: "monthly" },
 { path: "/privacy-policy", title: "Privacy Policy — CalcoloMediazione", desc: "Informativa sul trattamento dei dati personali di CalcoloMediazione.it: titolare del trattamento, dati raccolti, finalità e modalità di utilizzo, diritti dell'utente ai sensi del GDPR (Regolamento UE 2016/679).", priority: "0.3", changefreq: "yearly" },
 { path: "/cookie-policy", title: "Cookie Policy — CalcoloMediazione", desc: "Informativa sui cookie di CalcoloMediazione.it: cookie tecnici necessari e cookie analitici (Google Analytics), installati solo previo consenso esplicito dell'utente tramite il banner del Sito.", priority: "0.3", changefreq: "yearly" },
@@ -88,7 +87,7 @@ const PAGE_CONTENT: Record<string, string> = {
 <li><a href="/credito-imposta">Credito d'Imposta e Gratuito Patrocinio</a> - Art. 20 D.Lgs. 28/2010</li>
 <li><a href="/strategie-negoziazione">Strategie di Negoziazione</a> - MAAN/BATNA, negoziazione integrativa, ZOPA</li>
 <li><a href="/antiriciclaggio">Antiriciclaggio in Mediazione</a> - Obblighi antiriciclaggio (D.Lgs. 231/2007) e compilazione automatica dei modelli del fascicolo: adeguata verifica, titolare effettivo, scheda rischio, dichiarazione cliente e SOS</li>
-<li><a href="/antiriciclaggio-guida">Antiriciclaggio - Guida in linguaggio semplice</a> - Chi è obbligato, ispezioni della Guardia di Finanza, cosa fare e cosa mettere a verbale</li>
+<li><a href="/antiriciclaggio-guida">Antiriciclaggio - Guida agli obblighi e alla compilazione</a> - Chi è obbligato, adeguata verifica, fascicolo, operazioni sospette, e come si compila lo strumento</li>
 <li><a href="/calcolo-assegni">Calcolo Assegni</a> - Stima orientativa dell'assegno di mantenimento del coniuge, dell'assegno divorzile e del contributo per i figli</li>
 </ul>
 <h2>Caratteristiche principali</h2>
@@ -366,17 +365,6 @@ const PAGE_CONTENT: Record<string, string> = {
 <li>Accordo di mediazione, verbale, esecutività</li>
 </ul>`,
 
-"/antiriciclaggio-mediazione-obblighi": `
-<h1>Antiriciclaggio per mediatori e avvocati: la guida pratica agli obblighi D.Lgs. 231/2007</h1>
-<p>Antiriciclaggio mediazione obblighi: chi è tenuto all'adeguata verifica del mediatore, quando l'avvocato è esente, quali documenti produrre e conservare, come riconoscere un'operazione sospetta. Guida pratica D.Lgs. 231/2007.</p>
-<h2>Contenuto dell'articolo</h2>
-<ul>
-<li>Chi è obbligato: Organismo di mediazione, mediatore designato e avvocato (di regola esente)</li>
-<li>L'adeguata verifica della clientela: identificazione, titolare effettivo, PEP, misure semplificata/ordinaria/rafforzata</li>
-<li>Il fascicolo: i sei documenti da produrre e la conservazione decennale (art. 31 D.Lgs. 231/2007)</li>
-<li>Come riconoscere un'operazione sospetta e perché non va mai riportata nel verbale</li>
-</ul>`,
-
 "/trasferimento-immobiliare-mediazione": `
 <h1>Trasferimento immobiliare in mediazione: quanto si risparmia su notaio e imposte</h1>
 <p>Trasferimento immobiliare in mediazione: imposta di registro esente fino a €100.000, quando serve il notaio, quanto si risparmia sulla prima casa rispetto alla compravendita ordinaria. Guida con esempi di calcolo.</p>
@@ -418,20 +406,20 @@ const PAGE_CONTENT: Record<string, string> = {
 <p>Lo strumento genera automaticamente i modelli del fascicolo riservato (informativa, modulo di adeguata verifica, scheda di valutazione del rischio, dichiarazione del cliente, foglio di annotazione, checklist) a partire dai dati inseriti, con una modalità di lettura assistita dei documenti (documento d'identità, visura camerale, istanza di mediazione) e un motore trigger per i sette segnali di anomalia UIF.</p>`,
 
 "/antiriciclaggio-guida": `
-<h1>Guida Semplice all'Antiriciclaggio in Mediazione — D.Lgs. 231/2007</h1>
-<p>Guida in linguaggio semplice agli obblighi antiriciclaggio per mediatori, Organismi di mediazione e avvocati: chi è obbligato, cosa fare al tavolo di mediazione, come si valuta il rischio e quando scatta la segnalazione di operazioni sospette.</p>
-<h2>Chi è obbligato e chi è escluso</h2>
+<h1>Antiriciclaggio in mediazione — guida agli obblighi e alla compilazione</h1>
+<p>Due guide in una: la Parte 1 spiega in linguaggio semplice gli obblighi antiriciclaggio per mediatori, Organismi di mediazione e avvocati (D.Lgs. 231/2007); la Parte 2 spiega passo per passo come si compila lo strumento che genera i modelli del fascicolo.</p>
+<h2>Parte 1 — Guida agli obblighi di legge</h2>
+<h3>Chi è obbligato, e chi no</h3>
 <p>L'Organismo di mediazione e il mediatore designato sono soggetti obbligati ai sensi dell'art. 3, c. 5, lett. g), D.Lgs. 231/2007. L'avvocato che assiste o difende una parte in mediazione è invece escluso dagli obblighi, poiché l'attività difensiva non rientra nel perimetro della norma (Regola Tecnica n. 2 CNF; art. 35, c. 5, D.Lgs. 231/2007), salvo che l'incarico sfoci in un'operazione economica autonoma tipica dell'art. 3, c. 4, lett. c).</p>
-<h2>Cosa fare al tavolo di mediazione</h2>
-<ul>
-<li>Identificare la parte e verificare il documento di riconoscimento</li>
-<li>Individuare il titolare effettivo e verificare l'eventuale qualifica di persona politicamente esposta (PEP)</li>
-<li>Valutare il rischio della pratica (natura giuridica, area geografica, titolarità effettiva, tipologia di operazione)</li>
-<li>Applicare le misure di adeguata verifica semplificata, ordinaria o rafforzata in base al rischio rilevato</li>
-</ul>
-<h2>Segnalazione di operazioni sospette</h2>
-<p>Se emergono indicatori di anomalia (tra cui i sette segnali individuati dalla UIF), il mediatore valuta la trasmissione al Responsabile Antiriciclaggio dell'Organismo. Il livello di rischio e l'eventuale segnalazione non vanno mai riportati nel verbale di mediazione, che resta un atto conoscibile dalle parti: restano solo nel fascicolo riservato, conservato per 10 anni ai sensi degli artt. 31-32 D.Lgs. 231/2007.</p>
-<h2>Compilazione dei modelli</h2>
+<h3>L'adeguata verifica della clientela</h3>
+<p>Identificazione della parte, individuazione del titolare effettivo, verifica dell'eventuale qualifica di persona politicamente esposta (PEP), valutazione del rischio della pratica e applicazione delle misure semplificata, ordinaria o rafforzata in base al rischio rilevato.</p>
+<h3>Il fascicolo: i documenti da produrre e conservare</h3>
+<p>Il fascicolo riservato va conservato per 10 anni ai sensi degli artt. 31-32 D.Lgs. 231/2007.</p>
+<h3>Riconoscere un'operazione sospetta</h3>
+<p>Se emergono indicatori di anomalia (tra cui i sette segnali individuati dalla UIF), il mediatore valuta la trasmissione al Responsabile Antiriciclaggio dell'Organismo. Il livello di rischio e l'eventuale segnalazione non vanno mai riportati nel verbale di mediazione, che resta un atto conoscibile dalle parti: restano solo nel fascicolo riservato.</p>
+<h3>Come si traduce in pratica</h3>
+<p>La Parte 2 di questa guida spiega come compilare lo strumento che genera automaticamente i documenti del fascicolo a partire da questi obblighi.</p>
+<h2>Parte 2 — Guida alla compilazione dello strumento</h2>
 <p>calcolomediazione.it mette a disposizione uno strumento gratuito che genera automaticamente i sei documenti del fascicolo riservato (informativa, modulo di adeguata verifica, scheda di valutazione del rischio, dichiarazione del cliente, foglio di annotazione, checklist), con guida passo per passo alla compilazione per Organismo, mediatore e avvocato di parte.</p>`,
 
 "/privacy-policy": `
@@ -626,6 +614,19 @@ const newUrl = `https://${host.replace(/^www\./, "")}${req.originalUrl}`;
 return res.redirect(301, newUrl);
 }
 next();
+});
+
+// ─── REDIRECT PAGINE ELIMINATE (301 permanente) ───────────────────────────
+// /antiriciclaggio-mediazione-obblighi (articolo React sugli obblighi di legge)
+// e antiriciclaggio-compilazione.html (guida statica alla compilazione) sono
+// state accorpate in un'unica pagina, /antiriciclaggio-guida, divisa in
+// Parte 1 (obblighi) e Parte 2 (compilazione). Redirect permanenti per non
+// rompere eventuali link/backlink già indicizzati verso i vecchi URL.
+app.get("/antiriciclaggio-mediazione-obblighi", (_req, res) => {
+res.redirect(301, "/antiriciclaggio-guida#obblighi");
+});
+app.get("/antiriciclaggio-compilazione.html", (_req, res) => {
+res.redirect(301, "/antiriciclaggio-guida.html#compilazione");
 });
 
 // ─── BOT MIDDLEWARE — deve stare PRIMA di tutto il resto ─────────────────

@@ -17,7 +17,7 @@ export const SEO_CONTENT: Record<string, string> = {
 <li><a href="/credito-imposta">Credito d'Imposta e Gratuito Patrocinio</a> - Art. 20 D.Lgs. 28/2010, D.M. 1 agosto 2023</li>
 <li><a href="/strategie-negoziazione">Strategie di Negoziazione</a> - MAAN/BATNA, negoziazione integrativa, ZOPA, ancoraggio</li>
 <li><a href="/antiriciclaggio">Antiriciclaggio in Mediazione</a> - Obblighi antiriciclaggio (D.Lgs. 231/2007) e compilazione automatica dei modelli del fascicolo: adeguata verifica, titolare effettivo, scheda rischio, dichiarazione cliente e SOS</li>
-<li><a href="/antiriciclaggio-guida">Antiriciclaggio - Guida in linguaggio semplice</a> - Guida pratica agli obblighi antiriciclaggio in mediazione: chi e' obbligato, ispezioni della Guardia di Finanza, cosa fare e cosa mettere a verbale</li>
+<li><a href="/antiriciclaggio-guida">Antiriciclaggio - Guida agli obblighi e alla compilazione</a> - Chi e' obbligato, adeguata verifica, fascicolo, operazioni sospette, e come si compila lo strumento</li>
 <li><a href="/calcolo-assegni">Calcolo Assegni</a> - Stima orientativa dell'assegno di mantenimento del coniuge, dell'assegno divorzile e del contributo per i figli</li>
 </ul>
 <h2>Caratteristiche principali</h2>
@@ -194,11 +194,6 @@ export const SEO_CONTENT: Record<string, string> = {
 <p>Lo strumento genera in automatico i modelli del fascicolo riservato (informativa, modulo di adeguata verifica, scheda di valutazione del rischio, dichiarazione del cliente, foglio di annotazione) a partire dai dati inseriti, con anche una modalita' di lettura assistita dei documenti (identita', visura camerale, istanza di mediazione).</p>
 </div>`,
 
-  "/antiriciclaggio-mediazione-obblighi": `<div style="max-width:900px;margin:0 auto;padding:40px 20px;font-family:Inter,sans-serif;color:#2d2926">
-<h1 style="font-size:2rem;font-family:'Space Grotesk',sans-serif">Antiriciclaggio per mediatori e avvocati: la guida pratica agli obblighi D.Lgs. 231/2007</h1>
-<p>Antiriciclaggio mediazione obblighi: chi è tenuto all'adeguata verifica del mediatore, quando l'avvocato è esente, quali documenti produrre e conservare, come riconoscere un'operazione sospetta. Guida pratica D.Lgs. 231/2007.</p>
-</div>`,
-
   "/trasferimento-immobiliare-mediazione": `<div style="max-width:900px;margin:0 auto;padding:40px 20px;font-family:Inter,sans-serif;color:#2d2926">
 <h1 style="font-size:2rem;font-family:'Space Grotesk',sans-serif">Trasferimento immobiliare in mediazione: quanto si risparmia su notaio e imposte</h1>
 <p>Trasferimento immobiliare in mediazione: imposta di registro esente fino a €100.000, quando serve il notaio, quanto si risparmia sulla prima casa rispetto alla compravendita ordinaria. Guida con esempi di calcolo.</p>
@@ -267,19 +262,32 @@ export const SEO_CONTENT: Record<string, string> = {
 </div>`,
 
   "/antiriciclaggio-guida": `<div style="max-width:900px;margin:0 auto;padding:40px 20px;font-family:Inter,sans-serif;color:#2d2926">
-<h1 style="font-size:2rem;font-family:'Space Grotesk',sans-serif">Antiriciclaggio in Mediazione — Guida alla Compilazione</h1>
+<h1 style="font-size:2rem;font-family:'Space Grotesk',sans-serif">Antiriciclaggio in mediazione — guida agli obblighi e alla compilazione</h1>
+<p>Due guide in una: la Parte 1 spiega in linguaggio semplice gli obblighi antiriciclaggio per mediatori, Organismi di mediazione e avvocati (D.Lgs. 231/2007); la Parte 2 spiega passo per passo come si compila lo strumento che genera i modelli del fascicolo.</p>
+<h2>Parte 1 — Guida agli obblighi di legge</h2>
+<h3>Chi è obbligato, e chi no</h3>
+<p>L'Organismo di mediazione e il mediatore designato sono soggetti obbligati ai sensi dell'art. 3, c. 5, lett. g), D.Lgs. 231/2007. L'avvocato che assiste o difende una parte in mediazione e' invece escluso dagli obblighi, salvo che l'incarico sfoci in un'operazione economica autonoma ex art. 3, c. 4, lett. c).</p>
+<h3>L'adeguata verifica della clientela</h3>
+<p>Identificazione, titolare effettivo, verifica PEP, valutazione del rischio e misure di adeguata verifica semplificata, ordinaria o rafforzata.</p>
+<h3>Il fascicolo: i documenti da produrre e conservare</h3>
+<p>Conservazione decennale ai sensi degli artt. 31-32 D.Lgs. 231/2007.</p>
+<h3>Riconoscere un'operazione sospetta</h3>
+<p>I sette segnali di anomalia UIF e perche' il livello di rischio non va mai riportato nel verbale di mediazione.</p>
+<h3>Come si traduce in pratica</h3>
+<p>Dagli obblighi di legge alla compilazione concreta dei modelli, spiegata nella Parte 2.</p>
+<h2>Parte 2 — Guida alla compilazione dello strumento</h2>
 <p>Guida pratica passo per passo alla compilazione dello strumento antiriciclaggio di calcolomediazione.it: cosa fa l'Organismo di mediazione, cosa fa il Mediatore designato, cosa fa l'Avvocato di parte, sezione per sezione, con motore unico di compilazione automatica multi-documento e multi-parte, salvataggio automatico ed esportazione in Word.</p>
-<h2>La logica dello strumento: una procedura, piu parti</h2>
+<h3>La logica dello strumento: una procedura, piu parti</h3>
 <p>Una mediazione coinvolge sempre almeno due soggetti, spesso piu di due. I dati della procedura nel suo complesso (Organismo, numero di procedura, date, mediatore designato, oggetto della controversia) si inseriscono una sola volta; i dati di ciascuna parte (identificazione, rischio, adeguata verifica) si compilano separatamente per ognuna, con il pulsante "Nuova parte per questa procedura" o con il motore di compilazione automatica che individua da solo istanti e aderenti dai documenti caricati.</p>
-<h2>Chi compila cosa</h2>
+<h3>Chi compila cosa</h3>
 <ul>
 <li>Organismo di mediazione (o segreteria): dati del procedimento, numero di iscrizione, legale rappresentante, numero di procedura, date di deposito</li>
 <li>Mediatore designato: identificazione della parte, titolare effettivo, qualifica PEP, valutazione del rischio, esame delle anomalie, motore trigger UIF sui sette segnali T1-T7</li>
 <li>Avvocato di parte: compila solo se l'incarico sfocia in un'operazione economica autonoma ex art. 3, c. 4, lett. c) D.Lgs. 231/2007; nella generalita dei casi l'attivita difensiva e esclusa dagli obblighi antiriciclaggio</li>
 </ul>
-<h2>Le 18 sezioni del modulo</h2>
+<h3>Le 18 sezioni del modulo</h3>
 <p>Il modulo si compone di 18 sezioni, dai dati del procedimento e della parte, alla verifica PEP e del titolare effettivo, alla valutazione del rischio e delle anomalie, fino alla verifica di secondo livello del Responsabile Antiriciclaggio (RAR).</p>
-<h2>Funzioni trasversali</h2>
+<h3>Funzioni trasversali</h3>
 <ul>
 <li>Gestione di piu parti nella stessa procedura, con dati comuni salvati una sola volta</li>
 <li>Motore unico di compilazione automatica dai documenti del fascicolo, con individuazione di tutte le parti (istanti e aderenti)</li>
@@ -287,7 +295,7 @@ export const SEO_CONTENT: Record<string, string> = {
 <li>Esportazione e importazione dei dati in formato .json</li>
 <li>Generazione, stampa e download del fascicolo in Word o HTML</li>
 </ul>
-<p>Tutti i dati restano nel browser di chi compila: nulla viene inviato a calcolomediazione.it, salvo la modalita facoltativa ad alta precisione con AI, che trasmette i documenti caricati all'API del fornitore di intelligenza artificiale scelto dall'utente.</p>
+<p>Tutti i dati restano nel browser di chi compila: nulla viene inviato a calcolomediazione.it, salvo la modalita facoltativa con assistente AI, che trasmette i documenti caricati all'API del fornitore di intelligenza artificiale scelto dall'utente.</p>
 </div>`,
 
   "/privacy-policy": `<div style="max-width:900px;margin:0 auto;padding:40px 20px;font-family:Inter,sans-serif;color:#2d2926">
