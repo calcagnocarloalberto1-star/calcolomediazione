@@ -23,6 +23,56 @@ import { SeoHead } from "@/components/SeoHead";
 //
 // Nessuna modifica ai contenuti informativi della guida: cambia solo il
 // meccanismo con cui vengono mostrati nella pagina.
+// FAQ della guida (Parte 2, sezione 7): mantenuto qui in sincronia con il
+// testo visibile in client/public/antiriciclaggio-guida.html (#faq) per poter
+// esporre lo schema.org FAQPage lato client tramite SeoHead — lo stesso
+// pattern già usato in FAQ.tsx/StrategieNegoziazione.tsx, indipendente dal
+// fetch del markup statico (che inietta solo <body>, non <head>).
+const GUIDA_FAQ = [
+  {
+    q: "I dati inseriti vengono inviati a calcolomediazione.it?",
+    a: "Mai. Tutto resta nel browser del dispositivo usato per compilare (localStorage): non c'è alcun invio a un server, né di calcolomediazione.it né di terzi.",
+  },
+  {
+    q: "Cambio computer o browser: ritrovo i dati?",
+    a: "No, il salvataggio automatico è locale a quel browser: non esiste più una funzione di esportazione/importazione dei dati compilati. Per portare il lavoro su un altro dispositivo genera e scarica il fascicolo in Word (sezione 19) e trasmettilo, oppure ricompila i dati sull'altro computer.",
+  },
+  {
+    q: "Il pulsante \"Carica questi dati\" non compare: perché?",
+    a: "Il salvataggio e il recupero sono legati al numero di procedura: finché il campo \"N. procedura / R.G. mediazione\" è vuoto, lo strumento non sa a quale pratica associare i dati salvati.",
+  },
+  {
+    q: "Come tengo distinte le posizioni di più parti nella stessa procedura?",
+    a: "Con \"+ Nuova parte per questa procedura\": ogni parte resta salvata separatamente con il proprio nome, e nel box \"Procedure con dati salvati\" le trovi tutte elencate sotto lo stesso numero di procedura.",
+  },
+  {
+    q: "Rischio di perdere tutto se cancello i dati di navigazione del browser?",
+    a: "Sì: essendo un salvataggio solo locale, cancellando la cronologia/i dati di navigazione si perde anche quanto salvato qui. Per una conservazione affidabile nel tempo, dopo aver generato i modelli usa sempre una delle sezioni \"Genera o stampa i modelli\" (sezione 19) per scaricare il fascicolo in Word o stamparlo.",
+  },
+  {
+    q: "Il motore ha letto male un dato, o sbagliato il ruolo di una parte: cosa faccio?",
+    a: "Nell'elenco delle parti individuate, prima di applicare, correggi il ruolo con il menù a tendina se necessario; una volta applicata una parte, i suoi campi restano comunque normali campi del modulo, modificabili a mano come tutti gli altri prima di generare il fascicolo definitivo.",
+  },
+  {
+    q: "Il motore individua tutte le parti, anche se sono più di due?",
+    a: "Sì: legge sistematicamente tutti i documenti caricati e cerca sia gli istanti sia gli aderenti, quanti che siano — non si ferma alla prima parte istante. Applica ciascuna parte trovata una alla volta con \"Applica questa parte ai campi\", scaricando o stampando il fascicolo generato prima di passare alla successiva.",
+  },
+  {
+    q: "Posso generare solo un documento, senza tutto il fascicolo?",
+    a: "Sì: scegli il documento che ti serve nel selettore in cima alla pagina (Modulo AV, Scheda rischio, Dichiarazione del cliente o Modello ufficiale COA Genova) e la sezione 19 mostrerà un solo pulsante di generazione per quel documento. Il fascicolo completo resta disponibile come opzione avanzata in \"Altre opzioni\".",
+  },
+];
+
+const GUIDA_FAQ_JSONLD = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: GUIDA_FAQ.map((item) => ({
+    "@type": "Question",
+    name: item.q,
+    acceptedAnswer: { "@type": "Answer", text: item.a },
+  })),
+};
+
 export default function AntiriciclaggioGuida() {
   const containerRef = useRef<HTMLDivElement>(null);
   const [cacheBust] = useState<number>(() => Date.now());
@@ -102,6 +152,7 @@ export default function AntiriciclaggioGuida() {
         title="Antiriciclaggio in Mediazione — Guida agli obblighi e alla compilazione"
         description="Due guide in una: gli obblighi antiriciclaggio in mediazione in linguaggio semplice (chi è obbligato, adeguata verifica, fascicolo da conservare, come riconoscere un'operazione sospetta) e la guida pratica alla compilazione dello strumento, passo per passo. Per avvocati e organismi di mediazione."
         canonical="https://calcolomediazione.it/antiriciclaggio-guida"
+        jsonLd={GUIDA_FAQ_JSONLD}
       />
       {error && (
         <div className="max-w-2xl mx-auto my-12 border-2 border-foreground bg-amber-50 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] p-6 text-center">
