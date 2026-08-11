@@ -11,10 +11,14 @@ export const SEO_CONTENT: Record<string, string> = {
 <li><a href="/calcolatore">Calcolatore Indennita Mediazione D.M. 150/2023</a> - Calcola spese di avvio, indennita, compensi avvocato, costi notarili con esenzione prima casa</li>
 <li><a href="/analisi-caso-ai">Analisi AI del Caso di Mediazione</a> - Analisi giuridica completa, MAAN/BATNA, bias cognitivi, bozza accordo, confronto economico</li>
 <li><a href="/confronto-costi">Confronto Costi Mediazione vs Processo</a> - Primo grado, appello e cassazione con stima CTU e parametri forensi D.M. 55/2014</li>
+<li><a href="/costi-notarili">Costi Notarili</a> - Stima dei puri costi notarili: onorario, IVA, cassa, visure, imposte di registro/ipotecaria/catastale</li>
 <li><a href="/generatore-procura">Generatore Procura Speciale per Mediazione</a> - Conforme al D.Lgs. 28/2010</li>
 <li><a href="/giurisprudenza">Database Giurisprudenza Mediazione</a> - Sentenze di Cassazione, Tribunali e Corti d'Appello</li>
 <li><a href="/credito-imposta">Credito d'Imposta e Gratuito Patrocinio</a> - Art. 20 D.Lgs. 28/2010, D.M. 1 agosto 2023</li>
 <li><a href="/strategie-negoziazione">Strategie di Negoziazione</a> - MAAN/BATNA, negoziazione integrativa, ZOPA, ancoraggio</li>
+<li><a href="/antiriciclaggio">Antiriciclaggio in Mediazione</a> - Obblighi antiriciclaggio (D.Lgs. 231/2007) e compilazione automatica dei modelli del fascicolo: adeguata verifica, titolare effettivo, scheda rischio, dichiarazione cliente e SOS</li>
+<li><a href="/antiriciclaggio-guida">Antiriciclaggio - Guida in linguaggio semplice</a> - Guida pratica agli obblighi antiriciclaggio in mediazione: chi e' obbligato, ispezioni della Guardia di Finanza, cosa fare e cosa mettere a verbale</li>
+<li><a href="/calcolo-assegni">Calcolo Assegni</a> - Stima orientativa dell'assegno di mantenimento del coniuge, dell'assegno divorzile e del contributo per i figli</li>
 </ul>
 <h2>Caratteristiche principali</h2>
 <ul>
