@@ -6,6 +6,22 @@
 <link rel="canonical" href="https://calcolomediazione.it/antiriciclaggio-guida">
 <title>Antiriciclaggio in Mediazione — Guida in linguaggio semplice | calcolomediazione.it</title>
 <meta name="description" content="Guida in linguaggio semplice agli obblighi antiriciclaggio nella mediazione civile: chi è obbligato, ispezioni della Guardia di Finanza, cosa fare e cosa mettere a verbale. Per avvocati e organismi di mediazione.">
+<script type="application/ld+json">
+{
+"@context": "https://schema.org",
+"@type": "FAQPage",
+"mainEntity": [
+{"@type": "Question", "name": "I dati inseriti vengono inviati a calcolomediazione.it?", "acceptedAnswer": {"@type": "Answer", "text": "Mai. Tutto resta nel browser del dispositivo usato per compilare (localStorage): non c'è alcun invio a un server, né di calcolomediazione.it né di terzi."}},
+{"@type": "Question", "name": "Cambio computer o browser: ritrovo i dati?", "acceptedAnswer": {"@type": "Answer", "text": "No, il salvataggio automatico è locale a quel browser: non esiste più una funzione di esportazione/importazione dei dati compilati. Per portare il lavoro su un altro dispositivo genera e scarica il fascicolo in Word (sezione 19) e trasmettilo, oppure ricompila i dati sull'altro computer."}},
+{"@type": "Question", "name": "Il pulsante \"Carica questi dati\" non compare: perché?", "acceptedAnswer": {"@type": "Answer", "text": "Il salvataggio e il recupero sono legati al numero di procedura: finché il campo \"N. procedura / R.G. mediazione\" è vuoto, lo strumento non sa a quale pratica associare i dati salvati."}},
+{"@type": "Question", "name": "Come tengo distinte le posizioni di più parti nella stessa procedura?", "acceptedAnswer": {"@type": "Answer", "text": "Con \"+ Nuova parte per questa procedura\": ogni parte resta salvata separatamente con il proprio nome, e nel box \"Procedure con dati salvati\" le trovi tutte elencate sotto lo stesso numero di procedura."}},
+{"@type": "Question", "name": "Rischio di perdere tutto se cancello i dati di navigazione del browser?", "acceptedAnswer": {"@type": "Answer", "text": "Sì: essendo un salvataggio solo locale, cancellando la cronologia/i dati di navigazione si perde anche quanto salvato qui. Per una conservazione affidabile nel tempo, dopo aver generato i modelli usa sempre una delle sezioni \"Genera o stampa i modelli\" (sezione 19) per scaricare il fascicolo in Word o stamparlo."}},
+{"@type": "Question", "name": "Il motore ha letto male un dato, o sbagliato il ruolo di una parte: cosa faccio?", "acceptedAnswer": {"@type": "Answer", "text": "Nell'elenco delle parti individuate, prima di applicare, correggi il ruolo con il menù a tendina se necessario; una volta applicata una parte, i suoi campi restano comunque normali campi del modulo, modificabili a mano come tutti gli altri prima di generare il fascicolo definitivo."}},
+{"@type": "Question", "name": "Il motore individua tutte le parti, anche se sono più di due?", "acceptedAnswer": {"@type": "Answer", "text": "Sì: legge sistematicamente tutti i documenti caricati e cerca sia gli istanti sia gli aderenti, quanti che siano — non si ferma alla prima parte istante. Applica ciascuna parte trovata una alla volta con \"Applica questa parte ai campi\", scaricando o stampando il fascicolo generato prima di passare alla successiva."}},
+{"@type": "Question", "name": "Posso generare solo un documento, senza tutto il fascicolo?", "acceptedAnswer": {"@type": "Answer", "text": "Sì: scegli il documento che ti serve nel selettore in cima alla pagina (Modulo AV, Scheda rischio, Dichiarazione del cliente o Modello ufficiale COA Genova) e la sezione 19 mostrerà un solo pulsante di generazione per quel documento. Il fascicolo completo resta disponibile come opzione avanzata in \"Altre opzioni\"."}}
+]
+}
+</script>
 <style>
 :root{
 --navy:#13161b; --blue:#a03317; --accentDark:#861600; --light:#ffe5d7; --line:#ddd6d1;
@@ -27,6 +43,7 @@ a.btn.primary{background:var(--blue);color:#fff;border-color:var(--blue)}
 a.btn:hover{border-color:var(--blue)}
 h2{font-size:19px;color:var(--navy);margin:28px 0 8px;border-bottom:2px solid var(--blue);padding-bottom:6px}
 h3{font-size:15.5px;color:var(--accentDark);margin:18px 0 6px}
+h4{font-size:13.5px;color:var(--navy);margin:14px 0 4px;font-weight:700}
 p{margin:8px 0}
 b{color:var(--navy)}
 .lead{color:var(--muted);font-size:14.5px}
@@ -51,6 +68,16 @@ li{margin:5px 0}
 .toc ol{margin:6px 0 0;padding-left:20px}
 .rolecard{border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin:8px 0;background:#fff}
 .rolecard b{display:block;color:var(--navy);font-size:14.5px;margin-bottom:2px}
+.ctacallout{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:14px;background:linear-gradient(135deg,var(--navy),var(--blue));color:#fff;border-radius:12px;padding:16px 20px;margin:16px 0}
+.ctacallout .txt b{color:#fff;display:block;font-size:15.5px;margin-bottom:2px}
+.ctacallout .txt span{color:#f3e4dc;font-size:13px}
+.ctacallout a.btn.big{background:#fff;color:var(--blue);border-color:#fff;font-size:15px;padding:12px 20px;white-space:nowrap;box-shadow:0 3px 10px rgba(0,0,0,.15)}
+.ctacallout a.btn.big:hover{background:var(--light)}
+.pathcell b{display:block;color:var(--navy)}
+.pathcell i{display:block;color:var(--muted);font-weight:400;font-size:12.5px;margin-top:2px}
+.relres{display:flex;flex-wrap:wrap;gap:8px 14px;margin:8px 0}
+.relres a{color:var(--blue);text-decoration:none;font-size:13.5px;font-weight:600}
+.relres a:hover{text-decoration:underline}
 </style>
 </head>
 <body>
@@ -64,13 +91,18 @@ li{margin:5px 0}
 <div class="body">
 
 <div class="toolbar">
-<a class="btn primary" href="/antiriciclaggio.html">↩ Vai allo strumento (modelli + motore UIF)</a>
+<a class="btn primary" href="/antiriciclaggio.html">📄 Vai al generatore dei documenti</a>
 <a class="btn" href="#obblighi">📖 Parte 1 — Obblighi di legge</a>
 <a class="btn" href="#compilazione">📝 Parte 2 — Guida alla compilazione</a>
 <a class="btn" href="/">Tutti gli strumenti</a>
 </div>
 
 <p class="lead">Questa pagina raccoglie in un solo posto tutto ciò che serve su questo strumento: la <b>Parte 1</b> spiega gli obblighi di legge in linguaggio semplice (chi è obbligato, adeguata verifica, fascicolo da conservare, come riconoscere un'operazione sospetta); la <b>Parte 2</b> spiega <b>come si compila</b> lo strumento, campo per campo e ruolo per ruolo — gestione di più parti nella stessa procedura, motore unico di compilazione automatica dai documenti del fascicolo, salvataggio e ripresa del lavoro, esportazione e download in Word.</p>
+
+<div class="ctacallout">
+<div class="txt"><b>Devi solo generare un documento?</b><span>Vai dritto al generatore: scegli il modulo che ti serve e ottieni subito il file compilato.</span></div>
+<a class="btn big" href="/antiriciclaggio.html">📄 Vai al generatore dei documenti →</a>
+</div>
 
 <div class="toc">
 <b>In questa pagina:</b>
@@ -92,6 +124,7 @@ li{margin:5px 0}
 <li><a href="#avvocato">Cosa compila l'Avvocato di parte</a></li>
 <li><a href="#sezioni">Le 19 sezioni del modulo, una per una</a></li>
 <li><a href="#funzioni">Le funzioni trasversali (motore di compilazione automatica, multi-parte, salvataggio, Word)</a></li>
+<li><a href="#risorse">Altre risorse del sito</a></li>
 <li><a href="#faq">Domande frequenti</a></li>
 </ol>
 </li>
@@ -123,12 +156,17 @@ li{margin:5px 0}
 <p>Nel concreto, la compilazione si distribuisce tra i soggetti coinvolti: l'Organismo (o la segreteria) raccoglie i dati comuni alla procedura e, quando disponibile, la documentazione allo sportello; il mediatore esegue l'identificazione, la valutazione del rischio e l'esame delle anomalie ad ogni incontro; l'avvocato, nei rari casi in cui interviene, compila solo i propri dati come rappresentante della parte. Per una procedura con più parti, i dati comuni si inseriscono una sola volta, mentre le posizioni di ciascun soggetto — istante, aderente, eventuali terzi — restano distinte e vanno tenute separate lungo tutto il fascicolo. Per il dettaglio pratico, campo per campo, vedi la <a href="#compilazione">Parte 2 — Guida alla compilazione</a> qui sotto.</p>
 <p style="font-size:12px;color:var(--muted)">Le informazioni di questa Parte 1 hanno carattere informativo e divulgativo e sono aggiornate alla normativa vigente al momento della pubblicazione. Non costituiscono consulenza legale. Per la valutazione degli obblighi antiriciclaggio nel proprio caso specifico si raccomanda di consultare un avvocato abilitato o il Responsabile Antiriciclaggio del proprio Organismo di mediazione.</p>
 
+<div class="ctacallout">
+<div class="txt"><b>Obblighi chiari? Passa all'azione.</b><span>Il generatore compila da solo il Modulo di Adeguata Verifica, la Scheda di valutazione del rischio e gli altri documenti del fascicolo.</span></div>
+<a class="btn big" href="/antiriciclaggio.html">📄 Apri il generatore dei documenti →</a>
+</div>
+
 <h2 id="compilazione">Parte 2 — Guida alla compilazione dello strumento</h2>
 <p class="lead">Questa parte non ripete la normativa (v. Parte 1 qui sopra): spiega <b>come si compila</b> lo strumento, campo per campo e ruolo per ruolo, comprese le funzioni più recenti — gestione di più parti nella stessa procedura, motore unico di compilazione automatica dai documenti del fascicolo (individua da solo istanti e aderenti su tutto il fascicolo caricato), salvataggio e ripresa del lavoro, cronologia delle comunicazioni del mediatore, esportazione e download in Word.</p>
 
 <h3 id="logica">1. La logica dello strumento: una procedura, più parti</h3>
 <p>Una mediazione coinvolge sempre almeno due soggetti — l'istante e l'invitato/aderente, spesso più di due (più istanti, più aderenti). Lo strumento riflette questa realtà: i dati che riguardano <b>la procedura nel suo complesso</b> (Organismo, numero di procedura, date, mediatore designato, oggetto della controversia) si inseriscono <b>una sola volta</b>; i dati che riguardano <b>ciascuna parte</b> (identificazione, rischio, adeguata verifica) si compilano <b>separatamente per ognuna</b>. Per farlo hai due strade, che puoi anche combinare: il pulsante <b>"+ Nuova parte per questa procedura"</b> per passare manualmente da una parte all'altra, oppure — se usi il motore di compilazione automatica descritto al punto 6.2 — lasciare che sia lo strumento stesso a proporti <b>l'elenco di tutte le parti individuate</b> nei documenti caricati (istanti e aderenti), passando dall'una all'altra con un clic.</p>
-<p>In alto trovi tre schede di ruolo — <b>Organismo di mediazione</b>, <b>Mediatore designato</b>, <b>Avvocato di parte</b> — che non bloccano nessun campo, ma servono a marcare da chi provengono i dati inseriti e a orientarti su cosa compilare, secondo le sezioni seguenti. Alla fine, nella sezione 19 <b>"Genera o stampa i modelli"</b>, lo strumento produce automaticamente sei documenti per la parte corrente: <i>Informativa AML/privacy, Modulo di adeguata verifica, Scheda di valutazione del rischio, Dichiarazione del cliente, Foglio di annotazione, Checklist</i> — e, se il rischio risulta <b>alto</b>, anche un <i>Promemoria SOS riservato</i> per il Responsabile Antiriciclaggio (RAR).</p>
+<p>In alto trovi tre schede di ruolo — <b>Organismo di mediazione</b>, <b>Mediatore designato</b>, <b>Avvocato di parte</b> — che non bloccano nessun campo, ma servono a marcare da chi provengono i dati inseriti e a orientarti su cosa compilare, secondo le sezioni seguenti. Prima ancora di iniziare a compilare, in cima alla pagina puoi scegliere <b>che documento ti serve</b> (Modulo di Adeguata Verifica, Scheda di valutazione del rischio, Dichiarazione del cliente, Modello ufficiale COA Genova, oppure il Fascicolo AML completo come opzione avanzata): la sezione 19 <b>"Genera o stampa i modelli"</b> mostra allora un solo pulsante, quello relativo al documento scelto. Il <i>Promemoria SOS riservato</i> per il Responsabile Antiriciclaggio (RAR) non è mai generato automaticamente insieme agli altri: compare in un'area riservata a parte, visibile solo quando la valutazione di rischio risulta <b>alta</b> (v. punto 6.5).</p>
 <div class="box ok"><span class="t">Da ricordare sempre</span>Tutti i dati restano <b>solo nel browser</b> di chi compila: nulla viene inviato a calcolomediazione.it né ad alcun server. Questo significa anche che i dati non si spostano da soli tra un computer e l'altro: per condividerli tra postazioni diverse (es. segreteria e mediatore) genera e scarica il fascicolo in Word (sezione 19) e trasmettilo, oppure ricompila i dati sull'altro dispositivo.</div>
 
 <h3 id="organismo">2. Cosa compila l'Organismo di mediazione (o la segreteria)</h3>
@@ -170,8 +208,8 @@ li{margin:5px 0}
 <p>Nella generalità dei casi l'avvocato che assiste o difende una parte in mediazione <b>non ha obblighi antiriciclaggio</b>: l'attività difensiva è esclusa (Regola Tecnica n. 2 CNF; art. 35, c. 5, D.Lgs. 231/2007) e non c'è nulla da compilare in questa scheda — per il quadro completo v. <a href="#chi-obbligato">Chi è obbligato, e chi no</a> nella Parte 1 qui sopra.</p>
 <p>Gli obblighi si riattivano solo se l'incarico dell'avvocato sfocia in un'<b>operazione economica autonoma tipica dell'art. 3, c. 4, lett. c)</b> — ad esempio un trasferimento immobiliare collegato all'accordo. In quel caso, per la parte che assiste:</p>
 <ul>
-<li>Compila i propri dati nella <b>Sezione 5 — Rappresentante o soggetto autorizzato ad agire per la parte</b>, indicando come titolo di intervento "Difensore" o "Procuratore speciale", con i propri riferimenti anagrafici, i poteri conferiti (rappresentare, formulare proposte, disporre del diritto, sottoscrivere l'accordo) e il documento da cui derivano (procura alle liti, procura speciale/notarile).</li>
-<li>Può caricare la propria <b>tessera professionale</b> o la <b>procura alle liti/mandato a conciliare</b> nel motore di compilazione automatica per precompilare questi campi (v. punto 6.2).</li>
+<li>Compila i propri dati nella <b>Sezione 5 — Rappresentante o soggetto autorizzato ad agire per la parte</b>, indicando come titolo di intervento "Difensore" o "Procuratore speciale", con i propri riferimenti anagrafici, i poteri conferiti (rappresentare, formulare proposte, disporre del diritto, sottoscrivere l'accordo) e il documento da cui derivano (procura alle liti, <a href="/procura-sostanziale-mediazione">procura speciale/notarile</a>).</li>
+<li>Può caricare la propria <b>tessera professionale</b> o la <b>procura alle liti/mandato a conciliare</b> nel motore di compilazione automatica per precompilare questi campi (v. punto 6.2) — se devi ancora predisporla, puoi generarla con il <a href="/generatore-procura">generatore di procure</a> del sito.</li>
 </ul>
 <p>Le sezioni relative alla valutazione del rischio, alle anomalie e alla trasmissione al RAR (9-16) restano di norma di competenza del mediatore/Organismo, non dell'avvocato, anche quando quest'ultimo interviene per un'operazione dell'art. 3 c. 4 lett. c).</p>
 
@@ -197,15 +235,15 @@ li{margin:5px 0}
 <tr><td class="n">16</td><td>Trasmissione interna</td><td>Invio della scheda al RAR/Referente SOS, se necessario</td><td class="who">Mediatore</td></tr>
 <tr><td class="n">17</td><td>Dichiarazioni della parte</td><td>Veridicità dei dati, impegno ad aggiornare, presa visione privacy</td><td class="who">Mediatore (raccoglie la sottoscrizione)</td></tr>
 <tr><td class="n">18</td><td>Verifica del Responsabile dell'Organismo/RAR</td><td>Controllo di secondo livello, facoltativo in fase di compilazione al tavolo</td><td class="who">Responsabile Antiriciclaggio (Organismo)</td></tr>
-<tr><td class="n">19</td><td>Genera o stampa i modelli</td><td>Quattro percorsi a scelta: moduli COA Genova o formato generico compilati con i dati inseriti, moduli in bianco da stampare per la compilazione a mano, oppure generazione e stampa diretta a video (formato Genova)</td><td class="who">Chi conclude la compilazione (Organismo, Mediatore o Avvocato)</td></tr>
+<tr><td class="n">19</td><td>Genera o stampa i modelli</td><td>Un solo pulsante, quello del documento scelto in cima alla pagina; il fascicolo completo, gli altri formati e la stampa a mano restano disponibili in "Altre opzioni"</td><td class="who">Chi conclude la compilazione (Organismo, Mediatore o Avvocato)</td></tr>
 </table>
 
 <h3 id="funzioni">6. Le funzioni trasversali</h3>
 
-<h3>6.1 Più parti nella stessa procedura</h3>
+<h4>6.1 Più parti nella stessa procedura</h4>
 <p>Il pulsante <b>"+ Nuova parte per questa procedura"</b> (sotto il numero di procedura) mantiene i dati comuni — Organismo, numero, date, mediatore, oggetto — e azzera solo i campi specifici della parte, in modo da poter compilare separatamente il Modulo di adeguata verifica e la Scheda di valutazione del rischio per ciascun soggetto. Il box <b>"Procedure con dati salvati su questo browser"</b>, in cima al compilatore, elenca tutte le procedure già trattate su quel browser con le rispettive parti annidate: da lì si riapre in un clic qualunque combinazione procedura/parte con il link <b>"Apri ›"</b>.</p>
 
-<h3>6.2 Motore unico di compilazione dai documenti del fascicolo</h3>
+<h4>6.2 Motore unico di compilazione dai documenti del fascicolo</h4>
 <p>In cima al modulo, subito sopra la sezione 1, trovi il <b>motore unico di compilazione</b>: un solo punto di partenza per tutto il fascicolo. Scrivi in linguaggio naturale che cosa ti serve (es. «Mi compili il modulo AV e la scheda di valutazione del rischio per tutte le parti alla luce di questi documenti?») e carichi <b>tutti insieme</b> i documenti del fascicolo che hai a disposizione (istanza, adesione, documenti d'identità, visura camerale, procura, comunicazione di avvio, ricevute di pagamento, ecc. — anche più file di tipo diverso nello stesso caricamento). Il motore li legge insieme, risponde in linguaggio naturale e ti mostra il risultato in due parti:</p>
 <ul>
 <li><b>Dati di procedura</b>: organismo, numero, date, oggetto/materia/valore della controversia — comuni a tutte le parti, individuati una sola volta.</li>
@@ -215,22 +253,34 @@ li{margin:5px 0}
 <div class="box warn"><span class="t">Attenzione — questa modalità invia i documenti</span>Il motore <b>trasmette i documenti caricati all'API di Anthropic</b>, che li legge e ne estrae i dati (per contratto Anthropic non li usa per addestrare i propri modelli e conserva i log tecnici al massimo 7 giorni; il sito non salva né conserva file o dati estratti). Usa questa funzione come titolare del trattamento, con idonea base giuridica e informativa all'interessato.</div>
 <div class="box warn"><span class="t">Attenzione</span>Il motore <b>può sbagliare</b>, soprattutto su scansioni di scarsa qualità, documenti stranieri, formati non standard, o quando due persone diverse condividono lo stesso cognome in documenti diversi del fascicolo: il ruolo e i dati di ogni parte vanno sempre controllati — e corretti se necessario — prima di applicarli.</div>
 
-<h3>6.3 Salvataggio automatico, cronologia e ripresa del lavoro</h3>
+<h4>6.3 Salvataggio automatico, cronologia e ripresa del lavoro</h4>
 <p>Non appena si inserisce il <b>numero di procedura</b>, ogni modifica ai campi viene salvata automaticamente (con un breve ritardo) nel browser, associata a quel numero <b>e</b> al nome della parte corrente. L'indicatore "Salvataggio automatico attivo" mostra l'orario dell'ultimo salvataggio. Se in una sessione precedente era già stato compilato qualcosa per la stessa procedura, il box <b>"Sono stati trovati dati compilati..."</b> propone di ricaricarli con un pulsante dedicato — il caricamento non è mai automatico, va sempre confermato per non sovrascrivere per errore dati che si stanno digitando. Ogni volta che si generano i modelli, la data e l'elenco dei documenti prodotti vengono registrati nello <b>storico</b> di quella parte, visibile subito sotto il numero di procedura.</p>
 
-<h3>6.4 Comunicazioni e aggiornamenti del mediatore</h3>
+<h4>6.4 Comunicazioni e aggiornamenti del mediatore</h4>
 <p>Il box dedicato (sotto la sezione 1) permette di annotare data e contenuto di ogni comunicazione ricevuta nel corso della procedura — rinvii, nuovi elementi, variazioni comunicate tra una sessione e l'altra. La cronologia è unica per l'intera procedura (non per singola parte) e viene riportata automaticamente nella Scheda di valutazione del rischio generata, oltre ad aggiornare la data dell'ultimo aggiornamento in sezione 1.</p>
 
-<h3>6.5 Sezione 19 — Genera o stampa i modelli</h3>
-<p>In fondo al modulo, la sezione 19 raccoglie in quattro riquadri a tendina tutti i modi per produrre il fascicolo della parte corrente:</p>
+<h4>6.5 Sezione 19 — Genera o stampa i modelli</h4>
+<p>Il documento scelto in cima alla pagina (v. punto 1) determina cosa mostra la sezione 19: un solo pulsante di generazione, con il nome file già corretto per quel documento. Il fascicolo completo, gli altri formati e la stampa a mano restano un clic più in là, in "Altre opzioni":</p>
 <table>
-<tr><th>Percorso (sezione 19)</th><th>Cosa fa</th></tr>
-<tr><td><b>1 — Moduli COA Genova compilati dall'Assistente AI</b><br><i>"Genera i modelli (formato Genova)"</i></td><td>Compila automaticamente i sei documenti del fascicolo (più l'eventuale promemoria SOS) nel formato ufficiale dei mediatori dell'Organismo di Mediazione, Ordine degli Avvocati di Genova, con i dati inseriti per la parte corrente.</td></tr>
-<tr><td><b>2 — Moduli altro</b><br><i>"Genera i modelli (formato generico)"</i></td><td>Come sopra, nel formato generico (non COA Genova).</td></tr>
-<tr><td><b>3 — Moduli altro — compilazione a mano</b><br><i>"🖨️ Moduli in bianco (stampa)"</i></td><td>Stampa i moduli senza i dati, per la compilazione manuale su carta.</td></tr>
-<tr><td><b>4 — Moduli Genova — compilazione a video e stampa</b><br><i>"🖨️ Genera e stampa (formato Genova)"</i></td><td>Genera il fascicolo in formato Genova e apre subito la stampa del browser.</td></tr>
-<tr><td><b>📄 Scarica (apri in Word)</b><br><i>presente nei percorsi 1 e 2</i></td><td>Salva il fascicolo generato (tutte le parti già prodotte per la procedura corrente) in un file che si apre direttamente in Microsoft Word, pronto per essere archiviato o adattato.</td></tr>
+<tr><th>Percorso</th><th>Cosa fa</th></tr>
+<tr><td class="pathcell"><b>Pulsante principale</b><i>corrisponde al documento scelto in cima alla pagina</i></td><td>Genera solo quel documento (es. "Genera il Modulo AV COA Genova") e offre subito il download in Word con nome file dedicato — senza gli altri moduli del fascicolo.</td></tr>
+<tr><td class="pathcell"><b>Area riservata — Promemoria SOS</b><i>visibile solo con rischio ALTO</i></td><td>Genera e scarica il promemoria interno per il Responsabile Antiriciclaggio (RAR), separato dagli altri documenti: non entra mai automaticamente nel fascicolo ordinario.</td></tr>
+<tr><td class="pathcell"><b>Altre opzioni — Fascicolo formato Genova</b><i>"Genera i modelli (formato Genova)"</i></td><td>Compila automaticamente tutti i documenti del fascicolo nel formato ufficiale dei mediatori dell'Organismo di Mediazione, Ordine degli Avvocati di Genova, con i dati inseriti per la parte corrente.</td></tr>
+<tr><td class="pathcell"><b>Altre opzioni — Moduli altro</b><i>"Genera i modelli (formato generico)"</i></td><td>Come sopra, nel formato generico (non COA Genova).</td></tr>
+<tr><td class="pathcell"><b>Altre opzioni — compilazione a mano</b><i>"🖨️ Moduli in bianco (stampa)"</i></td><td>Stampa i moduli senza i dati, per la compilazione manuale su carta.</td></tr>
+<tr><td class="pathcell"><b>Altre opzioni — video e stampa</b><i>"🖨️ Genera e stampa (formato Genova)"</i></td><td>Genera il fascicolo in formato Genova e apre subito la stampa del browser.</td></tr>
+<tr><td class="pathcell"><b>📄 Scarica (apri in Word)</b><i>presente in ogni percorso</i></td><td>Salva il documento (o il fascicolo, a seconda del percorso) in un file che si apre direttamente in Microsoft Word, pronto per essere archiviato o adattato.</td></tr>
 </table>
+
+<h3 id="risorse">Altre risorse del sito per chi si occupa di mediazione</h3>
+<div class="relres">
+<a href="/generatore-procura">📝 Generatore di procure per la mediazione</a>
+<a href="/procura-sostanziale-mediazione">📖 Guida alla procura sostanziale in mediazione</a>
+<a href="/calcolatore">🧮 Calcolatore indennità di mediazione</a>
+<a href="/giurisprudenza">⚖️ Banca dati di giurisprudenza sulla mediazione</a>
+<a href="/faq">❓ FAQ generali sulla mediazione civile</a>
+<a href="/glossario">📚 Glossario dei termini della mediazione</a>
+</div>
 
 <h3 id="faq">7. Domande frequenti</h3>
 <div class="box"><span class="t">I dati inseriti vengono inviati a calcolomediazione.it?</span>Mai. Tutto resta nel browser del dispositivo usato per compilare (localStorage): non c'è alcun invio a un server, né di calcolomediazione.it né di terzi.</div>
@@ -240,9 +290,10 @@ li{margin:5px 0}
 <div class="box"><span class="t">Rischio di perdere tutto se cancello i dati di navigazione del browser?</span>Sì: essendo un salvataggio solo locale, cancellando la cronologia/i dati di navigazione si perde anche quanto salvato qui. Per una conservazione affidabile nel tempo, dopo aver generato i modelli usa sempre una delle sezioni "Genera o stampa i modelli" (sezione 19) per scaricare il fascicolo in Word o stamparlo.</div>
 <div class="box"><span class="t">Il motore ha letto male un dato, o sbagliato il ruolo di una parte: cosa faccio?</span>Nell'elenco delle parti individuate, prima di applicare, correggi il ruolo con il menù a tendina se necessario; una volta applicata una parte, i suoi campi restano comunque normali campi del modulo, modificabili a mano come tutti gli altri prima di generare il fascicolo definitivo.</div>
 <div class="box"><span class="t">Il motore individua tutte le parti, anche se sono più di due?</span>Sì: legge sistematicamente tutti i documenti caricati e cerca sia gli istanti sia gli aderenti, quanti che siano — non si ferma alla prima parte istante. Applica ciascuna parte trovata una alla volta con "Applica questa parte ai campi", scaricando o stampando il fascicolo generato prima di passare alla successiva.</div>
+<div class="box"><span class="t">Posso generare solo un documento, senza tutto il fascicolo?</span>Sì: scegli il documento che ti serve nel selettore in cima alla pagina (Modulo AV, Scheda rischio, Dichiarazione del cliente o Modello ufficiale COA Genova) e la sezione 19 mostrerà un solo pulsante di generazione per quel documento. Il fascicolo completo resta disponibile come opzione avanzata in "Altre opzioni".</div>
 
 <div class="toolbar">
-<a class="btn primary" href="/antiriciclaggio.html">↩ Vai allo strumento (modelli + motore UIF)</a>
+<a class="btn primary" href="/antiriciclaggio.html">📄 Vai al generatore dei documenti</a>
 <a class="btn" href="#obblighi">📖 Torna alla Parte 1 — Obblighi di legge</a>
 <a class="btn" href="/">Tutti gli strumenti</a>
 </div>
