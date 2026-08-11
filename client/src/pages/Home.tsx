@@ -93,7 +93,7 @@ const features = [
   {
     icon: BookOpen,
     title: "Antiriciclaggio · Guida",
-    description: "Guida in linguaggio semplice agli obblighi antiriciclaggio in mediazione: chi è obbligato, ispezioni della GdF, cosa fare e cosa mettere a verbale. In domande e risposte.",
+    description: "Due guide in una: gli obblighi antiriciclaggio in linguaggio semplice (chi è obbligato, adeguata verifica, fascicolo, operazioni sospette) e come si compila lo strumento, passo per passo.",
     href: "/antiriciclaggio-guida",
     active: true,
     isNew: true,

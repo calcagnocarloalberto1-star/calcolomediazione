@@ -73,8 +73,8 @@ export default function AntiriciclaggioGuida() {
   return (
     <div className="w-full">
       <SeoHead
-        title="Antiriciclaggio in Mediazione — Guida in linguaggio semplice"
-        description="Guida in linguaggio semplice agli obblighi antiriciclaggio nella mediazione civile: chi è obbligato, ispezioni della Guardia di Finanza, cosa fare e cosa mettere a verbale. Per avvocati e organismi di mediazione."
+        title="Antiriciclaggio in Mediazione — Guida agli obblighi e alla compilazione"
+        description="Due guide in una: gli obblighi antiriciclaggio in mediazione in linguaggio semplice (chi è obbligato, adeguata verifica, fascicolo da conservare, come riconoscere un'operazione sospetta) e la guida pratica alla compilazione dello strumento, passo per passo. Per avvocati e organismi di mediazione."
         canonical="https://calcolomediazione.it/antiriciclaggio-guida"
       />
       {error && (
