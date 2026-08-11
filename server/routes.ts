@@ -407,7 +407,7 @@ const PAGE_CONTENT: Record<string, string> = {
 
 "/antiriciclaggio-guida": `
 <h1>Antiriciclaggio in mediazione — guida agli obblighi e alla compilazione</h1>
-<p>Due guide in una: la Parte 1 spiega in linguaggio semplice gli obblighi antiriciclaggio per mediatori, Organismi di mediazione e avvocati (D.Lgs. 231/2007); la Parte 2 spiega passo per passo come si compila lo strumento che genera i modelli del fascicolo.</p>
+<p>Due guide in una: la Parte 1 spiega in linguaggio semplice gli obblighi antiriciclaggio per mediatori, Organismi di mediazione e avvocati (D.Lgs. 231/2007); la Parte 2 spiega passo per passo come si compila lo strumento che genera i modelli del fascicolo. Devi solo generare un documento? Vai direttamente al <a href="/antiriciclaggio.html">generatore dei documenti antiriciclaggio</a>.</p>
 <h2>Parte 1 — Guida agli obblighi di legge</h2>
 <h3>Chi è obbligato, e chi no</h3>
 <p>L'Organismo di mediazione e il mediatore designato sono soggetti obbligati ai sensi dell'art. 3, c. 5, lett. g), D.Lgs. 231/2007. L'avvocato che assiste o difende una parte in mediazione è invece escluso dagli obblighi, poiché l'attività difensiva non rientra nel perimetro della norma (Regola Tecnica n. 2 CNF; art. 35, c. 5, D.Lgs. 231/2007), salvo che l'incarico sfoci in un'operazione economica autonoma tipica dell'art. 3, c. 4, lett. c).</p>
@@ -420,7 +420,17 @@ const PAGE_CONTENT: Record<string, string> = {
 <h3>Come si traduce in pratica</h3>
 <p>La Parte 2 di questa guida spiega come compilare lo strumento che genera automaticamente i documenti del fascicolo a partire da questi obblighi.</p>
 <h2>Parte 2 — Guida alla compilazione dello strumento</h2>
-<p>calcolomediazione.it mette a disposizione uno strumento gratuito che genera automaticamente i sei documenti del fascicolo riservato (informativa, modulo di adeguata verifica, scheda di valutazione del rischio, dichiarazione del cliente, foglio di annotazione, checklist), con guida passo per passo alla compilazione per Organismo, mediatore e avvocato di parte.</p>`,
+<p>calcolomediazione.it mette a disposizione uno strumento gratuito che genera i documenti del fascicolo riservato (informativa, modulo di adeguata verifica, scheda di valutazione del rischio, dichiarazione del cliente, foglio di annotazione, checklist), con un selettore iniziale per scegliere subito il singolo documento da predisporre e con guida passo per passo alla compilazione per Organismo, mediatore e avvocato di parte.</p>
+<h3>Domande frequenti</h3>
+<p><strong>Posso generare solo un documento, senza tutto il fascicolo?</strong> Sì: scegliendo il documento nel selettore in cima alla pagina dello strumento, si ottiene un solo pulsante di generazione per quel documento; il fascicolo completo resta un'opzione avanzata.</p>
+<p><strong>I dati inseriti vengono inviati a calcolomediazione.it?</strong> Mai: tutto resta nel browser (localStorage), salvo la modalità facoltativa con assistente AI.</p>
+<h3>Altre risorse del sito</h3>
+<ul>
+<li><a href="/generatore-procura">Generatore di procure per la mediazione</a></li>
+<li><a href="/procura-sostanziale-mediazione">Guida alla procura sostanziale in mediazione</a></li>
+<li><a href="/calcolatore">Calcolatore indennità di mediazione</a></li>
+<li><a href="/faq">FAQ generali sulla mediazione civile</a></li>
+</ul>`,
 
 "/privacy-policy": `
 <h1>Privacy Policy — CalcoloMediazione</h1>

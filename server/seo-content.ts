@@ -263,7 +263,7 @@ export const SEO_CONTENT: Record<string, string> = {
 
   "/antiriciclaggio-guida": `<div style="max-width:900px;margin:0 auto;padding:40px 20px;font-family:Inter,sans-serif;color:#2d2926">
 <h1 style="font-size:2rem;font-family:'Space Grotesk',sans-serif">Antiriciclaggio in mediazione — guida agli obblighi e alla compilazione</h1>
-<p>Due guide in una: la Parte 1 spiega in linguaggio semplice gli obblighi antiriciclaggio per mediatori, Organismi di mediazione e avvocati (D.Lgs. 231/2007); la Parte 2 spiega passo per passo come si compila lo strumento che genera i modelli del fascicolo.</p>
+<p>Due guide in una: la Parte 1 spiega in linguaggio semplice gli obblighi antiriciclaggio per mediatori, Organismi di mediazione e avvocati (D.Lgs. 231/2007); la Parte 2 spiega passo per passo come si compila lo strumento che genera i modelli del fascicolo. Devi solo generare un documento? Vai direttamente al <a href="/antiriciclaggio.html">generatore dei documenti antiriciclaggio</a>.</p>
 <h2>Parte 1 — Guida agli obblighi di legge</h2>
 <h3>Chi è obbligato, e chi no</h3>
 <p>L'Organismo di mediazione e il mediatore designato sono soggetti obbligati ai sensi dell'art. 3, c. 5, lett. g), D.Lgs. 231/2007. L'avvocato che assiste o difende una parte in mediazione e' invece escluso dagli obblighi, salvo che l'incarico sfoci in un'operazione economica autonoma ex art. 3, c. 4, lett. c).</p>
@@ -276,26 +276,46 @@ export const SEO_CONTENT: Record<string, string> = {
 <h3>Come si traduce in pratica</h3>
 <p>Dagli obblighi di legge alla compilazione concreta dei modelli, spiegata nella Parte 2.</p>
 <h2>Parte 2 — Guida alla compilazione dello strumento</h2>
-<p>Guida pratica passo per passo alla compilazione dello strumento antiriciclaggio di calcolomediazione.it: cosa fa l'Organismo di mediazione, cosa fa il Mediatore designato, cosa fa l'Avvocato di parte, sezione per sezione, con motore unico di compilazione automatica multi-documento e multi-parte, salvataggio automatico ed esportazione in Word.</p>
+<p>Guida pratica passo per passo alla compilazione dello strumento antiriciclaggio di calcolomediazione.it: cosa fa l'Organismo di mediazione, cosa fa il Mediatore designato, cosa fa l'Avvocato di parte, sezione per sezione, con selettore iniziale del documento da predisporre, motore di compilazione automatica multi-parte, salvataggio automatico ed esportazione in Word.</p>
 <h3>La logica dello strumento: una procedura, piu parti</h3>
-<p>Una mediazione coinvolge sempre almeno due soggetti, spesso piu di due. I dati della procedura nel suo complesso (Organismo, numero di procedura, date, mediatore designato, oggetto della controversia) si inseriscono una sola volta; i dati di ciascuna parte (identificazione, rischio, adeguata verifica) si compilano separatamente per ognuna, con il pulsante "Nuova parte per questa procedura" o con il motore di compilazione automatica che individua da solo istanti e aderenti dai documenti caricati.</p>
+<p>Una mediazione coinvolge sempre almeno due soggetti, spesso piu di due. I dati della procedura nel suo complesso (Organismo, numero di procedura, date, mediatore designato, oggetto della controversia) si inseriscono una sola volta; i dati di ciascuna parte (identificazione, rischio, adeguata verifica) si compilano separatamente per ognuna, con il pulsante "Nuova parte per questa procedura" o con il motore di compilazione automatica che individua da solo istanti e aderenti dai documenti caricati. In cima alla pagina si sceglie subito il documento da predisporre (Modulo di Adeguata Verifica, Scheda di valutazione del rischio, Dichiarazione del cliente, Modello ufficiale COA Genova, o il Fascicolo AML completo come opzione avanzata).</p>
 <h3>Chi compila cosa</h3>
 <ul>
 <li>Organismo di mediazione (o segreteria): dati del procedimento, numero di iscrizione, legale rappresentante, numero di procedura, date di deposito</li>
 <li>Mediatore designato: identificazione della parte, titolare effettivo, qualifica PEP, valutazione del rischio, esame delle anomalie, motore trigger UIF sui sette segnali T1-T7</li>
-<li>Avvocato di parte: compila solo se l'incarico sfocia in un'operazione economica autonoma ex art. 3, c. 4, lett. c) D.Lgs. 231/2007; nella generalita dei casi l'attivita difensiva e esclusa dagli obblighi antiriciclaggio</li>
+<li>Avvocato di parte: compila solo se l'incarico sfocia in un'operazione economica autonoma ex art. 3, c. 4, lett. c) D.Lgs. 231/2007; nella generalita dei casi l'attivita difensiva e esclusa dagli obblighi antiriciclaggio — v. anche la <a href="/procura-sostanziale-mediazione">guida alla procura sostanziale in mediazione</a></li>
 </ul>
-<h3>Le 18 sezioni del modulo</h3>
-<p>Il modulo si compone di 18 sezioni, dai dati del procedimento e della parte, alla verifica PEP e del titolare effettivo, alla valutazione del rischio e delle anomalie, fino alla verifica di secondo livello del Responsabile Antiriciclaggio (RAR).</p>
+<h3>Le 19 sezioni del modulo</h3>
+<p>Il modulo si compone di 19 sezioni, dai dati del procedimento e della parte, alla verifica PEP e del titolare effettivo, alla valutazione del rischio e delle anomalie, fino alla generazione dei documenti e alla verifica di secondo livello del Responsabile Antiriciclaggio (RAR).</p>
 <h3>Funzioni trasversali</h3>
 <ul>
+<li>Selettore iniziale del documento da predisporre, con barra persistente "Stai compilando" e possibilita' di cambiare scelta in ogni momento</li>
 <li>Gestione di piu parti nella stessa procedura, con dati comuni salvati una sola volta</li>
-<li>Motore unico di compilazione automatica dai documenti del fascicolo, con individuazione di tutte le parti (istanti e aderenti)</li>
+<li>Motore di compilazione automatica dai documenti del fascicolo, con individuazione di tutte le parti (istanti e aderenti)</li>
 <li>Salvataggio automatico nel browser, cronologia delle generazioni e ripresa del lavoro</li>
-<li>Esportazione e importazione dei dati in formato .json</li>
-<li>Generazione, stampa e download del fascicolo in Word o HTML</li>
+<li>Generazione e download in Word del singolo documento scelto, o dell'intero fascicolo come opzione avanzata</li>
+<li>Area riservata per il promemoria SOS/RAR, separata dal fascicolo ordinario e attiva solo con rischio ALTO</li>
 </ul>
 <p>Tutti i dati restano nel browser di chi compila: nulla viene inviato a calcolomediazione.it, salvo la modalita facoltativa con assistente AI, che trasmette i documenti caricati all'API del fornitore di intelligenza artificiale scelto dall'utente.</p>
+<h3>Domande frequenti</h3>
+<p><strong>I dati inseriti vengono inviati a calcolomediazione.it?</strong> Mai: tutto resta nel browser (localStorage), salvo la modalita facoltativa con assistente AI.</p>
+<p><strong>Posso generare solo un documento, senza tutto il fascicolo?</strong> Si': scegliendo il documento nel selettore in cima alla pagina, la sezione 19 mostra un solo pulsante di generazione per quel documento; il fascicolo completo resta un'opzione avanzata.</p>
+<p><strong>Cambio computer o browser: ritrovo i dati?</strong> No, il salvataggio e' locale al browser: per portare il lavoro altrove si scarica il fascicolo in Word.</p>
+<h3>Altre risorse del sito</h3>
+<ul>
+<li><a href="/generatore-procura">Generatore di procure per la mediazione</a></li>
+<li><a href="/calcolatore">Calcolatore indennita' di mediazione</a></li>
+<li><a href="/giurisprudenza">Banca dati di giurisprudenza sulla mediazione</a></li>
+<li><a href="/faq">FAQ generali sulla mediazione civile</a></li>
+<li><a href="/glossario">Glossario dei termini della mediazione</a></li>
+</ul>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[
+{"@type":"Question","name":"I dati inseriti vengono inviati a calcolomediazione.it?","acceptedAnswer":{"@type":"Answer","text":"Mai. Tutto resta nel browser del dispositivo usato per compilare (localStorage): non c'e' alcun invio a un server, ne' di calcolomediazione.it ne' di terzi."}},
+{"@type":"Question","name":"Posso generare solo un documento, senza tutto il fascicolo?","acceptedAnswer":{"@type":"Answer","text":"Si': scegli il documento che ti serve nel selettore in cima alla pagina (Modulo AV, Scheda rischio, Dichiarazione del cliente o Modello ufficiale COA Genova) e la sezione 19 mostrera' un solo pulsante di generazione per quel documento. Il fascicolo completo resta disponibile come opzione avanzata."}},
+{"@type":"Question","name":"Cambio computer o browser: ritrovo i dati?","acceptedAnswer":{"@type":"Answer","text":"No, il salvataggio automatico e' locale a quel browser. Per portare il lavoro su un altro dispositivo genera e scarica il fascicolo in Word, oppure ricompila i dati sull'altro computer."}}
+]}
+</script>
 </div>`,
 
   "/privacy-policy": `<div style="max-width:900px;margin:0 auto;padding:40px 20px;font-family:Inter,sans-serif;color:#2d2926">
