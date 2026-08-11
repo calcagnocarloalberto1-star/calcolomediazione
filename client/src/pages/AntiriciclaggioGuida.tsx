@@ -33,6 +33,20 @@ export default function AntiriciclaggioGuida() {
     const container = containerRef.current;
     if (!container) return;
 
+    // Bug osservato: "la pagina si apre sul footer". Causa: il sito non ha da
+    // nessuna parte un reset dello scroll al cambio di rotta (nessun
+    // ScrollToTop/window.scrollTo globale — verificato in tutto client/src);
+    // finché questo effect non inietta il contenuto, il contenitore è VUOTO,
+    // quindi la pagina intera (Header+Nav+contenitore vuoto+Footer del sito)
+    // è altissima solo poche centinaia di px. Se si arriva qui già scrollati
+    // in basso su un'altra pagina (es. da un link nel Footer del sito, che
+    // sta in fondo), il browser blocca subito lo scroll al massimo consentito
+    // da questa pagina ancora corta — cioè al Footer del sito — e quando poi
+    // il contenuto reale viene iniettato e la pagina si allunga, lo scroll
+    // NON si riporta automaticamente in cima: resta bloccato in fondo. Fix:
+    // forzare esplicitamente lo scroll in cima appena si monta la pagina.
+    window.scrollTo(0, 0);
+
     // Foglio di stile scoped: aggiunto una sola volta, condiviso se la
     // pagina viene rimontata nella stessa sessione SPA.
     const CSS_ID = "ac-guida-embed-styles";
@@ -59,6 +73,18 @@ export default function AntiriciclaggioGuida() {
         }
 
         containerRef.current.innerHTML = html.slice(bodyStart, bodyEnd);
+
+        // Il contenuto (con gli id "obblighi"/"compilazione"/ecc.) esiste solo
+        // da questo momento in poi: se l'URL con cui si è arrivati qui aveva
+        // già un frammento (es. /antiriciclaggio-guida#compilazione, come nei
+        // link aggiunti dal toolbar), lo scroll automatico del browser verso
+        // quell'ancora è già fallito silenziosamente in precedenza, perché al
+        // momento del caricamento della pagina l'elemento non esisteva ancora.
+        // Lo si ripete qui a mano, ora che l'elemento è nel DOM.
+        if (window.location.hash) {
+          const target = document.getElementById(window.location.hash.slice(1));
+          if (target) target.scrollIntoView();
+        }
       })
       .catch((err) => {
         console.error("Errore caricamento guida antiriciclaggio:", err);

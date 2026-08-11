@@ -86,6 +86,18 @@ export default function Antiriciclaggio() {
     const container = containerRef.current;
     if (!container) return;
 
+    // Bug osservato su /antiriciclaggio-guida (stessa architettura di questa
+    // pagina, v. commento equivalente in AntiriciclaggioGuida.tsx): finché
+    // questo effect non inietta il contenuto, il contenitore è vuoto e la
+    // pagina intera è altissima solo poche centinaia di px; arrivando qui già
+    // scrollati in basso da un'altra pagina (il sito non azzera mai lo scroll
+    // al cambio di rotta), il browser blocca subito lo scroll al massimo
+    // consentito da questa pagina ancora corta — cioè in fondo, verso il
+    // Footer del sito — e non lo riporta in cima da solo quando il contenuto
+    // reale viene iniettato e la pagina si allunga. Fix preventivo: forzare
+    // lo scroll in cima appena si monta la pagina.
+    window.scrollTo(0, 0);
+
     // Foglio di stile scoped: aggiunto una sola volta, condiviso se la
     // pagina viene rimontata nella stessa sessione SPA.
     const CSS_ID = "ac-embed-styles";
