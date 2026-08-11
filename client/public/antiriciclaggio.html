@@ -950,19 +950,29 @@ const goCellStyle = "border:1px solid #cccccc;padding:4px 6px;font-family:"+GO_F
 // tabella, per evitare che un font di fallback scelto da Word con un'altezza di riga anomala
 // gonfi la cella (e quindi l'intera riga della tabella) fino a occupare da sola una pagina.
 const ckStyle = "font-family:'Segoe UI Symbol','Arial Unicode MS',Arial,sans-serif;";
-let out = '<table class="go-table" style="width:100%;border-collapse:collapse;margin:6px 0 10px;font-size:12px;font-family:'+GO_FONT+'"><tr>'+
-'<th class="go-td" style="'+goCellStyle+'text-align:left">Elemento</th>'+
-'<th class="go-td" style="'+goCellStyle+'text-align:center">Basso</th>'+
-'<th class="go-td" style="'+goCellStyle+'text-align:center">Medio</th>'+
-'<th class="go-td" style="'+goCellStyle+'text-align:center">Alto</th>'+
-(includeNA?'<th class="go-td" style="'+goCellStyle+'text-align:center">Non applicabile</th>':'')+'</tr>';
+// Larghezze esplicite sulle colonne Basso/Medio/Alto/Non applicabile: senza queste,
+// il motore HTML di Word (e LibreOffice in modalità "pagina Web filtrata") restringe
+// troppo quelle colonne a favore della colonna "Elemento" più lunga, e le etichette
+// vanno a capo a metà parola ("Bass" + "o" su due righe) — illeggibili. VERIFICATO
+// con test isolati: lo stile CSS "width:%" (anche con table-layout:fixed o colgroup)
+// viene ignorato da questo motore ed è inutile; l'unica cosa che rispetta davvero è
+// l'ATTRIBUTO HTML legacy width="NN%" direttamente su ciascun <th>/<td> — per questo
+// qui sotto è un attributo, non parte dello style. Da non "ripulire" per modernità.
+const wElemento = includeNA ? "40%" : "46%";
+const wValore = includeNA ? "15%" : "18%";
+let out = '<table class="go-table" width="100%" style="border-collapse:collapse;margin:6px 0 10px;font-size:12px;font-family:'+GO_FONT+'"><tr>'+
+'<th class="go-td" width="'+wElemento+'" style="'+goCellStyle+'text-align:left">Elemento</th>'+
+'<th class="go-td" width="'+wValore+'" style="'+goCellStyle+'text-align:center">Basso</th>'+
+'<th class="go-td" width="'+wValore+'" style="'+goCellStyle+'text-align:center">Medio</th>'+
+'<th class="go-td" width="'+wValore+'" style="'+goCellStyle+'text-align:center">Alto</th>'+
+(includeNA?'<th class="go-td" width="'+wValore+'" style="'+goCellStyle+'text-align:center">Non applicabile</th>':'')+'</tr>';
 rows.forEach(r=>{
 const cur = v(r[1]);
-out += '<tr><td class="go-td" style="'+goCellStyle+'">'+esc(r[0])+'</td>'+
-'<td class="go-td" style="'+goCellStyle+'text-align:center"><span style="'+ckStyle+'">'+(cur==="basso"?"☑":"☐")+'</span></td>'+
-'<td class="go-td" style="'+goCellStyle+'text-align:center"><span style="'+ckStyle+'">'+(cur==="medio"?"☑":"☐")+'</span></td>'+
-'<td class="go-td" style="'+goCellStyle+'text-align:center"><span style="'+ckStyle+'">'+(cur==="alto"?"☑":"☐")+'</span></td>'+
-(includeNA?'<td class="go-td" style="'+goCellStyle+'text-align:center"><span style="'+ckStyle+'">'+(cur==="na"?"☑":"☐")+'</span></td>':'')+'</tr>';
+out += '<tr><td class="go-td" width="'+wElemento+'" style="'+goCellStyle+'">'+esc(r[0])+'</td>'+
+'<td class="go-td" width="'+wValore+'" style="'+goCellStyle+'text-align:center"><span style="'+ckStyle+'">'+(cur==="basso"?"☑":"☐")+'</span></td>'+
+'<td class="go-td" width="'+wValore+'" style="'+goCellStyle+'text-align:center"><span style="'+ckStyle+'">'+(cur==="medio"?"☑":"☐")+'</span></td>'+
+'<td class="go-td" width="'+wValore+'" style="'+goCellStyle+'text-align:center"><span style="'+ckStyle+'">'+(cur==="alto"?"☑":"☐")+'</span></td>'+
+(includeNA?'<td class="go-td" width="'+wValore+'" style="'+goCellStyle+'text-align:center"><span style="'+ckStyle+'">'+(cur==="na"?"☑":"☐")+'</span></td>':'')+'</tr>';
 });
 out += '</table>';
 return out;
