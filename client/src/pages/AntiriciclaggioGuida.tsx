@@ -1,94 +1,74 @@
 import { useEffect, useRef, useState } from "react";
 import { SeoHead } from "@/components/SeoHead";
 
-// Pagina "Antiriciclaggio — guida in linguaggio semplice".
-// Incorpora la pagina statica /antiriciclaggio-guida.html (servita da client/public)
-// con auto-ridimensionamento dell'altezza (stessa origine, nessun bordo/scroll interno).
+// ACC-01 — fix accessibilità: /antiriciclaggio-guida caricava la pagina statica
+// /antiriciclaggio-guida.html dentro un <iframe>. Stesso problema già risolto per
+// /antiriciclaggio (vedi il commento esteso in Antiriciclaggio.tsx): un iframe
+// rende l'intero contenuto (titoli, tabelle, testo) invisibile all'albero di
+// accessibilità della pagina e ai tool di estrazione testo, perché vive in un
+// document separato.
 //
-// Cache-busting automatico: vedi il commento equivalente in Antiriciclaggio.tsx.
-// Il parametro "?v=" è calcolato una sola volta al mount (non ad ogni render) ed
-// è sempre diverso, così il browser non può restare bloccato su una copia vecchia
-// di /antiriciclaggio-guida.html in cache — non serve più incrementare a mano un
-// numero di versione ad ogni modifica del file statico.
+// Fix: il markup di antiriciclaggio-guida.html viene ora iniettato DIRETTAMENTE
+// nel DOM di questa pagina (stesso documento, nessun iframe) dentro un
+// contenitore ".ac-guida-embed" — così titoli/tabelle/testo diventano DOM reale
+// della pagina, navigabile da tastiera senza il confine dell'iframe ed estraibile
+// da qualunque tool di lettura testo standard.
+//
+// Più semplice del fix equivalente per /antiriciclaggio: antiriciclaggio-guida.html
+// non contiene alcuno <script> né alcun onclick/onchange (è puro contenuto
+// statico), quindi non serve né isolare uno script in una IIFE né riscrivere
+// handler — basta iniettare il markup e caricare il CSS scoped
+// (antiriciclaggio-guida-embed.css, stessa trasformazione già usata per
+// antiriciclaggio-embed.css: ogni selettore prefissato con ".ac-guida-embed").
+//
+// Nessuna modifica ai contenuti informativi della guida: cambia solo il
+// meccanismo con cui vengono mostrati nella pagina.
 export default function AntiriciclaggioGuida() {
-  const frameRef = useRef<HTMLIFrameElement>(null);
-  const [height, setHeight] = useState<number>(1800);
+  const containerRef = useRef<HTMLDivElement>(null);
   const [cacheBust] = useState<number>(() => Date.now());
+  const [error, setError] = useState(false);
 
   useEffect(() => {
-    const frame = frameRef.current;
-    if (!frame) return;
+    let cancelled = false;
+    const container = containerRef.current;
+    if (!container) return;
 
-    let observer: ResizeObserver | null = null;
-    let interval: number | undefined;
-    const settleTimers: number[] = [];
+    // Foglio di stile scoped: aggiunto una sola volta, condiviso se la
+    // pagina viene rimontata nella stessa sessione SPA.
+    const CSS_ID = "ac-guida-embed-styles";
+    if (!document.getElementById(CSS_ID)) {
+      const link = document.createElement("link");
+      link.id = CSS_ID;
+      link.rel = "stylesheet";
+      link.href = `/antiriciclaggio-guida-embed.css?v=${cacheBust}`;
+      document.head.appendChild(link);
+    }
 
-    const sync = () => {
-      try {
-        const doc = frame.contentWindow?.document;
-        if (doc?.body) {
-          // Nota: NON usare doc.documentElement.scrollHeight qui. Dentro un
-          // iframe la cui altezza è impostata via JS (come questo), lo
-          // scrollHeight dell'elemento <html> non scende mai sotto l'altezza
-          // corrente impostata sull'iframe stesso: è un "cricchetto" che può
-          // solo crescere. Se una singola misurazione lo sovrastima anche di
-          // poco, l'iframe resta bloccato più alto del contenuto reale per
-          // sempre, lasciando uno spazio vuoto sotto la guida prima del
-          // footer del sito. doc.body.scrollHeight non ha questo problema e
-          // riflette sempre l'altezza reale del contenuto.
-          const h = doc.body.scrollHeight;
-          setHeight((prev) => (prev === h + 40 ? prev : h + 40));
+    fetch(`/antiriciclaggio-guida.html?v=${cacheBust}`)
+      .then((res) => {
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        return res.text();
+      })
+      .then((html) => {
+        if (cancelled || !containerRef.current) return;
+
+        const bodyStart = html.indexOf("<body>") + "<body>".length;
+        const bodyEnd = html.lastIndexOf("</body>");
+        if (bodyStart <= 0 || bodyEnd < 0) {
+          throw new Error("Struttura HTML inattesa");
         }
-      } catch {
-        /* cross-origin: ignora */
-      }
-    };
 
-    const onLoad = () => {
-      // Doppio rAF: assicura che il browser abbia completato almeno un
-      // ciclo di layout/paint prima della prima misurazione. Senza questa
-      // attesa la prima lettura di scrollHeight può essere transitoriamente
-      // troppo alta, lasciando per un istante uno spazio vuoto sotto il
-      // contenuto della guida prima del "salto" all'altezza corretta.
-      requestAnimationFrame(() => requestAnimationFrame(sync));
-
-      // Rete di sicurezza: alcuni reflow (immagini che finiscono di
-      // caricare, dettagli che si aprono) arrivano dopo il load event.
-      // Ri-misura per un paio di secondi finché l'altezza non si è assestata.
-      [50, 150, 350, 700, 1200, 2000].forEach((ms) => {
-        settleTimers.push(window.setTimeout(sync, ms));
+        containerRef.current.innerHTML = html.slice(bodyStart, bodyEnd);
+      })
+      .catch((err) => {
+        console.error("Errore caricamento guida antiriciclaggio:", err);
+        if (!cancelled) setError(true);
       });
 
-      try {
-        const doc = frame.contentWindow!.document;
-        observer = new ResizeObserver(sync);
-        observer.observe(doc.body);
-        // Ogni immagine che completa il caricamento può cambiare l'altezza
-        // del contenuto: ridisegna la misura anche in quel momento.
-        doc.querySelectorAll("img").forEach((img) => {
-          if (!(img as HTMLImageElement).complete) {
-            img.addEventListener("load", sync, { once: true });
-          }
-        });
-      } catch {
-        /* cross-origin: il polling qui sotto resta comunque attivo */
-      }
-
-      // Rete di sicurezza permanente: un ResizeObserver che osserva il body
-      // di un documento in un altro iframe non sempre notifica in modo
-      // affidabile le riduzioni di altezza. Un controllo periodico leggero
-      // garantisce che l'iframe si restringa comunque entro un secondo.
-      interval = window.setInterval(sync, 900);
-    };
-
-    frame.addEventListener("load", onLoad);
     return () => {
-      frame.removeEventListener("load", onLoad);
-      observer?.disconnect();
-      if (interval) window.clearInterval(interval);
-      settleTimers.forEach((t) => window.clearTimeout(t));
+      cancelled = true;
     };
-  }, []);
+  }, [cacheBust]);
 
   return (
     <div className="w-full">
@@ -97,14 +77,14 @@ export default function AntiriciclaggioGuida() {
         description="Guida in linguaggio semplice agli obblighi antiriciclaggio nella mediazione civile: chi è obbligato, ispezioni della Guardia di Finanza, cosa fare e cosa mettere a verbale. Per avvocati e organismi di mediazione."
         canonical="https://calcolomediazione.it/antiriciclaggio-guida"
       />
-      <iframe
-        ref={frameRef}
-        src={`/antiriciclaggio-guida.html?v=${cacheBust}`}
-        title="Antiriciclaggio in mediazione — guida in linguaggio semplice"
-        loading="lazy"
-        scrolling="no"
-        style={{ width: "100%", height: `${height}px`, border: 0, display: "block" }}
-      />
+      {error && (
+        <div className="max-w-2xl mx-auto my-12 border-2 border-foreground bg-amber-50 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] p-6 text-center">
+          <p>
+            Non è stato possibile caricare la guida. Ricarica la pagina o riprova tra qualche istante.
+          </p>
+        </div>
+      )}
+      <div ref={containerRef} className="ac-guida-embed" />
     </div>
   );
 }
