@@ -159,10 +159,34 @@ margin-bottom:2cm;
 <!-- ===================== PARTE INFORMATIVA: spostata su /antiriciclaggio-guida.html ===================== -->
 <div class="note">Questa pagina è lo <b>strumento operativo</b>: un unico motore che compila i campi, individua i trigger UIF e valuta il rischio in un solo percorso — con la possibilità di ottenere una prima bozza automaticamente dai documenti del fascicolo. Per tutte le spiegazioni — normativa, uso dello strumento, domande frequenti — vai alla <a href="/antiriciclaggio-guida.html">guida antiriciclaggio</a>. I dati inseriti restano nel tuo browser e non sono trasmessi ad alcun server, salvo quando usi tu, di tua scelta, l'assistente AI per ottenere una prima bozza dai documenti caricati: in quel caso vengono inviate al server solo le immagini/i testi caricati per quell'operazione.</div>
 
+<!-- ===================== SELETTORE DOCUMENTO INIZIALE ===================== -->
+<div class="ocrbox no-print" id="docSelectBox" style="background:#fff;border-color:var(--blue)">
+<h3 class="grouph">Che documento devi predisporre?</h3>
+<p class="sub">Scegli subito che cosa ti serve: lo strumento chiede comunque tutti i dati del fascicolo qui sotto, ma la sezione finale di generazione mostra da subito solo il pulsante che ti serve. Puoi cambiare scelta in qualsiasi momento con «Cambia scelta».</p>
+<div class="roles" id="docChoices" style="margin-top:10px">
+<div class="role" data-doc="av" onclick="sceltaDocumento('av')"><b>Adeguata verifica della parte</b><small>Modulo AV, da far firmare alla parte</small></div>
+<div class="role" data-doc="svr" onclick="sceltaDocumento('svr')"><b>Valutazione del rischio</b><small>Scheda di valutazione del rischio, ad uso del mediatore</small></div>
+<div class="role" data-doc="dich" onclick="sceltaDocumento('dich')"><b>Dichiarazione del cliente</b><small>Dichiarazione ex art. 22 D.Lgs. 231/2007</small></div>
+<div class="role" data-doc="coa" onclick="sceltaDocumento('coa')"><b>Modello ufficiale COA Genova</b><small>Modulo AV + Scheda rischio, formato Organismo di Mediazione COA Genova — compilabile anche a mano</small></div>
+</div>
+<details style="margin-top:10px">
+<summary>Fascicolo AML completo (opzione avanzata) <span class="chev">&rsaquo;</span></summary>
+<div class="inner">
+<p class="sub" style="margin-top:8px">Tutti i moduli del fascicolo insieme (informativa, AV, scheda rischio, dichiarazione, annotazione, checklist e, se il rischio è alto, il promemoria riservato per il RAR). Utile se vuoi predisporre subito l'intero fascicolo invece di un documento alla volta.</p>
+<div class="row-btns" style="margin-top:0"><button class="btn-ghost" type="button" onclick="sceltaDocumento('fascicolo')">Scegli: fascicolo AML completo</button></div>
+</div>
+</details>
+</div>
+
+<div class="no-print" id="docTargetBar" style="display:none;position:sticky;top:0;z-index:20;background:var(--light);border:1px solid var(--blue);border-radius:10px;padding:10px 14px;margin:0 0 16px;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap">
+<div><span style="font-size:11.5px;color:var(--muted)">Stai compilando:</span><br><b id="docTargetLabel" style="font-size:15px;color:var(--navy)"></b></div>
+<button type="button" class="btn-ghost" onclick="mostraSelettoreDocumento()" style="white-space:nowrap;padding:8px 12px;font-size:13px">↺ Cambia scelta</button>
+</div>
+
 <!-- ===================== ASSISTENTE AI DI COMPILAZIONE ===================== -->
 <div class="ocrbox no-print" id="assistbox" style="background:#eefaf3;border-color:#bfe4cf">
-<h3 class="grouph">Motore unico di compilazione — carica i documenti del fascicolo</h3>
-<p class="sub">Un solo punto di partenza per compilare il modulo qui sotto: descrivi che cosa ti serve e carica tutti i documenti del fascicolo che hai a disposizione (istanza, documento d'identità, visura camerale, procura, comunicazione di avvio, ricevute di pagamento, ecc.). L'assistente li legge insieme, ti risponde in linguaggio naturale e propone la compilazione di gran parte dei campi qui sotto: nulla viene scritto nei campi finché non lo confermi tu. Puoi caricare i documenti uno alla volta o tutti insieme, anche un'intera cartella: v. come funziona più sotto.</p>
+<h3 class="grouph">Vuoi partire da una bozza automatica? Carica i documenti del fascicolo</h3>
+<p class="sub">Facoltativo: descrivi che cosa ti serve e carica tutti i documenti del fascicolo che hai a disposizione (istanza, documento d'identità, visura camerale, procura, comunicazione di avvio, ricevute di pagamento, ecc.). L'assistente li legge insieme, ti risponde in linguaggio naturale e propone la compilazione di gran parte dei campi qui sotto: nulla viene scritto nei campi finché non lo confermi tu. Puoi caricare i documenti uno alla volta o tutti insieme, anche un'intera cartella: v. come funziona più sotto.</p>
 <div class="field">
 <label for="assist_richiesta">La tua richiesta</label>
 <div class="hint">Scrivi in linguaggio naturale che cosa vuoi che venga compilato o valutato.</div>
@@ -257,11 +281,26 @@ margin-bottom:2cm;
 </div>
 <table class="risktable"><tr><th>Elemento</th><th>Livello attribuito</th></tr><tr><td class="elname">Natura giuridica</td><td><select id="rp_naturagiur" aria-label="Natura giuridica"><option value="basso">Basso</option><option value="medio">Medio</option><option value="alto">Alto</option></select></td></tr><tr><td class="elname">Attività svolta</td><td><select id="rp_attivita" aria-label="Attività svolta"><option value="basso">Basso</option><option value="medio">Medio</option><option value="alto">Alto</option></select></td></tr><tr><td class="elname">Coerenza delle dichiarazioni con la documentazione acquisita</td><td><select id="rp_coerenza" aria-label="Coerenza delle dichiarazioni con la documentazione acquisita"><option value="basso">Basso</option><option value="medio">Medio</option><option value="alto">Alto</option></select></td></tr><tr><td class="elname">Area geografica</td><td><select id="rp_areageo" aria-label="Area geografica"><option value="basso">Basso</option><option value="medio">Medio</option><option value="alto">Alto</option></select></td></tr><tr><td class="elname">Trasparenza titolare effettivo</td><td><select id="rp_trasparenza_te" aria-label="Trasparenza titolare effettivo"><option value="basso">Basso</option><option value="medio">Medio</option><option value="alto">Alto</option></select></td></tr><tr><td class="elname">Qualifica PEP</td><td><select id="rp_pep" aria-label="Qualifica PEP"><option value="basso">Basso</option><option value="medio">Medio</option><option value="alto">Alto</option></select></td></tr></table><h3 class="grouph">10 — Valutazione della prestazione</h3><div class="hint" style="margin-bottom:6px">Stessi criteri della tabella precedente, riferiti però all'operazione/controversia. È prevista anche l'opzione «non applicabile».</div><table class="risktable"><tr><th>Elemento</th><th>Livello attribuito</th></tr><tr><td class="elname">Tipologia della controversia</td><td><select id="vp_tipologia" aria-label="Tipologia della controversia"><option value="basso">Basso</option><option value="medio">Medio</option><option value="alto">Alto</option><option value="na">Non applicabile</option></select></td></tr><tr><td class="elname">Valore economico</td><td><select id="vp_valore" aria-label="Valore economico"><option value="basso">Basso</option><option value="medio">Medio</option><option value="alto">Alto</option><option value="na">Non applicabile</option></select></td></tr><tr><td class="elname">Modalità operative</td><td><select id="vp_modalita" aria-label="Modalità operative"><option value="basso">Basso</option><option value="medio">Medio</option><option value="alto">Alto</option><option value="na">Non applicabile</option></select></td></tr><tr><td class="elname">Coerenza della controversia/operazione con il profilo economico/attività della parte</td><td><select id="vp_coerenza" aria-label="Coerenza della controversia/operazione con il profilo economico/attività della parte"><option value="basso">Basso</option><option value="medio">Medio</option><option value="alto">Alto</option><option value="na">Non applicabile</option></select></td></tr><tr><td class="elname">Complessità dell'operazione</td><td><select id="vp_complessita" aria-label="Complessità dell'operazione"><option value="basso">Basso</option><option value="medio">Medio</option><option value="alto">Alto</option><option value="na">Non applicabile</option></select></td></tr></table><h3 class="grouph">11 — Esame delle anomalie</h3><div class="no-print" style="border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin:8px 0;background:#fff"><p class="sub" style="margin-top:0"><b>Motore trigger UIF — intervista al mediatore.</b> Rispondi sui sette segnali T1–T7 percepiti al tavolo: il motore li mappa sugli indicatori del Provvedimento UIF 12 maggio 2023, segnala le combinazioni che integrano il "dubbio ragionevole", aggiorna da solo la domanda di sintesi qui sotto e prepara una bozza di motivazione per il Responsabile Antiriciclaggio (RAR).</p><div id="trigBox"></div><div class="row-btns"><button class="btn-primary" onclick="analizzaTrigger()">Analizza i trigger</button><button class="btn-ghost" onclick="resetTrigger()">Azzera intervista</button></div><div class="out" id="trigOut" role="status" aria-live="polite"></div></div><div class="grid"><div class="field"><label for="anomalie_presenti">Sono emersi indicatori di anomalia?</label><div class="hint">Domanda di sintesi: se «Sì», selezionare sotto quali indicatori ricorrono.</div><select id="anomalie_presenti" ><option value="no">No</option><option value="si">Sì</option></select></div><div class="field"><label for="anomalie_spiegate">Le anomalie hanno ricevuto una spiegazione ragionevole e documentata?</label><div class="hint">Da compilare solo se sopra è stato indicato «Sì».</div><select id="anomalie_spiegate" ><option value="na">Non applicabile</option><option value="si">Sì</option><option value="no">No</option></select></div></div><details class="field checklist"><summary style="cursor:pointer;font-weight:600">Indicatori UIF ufficiali in forma estesa (facoltativo)</summary><div class="hint">Da usare solo se preferisci citare anche i numeri esatti degli indicatori del Provvedimento UIF 12 maggio 2023, in aggiunta alle risposte date sopra nell'intervista T1–T7 (che da sole bastano a compilare la scheda).</div><div class="cbwrap"><label class="cbrow"><input type="checkbox" id="cb_an_1"> Informazioni contraddittorie o incoerenti</label><label class="cbrow"><input type="checkbox" id="cb_an_2"> Documentazione incompleta o incoerente rispetto alle dichiarazioni rese</label><label class="cbrow"><input type="checkbox" id="cb_an_3"> Rifiuto di fornire i dati o la documentazione necessari per l'adeguata verifica</label><label class="cbrow"><input type="checkbox" id="cb_an_4"> Utilizzo di soggetti interposti o di strutture societarie non adeguatamente trasparenti</label><label class="cbrow"><input type="checkbox" id="cb_an_5"> Movimentazioni economiche non coerenti con il valore della controversia o con il profilo economico della parte</label><label class="cbrow"><input type="checkbox" id="cb_an_6"> Reticenza o ingiustificato rifiuto di fornire informazioni rilevanti ai fini dell'adeguata verifica</label><label class="cbrow"><input type="checkbox" id="cb_an_7"> Controversia apparentemente artificiosa o priva di reale contrapposizione</label><label class="cbrow"><input type="checkbox" id="cb_an_8"> Accordo manifestamente sproporzionato rispetto all'oggetto della controversia</label><label class="cbrow"><input type="checkbox" id="cb_an_9"> Pagamento o trasferimento a favore di un soggetto estraneo alla controversia</label><label class="cbrow"><input type="checkbox" id="cb_an_10"> Pagamento effettuato da un terzo privo di apparente collegamento con la procedura</label><label class="cbrow"><input type="checkbox" id="cb_an_11"> Modifiche frequenti e non giustificate del beneficiario o delle modalità di pagamento</label><label class="cbrow"><input type="checkbox" id="cb_an_12"> Trasferimento di immobili, aziende o partecipazioni a valori apparentemente incongrui</label><label class="cbrow"><input type="checkbox" id="cb_an_13"> Utilizzo ingiustificato di contanti, conti esteri, cripto-attività o strumenti non ordinari</label><label class="cbrow"><input type="checkbox" id="cb_an_14"> Utilizzo di società, trust o soggetti interposti non coerente con la controversia</label><label class="cbrow"><input type="checkbox" id="cb_an_15"> Ripetute procedure di mediazione tra soggetti collegati</label><label class="cbrow"><input type="checkbox" id="cb_an_16"> Rifiuto di chiarire la titolarità effettiva o la provenienza dei fondi</label><label class="cbrow"><input type="checkbox" id="cb_an_17"> Richieste anomale e ingiustificate di occultamento dell'identità dei soggetti coinvolti, del beneficiario, della provenienza dei fondi o delle condizioni economiche dell'accordo</label><label class="cbrow cbother-row"><input type="checkbox" id="cb_an_altro"> Altro:</label><input id="an_altro_txt" class="cbother" placeholder="specificare" aria-label="Altro — specificare l'indicatore UIF"></div></details><div class="grid"><div class="field"><label for="anomalie_approfondimenti">Approfondimenti svolti</label><div class="hint">Cosa è stato fatto per chiarire l'anomalia (es. richiesta di documenti integrativi).</div><textarea id="anomalie_approfondimenti" rows="2" placeholder="" ></textarea></div><div class="field"><label for="anomalie_documentazione">Documentazione acquisita a giustificazione</label><div class="hint">Quali documenti sono stati raccolti per giustificare l'anomalia.</div><textarea id="anomalie_documentazione" rows="2" placeholder="" ></textarea></div></div><h3 class="grouph">12 — Valutazione complessiva del rischio</h3><div class="riskbar" id="autoRiskRow" role="status" aria-live="polite">Indicatore automatico orientativo: <span id="riskBadge" class="badge b-basso">BASSO</span><span class="legalref" id="riskNote">(monitoraggio ordinario)</span></div><div class="hint" style="margin:6px 0 10px">Calcolato in automatico dalle risposte date sopra (area geografica, PEP, titolare effettivo, anomalie). È solo un suggerimento: la classificazione finale, qui sotto, resta una valutazione professionale del mediatore/Organismo.</div><div class="grid"><div class="field"><label for="risk_livello">Livello di rischio attribuito</label><div class="hint">La classificazione finale della parte/procedura, anche sulla base della tabella al punto 9-10.</div><select id="risk_livello" ><option value="basso">Basso</option><option value="medio">Medio</option><option value="alto">Alto</option></select></div></div><div class="field"><label for="risk_motivazione">Motivazione</label><div class="hint">Le ragioni della classificazione attribuita.</div><textarea id="risk_motivazione" rows="2" placeholder="" ></textarea></div><h3 class="grouph">13 — Misure di adeguata verifica</h3><div class="grid"><div class="field"><label for="av_tipo">Tipo di adeguata verifica applicata</label><div class="hint">Semplificata (rischio basso / PA, enti pubblici, quotati, vigilati); ordinaria (livello standard); rafforzata (rischio alto, PEP, Paesi a rischio, operazioni complesse o a distanza).</div><select id="av_tipo" ><option value="semplificata">Adeguata verifica semplificata (art. 23 D.Lgs. 231/2007)</option><option value="ordinaria">Adeguata verifica ordinaria (art. 18 D.Lgs. 231/2007)</option><option value="rafforzata">Adeguata verifica rafforzata (artt. 24-25 D.Lgs. 231/2007)</option></select></div></div><div class="field checklist"><label for="cb_avmis_docint">Misure rafforzate adottate</label><div class="hint">Da compilare solo se è stata applicata l'adeguata verifica rafforzata (più opzioni possibili).</div><div class="cbwrap"><label class="cbrow"><input type="checkbox" id="cb_avmis_docint"> Acquisizione di ulteriore documentazione</label><label class="cbrow"><input type="checkbox" id="cb_avmis_approftit"> Approfondimento sul titolare effettivo</label><label class="cbrow"><input type="checkbox" id="cb_avmis_provfondi"> Verifica della provenienza dei fondi</label><label class="cbrow"><input type="checkbox" id="cb_avmis_benef"> Verifica del beneficiario dell'operazione</label><label class="cbrow"><input type="checkbox" id="cb_avmis_terzi"> Verifica di eventuali soggetti terzi coinvolti</label><label class="cbrow cbother-row"><input type="checkbox" id="cb_avmis_altro"> Altro:</label><input id="avmis_altro_txt" class="cbother" placeholder="specificare" aria-label="Altro — specificare la misura rafforzata adottata"></div></div><h3 class="grouph">14 — Documentazione acquisita</h3><div class="field checklist"><label for="cb_docacq_identita">Documenti raccolti agli atti</label><div class="hint">Selezionare tutti i documenti effettivamente acquisiti (più opzioni possibili).</div><div class="cbwrap"><label class="cbrow"><input type="checkbox" id="cb_docacq_identita"> Documento di identità (parte, esecutore e titolare effettivo)</label><label class="cbrow"><input type="checkbox" id="cb_docacq_cf"> Codice fiscale</label><label class="cbrow"><input type="checkbox" id="cb_docacq_visura"> Visura camerale</label><label class="cbrow"><input type="checkbox" id="cb_docacq_statuto"> Statuto</label><label class="cbrow"><input type="checkbox" id="cb_docacq_attocost"> Atto costitutivo</label><label class="cbrow"><input type="checkbox" id="cb_docacq_procalliti"> Procura alle liti</label><label class="cbrow"><input type="checkbox" id="cb_docacq_procspec"> Procura speciale o sostanziale per la partecipazione alla mediazione e l'eventuale disposizione del diritto</label><label class="cbrow"><input type="checkbox" id="cb_docacq_procnot"> Procura notarile</label><label class="cbrow"><input type="checkbox" id="cb_docacq_modulomav"> Modulo di Adeguata Verifica</label><label class="cbrow cbother-row"><input type="checkbox" id="cb_docacq_altro"> Altro:</label><input id="docacq_altro_txt" class="cbother" placeholder="specificare" aria-label="Altro — specificare il documento raccolto"></div></div><h3 class="grouph">15 — Esito complessivo sulla parte e determinazioni finali</h3><div class="field checklist"><label for="cb_esito_nessuno">Determinazioni finali</label><div class="hint">La/e conclusione/i operativa/e (più opzioni possibili).</div><div class="cbwrap"><label class="cbrow"><input type="checkbox" id="cb_esito_nessuno"> Nessun elemento di anomalia</label><label class="cbrow"><input type="checkbox" id="cb_esito_monitoraggio"> Monitoraggio nel corso della procedura</label><label class="cbrow"><input type="checkbox" id="cb_esito_rafforzata"> Adeguata verifica rafforzata</label><label class="cbrow"><input type="checkbox" id="cb_esito_ulteriori"> Valutazione di eventuali ulteriori adempimenti previsti dalla normativa</label></div></div><div class="field"><label for="esito_osservazioni">Osservazioni finali</label><div class="hint">Eventuali note di sintesi ad uso del fascicolo riservato.</div><textarea id="esito_osservazioni" rows="2" placeholder="" ></textarea></div><h3 class="grouph">16 — Trasmissione interna</h3><div class="hint" style="margin-bottom:6px">Trasmissione della scheda al Responsabile antiriciclaggio (RAR) o al Referente SOS, se ritenuta necessaria.</div><div class="grid"><div class="field"><label for="trasm_tipo">Trasmissione al Responsabile antiriciclaggio / Referente SOS</label><div class="hint">Se la trasmissione interna è stata ritenuta necessaria.</div><select id="trasm_tipo" ><option value="non_necessaria">Non necessaria</option><option value="effettuata">Effettuata</option></select></div><div class="field"><label for="trasm_data">Data di trasmissione</label><div class="hint">Da compilare se sopra è stato indicato «Effettuata».</div><input id="trasm_data" type="date" placeholder="" ></div><div class="field"><label for="trasm_destinatario">Destinatario</label><div class="hint">A chi è stata inviata la trasmissione (es. RAR).</div><input id="trasm_destinatario" type="text" placeholder="..." ></div><div class="field"><label for="trasm_motivo">Motivo della trasmissione</label><div class="hint">Perché si è ritenuto necessario trasmettere la scheda.</div><input id="trasm_motivo" type="text" placeholder="..." ></div></div><div class="field"><label for="trasm_annotazioni">Annotazioni riservate</label><div class="hint">Note riservate ad uso interno, da non riportare nel verbale di mediazione.</div><textarea id="trasm_annotazioni" rows="2" placeholder="" ></textarea></div><h3 class="grouph">17 — Dichiarazioni della parte</h3><div class="hint" style="margin-bottom:6px">Le dichiarazioni che la parte (o il legale rappresentante) rende sottoscrivendo il Modulo di Adeguata Verifica.</div><div class="cbwrap" style="flex-direction:column;align-items:flex-start;gap:8px"><label class="cbrow"><input type="checkbox" id="cb_dich_veritieri"> Che i dati forniti sono veritieri, completi e aggiornati</label><label class="cbrow"><input type="checkbox" id="cb_dich_impegno"> Di impegnarsi a comunicare all'Organismo eventuali variazioni rilevanti intervenute nel corso della procedura, entro 30 giorni dal loro verificarsi</label><label class="cbrow"><input type="checkbox" id="cb_dich_privacy"> Di aver ricevuto e preso visione dell'informativa sul trattamento dei dati personali (artt. 13-14 Reg. UE 2016/679)</label></div><div class="field"><label for="dich_carichi">Carichi pendenti per reati economici/tributari/societari</label><div class="hint">A carico del cliente e/o del/dei titolare/i effettivo/i.</div><select id="dich_carichi" ><option value="nessuno">Nessun carico pendente</option><option value="presenti">Sussistono carichi pendenti (specificare sotto)</option></select></div><div class="field"><label for="dich_carichi_dettaglio">Se presenti, specificare</label><div class="hint">Dettaglio dei carichi pendenti dichiarati.</div><textarea id="dich_carichi_dettaglio" rows="2" placeholder="" ></textarea></div><h3 class="grouph">18 — Verifica del Responsabile dell'Organismo / RAR</h3><div class="hint" style="margin-bottom:6px">Riservato al controllo di secondo livello svolto dal Responsabile Antiriciclaggio (facoltativo in fase di compilazione al tavolo).</div><div class="grid"><div class="field"><label for="resp_data">Data della verifica</label><div class="hint">Data in cui il Responsabile Antiriciclaggio (RAR) ha svolto il controllo.</div><input id="resp_data" type="date" placeholder="" ></div><div class="field"><label for="resp_esito">Esito</label><div class="hint">La valutazione del RAR sulla scheda ricevuta.</div><select id="resp_esito" ><option value="conforme">Conforme</option><option value="integrare">Da integrare</option><option value="approfondimenti">Necessari ulteriori approfondimenti</option></select></div></div><div class="field"><label for="resp_note">Note</label><div class="hint">Osservazioni del Responsabile.</div><textarea id="resp_note" rows="2" placeholder="" ></textarea></div>
 <h3 class="grouph">19 — Genera o stampa i modelli</h3>
-<p class="sub" style="margin-bottom:10px">Scegli il percorso più adatto: i dati compilati sopra (a mano o con l'assistente IA più in alto nella pagina) restano gli stessi, cambia solo il modello e il modo in cui lo ottieni.</p>
+<p class="sub" style="margin-bottom:10px">Il pulsante qui sotto corrisponde al documento scelto all'inizio della pagina. I dati compilati sopra (a mano o con l'assistente IA) restano gli stessi in ogni percorso.</p>
 <div class="note no-print"><b>Prima di generare.</b> Ricontrolla tutti i campi, comprese le proposte individuate dall'assistente IA (non solo il ruolo): restano suggerimenti da confermare. Lo strumento supporta la compilazione ma non sostituisce la valutazione professionale — rischio, adeguata verifica ed eventuale segnalazione restano una responsabilità del mediatore/Organismo. La stessa avvertenza viene riportata nel fascicolo generato.</div>
 
+<div class="no-print" id="azionePrincipale" style="margin:14px 0"></div>
+
+<div class="no-print" id="areaRiservataSOS" style="display:none;margin:0 0 14px;border:1px solid var(--blue);border-radius:10px;padding:12px 14px;background:#fff6f4">
+<h4 style="margin:0 0 6px;color:var(--blue);font-size:14px">🔒 Area riservata — rischio ALTO rilevato (sezione 12)</h4>
+<p class="sub" style="margin:0 0 8px">Il promemoria interno per il Responsabile Antiriciclaggio (RAR), propedeutico a un'eventuale segnalazione SOS alla UIF, non viene incluso automaticamente negli altri documenti: si genera solo qui, dopo la valutazione professionale dell'anomalia.</p>
+<div class="row-btns" style="margin-top:0">
+<button class="btn-primary" type="button" onclick="generaSOSRiservato()">Genera il promemoria SOS (riservato)</button>
+<button class="btn-ghost" type="button" onclick="scaricaSOSRiservato()">📄 Scarica (apri in Word)</button>
+</div>
+</div>
+
+<details id="opzioniAvanzateBox" style="margin-top:10px">
+<summary>Altre opzioni — fascicolo completo, altri formati, stampa a mano <span class="chev">&rsaquo;</span></summary>
+<div class="inner">
+
 <details style="margin-top:10px">
-<summary>1 — Moduli COA Genova compilati dall'Assistente AI <span class="chev">&rsaquo;</span></summary>
+<summary>1 — Fascicolo formato Genova <span class="chev">&rsaquo;</span></summary>
 <div class="inner">
 <p>Genera il fascicolo con i dati compilati sopra (anche con l'aiuto dell'assistente IA) nel formato ufficiale dei mediatori dell'Organismo di Mediazione, Ordine degli Avvocati di Genova, pronto da scaricare in Word.</p>
 <div class="row-btns">
@@ -299,6 +338,9 @@ margin-bottom:2cm;
 <div class="row-btns">
 <button class="btn-primary" onclick="stampaVideoGenova()">🖨️ Genera e stampa (formato Genova)</button>
 </div>
+</div>
+</details>
+
 </div>
 </details>
 
@@ -415,6 +457,7 @@ if(!avTipoManual){
 const rl = v("risk_livello");
 $("av_tipo").value = rl==="basso" ? "semplificata" : (rl==="alto" ? "rafforzata" : "ordinaria");
 }
+aggiornaAreaRiservataSOS(lvl);
 return lvl==="nd" ? "DA VALUTARE (dati insufficienti)" : v("risk_livello").toUpperCase();
 }
 ["p_area","pep_parte","pep_te","pep_rappr","pep_esito","te_esito","anomalie_presenti","anomalie_spiegate","p_natgiur","risk_livello"]
@@ -1324,6 +1367,156 @@ fascicoloAccumuloSaveAll();
 if(!procKey && partyKey==="(parte senza nome)") toast("Attenzione: numero di procedura e nome della parte non compilati — restano in bianco nei documenti generati.");
 else if(!procKey) toast("Attenzione: numero di procedura non compilato — resta in bianco nei documenti generati.");
 else if(partyKey==="(parte senza nome)") toast("Attenzione: nome/denominazione della parte non compilato — resta in bianco nei documenti generati.");
+}
+
+// ---------- Selettore documento iniziale ----------
+// Non introduce un nuovo motore di compilazione: riusa genera()/modAV()/ecc. già
+// esistenti, filtrando solo quale modulo mostrare/scaricare in base alla scelta
+// fatta in cima alla pagina. Storico, autosalvataggio e accumulo multi-parte
+// restano quelli già in uso per il fascicolo completo (chiamano comunque genera()).
+const DOC_TARGET_KEY = "calcolomediazione_aml_doc_target";
+let documentoTarget = null;
+try{ documentoTarget = localStorage.getItem(DOC_TARGET_KEY) || null; } catch(e){ /* storage non disponibile: si prosegue senza persistenza */ }
+
+const DOC_LABELS = {
+av: "Modulo di Adeguata Verifica",
+svr: "Scheda di valutazione del rischio",
+dich: "Dichiarazione del cliente",
+coa: "Modello ufficiale COA Genova (Modulo AV + Scheda rischio)",
+fascicolo: "Fascicolo AML completo"
+};
+
+function sceltaDocumento(tipo){
+documentoTarget = tipo;
+try{ localStorage.setItem(DOC_TARGET_KEY, tipo); } catch(e){ /* storage non disponibile: si prosegue senza persistenza */ }
+if(tipo==="coa"){
+usaFormatoGenova = true;
+try{ localStorage.setItem(USA_FORMATO_GENOVA_KEY, "1"); } catch(e){ /* storage non disponibile: si prosegue senza persistenza */ }
+const selFormato = $("formato_modello"); if(selFormato) selFormato.value = "genova";
+}
+document.querySelectorAll("#docChoices .role").forEach(r=>r.classList.toggle("active", r.dataset.doc===tipo));
+aggiornaBarraDocTarget();
+aggiornaSezione19();
+const box = $("docSelectBox"); if(box) box.style.display = "none";
+const bar = $("docTargetBar"); if(bar) bar.scrollIntoView({behavior:"smooth", block:"start"});
+}
+
+function mostraSelettoreDocumento(){
+const box = $("docSelectBox"); if(box) box.style.display = "";
+if(box) box.scrollIntoView({behavior:"smooth"});
+}
+
+function aggiornaBarraDocTarget(){
+const bar = $("docTargetBar"), lbl = $("docTargetLabel");
+if(!bar || !lbl) return;
+if(documentoTarget && DOC_LABELS[documentoTarget]){
+const conFormato = (documentoTarget==="av" || documentoTarget==="svr");
+lbl.textContent = DOC_LABELS[documentoTarget] + (conFormato ? (" · Formato " + (usaFormatoGenova?"COA Genova":"generico")) : "");
+bar.style.display = "flex";
+} else {
+bar.style.display = "none";
+}
+}
+
+// Mostra in sezione 19 solo l'azione pertinente al documento scelto in cima alla
+// pagina; il fascicolo completo e gli altri formati restano disponibili come
+// opzione avanzata nell'accordion "Altre opzioni" sottostante.
+function aggiornaSezione19(){
+const azione = $("azionePrincipale");
+if(!azione) return;
+if(!documentoTarget){
+azione.innerHTML = '<p class="sub">Scegli il documento da predisporre in cima alla pagina per vedere qui il pulsante di generazione, oppure apri «Altre opzioni» qui sotto per il fascicolo completo.</p>';
+return;
+}
+if(documentoTarget==="fascicolo"){
+azione.innerHTML = '<p class="sub">Hai scelto il fascicolo AML completo: usa le opzioni in «Altre opzioni» qui sotto (formato Genova o generico, a video o da stampare).</p>';
+const adv = $("opzioniAvanzateBox"); if(adv) adv.open = true;
+return;
+}
+const label = DOC_LABELS[documentoTarget] || "documento";
+const btnLabel = documentoTarget==="coa" ? "Genera il Modulo AV COA Genova" : "Genera: " + label;
+azione.innerHTML =
+'<div class="row-btns" style="margin-top:0">'
++ '<button class="btn-primary" type="button" onclick="generaSingolo(\''+documentoTarget+'\')">'+esc(btnLabel)+'</button>'
++ '<button class="btn-ghost" type="button" onclick="scaricaSingolo(\''+documentoTarget+'\')">📄 Scarica (apri in Word)</button>'
++ '</div>';
+}
+
+// Restituisce il solo blocco HTML del documento richiesto (senza SOS/checklist).
+function contenutoSingolo(tipo){
+if(tipo==="av") return usaFormatoGenova ? modAVGenova() : modAV();
+if(tipo==="svr") return usaFormatoGenova ? modSchedaRischioGenova() : modSchedaRischio();
+if(tipo==="dich") return modInformativa() + modDich();
+if(tipo==="coa") return (usaFormatoGenova?modAVGenova():modAV()) + (usaFormatoGenova?modSchedaRischioGenova():modSchedaRischio());
+return "";
+}
+
+function generaSingolo(tipo){
+genera(); // aggiorna storico, accumulo multi-parte e badge rischio con la stessa logica del fascicolo completo
+const out = $("out");
+out.innerHTML = contenutoSingolo(tipo);
+out.style.display = "block";
+out.scrollIntoView({behavior:"smooth"});
+}
+
+function nomeFileSingolo(tipo){
+const proc = (v("proc_n")||"procedura").replace(/[^\w]/g,"_");
+const nomi = {
+av: (usaFormatoGenova?"Modulo_AV_COA_Genova_":"Modulo_AV_") + proc,
+svr: (usaFormatoGenova?"Scheda_rischio_COA_Genova_":"Scheda_rischio_generica_") + proc,
+dich: "Dichiarazione_cliente_" + proc,
+coa: "Modulo_AV_COA_Genova_" + proc
+};
+return (nomi[tipo] || ("documento_"+proc)) + ".doc";
+}
+
+// Esporta in Word un singolo documento (non l'intero fascicolo), riusando lo stesso
+// boilerplate MSO/pagina e la stessa funzione wordizzaHtml() già usati da scaricaWord(),
+// senza toccare scaricaWord() né il suo comportamento sul fascicolo completo.
+function esportaDocSingoloWord(titolo, bodyHtmlGrezzo, filename){
+const mso = '<!--[if gte mso 9]><xml><w:WordDocument><w:View>Print</w:View><w:Zoom>100</w:Zoom><w:DoNotOptimizeForBrowser/></w:WordDocument></xml><![endif]-->';
+const pageCss = '<style>@page WordSection1 {size:21.0cm 29.7cm; margin:2.0cm 1.8cm 2.0cm 1.8cm; mso-header-margin:1.0cm; mso-footer-margin:1.0cm; mso-paper-source:0;} div.WordSection1 {page:WordSection1;}</style>';
+const bodyStyle = 'font-family:Segoe UI,Arial,sans-serif;color:#13161b;max-width:820px;margin:24px auto;padding:0 16px;background:#ffffff';
+const bodyHtml = wordizzaHtml(FASCICOLO_AVVERTENZA_HTML + bodyHtmlGrezzo);
+const sottotitolo = esc(v("odm_nome")) + ' · procedura ' + esc(v("proc_n")) + ' · generato il ' + today();
+const html = '<!doctype html><html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40" lang="it"><head><meta charset="utf-8"><title>'+esc(titolo)+'</title>'+mso+pageCss+'</head><body style="'+bodyStyle+'"><div class="WordSection1"><h1 style="color:#a03317;font-size:18px;margin:0 0 4px">'+esc(titolo)+'</h1><p style="color:#5b6675;font-size:13px">'+sottotitolo+'</p>'+bodyHtml+'</div></body></html>';
+const blob = new Blob([' '+html],{type:"application/msword"});
+const a = document.createElement("a");
+a.href = URL.createObjectURL(blob);
+a.download = filename;
+a.click(); URL.revokeObjectURL(a.href);
+}
+
+function scaricaSingolo(tipo){
+if(!$("out").innerHTML) generaSingolo(tipo);
+esportaDocSingoloWord(DOC_LABELS[tipo] || "Documento antiriciclaggio", contenutoSingolo(tipo), nomeFileSingolo(tipo));
+}
+
+// ---------- Area riservata SOS/RAR ----------
+// modSOS() genera contenuto solo quando la valutazione (sezione 12) è ALTO: qui si
+// rende esplicito che il promemoria SOS non entra mai nei percorsi documento-singolo
+// né va scaricato per errore insieme agli altri, ma solo da questa area dedicata,
+// dopo la valutazione professionale dell'anomalia.
+function aggiornaAreaRiservataSOS(lvl){
+const box = $("areaRiservataSOS");
+if(!box) return;
+box.style.display = (lvl==="alto") ? "block" : "none";
+}
+
+function generaSOSRiservato(){
+const html = modSOS();
+if(!html){ toast("Il promemoria SOS si genera solo quando la valutazione di rischio (sezione 12) è ALTO."); return; }
+genera(); // aggiorna comunque storico/accumulo con la stessa logica del fascicolo completo
+const out = $("out");
+out.innerHTML = html;
+out.style.display = "block";
+out.scrollIntoView({behavior:"smooth"});
+}
+
+function scaricaSOSRiservato(){
+const html = modSOS();
+if(!html){ toast("Il promemoria SOS si genera solo quando la valutazione di rischio (sezione 12) è ALTO."); return; }
+esportaDocSingoloWord("Promemoria SOS — riservato", html, "Promemoria_SOS_riservato_"+((v("proc_n")||"procedura").replace(/[^\w]/g,"_"))+".doc");
 }
 
 // ---------- Comunicazioni e aggiornamenti del mediatore ----------
@@ -2459,6 +2652,17 @@ const o=$("trigOut"); o.innerHTML=html; o.style.display="block"; o.scrollIntoVie
 }
 function copyMot(){ const el=$("motText"); if(el) navigator.clipboard.writeText(el.innerText).then(()=>toast("Bozza copiata")); }
 buildTriggers();
+
+// Ripristina lo stato del selettore documento iniziale se una scelta era già
+// stata salvata su questo browser in una sessione precedente (stessa procedura
+// o una nuova): mostra subito la barra "Stai compilando" e il pulsante giusto
+// in sezione 19, senza dover ripetere la scelta ad ogni apertura della pagina.
+if(documentoTarget){
+document.querySelectorAll("#docChoices .role").forEach(r=>r.classList.toggle("active", r.dataset.doc===documentoTarget));
+const box = $("docSelectBox"); if(box) box.style.display = "none";
+}
+aggiornaBarraDocTarget();
+aggiornaSezione19();
 
 
 </script>
