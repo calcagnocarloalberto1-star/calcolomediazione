@@ -49,7 +49,6 @@ const CreditoImpostaMediazioneDomanda = lazy(() => import("@/pages/CreditoImpost
 const GratuitoPatrocinioMediazione = lazy(() => import("@/pages/GratuitoPatrocinioMediazione"));
 const MaanZopaMediazione = lazy(() => import("@/pages/MaanZopaMediazione"));
 const AssegnoMantenimentoDivorzileCalcolo = lazy(() => import("@/pages/AssegnoMantenimentoDivorzileCalcolo"));
-const AntiriciclaggioMediazioneObblighi = lazy(() => import("@/pages/AntiriciclaggioMediazioneObblighi"));
 const TrasferimentoImmobiliareMediazione = lazy(() => import("@/pages/TrasferimentoImmobiliareMediazione"));
 import { usePageTracker } from "@/hooks/use-page-tracker";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
@@ -121,7 +120,6 @@ function AppRouter() {
         </Boundary>
       </Route>
       <Route path="/antiriciclaggio-guida" component={AntiriciclaggioGuida} />
-      <Route path="/antiriciclaggio-mediazione-obblighi" component={AntiriciclaggioMediazioneObblighi} />
       <Route path="/trasferimento-immobiliare-mediazione" component={TrasferimentoImmobiliareMediazione} />
       <Route path="/admin" component={Admin} />
       <Route component={NotFound} />
