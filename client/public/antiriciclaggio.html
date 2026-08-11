@@ -167,7 +167,7 @@ margin-bottom:2cm;
 <div class="role" data-doc="av" onclick="sceltaDocumento('av')"><b>Adeguata verifica della parte</b><small>Modulo AV, da far firmare alla parte</small></div>
 <div class="role" data-doc="svr" onclick="sceltaDocumento('svr')"><b>Valutazione del rischio</b><small>Scheda di valutazione del rischio, ad uso del mediatore</small></div>
 <div class="role" data-doc="dich" onclick="sceltaDocumento('dich')"><b>Dichiarazione del cliente</b><small>Dichiarazione ex art. 22 D.Lgs. 231/2007</small></div>
-<div class="role" data-doc="coa" onclick="sceltaDocumento('coa')"><b>Modello ufficiale COA Genova</b><small>Modulo AV + Scheda rischio, formato Organismo di Mediazione COA Genova — compilabile anche a mano</small></div>
+<div class="role" data-doc="coa" onclick="sceltaDocumento('coa')"><b>Proposta di compilazione per i mediatori dell'Organismo del Coa Genova</b><small>Modulo AV + Scheda rischio, formato Organismo di Mediazione COA Genova — compilabile anche a mano</small></div>
 </div>
 <details style="margin-top:10px">
 <summary>Fascicolo AML completo (opzione avanzata) <span class="chev">&rsaquo;</span></summary>
@@ -1434,7 +1434,7 @@ const adv = $("opzioniAvanzateBox"); if(adv) adv.open = true;
 return;
 }
 const label = DOC_LABELS[documentoTarget] || "documento";
-const btnLabel = documentoTarget==="coa" ? "Genera il Modulo AV COA Genova" : "Genera: " + label;
+const btnLabel = "Genera: " + label;
 azione.innerHTML =
 '<div class="row-btns" style="margin-top:0">'
 + '<button class="btn-primary" type="button" onclick="generaSingolo(\''+documentoTarget+'\')">'+esc(btnLabel)+'</button>'
