@@ -19,7 +19,7 @@ export default function PrivacyPolicy() {
         </div>
 
         <div className="bg-card border-[2px] border-foreground shadow-[4px_4px_0px_0px] shadow-foreground/20 p-6 sm:p-8 space-y-6">
-          <p className="text-sm opacity-60">Ultimo aggiornamento: Marzo 2026</p>
+          <p className="text-sm opacity-60">Ultimo aggiornamento: Settembre 2026</p>
 
           <Section title="1. Titolare del Trattamento">
             <p>Il titolare del trattamento dei dati personali è Carlo Alberto Calcagno, responsabile del sito web CalcoloMediazione.it (di seguito "il Sito").</p>
@@ -31,7 +31,7 @@ export default function PrivacyPolicy() {
             <ul className="list-disc list-inside space-y-1 ml-4">
               <li><strong>Dati di navigazione:</strong> indirizzo IP, tipo di browser, sistema operativo, pagine visitate, orario di accesso. Questi dati vengono raccolti automaticamente durante la navigazione.</li>
               <li><strong>Dati forniti volontariamente:</strong> eventuali dati inseriti dall'utente nei form di contatto o nei calcolatori (valore della controversia, materia, descrizione del caso per l'analisi AI).</li>
-              <li><strong>Dati di analisi AI:</strong> le descrizioni dei casi inserite per l'analisi AI vengono elaborate in tempo reale e non vengono conservate in modo permanente sul server dopo la chiusura della sessione.</li>
+              <li><strong>Dati di analisi AI:</strong> le descrizioni dei casi inserite nello strumento «Analisi AI del Caso» vengono elaborate da fornitori di intelligenza artificiale (Anthropic Claude, Google Gemini in fallback — v. Sezione 6) e salvate sul server per un massimo di 30 giorni (v. Sezione 5), non a tempo indeterminato. Prima dell'invio ai fornitori, i nomi delle parti e alcuni dati identificativi diretti eventualmente presenti nel testo (email, codice fiscale, IBAN, telefono) vengono sostituiti con codici anonimi; si tratta di una misura di minimizzazione best-effort, non di un'anonimizzazione garantita al 100% per ogni dettaglio indiretto eventualmente presente nel testo libero.</li>
             </ul>
           </Section>
 
@@ -70,9 +70,10 @@ export default function PrivacyPolicy() {
             <p>I dati personali non vengono venduti, ceduti o diffusi a terzi. Possono essere comunicati a:</p>
             <ul className="list-disc list-inside space-y-1 ml-4">
               <li>Provider di servizi tecnologici (hosting, servizi cloud) necessari al funzionamento del Sito, nei limiti di quanto necessario per l'erogazione del servizio</li>
-              <li>Provider di servizi di intelligenza artificiale per l'elaborazione delle analisi AI, in conformità alle rispettive policy sulla privacy</li>
+              <li>Provider di servizi di intelligenza artificiale (Anthropic Claude, Google Gemini in fallback) per l'elaborazione delle analisi AI — v. dettaglio sotto</li>
               <li>Autorità competenti, ove richiesto dalla legge</li>
             </ul>
+            <p className="mt-2"><strong>Analisi AI del Caso.</strong> Titolo, descrizione del caso, parti e documenti eventualmente allegati vengono trasmessi all'API di Anthropic (Claude) o, in caso di indisponibilità, di Google (Gemini) per generare l'analisi giuridica, MAAN/BATNA, il controllo dei bias cognitivi, la bozza di accordo e il confronto economico. Prima dell'invio, i nomi delle parti e alcuni identificatori diretti individuati nel testo (email, codice fiscale, IBAN, telefono) vengono sostituiti con codici anonimi; i valori reali sono ripristinati solo nel risultato mostrato all'utente, mai in quanto reinviato ai fornitori nelle richieste successive della stessa analisi. In base ai rispettivi termini commerciali, i fornitori non utilizzano i dati per addestrare i propri modelli; l'elaborazione avviene su infrastruttura statunitense, con le clausole contrattuali standard a copertura del trasferimento extra-UE. L'analisi resta salvata sul server per un massimo di 30 giorni (v. Sezione 5) ed è accessibile solo tramite un codice di accesso univoco generato per quella analisi. Gli output restano stime orientative generate con l'ausilio dell'intelligenza artificiale: vanno verificati dal professionista prima di ogni uso, anche quando i dati di input sono stati resi anonimi.</p>
             <p className="mt-2"><strong>Compilazione automatica dei modelli antiriciclaggio — modalità «alta precisione (AI)».</strong> Su scelta esplicita dell'utente, l'immagine (o le pagine) del documento caricato nello strumento antiriciclaggio viene trasmessa all'API di un fornitore di intelligenza artificiale (Anthropic) al solo fine di estrarne automaticamente i dati per la compilazione dei modelli. In base ai termini commerciali e al Data Processing Agreement (DPA) conforme al GDPR, il fornitore non utilizza tali dati per addestrare i propri modelli e ne conserva i log tecnici per un massimo di 7 giorni; l'elaborazione avviene prevalentemente su infrastruttura statunitense, con le clausole contrattuali standard a copertura del trasferimento. Il sito non conserva il file caricato né i dati estratti. Il trattamento avviene sotto la responsabilità del professionista o dell'organismo che utilizza lo strumento, quale titolare, tenuto a verificare la sussistenza di un'idonea base giuridica e a informare l'interessato. La modalità predefinita di riconoscimento (OCR) opera invece interamente nel browser, senza trasmissione dei file. I dati estratti sono comunque sottoposti a controllo umano prima dell'inserimento.</p>
           </Section>
 
