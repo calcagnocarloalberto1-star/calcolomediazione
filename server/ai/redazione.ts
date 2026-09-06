@@ -161,3 +161,23 @@ export function ripristinaTesto(testo: string | null | undefined, mappa: Record<
   }
   return risultato;
 }
+
+// PRIV-09 — variante di redigiDati() per endpoint che devono redigere piu'
+// testi indipendenti in un colpo solo con una mappa condivisa (es. la chat di
+// follow-up: titolo, descrizione, contesto dell'analisi gia' completata,
+// cronologia dei messaggi precedenti e il nuovo messaggio dell'utente.
+// Usare una mappa condivisa, invece di chiamare redigiDati() piu' volte,
+// evita che lo stesso valore (es. la stessa email citata due volte in pezzi
+// diversi) finisca tokenizzato con due token diversi.
+export function redigiMultiplo(
+  pezzi: (string | null | undefined)[],
+  parti: ParteAnalisi[]
+): { pezziRedatti: string[]; partiRedatte: ParteAnalisi[]; mappa: Record<string, string> } {
+  // Separatore improbabile da incontrare in testo libero e comunque innocuo
+  // per i pattern di redazione (non e' un'email, un CF, un IBAN o un nome).
+  const SEPARATORE = " PRIV09-SEP ";
+  const testoUnito = pezzi.map((p) => p || "").join(SEPARATORE);
+  const { descrizioneRedatta, partiRedatte, mappa } = redigiDati(testoUnito, parti, "");
+  const pezziRedatti = descrizioneRedatta.split(SEPARATORE);
+  return { pezziRedatti, partiRedatte, mappa };
+}
