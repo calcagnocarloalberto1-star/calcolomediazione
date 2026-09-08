@@ -770,7 +770,7 @@ export default function ConfrontoCosti() {
                   </div>
                 </CardContent>
               </Card>
-
+Limite reddito 2026:
               <Card className={`border-2 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] ${gratuitoPatrocinio ? "border-green-600 bg-green-50" : "border-foreground"}`}>
                 <CardContent className="pt-6">
                   <div className="flex items-center gap-2 mb-4">
@@ -794,7 +794,7 @@ export default function ConfrontoCosti() {
                     </div>
                   ) : (
                     <div>
-                      <p className="text-sm text-muted-foreground mb-2">Limite reddito 2025: <span className="font-mono font-bold">{formatEuro(risultato.gratuitoPatrocinio.limiteReddito)}</span></p>
+                      <p className="text-sm text-muted-foreground mb-2">Limite reddito 2026: <span className="font-mono font-bold">{formatEuro(risultato.gratuitoPatrocinio.limiteReddito)}</span></p>
                       <p className="text-xs text-muted-foreground">Inserisci il reddito annuo per verificare l'ammissibilità (D.M. 22/04/2025).</p>
                     </div>
                   )}
