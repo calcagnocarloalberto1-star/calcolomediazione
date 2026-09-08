@@ -1,5 +1,6 @@
 import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
+import { eliminaAnalisiScadute } from "./storage";
 import { serveStatic } from "./static";
 import { createServer } from "http";
 
@@ -136,4 +137,14 @@ app.use((req, res, next) => {
       log(`serving on port ${port}`);
     },
   );
+
+  // PRIV-09 — garantisce la retention a 30 giorni indipendentemente dal
+  // traffico (in precedenza girava solo come effetto collaterale della
+  // creazione di una nuova analisi, vedi server/storage.ts). Un intervallo
+  // ogni ora e' sufficiente per onorare la promessa fatta in privacy policy
+  // senza bisogno di infrastruttura di scheduling esterna.
+  eliminaAnalisiScadute().catch((err) => console.error("Errore pulizia analisi scadute:", err));
+  setInterval(() => {
+    eliminaAnalisiScadute().catch((err) => console.error("Errore pulizia analisi scadute:", err));
+  }, 60 * 60 * 1000);
 })();
