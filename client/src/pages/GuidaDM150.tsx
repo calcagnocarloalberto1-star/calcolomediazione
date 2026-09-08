@@ -33,7 +33,7 @@ export default function GuidaDM150() {
           </p>
           {/* DATA-04 / PRIV-07: data dell'ultima verifica normativa, aggiornata
               manualmente ad ogni revisione periodica (v. processo PRIV-07). */}
-          <p className="text-sm text-muted-foreground/70 mt-2">Ultima verifica normativa: agosto 2026</p>
+          <p className="text-sm text-muted-foreground/70 mt-2">Ultima verifica normativa: settembre 2026</p>
         </div>
 
         {/* Table of contents */}
