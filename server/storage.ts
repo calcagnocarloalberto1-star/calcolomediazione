@@ -55,7 +55,7 @@ async function initDb() {
     );
   `);
 
-  // 2. Migrazione: aggiunge access_token se non esiste (query separata)
+  await pool.query(`CREATE TABLE IF NOT EXISTS contatore_visite (id INTEGER PRIMARY KEY DEFAULT 1, totale INTEGER NOT NULL DEFAULT 0);`); try { await pool.query(`INSERT INTO contatore_visite (id, totale) VALUES (1, 0) ON CONFLICT (id) DO NOTHING;`); } catch (err) { console.error("Errore inizializzazione contatore_visite:", err); } // 2. Migrazione: aggiunge access_token se non esiste (query separata)
   try {
     await pool.query(`
       ALTER TABLE analisi_casi ADD COLUMN IF NOT EXISTS access_token TEXT;
@@ -113,7 +113,7 @@ export async function eliminaAnalisiScadute(): Promise<void> {
   await pool.query("DELETE FROM analisi_casi WHERE created_at < now() - interval '30 days'");
 }
 
-export class DatabaseStorage implements IStorage {
+export async function incrementaContatoreVisite(): Promise<number> { const res = await pool.query(`UPDATE contatore_visite SET totale = totale + 1 WHERE id = 1 RETURNING totale`); return res.rows[0]?.totale ?? 0; } export async function getContatoreVisite(): Promise<number> { const res = await pool.query(`SELECT totale FROM contatore_visite WHERE id = 1`); return res.rows[0]?.totale ?? 0; } export class DatabaseStorage implements IStorage {
   async createAnalisi(data: InsertAnalisiCaso): Promise<AnalisiCaso & { accessToken: string }> {
     // Retention best-effort immediata: non blocca la creazione. Lo scheduler
     // periodico in server/index.ts resta la garanzia indipendente dal traffico.
