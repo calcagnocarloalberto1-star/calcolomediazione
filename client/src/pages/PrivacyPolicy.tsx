@@ -27,7 +27,7 @@ export default function PrivacyPolicy() {
 
           <Section title="2. Dati trattati e origine">
             <ul className="list-disc space-y-2 ml-5">
-              <li><strong>Navigazione tecnica:</strong> il server riceve i dati necessari alla connessione e alla sicurezza. La statistica interna delle pagine visitate è aggregata e volatile e non conserva indirizzi IP o user-agent.</li>
+              <li><strong>Navigazione tecnica:</strong> il server riceve i dati necessari alla connessione e alla sicurezza. Le statistiche interne non conservano indirizzi IP o user-agent: il totale complessivo delle visualizzazioni è memorizzato nel database come solo numero aggregato, mentre il dettaglio per pagina resta volatile in memoria.</li>
               <li><strong>Calcolatori locali:</strong> i dati di molti calcoli restano nel browser, salvo l'uso volontario di funzioni IA o di esportazione che richiedano il server.</li>
               <li><strong>Analisi del caso con IA:</strong> titolo, descrizione, parti, parametri economici, testo estratto dai PDF, risultati e messaggi della chat.</li>
               <li><strong>Antiriciclaggio:</strong> i moduli ordinari restano nel browser. Solo scegliendo una funzione IA i documenti vengono trasmessi al server e al fornitore IA per l'elaborazione richiesta.</li>
@@ -57,7 +57,7 @@ export default function PrivacyPolicy() {
               <li><strong>Analisi del caso:</strong> massimo 30 giorni sul database del sito. L'utente può cancellarla prima dallo storico mediante il token segreto memorizzato nel proprio browser.</li>
               <li><strong>PDF caricati nell'Analisi del caso:</strong> usati in memoria per estrarre il testo e non archiviati come file; il testo estratto confluisce nell'analisi conservata fino a 30 giorni.</li>
               <li><strong>Documenti AML inviati all'IA:</strong> elaborati in memoria e non archiviati dal sito dopo la risposta. I tempi tecnici del fornitore dipendono dal servizio e dal piano contrattuale applicato.</li>
-              <li><strong>Statistiche interne:</strong> solo in memoria fino al riavvio del servizio, con limite massimo di eventi e senza IP o user-agent.</li>
+              <li><strong>Statistiche interne:</strong> il totale complessivo delle visualizzazioni è conservato nel database come numero aggregato; il dettaglio per pagina resta in memoria fino al riavvio del servizio. Nessuno dei due contiene IP, user-agent o identificatori del visitatore.</li>
               <li><strong>Browser dell'utente:</strong> token di accesso, storico tecnico minimizzato e modelli locali restano sul dispositivo finché l'utente non li elimina o cancella i dati del sito.</li>
             </ul>
           </Section>

@@ -461,35 +461,28 @@ const PAGE_CONTENT: Record<string, string> = {
 </ul>`,
 
 "/privacy-policy": `
-<h1>Privacy Policy — CalcoloMediazione</h1>
-<p>Informativa sul trattamento dei dati personali degli utenti di CalcoloMediazione.it, ai sensi del Regolamento UE 2016/679 (GDPR).</p>
+<h1>Informativa sul trattamento dei dati personali</h1>
+<p>Ultimo aggiornamento: 8 settembre 2026.</p>
 <h2>Titolare del trattamento</h2>
-<p>Il titolare del trattamento è Carlo Alberto Calcagno, responsabile del sito CalcoloMediazione.it.</p>
-<h2>Dati raccolti e finalità</h2>
-<ul>
-<li>Dati di navigazione (indirizzo IP, browser, pagine visitate), raccolti automaticamente</li>
-<li>Dati forniti volontariamente nei form di contatto o nei calcolatori</li>
-<li>Dati delle analisi AI, elaborati in tempo reale e non conservati in modo permanente dopo la sessione</li>
-</ul>
-<p>I dati sono trattati per erogare i servizi di calcolo e analisi del sito, rispondere alle richieste di contatto, adempiere a obblighi di legge ed effettuare analisi statistiche aggregate, sulla base del consenso, dell'esecuzione di un contratto, del legittimo interesse o di un obbligo legale (art. 6 GDPR).</p>
-<h2>Compilazione automatica dei modelli antiriciclaggio con AI</h2>
-<p>Su scelta esplicita dell'utente, la modalità ad alta precisione dello strumento antiriciclaggio trasmette il documento caricato all'API commerciale di Anthropic. Il sito elabora il file in memoria e non lo archivia dopo la risposta; l'eventuale conservazione tecnica del fornitore dipende dal piano e dai termini applicabili.</p>
-<h2>Diritti dell'interessato</h2>
-<p>Ai sensi degli artt. 15-22 GDPR, l'utente ha diritto di accesso, rettifica, cancellazione, limitazione, portabilità e opposizione al trattamento, oltre al diritto di proporre reclamo al Garante per la Protezione dei Dati Personali.</p>`,
+<p>Il titolare del trattamento è Carlo Alberto Calcagno, responsabile di CalcoloMediazione.it. Le richieste privacy possono essere inviate mediante i recapiti della pagina Contatti.</p>
+<h2>Dati trattati e statistiche</h2>
+<p>Il server riceve i dati tecnici necessari alla connessione e alla sicurezza. Le statistiche interne non conservano IP o user-agent: il totale complessivo delle visualizzazioni è memorizzato nel database come solo numero aggregato, mentre il dettaglio per pagina resta volatile in memoria.</p>
+<h2>Servizi di intelligenza artificiale</h2>
+<p>Le funzioni IA possono trattare titolo, descrizione, parti, parametri economici, testo estratto dai PDF, risultati e messaggi della chat. I contenuti sono trasmessi ad Anthropic Claude e, solo se configurato in un ambiente commerciale idoneo, a Google Gemini. Il professionista deve verificare base giuridica, informativa, minimizzazione e condizioni contrattuali applicabili.</p>
+<h2>Conservazione e sicurezza</h2>
+<p>Le analisi del caso sono conservate per un massimo di 30 giorni e possono essere eliminate prima mediante il token segreto. Il sito usa HTTPS, risposte API non memorizzabili, controlli di origine, limiti di frequenza e dimensione e validazione dei file.</p>
+<h2>Diritti</h2>
+<p>Nei casi previsti dagli artt. 15-22 GDPR, l'interessato può esercitare i diritti applicabili e proporre reclamo al Garante. Per maggiori dettagli consultare la pagina completa nel browser e la <a href="/cookie-policy">Cookie Policy</a>.</p>`,
 
 "/cookie-policy": `
 <h1>Cookie Policy — CalcoloMediazione</h1>
-<p>Informativa sull'utilizzo dei cookie sul sito CalcoloMediazione.it.</p>
-<h2>Cookie tecnici e analitici</h2>
-<p>Il sito utilizza cookie tecnici (di sessione e funzionali), necessari al funzionamento e che non richiedono consenso preventivo, e cookie analitici di Google Analytics, installati solo dopo che l'utente ha espresso il consenso tramite il banner presente sul sito.</p>
-<h2>Servizi di terze parti</h2>
-<ul>
-<li>Google Analytics — statistiche di navigazione, richiede consenso</li>
-<li>Servizi AI (Anthropic Claude, Google Gemini in fallback) — elaborazione delle analisi AI e, solo su richiesta dell'utente, lettura dei documenti caricati nello strumento antiriciclaggio</li>
-<li>Google Fonts — caricamento dei font tipografici del sito</li>
-</ul>
-<h2>Gestione dei cookie</h2>
-<p>L'utente può gestire le preferenze sui cookie direttamente dal proprio browser; la disattivazione dei cookie tecnici può compromettere il funzionamento di alcune funzionalità del sito.</p>`,
+<p>Ultimo aggiornamento: 8 settembre 2026.</p>
+<h2>Scelte disponibili</h2>
+<p>Il cookie tecnico cm_consent ricorda la scelta per 12 mesi in caso di accettazione e per 6 mesi in caso di rifiuto. Google Analytics viene caricato soltanto dopo un consenso esplicito; il rifiuto non limita le funzioni essenziali.</p>
+<h2>Statistiche interne</h2>
+<p>Il sito conta le visualizzazioni senza cookie, profili, indirizzi IP, user-agent o altri identificatori. Il totale complessivo è conservato nel database come solo numero aggregato; il dettaglio per pagina resta in memoria fino al riavvio.</p>
+<h2>Revoca</h2>
+<p>La scelta può essere modificata in qualsiasi momento dal link Preferenze cookie nel footer o dalla pagina completa nel browser. La revoca disabilita Analytics e tenta di eliminare i relativi cookie di prima parte. Per il trattamento dei dati si rinvia alla <a href="/privacy-policy">Privacy Policy</a>.</p>`,
 
 "/termini-condizioni": `
 <h1>Termini e Condizioni — CalcoloMediazione</h1>

@@ -39,7 +39,7 @@ La sicurezza assoluta non può essere garantita da una revisione puntuale. La co
 - **Revoca:** il footer e la Cookie Policy permettono di riaprire le preferenze. La revoca disabilita Analytics e tenta la rimozione dei cookie `_ga`.
 - **Scelta equivalente:** il banner mantiene “Accetta tutti” e “Solo necessari”; la chiusura equivale a “Solo necessari”.
 - **Durata:** scelta positiva 12 mesi, rifiuto 6 mesi.
-- **Statistica interna:** non conserva più IP o user-agent e resta volatile in memoria.
+- **Statistica interna:** non conserva più IP o user-agent. Il nuovo contatore conserva nel database soltanto il totale numerico aggregato; il dettaglio per pagina resta volatile in memoria.
 - **Riferimento:** Linee guida del Garante sui cookie e altri strumenti di tracciamento: https://www.garanteprivacy.it/home/docweb/-/docweb-display/docweb/9677876
 
 ### Logging e header
@@ -63,9 +63,10 @@ La sicurezza assoluta non può essere garantita da una revisione puntuale. La co
 - Build di produzione Vite e server: completata.
 - `git diff --check`: nessun errore di whitespace.
 - Audit npm: eliminate le vulnerabilità applicative rilevate; resta una segnalazione bassa in `esbuild`, dipendenza dello strumento di sviluppo `tsx`, relativa al development server su Windows e non al bundle di produzione Linux.
-- Sito pubblico: HTTPS e redirect HTTP verificati; nessun mixed content o errore runtime osservato durante l'audit.
+- Rilascio pubblico: intervento pubblicato su `main` e deployment verificato sul dominio il 9 settembre 2026.
+- Sito pubblico: HTTPS, TLS 1.3, redirect HTTP, policy aggiornate, preferenze cookie, conferma privacy server-side e header di sicurezza verificati; nessun mixed content o errore runtime osservato.
 
-## Azioni operative necessarie prima della pubblicazione
+## Azioni operative successive al rilascio
 
 1. Verificare e conservare DPA, SCC e condizioni del piano commerciale Anthropic.
 2. Lasciare `GEMINI_PAID_SERVICE_ACKNOWLEDGED=false` finché non sia documentato un piano Gemini paid idoneo al trattamento previsto.

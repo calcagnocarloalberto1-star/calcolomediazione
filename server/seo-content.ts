@@ -324,7 +324,7 @@ export const SEO_CONTENT: Record<string, string> = {
 <h2>Titolare del trattamento</h2>
 <p>Il titolare del trattamento e Carlo Alberto Calcagno, responsabile di CalcoloMediazione.it. Le richieste privacy possono essere inviate mediante i recapiti della pagina Contatti.</p>
 <h2>Dati trattati</h2>
-<p>Il server riceve i dati tecnici necessari alla connessione e alla sicurezza. La statistica interna delle pagine e aggregata, volatile e non conserva indirizzi IP o user-agent. Le funzioni IA possono trattare titolo, descrizione, parti, parametri economici, testo estratto dai PDF, risultati e messaggi della chat.</p>
+<p>Il server riceve i dati tecnici necessari alla connessione e alla sicurezza. Le statistiche interne non conservano indirizzi IP o user-agent: il totale complessivo delle visualizzazioni e memorizzato nel database come solo numero aggregato, mentre il dettaglio per pagina resta volatile in memoria. Le funzioni IA possono trattare titolo, descrizione, parti, parametri economici, testo estratto dai PDF, risultati e messaggi della chat.</p>
 <h2>Finalita e basi giuridiche</h2>
 <p>I dati sono trattati per erogare il servizio richiesto, proteggere e diagnosticare il servizio, adempiere agli obblighi di legge e produrre statistiche interne aggregate. Google Analytics e utilizzato esclusivamente previo consenso, revocabile dal link Preferenze cookie nel footer.</p>
 <h2>Servizi di intelligenza artificiale</h2>
@@ -343,7 +343,7 @@ export const SEO_CONTENT: Record<string, string> = {
 <h2>Google Analytics</h2>
 <p>I cookie _ga e _ga_* sono usati per la misurazione statistica soltanto dopo il consenso. La configurazione disabilita i segnali Google e la personalizzazione pubblicitaria.</p>
 <h2>Statistiche interne e memoria locale</h2>
-<p>Il sito conta le visualizzazioni delle pagine sul proprio server senza cookie, profili, indirizzi IP o user-agent; il conteggio resta in memoria fino al riavvio del servizio. Alcune funzioni usano localStorage per preferenze, modelli di lavoro, token casuali e uno storico tecnico minimizzato.</p>
+<p>Il sito conta le visualizzazioni sul proprio server senza cookie, profili, indirizzi IP, user-agent o altri identificatori. Il totale complessivo e conservato nel database come solo numero aggregato, mentre il dettaglio per pagina resta in memoria fino al riavvio. Alcune funzioni usano localStorage per preferenze, modelli di lavoro, token casuali e uno storico tecnico minimizzato.</p>
 <h2>Revoca</h2>
 <p>La scelta puo essere modificata in qualsiasi momento dal link Preferenze cookie nel footer o dalla pagina completa nel browser. La revoca disabilita Analytics e tenta di eliminare i relativi cookie di prima parte. Per il trattamento dei dati si rinvia alla <a href="/privacy-policy">Privacy Policy</a>.</p>
 </div>`,

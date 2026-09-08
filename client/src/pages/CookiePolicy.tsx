@@ -62,7 +62,7 @@ export default function CookiePolicy() {
           </Section>
 
           <Section title="3. Statistiche interne senza cookie">
-            <p>Il sito conta le visualizzazioni delle singole pagine con una richiesta al proprio server. Questo conteggio non usa cookie, non crea profili, non conserva indirizzi IP o user-agent ed è mantenuto soltanto in memoria fino al riavvio del servizio. È distinto da Google Analytics.</p>
+            <p>Il sito conta le visualizzazioni con una richiesta al proprio server. Il totale complessivo è conservato nel database come solo numero aggregato; il dettaglio per pagina resta in memoria fino al riavvio del servizio. Il conteggio non usa cookie, non crea profili e non conserva indirizzi IP, user-agent o altri identificatori del visitatore. È distinto da Google Analytics.</p>
           </Section>
 
           <Section title="4. Memoria locale del browser">
