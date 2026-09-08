@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import { Link } from "wouter";
 import { useToast } from "@/hooks/use-toast";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -60,7 +61,8 @@ const QUICK_ACTIONS = [
 
 // ─── GESTIONE TOKEN IN LOCALSTORAGE ─────────────────────────────────────────
 // Chiave: "analisi_token_<id>" → valore: accessToken
-// Chiave: "analisi_history" → valore: JSON array di {id, titolo, stato, createdAt, valoreLite, parti}
+// Lo storico locale contiene solo metadati tecnici minimi. Titolo, importi e
+// nominativi restano sul server protetti dal token e non sono duplicati nel browser.
 
 function saveToken(id: number, token: string) {
   try {
@@ -78,11 +80,8 @@ function getToken(id: number): string | null {
 
 interface HistoryEntry {
   id: number;
-  titolo: string;
   stato: string;
   createdAt: string;
-  valoreLite?: number | null;
-  parti?: Array<{ nome: string; ruolo: string }>;
 }
 
 function saveToHistory(entry: HistoryEntry) {
@@ -116,11 +115,8 @@ function removeFromHistory(id: number) {
 function updateHistoryEntry(analisi: AnalisiCaso) {
   saveToHistory({
     id: analisi.id,
-    titolo: analisi.titolo,
     stato: analisi.stato ?? "in_corso",
     createdAt: analisi.createdAt ? String(analisi.createdAt) : new Date().toISOString(),
-    valoreLite: analisi.valoreLite ? Number(analisi.valoreLite) : null,
-    parti: (analisi.parti as Array<{ nome: string; ruolo: string }>) || [],
   });
 }
 
@@ -159,9 +155,14 @@ async function apiPostChat(id: number, message: string): Promise<{ response: str
 }
 
 async function apiDeleteAnalisi(id: number): Promise<boolean> {
+  const token = getToken(id);
+  if (!token) return false;
   try {
-    await apiRequest("DELETE", `/api/analisi/${id}`);
-    return true;
+    const res = await fetch(`/api/analisi/${id}`, {
+      method: "DELETE",
+      headers: { "X-Access-Token": token },
+    });
+    return res.ok;
   } catch {
     return false;
   }
@@ -199,6 +200,7 @@ export default function AnalisiCasoAI() {
   const [venditoreImpresaIva, setVenditoreImpresaIva] = useState(false);
   const [dragActive, setDragActive] = useState(false);
   const [files, setFiles] = useState<File[]>([]);
+  const [privacyAcknowledged, setPrivacyAcknowledged] = useState(false);
 
   // Documenti richiesti — elenco personalizzato che l'utente definisce (es. "carta d'identità",
   // "visura camerale", un modulo specifico nel proprio formato) per ricordarsi cosa allegare per
@@ -373,6 +375,10 @@ export default function AnalisiCasoAI() {
   };
   const handleDrop = async (e: React.DragEvent) => {
     e.preventDefault(); e.stopPropagation(); setDragActive(false);
+    if (!privacyAcknowledged) {
+      toast({ title: "Conferma privacy necessaria", description: "Prima di caricare documenti, conferma l'informativa posta sotto l'area di upload.", variant: "destructive" });
+      return;
+    }
     const items = e.dataTransfer.items;
     let tutti: File[] = [];
     const entrySupportato = items && items.length > 0 && typeof (items[0] as any).webkitGetAsEntry === "function";
@@ -389,6 +395,11 @@ export default function AnalisiCasoAI() {
     segnalaScartati(tutti.length, dropped.length);
   };
   const handleFileInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!privacyAcknowledged) {
+      e.target.value = "";
+      toast({ title: "Conferma privacy necessaria", description: "Conferma l'informativa prima di selezionare documenti.", variant: "destructive" });
+      return;
+    }
     if (e.target.files) {
       const tutti = Array.from(e.target.files);
       const selected = tutti.filter(isPdfFile);
@@ -399,6 +410,11 @@ export default function AnalisiCasoAI() {
   // Selezione esplicita di un'intera cartella (bottone "Carica una cartella"): il browser
   // restituisce TUTTI i file al suo interno (anche nelle sottocartelle), li filtriamo qui.
   const handleFolderInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!privacyAcknowledged) {
+      e.target.value = "";
+      toast({ title: "Conferma privacy necessaria", description: "Conferma l'informativa prima di selezionare documenti.", variant: "destructive" });
+      return;
+    }
     if (e.target.files) {
       const tutti = Array.from(e.target.files);
       const selected = tutti.filter(isPdfFile);
@@ -423,7 +439,7 @@ export default function AnalisiCasoAI() {
 
   // ─── SUBMIT ───────────────────────────────────────────────────────────────
   const handleSubmit = async () => {
-    if (!titolo || descrizione.length < 50) return;
+    if (!titolo || descrizione.length < 50 || !privacyAcknowledged) return;
     setIsRunning(true); setCurrentStep(0);
     try {
       const documentiCombinati = uploadedTexts
@@ -448,6 +464,7 @@ export default function AnalisiCasoAI() {
             : null,
         applicaPrezzoValore: materiaImmobiliare && attivaCalcoloCostiNotarili && applicaPrezzoValore,
         venditoreImpresaIva: materiaImmobiliare && attivaCalcoloCostiNotarili && venditoreImpresaIva,
+        privacyAcknowledged: true,
       };
 
       const res = await apiRequest("POST", "/api/analisi", body);
@@ -569,6 +586,7 @@ export default function AnalisiCasoAI() {
     setAnalisi(null); setIsRunning(false); setCurrentStep(0);
     setChatMessages([]); setChatInput(""); setTitolo(""); setDescrizione("");
     setFiles([]); setUploadedTexts([]); setUploadingFiles(false); setIsAnonymized(false);
+    setPrivacyAcknowledged(false);
   };
 
   // ─── ANONIMIZZAZIONE ──────────────────────────────────────────────────────
@@ -1073,6 +1091,34 @@ export default function AnalisiCasoAI() {
             {/* File Upload */}
             <div className="space-y-2">
               <Label className="text-sm font-semibold">Documenti (PDF)</Label>
+              <div className="border-2 border-amber-600/50 bg-amber-50 dark:bg-amber-950/20 p-4 text-sm space-y-2">
+                <p className="font-semibold">Prima di inserire dati personali o documenti</p>
+                <p className="text-muted-foreground">
+                  Descrizione, nominativi e testo estratto dai PDF sono inviati al fornitore IA configurato
+                  per generare l'analisi. L'analisi completa resta sul server per un massimo di 30 giorni,
+                  salvo cancellazione anticipata; il token necessario per riaprirla è conservato su questo dispositivo.
+                  Inserisci solo dati necessari e, quando possibile, usa sigle o pseudonimi.
+                </p>
+                <p>
+                  Consulta la{" "}
+                  <Link href="/privacy-policy">
+                    <span className="underline font-semibold cursor-pointer">Privacy Policy, sezione servizi IA</span>
+                  </Link>.
+                </p>
+              </div>
+              <div className="flex items-start gap-3 border-2 border-foreground/20 p-3">
+                <Checkbox
+                  id="privacy-ai-ack"
+                  checked={privacyAcknowledged}
+                  onCheckedChange={value => setPrivacyAcknowledged(value === true)}
+                  className="mt-0.5 border-2 border-foreground"
+                  data-testid="checkbox-privacy-ai"
+                />
+                <label htmlFor="privacy-ai-ack" className="text-sm leading-relaxed cursor-pointer">
+                  Confermo di aver letto l'informativa, di essere autorizzato a trattare e trasmettere i dati
+                  inseriti e di aver escluso i dati non necessari, in particolare categorie particolari di dati.
+                </label>
+              </div>
               <div className={`border-2 border-dashed p-8 text-center cursor-pointer transition-all duration-150 ${dragActive ? "border-primary bg-primary/5" : "border-foreground/40 hover:border-foreground"}`}
                 onDragEnter={handleDrag} onDragLeave={handleDrag} onDragOver={handleDrag} onDrop={handleDrop}
                 onClick={() => document.getElementById("file-input")?.click()} data-testid="dropzone-files">
@@ -1124,7 +1170,7 @@ export default function AnalisiCasoAI() {
             </div>
 
             {/* Submit */}
-            <Button onClick={handleSubmit} disabled={!titolo || descrizione.length < 50 || isRunning}
+            <Button onClick={handleSubmit} disabled={!titolo || descrizione.length < 50 || !privacyAcknowledged || isRunning}
               className="w-full py-6 text-base font-bold border-2 border-foreground shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] transition-all duration-150"
               data-testid="button-avvia-analisi">
               {isRunning ? <><Loader2 className="w-5 h-5 mr-2 animate-spin" />Analisi in corso...</>
@@ -1230,15 +1276,14 @@ function StoricoAnalisi({ onLoadAnalisi }: { onLoadAnalisi: (a: AnalisiCaso) => 
                   data-testid={`storico-item-${a.id}`}>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-1">
-                      <span className="font-semibold text-sm truncate" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>{a.titolo}</span>
+                      <span className="font-semibold text-sm truncate" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>Analisi #{a.id}</span>
                       <Badge className={`text-[10px] flex-shrink-0 border ${a.stato === "completata" ? "bg-green-100 text-green-800 border-green-300" : a.stato === "errore" ? "bg-red-100 text-red-800 border-red-300" : "bg-yellow-100 text-yellow-800 border-yellow-300"}`}>
                         {a.stato}
                       </Badge>
                     </div>
                     <div className="flex items-center gap-3 text-xs text-muted-foreground">
                       <span className="flex items-center gap-1"><CalendarDays className="w-3 h-3" />{formatDate(a.createdAt)}</span>
-                      {a.valoreLite && <span className="font-mono" style={{ fontFamily: "'JetBrains Mono', monospace" }}>EUR {Number(a.valoreLite).toLocaleString("it-IT")}</span>}
-                      {a.parti && a.parti.length > 0 && <span className="truncate max-w-[200px]">{a.parti.map(p => p.nome).filter(Boolean).join(" vs ")}</span>}
+                      <span>Metadati locali minimizzati</span>
                     </div>
                   </div>
                   <div className="flex items-center gap-1 flex-shrink-0">

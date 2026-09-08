@@ -238,7 +238,7 @@ export default function Home() {
               <div className="w-7 h-7 bg-blue-100 dark:bg-blue-900/30 border-2 border-foreground flex items-center justify-center">
                 <Lock className="w-4 h-4 text-blue-600" />
               </div>
-              Dati Crittografati
+              Connessione HTTPS
             </div>
             <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground" data-testid="badge-gdpr">
               <div className="w-7 h-7 bg-purple-100 dark:bg-purple-900/30 border-2 border-foreground flex items-center justify-center">

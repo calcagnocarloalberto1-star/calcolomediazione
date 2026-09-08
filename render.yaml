@@ -10,3 +10,11 @@ services:
         value: production
       - key: ANTHROPIC_API_KEY
         sync: false
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: GEMINI_PAID_SERVICE_ACKNOWLEDGED
+        value: "false"
+      - key: ADMIN_PASSWORD
+        sync: false
+      - key: ADMIN_SECRET
+        generateValue: true

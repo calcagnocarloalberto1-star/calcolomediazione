@@ -78,10 +78,7 @@ async function forwardToSheets(
 
 export function registerClientErrorRoute(app: Express): void {
   app.post("/api/client-error", async (req: Request, res: Response) => {
-    const ip =
-      ((req.headers["x-forwarded-for"] as string) || "").split(",")[0].trim() ||
-      req.socket.remoteAddress ||
-      "unknown";
+    const ip = req.ip || req.socket.remoteAddress || "unknown";
 
     if (rateLimited(ip)) {
       return res.status(429).json({ ok: false, reason: "rate_limited" });
@@ -92,7 +89,7 @@ export function registerClientErrorRoute(app: Express): void {
       return res.status(400).json({ ok: false, reason: "invalid_payload" });
     }
 
-    const payload = { ...parsed.data, ip_hash: hashIp(ip) };
+    const payload = sanitizePayload(parsed.data);
 
     // Log strutturato (visibile nei log Render)
     console.log(
@@ -100,21 +97,31 @@ export function registerClientErrorRoute(app: Express): void {
     );
 
     // Fire-and-forget verso il webhook (non aspettiamo la risposta)
-    void forwardToSheets(parsed.data);
+    void forwardToSheets(payload);
 
     // 204 No Content: il client non deve gestire una risposta.
     return res.status(204).end();
   });
 }
 
-/**
- * Hash deterministico ma non reversibile dell'IP (privacy-preserving).
- * Usa una semplice djb2 perché l'IP non è un segreto e ci basta un dedup id.
- */
-function hashIp(ip: string): string {
-  let h = 5381;
-  for (let i = 0; i < ip.length; i++) {
-    h = (h * 33) ^ ip.charCodeAt(i);
-  }
-  return (h >>> 0).toString(36);
+function redact(value: string): string {
+  return value
+    .replace(/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/gi, "[email]")
+    .replace(/\b[A-Z]{6}[0-9]{2}[A-Z][0-9]{2}[A-Z][0-9]{3}[A-Z]\b/gi, "[codice-fiscale]")
+    .replace(/\b(?:Bearer\s+)?[A-F0-9]{40,}\b/gi, "[token]")
+    .replace(/([?&](?:token|key|code|email)=)[^&\s]+/gi, "$1[redacted]");
+}
+
+function sanitizePayload(
+  payload: z.infer<typeof ClientErrorSchema>,
+): z.infer<typeof ClientErrorSchema> {
+  return {
+    ...payload,
+    route: payload.route.split("?")[0].slice(0, 200),
+    message: redact(payload.message).slice(0, 500),
+    stack: redact(payload.stack).slice(0, 2000),
+    source: payload.source.split("?")[0].slice(0, 300),
+    // Il dettaglio completo dello user-agent non è necessario per la diagnosi.
+    user_agent: payload.is_mobile ? "mobile" : "desktop",
+  };
 }

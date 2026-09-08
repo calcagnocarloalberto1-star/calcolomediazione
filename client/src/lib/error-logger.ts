@@ -112,7 +112,7 @@ function getBuildHash(): string {
 
 function getRoute(): string {
   try {
-    return window.location.pathname + window.location.search;
+    return window.location.pathname;
   } catch {
     return "unknown";
   }
@@ -150,7 +150,7 @@ export function sendError(
     source: source.slice(0, 300),
     line,
     column: options.column || 0,
-    user_agent: navigator.userAgent.slice(0, 300),
+    user_agent: isMobileDevice() ? "mobile" : "desktop",
     viewport_width: window.innerWidth,
     viewport_height: window.innerHeight,
     is_mobile: isMobileDevice(),

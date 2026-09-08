@@ -23,7 +23,34 @@ import { generaSlugSentenza, trovaSentenzaPerSlug, urlSentenza } from "../shared
 import { buildSentenzaHtml, buildGiurisprudenzaSitemap } from "./sentenza-bot-html.js";
 import lastmodMap from "./lastmod-generated.json" with { type: "json" };
 
-const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 20 * 1024 * 1024 } });
+const PDF_MIME = "application/pdf";
+const AML_ALLOWED_TYPES = ["image/jpeg", "image/png", "image/webp", "image/gif", PDF_MIME];
+const uploadPdf = multer({
+storage: multer.memoryStorage(),
+limits: { fileSize: 8 * 1024 * 1024, files: 10 },
+fileFilter: (_req, file, cb) => cb(null, file.mimetype === PDF_MIME),
+});
+const uploadAml = multer({
+storage: multer.memoryStorage(),
+limits: { fileSize: 8 * 1024 * 1024, files: 10 },
+fileFilter: (_req, file, cb) => cb(null, AML_ALLOWED_TYPES.includes(file.mimetype.toLowerCase())),
+});
+
+const MAX_UPLOAD_TOTAL = 32 * 1024 * 1024;
+function totalUploadOk(files: Express.Multer.File[]): boolean {
+return files.reduce((sum, file) => sum + file.size, 0) <= MAX_UPLOAD_TOTAL;
+}
+
+function matchesFileSignature(file: { buffer: Buffer; mimetype: string }): boolean {
+const b = file.buffer;
+if (!b || b.length < 4) return false;
+if (file.mimetype === PDF_MIME) return b.subarray(0, 5).toString("ascii") === "%PDF-";
+if (file.mimetype === "image/jpeg") return b[0] === 0xff && b[1] === 0xd8 && b[2] === 0xff;
+if (file.mimetype === "image/png") return b.subarray(0, 8).equals(Buffer.from([0x89,0x50,0x4e,0x47,0x0d,0x0a,0x1a,0x0a]));
+if (file.mimetype === "image/gif") return ["GIF87a", "GIF89a"].includes(b.subarray(0, 6).toString("ascii"));
+if (file.mimetype === "image/webp") return b.subarray(0, 4).toString("ascii") === "RIFF" && b.subarray(8, 12).toString("ascii") === "WEBP";
+return false;
+}
 
 // ─── SEO: PAGINE E METADATI ────────────────────────────────────────────────
 const PRIMARY_URL = "https://calcolomediazione.it";
@@ -446,7 +473,7 @@ const PAGE_CONTENT: Record<string, string> = {
 </ul>
 <p>I dati sono trattati per erogare i servizi di calcolo e analisi del sito, rispondere alle richieste di contatto, adempiere a obblighi di legge ed effettuare analisi statistiche aggregate, sulla base del consenso, dell'esecuzione di un contratto, del legittimo interesse o di un obbligo legale (art. 6 GDPR).</p>
 <h2>Compilazione automatica dei modelli antiriciclaggio con AI</h2>
-<p>Su scelta esplicita dell'utente, la modalità ad alta precisione dello strumento antiriciclaggio trasmette il documento caricato all'API di un fornitore di intelligenza artificiale (Anthropic), che non utilizza i dati per addestrare i propri modelli e ne conserva i log tecnici per un massimo di 7 giorni; il sito non conserva il file caricato né i dati estratti.</p>
+<p>Su scelta esplicita dell'utente, la modalità ad alta precisione dello strumento antiriciclaggio trasmette il documento caricato all'API commerciale di Anthropic. Il sito elabora il file in memoria e non lo archivia dopo la risposta; l'eventuale conservazione tecnica del fornitore dipende dal piano e dai termini applicabili.</p>
 <h2>Diritti dell'interessato</h2>
 <p>Ai sensi degli artt. 15-22 GDPR, l'utente ha diritto di accesso, rettifica, cancellazione, limitazione, portabilità e opposizione al trattamento, oltre al diritto di proporre reclamo al Garante per la Protezione dei Dati Personali.</p>`,
 
@@ -544,8 +571,7 @@ const AI_HITS = new Map<string, number[]>();
 const AI_MAX_HOUR = Number(process.env.AI_MAX_PER_HOUR || 30);
 const AI_MAX_DAY = Number(process.env.AI_MAX_PER_DAY || 150);
 function clientIp(req: any): string {
-const xf = (req.headers["x-forwarded-for"] as string) || "";
-return xf.split(",")[0].trim() || req.socket?.remoteAddress || "unknown";
+return req.ip || req.socket?.remoteAddress || "unknown";
 }
 function aiRateLimit(req: any, res: any, next: any) {
 const ip = clientIp(req);
@@ -635,6 +661,27 @@ return res.redirect(301, newUrl);
 next();
 });
 
+// Rifiuta richieste mutative provenienti da pagine di altri siti. Le richieste
+// senza Origin restano ammesse per client non-browser e monitoraggi tecnici.
+app.use("/api", (req, res, next) => {
+if (!["POST", "PUT", "PATCH", "DELETE"].includes(req.method)) return next();
+if (req.get("sec-fetch-site") === "cross-site") {
+return res.status(403).json({ error: "Origine della richiesta non autorizzata." });
+}
+const origin = req.get("origin");
+if (origin) {
+try {
+const originHost = new URL(origin).host;
+if (originHost !== req.get("host")) {
+return res.status(403).json({ error: "Origine della richiesta non autorizzata." });
+}
+} catch {
+return res.status(403).json({ error: "Origine della richiesta non valida." });
+}
+}
+next();
+});
+
 // ─── REDIRECT PAGINE ELIMINATE (301 permanente) ───────────────────────────
 // /antiriciclaggio-mediazione-obblighi (articolo React sugli obblighi di legge)
 // e antiriciclaggio-compilazione.html (guida statica alla compilazione) sono
@@ -701,11 +748,14 @@ res.send(buildBotHtml(page, siteUrl));
 
 // ─── TRACKING ─────────────────────────────────────────────────────────────
 app.post("/api/track", (req, res) => {
-const { path } = req.body;
-const ip = req.headers['x-forwarded-for'] as string || req.socket.remoteAddress || '';
-const userAgent = req.headers['user-agent'] || '';
-stats.track('page_view', path, userAgent, ip);
-incrementaContatoreVisite().catch(() => {}); res.json({ ok: true });
+const path = typeof req.body?.path === "string" && /^\/[a-zA-Z0-9/_-]{0,180}$/.test(req.body.path)
+? req.body.path
+: "/";
+// Statistica solo aggregata e volatile: niente IP, user-agent o identificatori.
+stats.track('page_view', path);
+// Il contatore pubblico conserva soltanto un totale numerico, senza dati del visitatore.
+incrementaContatoreVisite().catch(() => {});
+res.json({ ok: true });
 });
 
 // ─── CLIENT ERROR LOGGING ────────────────────────────────────────────────
@@ -738,11 +788,17 @@ res.json(stats.getStats());
 
 // ─── ANALISI AI ───────────────────────────────────────────────────────────
 
-app.post("/api/upload-pdf", uploadRateLimit, upload.array("files", 10), async (req, res) => {
+app.post("/api/upload-pdf", uploadRateLimit, uploadPdf.array("files", 10), async (req, res) => {
 try {
 const files = req.files as Express.Multer.File[];
 if (!files || files.length === 0) {
 return res.status(400).json({ error: "Nessun file caricato" });
+}
+if (!totalUploadOk(files)) {
+return res.status(413).json({ error: "Il caricamento complessivo supera 32 MB." });
+}
+if (files.some(file => !matchesFileSignature(file))) {
+return res.status(415).json({ error: "Uno o più file non sono PDF validi." });
 }
 const results: Array<{ filename: string; text: string; pages: number }> = [];
 for (const file of files) {
@@ -770,8 +826,6 @@ res.status(500).json({ error: "Errore nell'elaborazione dei file" });
 // Tipi di file accettati dagli endpoint AML: immagini (lette in visione nativa)
 // e PDF (letti come documento nativo dal modello, pagina per pagina — stesso
 // meccanismo con cui si legge un PDF allegato direttamente in una chat).
-const AML_ALLOWED_TYPES = ["image/jpeg", "image/png", "image/webp", "image/gif", "application/pdf"];
-
 // Divide i file caricati in documenti validi (da inviare al modello) e file
 // scartati (tipo non supportato o corpo mancante), cosi' l'utente viene
 // avvisato esplicitamente invece che il file sparisca in silenzio.
@@ -780,7 +834,7 @@ const documenti: Array<{ base64: string; mediaType: string }> = [];
 const scartati: string[] = [];
 for (const f of files) {
 const mediaType = (f.mimetype || "").toLowerCase();
-if (!AML_ALLOWED_TYPES.includes(mediaType) || !f.buffer) {
+if (!AML_ALLOWED_TYPES.includes(mediaType) || !f.buffer || !matchesFileSignature(f)) {
 scartati.push(f.originalname || mediaType || "file sconosciuto");
 continue;
 }
@@ -790,12 +844,15 @@ return { documenti, scartati };
 }
 
 // ─── ESTRAZIONE AI DA DOCUMENTO (tool antiriciclaggio, modalita' alta precisione) ─
-app.post("/api/aml-extract", aiRateLimit, upload.array("files", 50), async (req, res) => {
+app.post("/api/aml-extract", aiRateLimit, uploadAml.array("files", 10), async (req, res) => {
 try {
 const files = ((req as any).files as Array<{ buffer: Buffer; mimetype: string; originalname?: string }>) || [];
 const doctype = (req.body?.doctype || "id").toString();
 if (!files.length) {
 return res.status(400).json({ error: "Nessun file ricevuto." });
+}
+if (!totalUploadOk(files as Express.Multer.File[])) {
+return res.status(413).json({ error: "Il caricamento complessivo supera 32 MB." });
 }
 const { documenti, scartati } = smistaFileAml(files);
 if (!documenti.length) {
@@ -805,17 +862,20 @@ const fields = await estraiDocumentoAI(documenti, doctype);
 res.json({ fields, scartati: scartati.length ? scartati : undefined });
 } catch (e: any) {
 console.error("Errore /api/aml-extract:", e);
-res.status(500).json({ error: (e && e.message) ? e.message : "Errore durante l'estrazione AI." });
+res.status(500).json({ error: "Errore durante l'estrazione AI." });
 }
 });
 
 // ─── ASSISTENTE AI DI COMPILAZIONE (tool antiriciclaggio, piu' documenti + richiesta libera) ─
-app.post("/api/aml-assist", aiRateLimit, upload.array("files", 40), async (req, res) => {
+app.post("/api/aml-assist", aiRateLimit, uploadAml.array("files", 10), async (req, res) => {
 try {
 const files = ((req as any).files as Array<{ buffer: Buffer; mimetype: string; originalname?: string }>) || [];
 const richiesta = (req.body?.richiesta || "").toString().slice(0, 4000);
 if (!files.length) {
 return res.status(400).json({ error: "Nessun file ricevuto." });
+}
+if (!totalUploadOk(files as Express.Multer.File[])) {
+return res.status(413).json({ error: "Il caricamento complessivo supera 32 MB." });
 }
 const { documenti, scartati } = smistaFileAml(files);
 if (!documenti.length) {
@@ -825,7 +885,7 @@ const result = await assistenteCompilazioneAI(documenti, richiesta);
 res.json({ ...result, scartati: scartati.length ? scartati : undefined });
 } catch (e: any) {
 console.error("Errore /api/aml-assist:", e);
-res.status(500).json({ error: (e && e.message) ? e.message : "Errore durante l'elaborazione dell'assistente AI." });
+res.status(500).json({ error: "Errore durante l'elaborazione dell'assistente AI." });
 }
 });
 
@@ -896,7 +956,11 @@ attivaCalcoloCostiNotarili, tipoAttoNotarile, valoreImmobile,
 applicaPrezzoValore, venditoreImpresaIva,
 onorarioNotarileStimato, impostaRegistroAliquota, impostaIpotecaria,
 impostaCatastale, altreSpeseNotarili,
+privacyAcknowledged,
 } = req.body;
+if (privacyAcknowledged !== true) {
+return res.status(400).json({ error: "Conferma l'informativa privacy prima di avviare l'analisi." });
+}
 if (!titolo || !descrizione) {
 return res.status(400).json({ error: "Titolo e descrizione sono obbligatori" });
 }
@@ -905,6 +969,9 @@ return res.status(400).json({ error: "Il titolo e' troppo lungo (max 300 caratte
 }
 if (String(descrizione).length > 20000) {
 return res.status(400).json({ error: "La descrizione del caso e' troppo lunga (max 20.000 caratteri)." });
+}
+if (typeof documentiText === "string" && documentiText.length > 500000) {
+return res.status(413).json({ error: "Il testo complessivo dei documenti supera il limite consentito." });
 }
 if (Array.isArray(parti) && parti.length > 20) {
 return res.status(400).json({ error: "Troppe parti indicate (max 20)." });
@@ -1059,8 +1126,12 @@ res.status(500).json({ error: "Errore nella generazione del PDF" });
 
 app.delete("/api/analisi/:id", async (req, res) => {
 const id = parseInt(req.params.id);
-const deleted = await storage.deleteAnalisi(id);
-if (!deleted) return res.status(404).json({ error: "Analisi non trovata" });
+const accessToken = req.headers["x-access-token"] as string | undefined;
+if (!Number.isSafeInteger(id) || !accessToken || !/^[a-f0-9]{64}$/i.test(accessToken)) {
+return res.status(401).json({ error: "Token di accesso mancante o non valido" });
+}
+const deleted = await storage.deleteAnalisi(id, accessToken);
+if (!deleted) return res.status(404).json({ error: "Analisi non trovata o accesso non autorizzato" });
 res.json({ success: true });
 });
 

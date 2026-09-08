@@ -1,125 +1,81 @@
 import { Link } from "wouter";
 import { ArrowLeft, Cookie } from "lucide-react";
+import { OPEN_COOKIE_PREFERENCES_EVENT } from "@/components/CookieConsent";
 
 export default function CookiePolicy() {
   return (
     <div className="min-h-screen bg-background">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <Link href="/">
-          <span className="inline-flex items-center gap-2 text-sm font-medium mb-6 cursor-pointer hover:opacity-70 transition-opacity" style={{ color: 'var(--primary)' }}>
+          <span className="inline-flex items-center gap-2 text-sm font-medium mb-6 cursor-pointer hover:opacity-70 transition-opacity text-primary">
             <ArrowLeft className="w-4 h-4" /> Torna alla Home
           </span>
         </Link>
 
         <div className="flex items-center gap-3 mb-8">
-          <Cookie className="w-8 h-8" style={{ color: 'var(--primary)' }} />
-          <h1 className="text-2xl font-bold" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
-            Cookie Policy
-          </h1>
+          <Cookie className="w-8 h-8 text-primary" />
+          <h1 className="text-2xl font-bold" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>Cookie Policy</h1>
         </div>
 
-        <div className="bg-card border-[2px] border-foreground shadow-[4px_4px_0px_0px] shadow-foreground/20 p-6 sm:p-8 space-y-6">
-          <p className="text-sm opacity-60">Ultimo aggiornamento: Marzo 2026</p>
+        <div className="bg-card border-2 border-foreground shadow-[4px_4px_0px_0px] shadow-foreground/20 p-6 sm:p-8 space-y-7">
+          <p className="text-sm opacity-70">Ultimo aggiornamento: 8 settembre 2026</p>
 
-          <Section title="1. Cosa Sono i Cookie">
-            <p>I cookie sono piccoli file di testo che i siti web visitati dall'utente inviano al suo terminale (computer, tablet, smartphone), dove vengono memorizzati per essere ritrasmessi agli stessi siti alla visita successiva. I cookie sono utilizzati per diverse finalità, dall'esecuzione di autenticazioni informatiche al monitoraggio di sessioni, alla memorizzazione di informazioni su specifiche configurazioni degli utenti.</p>
+          <Section title="1. Scelte disponibili">
+            <p>CalcoloMediazione.it usa una preferenza tecnica necessaria per ricordare la scelta dell'utente. Google Analytics viene caricato soltanto dopo un consenso esplicito. Rifiutare i cookie analitici non limita i calcolatori né le altre funzioni essenziali.</p>
+            <button
+              type="button"
+              onClick={() => window.dispatchEvent(new Event(OPEN_COOKIE_PREFERENCES_EVENT))}
+              className="border-2 border-foreground bg-primary text-primary-foreground px-4 py-2 text-sm font-bold shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]"
+            >
+              Modifica le preferenze cookie
+            </button>
           </Section>
 
-          <Section title="2. Tipologie di Cookie Utilizzati">
-            <p>Il Sito CalcoloMediazione.it utilizza le seguenti categorie di cookie:</p>
-
-            <h3 className="font-bold mt-3">2.1 Cookie Tecnici (necessari)</h3>
-            <p>Sono essenziali per il corretto funzionamento del Sito e non possono essere disattivati. Includono:</p>
-            <ul className="list-disc list-inside space-y-1 ml-4">
-              <li>Cookie di sessione per il mantenimento dello stato di navigazione</li>
-              <li>Cookie funzionali per ricordare le preferenze dell'utente (es. modalità tariffe selezionata)</li>
-              <li>Cookie di sicurezza per prevenire attività fraudolente</li>
-            </ul>
-            <p className="mt-2 text-xs opacity-70">Questi cookie non richiedono il consenso preventivo dell'utente ai sensi dell'art. 122, comma 1, del Codice Privacy (D.Lgs. 196/2003) e del Provvedimento del Garante dell'8 maggio 2014.</p>
-
-            <h3 className="font-bold mt-4">2.2 Cookie Analitici (Google Analytics)</h3>
-            <p>Il Sito utilizza Google Analytics (ID: G-MS9CY7VC3S) per raccogliere informazioni statistiche aggregate sull'utilizzo del Sito (numero di visitatori, pagine visitate, tempo di permanenza). Questi cookie vengono installati solo dopo che l'utente ha espresso il proprio consenso tramite il banner presente sul Sito. Senza consenso, Google Analytics non viene caricato e nessun cookie analitico viene installato.</p>
-
-            <h3 className="font-bold mt-4">2.3 Cookie di Terze Parti</h3>
-            <p>Il Sito potrebbe utilizzare servizi di terze parti che installano propri cookie. In particolare:</p>
-            <div className="mt-2 overflow-x-auto">
-              <table className="w-full text-sm border-collapse">
-                <thead>
-                  <tr className="border-b-2 border-foreground/20">
-                    <th className="text-left py-2 pr-4 font-bold">Servizio</th>
-                    <th className="text-left py-2 pr-4 font-bold">Finalità</th>
-                    <th className="text-left py-2 font-bold">Policy</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr className="border-b border-foreground/10">
-                    <td className="py-2 pr-4">Google Analytics (G-MS9CY7VC3S)</td>
-                    <td className="py-2 pr-4">Statistiche di navigazione (cookie analitico &mdash; richiede consenso)</td>
-                    <td className="py-2"><a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer" className="underline" style={{ color: 'var(--primary)' }}>Privacy Policy</a></td>
-                  </tr>
-                  <tr className="border-b border-foreground/10">
-                    <td className="py-2 pr-4">Servizi AI (Anthropic Claude; Google Gemini in fallback)</td>
-                    <td className="py-2 pr-4">Elaborazione delle analisi AI e, solo su richiesta dell'utente, lettura dei documenti caricati (modalità AI dello strumento antiriciclaggio)</td>
-                    <td className="py-2"><a href="https://www.anthropic.com/legal/privacy" target="_blank" rel="noopener noreferrer" className="underline" style={{ color: 'var(--primary)' }}>Privacy Policy</a></td>
-                  </tr>
-                  <tr className="border-b border-foreground/10">
-                    <td className="py-2 pr-4">Font CDN (Google Fonts)</td>
-                    <td className="py-2 pr-4">Caricamento font tipografici</td>
-                    <td className="py-2"><a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer" className="underline" style={{ color: 'var(--primary)' }}>Privacy Policy</a></td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </Section>
-
-          <Section title="3. Durata dei Cookie">
+          <Section title="2. Cookie e strumenti effettivamente utilizzati">
             <div className="overflow-x-auto">
               <table className="w-full text-sm border-collapse">
                 <thead>
                   <tr className="border-b-2 border-foreground/20">
-                    <th className="text-left py-2 pr-4 font-bold">Tipo</th>
-                    <th className="text-left py-2 pr-4 font-bold">Durata</th>
-                    <th className="text-left py-2 font-bold">Descrizione</th>
+                    <th className="text-left py-2 pr-4">Nome</th>
+                    <th className="text-left py-2 pr-4">Finalità</th>
+                    <th className="text-left py-2 pr-4">Durata</th>
+                    <th className="text-left py-2">Base</th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr className="border-b border-foreground/10">
-                    <td className="py-2 pr-4">Cookie di sessione</td>
-                    <td className="py-2 pr-4">Fino alla chiusura del browser</td>
-                    <td className="py-2">Eliminati automaticamente al termine della sessione</td>
+                    <td className="py-2 pr-4 font-mono">cm_consent</td>
+                    <td className="py-2 pr-4">Memorizza accettazione o rifiuto di Google Analytics</td>
+                    <td className="py-2 pr-4">12 mesi se accettato; 6 mesi se rifiutato</td>
+                    <td className="py-2">Necessario</td>
                   </tr>
                   <tr className="border-b border-foreground/10">
-                    <td className="py-2 pr-4">Cookie persistenti</td>
-                    <td className="py-2 pr-4">Max 12 mesi</td>
-                    <td className="py-2">Memorizzano preferenze dell'utente tra le sessioni</td>
+                    <td className="py-2 pr-4 font-mono">_ga, _ga_*</td>
+                    <td className="py-2 pr-4">Misurazione statistica tramite Google Analytics 4, ID G-MS9CY7VC3S</td>
+                    <td className="py-2 pr-4">Secondo le impostazioni di Google Analytics, normalmente fino a 2 anni</td>
+                    <td className="py-2">Consenso</td>
                   </tr>
                 </tbody>
               </table>
             </div>
+            <p>La configurazione Analytics disabilita i segnali Google e la personalizzazione pubblicitaria. Se manca il consenso, lo script Analytics non viene caricato.</p>
           </Section>
 
-          <Section title="4. Gestione dei Cookie">
-            <p>L'utente può gestire le preferenze relative ai cookie direttamente all'interno del proprio browser. Di seguito i link alle istruzioni per i browser più diffusi:</p>
-            <ul className="list-disc list-inside space-y-1 ml-4">
-              <li><a href="https://support.google.com/chrome/answer/95647" target="_blank" rel="noopener noreferrer" className="underline" style={{ color: 'var(--primary)' }}>Google Chrome</a></li>
-              <li><a href="https://support.mozilla.org/it/kb/protezione-antitracciamento-avanzata-firefox-desktop" target="_blank" rel="noopener noreferrer" className="underline" style={{ color: 'var(--primary)' }}>Mozilla Firefox</a></li>
-              <li><a href="https://support.apple.com/it-it/guide/safari/sfri11471/mac" target="_blank" rel="noopener noreferrer" className="underline" style={{ color: 'var(--primary)' }}>Safari</a></li>
-              <li><a href="https://support.microsoft.com/it-it/microsoft-edge/eliminare-i-cookie-in-microsoft-edge-63947406-40ac-c3b8-57b9-2a946a29ae09" target="_blank" rel="noopener noreferrer" className="underline" style={{ color: 'var(--primary)' }}>Microsoft Edge</a></li>
-            </ul>
-            <p className="mt-2">La disattivazione dei cookie tecnici potrebbe compromettere il corretto funzionamento di alcune funzionalità del Sito.</p>
+          <Section title="3. Statistiche interne senza cookie">
+            <p>Il sito conta le visualizzazioni delle singole pagine con una richiesta al proprio server. Questo conteggio non usa cookie, non crea profili, non conserva indirizzi IP o user-agent ed è mantenuto soltanto in memoria fino al riavvio del servizio. È distinto da Google Analytics.</p>
           </Section>
 
-          <Section title="5. Riferimenti Normativi">
-            <ul className="list-disc list-inside space-y-1 ml-4">
-              <li>Regolamento UE 2016/679 (GDPR)</li>
-              <li>D.Lgs. 196/2003 (Codice Privacy), come modificato dal D.Lgs. 101/2018</li>
-              <li>Provvedimento del Garante Privacy dell'8 maggio 2014 ("Individuazione delle modalità semplificate per l'informativa e l'acquisizione del consenso per l'uso dei cookie")</li>
-              <li>Linee guida del Garante Privacy del 10 giugno 2021 su cookie e altri strumenti di tracciamento</li>
-            </ul>
+          <Section title="4. Memoria locale del browser">
+            <p>Alcune funzioni usano localStorage, che non è un cookie: preferenze dei calcolatori, modelli di lavoro, token casuali per riaprire le analisi e uno storico tecnico minimizzato. Questi dati restano sul dispositivo finché l'utente li elimina o cancella i dati del sito. Su computer condivisi è opportuno rimuoverli al termine del lavoro.</p>
           </Section>
 
-          <Section title="6. Aggiornamenti">
-            <p>La presente Cookie Policy può essere aggiornata periodicamente. L'utente è invitato a consultare questa pagina per verificare eventuali modifiche. Per informazioni generali sul trattamento dei dati, si rinvia alla <Link href="/privacy-policy"><span className="underline cursor-pointer" style={{ color: 'var(--primary)' }}>Privacy Policy</span></Link>.</p>
+          <Section title="5. Revoca e cancellazione">
+            <p>La scelta può essere modificata in qualsiasi momento dal pulsante presente in questa pagina o dal link “Preferenze cookie” nel footer. Se il consenso viene revocato, Analytics viene disabilitato e il sito tenta di eliminare i relativi cookie di prima parte. È sempre possibile cancellare anche cookie e memoria locale dalle impostazioni del browser.</p>
+          </Section>
+
+          <Section title="6. Terze parti e riferimenti">
+            <p>Per il trattamento Analytics consulta la <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer" className="underline text-primary">Privacy Policy di Google</a>. I servizi IA non sono strumenti di tracciamento e sono descritti separatamente nella <Link href="/privacy-policy"><span className="underline cursor-pointer text-primary">Privacy Policy</span></Link>.</p>
+            <p>La gestione del consenso segue le <a href="https://www.garanteprivacy.it/home/docweb/-/docweb-display/docweb/9677876" target="_blank" rel="noopener noreferrer" className="underline text-primary">Linee guida del Garante sui cookie e altri strumenti di tracciamento</a>.</p>
           </Section>
         </div>
       </div>
@@ -129,9 +85,9 @@ export default function CookiePolicy() {
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <div className="space-y-3">
+    <section className="space-y-3">
       <h2 className="text-lg font-bold" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>{title}</h2>
       <div className="text-sm leading-relaxed space-y-2 opacity-90">{children}</div>
-    </div>
+    </section>
   );
 }

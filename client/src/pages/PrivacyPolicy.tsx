@@ -6,97 +6,78 @@ export default function PrivacyPolicy() {
     <div className="min-h-screen bg-background">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <Link href="/">
-          <span className="inline-flex items-center gap-2 text-sm font-medium mb-6 cursor-pointer hover:opacity-70 transition-opacity" style={{ color: 'var(--primary)' }}>
+          <span className="inline-flex items-center gap-2 text-sm font-medium mb-6 cursor-pointer hover:opacity-70 transition-opacity text-primary">
             <ArrowLeft className="w-4 h-4" /> Torna alla Home
           </span>
         </Link>
 
         <div className="flex items-center gap-3 mb-8">
-          <Shield className="w-8 h-8" style={{ color: 'var(--primary)' }} />
+          <Shield className="w-8 h-8 text-primary" />
           <h1 className="text-2xl font-bold" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
-            Privacy Policy
+            Informativa sul trattamento dei dati personali
           </h1>
         </div>
 
-        <div className="bg-card border-[2px] border-foreground shadow-[4px_4px_0px_0px] shadow-foreground/20 p-6 sm:p-8 space-y-6">
-          <p className="text-sm opacity-60">Ultimo aggiornamento: Marzo 2026</p>
+        <div className="bg-card border-2 border-foreground shadow-[4px_4px_0px_0px] shadow-foreground/20 p-6 sm:p-8 space-y-7">
+          <p className="text-sm opacity-70">Ultimo aggiornamento: 8 settembre 2026</p>
 
-          <Section title="1. Titolare del Trattamento">
-            <p>Il titolare del trattamento dei dati personali è Carlo Alberto Calcagno, responsabile del sito web CalcoloMediazione.it (di seguito "il Sito").</p>
-            <p>Per qualsiasi richiesta relativa al trattamento dei dati personali, è possibile contattare il Titolare tramite la pagina <Link href="/contatti"><span className="underline cursor-pointer" style={{ color: 'var(--primary)' }}>Contatti</span></Link>.</p>
+          <Section title="1. Titolare del trattamento">
+            <p>Il titolare del trattamento è Carlo Alberto Calcagno, responsabile di CalcoloMediazione.it. Le richieste privacy possono essere inviate mediante i recapiti indicati nella pagina <Link href="/contatti"><span className="underline cursor-pointer text-primary">Contatti</span></Link>.</p>
           </Section>
 
-          <Section title="2. Tipologia di Dati Raccolti">
-            <p>Il Sito raccoglie le seguenti categorie di dati:</p>
-            <ul className="list-disc list-inside space-y-1 ml-4">
-              <li><strong>Dati di navigazione:</strong> indirizzo IP, tipo di browser, sistema operativo, pagine visitate, orario di accesso. Questi dati vengono raccolti automaticamente durante la navigazione.</li>
-              <li><strong>Dati forniti volontariamente:</strong> eventuali dati inseriti dall'utente nei form di contatto o nei calcolatori (valore della controversia, materia, descrizione del caso per l'analisi AI).</li>
-              <li><strong>Dati di analisi AI:</strong> le descrizioni dei casi inserite per l'analisi AI vengono elaborate in tempo reale e non vengono conservate in modo permanente sul server dopo la chiusura della sessione.</li>
+          <Section title="2. Dati trattati e origine">
+            <ul className="list-disc space-y-2 ml-5">
+              <li><strong>Navigazione tecnica:</strong> il server riceve i dati necessari alla connessione e alla sicurezza. La statistica interna delle pagine visitate è aggregata e volatile e non conserva indirizzi IP o user-agent.</li>
+              <li><strong>Calcolatori locali:</strong> i dati di molti calcoli restano nel browser, salvo l'uso volontario di funzioni IA o di esportazione che richiedano il server.</li>
+              <li><strong>Analisi del caso con IA:</strong> titolo, descrizione, parti, parametri economici, testo estratto dai PDF, risultati e messaggi della chat.</li>
+              <li><strong>Antiriciclaggio:</strong> i moduli ordinari restano nel browser. Solo scegliendo una funzione IA i documenti vengono trasmessi al server e al fornitore IA per l'elaborazione richiesta.</li>
+              <li><strong>Segnalazioni tecniche:</strong> informazioni tecniche minimizzate su errori dell'interfaccia, prive intenzionalmente dei contenuti dei moduli.</li>
             </ul>
           </Section>
 
-          <Section title="3. Finalità del Trattamento">
-            <p>I dati personali sono trattati per le seguenti finalità:</p>
-            <ul className="list-disc list-inside space-y-1 ml-4">
-              <li>Erogazione dei servizi di calcolo e analisi offerti dal Sito</li>
-              <li>Miglioramento dell'esperienza di navigazione e dei servizi</li>
-              <li>Risposta alle richieste di contatto</li>
-              <li>Adempimento di obblighi di legge</li>
-              <li>Analisi statistiche aggregate e anonimizzate sull'utilizzo del Sito</li>
+          <Section title="3. Finalità e basi giuridiche">
+            <ul className="list-disc space-y-2 ml-5">
+              <li><strong>Erogazione del servizio richiesto:</strong> calcoli, analisi e generazione di documenti, ai sensi dell'art. 6, par. 1, lett. b GDPR o delle misure precontrattuali richieste dall'utente.</li>
+              <li><strong>Sicurezza e continuità:</strong> prevenzione di abusi, diagnostica e difesa del servizio, sulla base del legittimo interesse ai sensi dell'art. 6, par. 1, lett. f GDPR.</li>
+              <li><strong>Statistiche interne aggregate:</strong> conteggio delle pagine senza identificatori persistenti, sulla base del legittimo interesse.</li>
+              <li><strong>Google Analytics:</strong> esclusivamente previo consenso, revocabile in ogni momento dal link “Preferenze cookie” nel footer.</li>
+              <li><strong>Obblighi di legge:</strong> quando il trattamento è necessario ai sensi dell'art. 6, par. 1, lett. c GDPR.</li>
             </ul>
           </Section>
 
-          <Section title="4. Base Giuridica del Trattamento">
-            <p>Il trattamento dei dati si fonda sulle seguenti basi giuridiche ai sensi dell'art. 6 del Regolamento UE 2016/679 (GDPR):</p>
-            <ul className="list-disc list-inside space-y-1 ml-4">
-              <li><strong>Consenso:</strong> per l'utilizzo di cookie non tecnici e per l'invio di comunicazioni</li>
-              <li><strong>Esecuzione di un contratto:</strong> per l'erogazione dei servizi richiesti dall'utente</li>
-              <li><strong>Legittimo interesse:</strong> per l'analisi statistica e il miglioramento dei servizi</li>
-              <li><strong>Obbligo legale:</strong> per gli adempimenti previsti dalla normativa vigente</li>
+          <Section title="4. Servizi di intelligenza artificiale e dati di terzi">
+            <p>Le funzioni IA non devono essere usate per decisioni automatiche vincolanti. Gli output sono bozze informative da verificare professionalmente e non sostituiscono il giudizio dell'avvocato, del mediatore o dell'organismo.</p>
+            <p>I contenuti inviati alle funzioni IA sono trasmessi ad Anthropic Claude e, se tecnicamente configurato come fallback in un ambiente commerciale idoneo, a Google Gemini. I fornitori possono trattare dati fuori dallo Spazio economico europeo secondo i relativi accordi sul trattamento e meccanismi di trasferimento applicabili.</p>
+            <p>Prima di inserire dati di clienti, controparti o altri interessati, il professionista deve disporre di un'idonea base giuridica, fornire l'informativa necessaria e applicare minimizzazione e pseudonimizzazione. Non inserire dati sanitari, biometrici, giudiziari o altre categorie particolari se non strettamente necessari e giuridicamente autorizzati.</p>
+            <p>Per maggiori informazioni consulta le informative di <a href="https://www.anthropic.com/legal/privacy" target="_blank" rel="noopener noreferrer" className="underline text-primary">Anthropic</a> e <a href="https://ai.google.dev/gemini-api/terms" target="_blank" rel="noopener noreferrer" className="underline text-primary">Google Gemini API</a>.</p>
+          </Section>
+
+          <Section title="5. Conservazione e cancellazione">
+            <ul className="list-disc space-y-2 ml-5">
+              <li><strong>Analisi del caso:</strong> massimo 30 giorni sul database del sito. L'utente può cancellarla prima dallo storico mediante il token segreto memorizzato nel proprio browser.</li>
+              <li><strong>PDF caricati nell'Analisi del caso:</strong> usati in memoria per estrarre il testo e non archiviati come file; il testo estratto confluisce nell'analisi conservata fino a 30 giorni.</li>
+              <li><strong>Documenti AML inviati all'IA:</strong> elaborati in memoria e non archiviati dal sito dopo la risposta. I tempi tecnici del fornitore dipendono dal servizio e dal piano contrattuale applicato.</li>
+              <li><strong>Statistiche interne:</strong> solo in memoria fino al riavvio del servizio, con limite massimo di eventi e senza IP o user-agent.</li>
+              <li><strong>Browser dell'utente:</strong> token di accesso, storico tecnico minimizzato e modelli locali restano sul dispositivo finché l'utente non li elimina o cancella i dati del sito.</li>
             </ul>
           </Section>
 
-          <Section title="5. Conservazione dei Dati">
-            <p>I dati personali vengono conservati per il tempo strettamente necessario al perseguimento delle finalità per cui sono stati raccolti, nel rispetto del principio di minimizzazione previsto dall'art. 5 del GDPR.</p>
-            <p>In particolare:</p>
-            <ul className="list-disc list-inside space-y-1 ml-4">
-              <li>I dati di navigazione vengono conservati per un massimo di 12 mesi</li>
-              <li>I dati dei calcoli non vengono conservati in modo permanente; le analisi AI eventualmente salvate vengono eliminate automaticamente entro 30 giorni</li>
-              <li>I dati di contatto vengono conservati per il tempo necessario a evadere la richiesta</li>
-            </ul>
+          <Section title="6. Destinatari e misure di sicurezza">
+            <p>I dati possono essere trattati dai fornitori necessari all'hosting, al database, alla diagnostica tecnica e alle API IA, nei limiti delle funzioni utilizzate. Non sono venduti né diffusi.</p>
+            <p>Il sito usa HTTPS, risposte API non memorizzabili, token casuali per l'accesso alle analisi, cancellazione automatica, controlli di origine, limiti di frequenza e dimensione, validazione dei file e minimizzazione dei log. Nessuna misura elimina ogni rischio: l'utente deve proteggere il proprio dispositivo e non condividere il token di accesso.</p>
           </Section>
 
-          <Section title="6. Comunicazione e Diffusione dei Dati">
-            <p>I dati personali non vengono venduti, ceduti o diffusi a terzi. Possono essere comunicati a:</p>
-            <ul className="list-disc list-inside space-y-1 ml-4">
-              <li>Provider di servizi tecnologici (hosting, servizi cloud) necessari al funzionamento del Sito, nei limiti di quanto necessario per l'erogazione del servizio</li>
-              <li>Provider di servizi di intelligenza artificiale per l'elaborazione delle analisi AI, in conformità alle rispettive policy sulla privacy</li>
-              <li>Autorità competenti, ove richiesto dalla legge</li>
-            </ul>
-            <p className="mt-2"><strong>Altre funzionalità di intelligenza artificiale del Sito (analisi AI del caso, spiegazione dei calcoli in linguaggio semplice, stima dell'assegno di mantenimento).</strong> Il testo descrittivo inserito volontariamente dall'utente in questi strumenti viene trasmesso all'API di un fornitore di intelligenza artificiale — Anthropic Claude come servizio primario, con Google Gemini utilizzato come fallback in caso di indisponibilità del primo — al solo fine di generare l'elaborazione richiesta. Entrambi i fornitori hanno sede negli Stati Uniti; il trasferimento extra-UE dei dati è coperto dalle clausole contrattuali standard (Standard Contractual Clauses) adottate dalla Commissione Europea ai sensi degli artt. 44-49 GDPR e dai rispettivi Data Processing Agreement, e i fornitori non utilizzano i dati trasmessi per addestrare i propri modelli. Il contenuto testuale inserito dall'utente non viene conservato in modo permanente sul Sito oltre quanto indicato al punto 5; le eventuali analisi salvate su richiesta dell'utente sono eliminate entro 30 giorni.</p>
-            <p className="mt-2"><strong>Compilazione automatica dei modelli antiriciclaggio — modalità «alta precisione (AI)».</strong> Su scelta esplicita dell'utente, l'immagine (o le pagine) del documento caricato nello strumento antiriciclaggio viene trasmessa all'API di un fornitore di intelligenza artificiale (Anthropic) al solo fine di estrarne automaticamente i dati per la compilazione dei modelli. In base ai termini commerciali e al Data Processing Agreement (DPA) conforme al GDPR, il fornitore non utilizza tali dati per addestrare i propri modelli e ne conserva i log tecnici per un massimo di 7 giorni; l'elaborazione avviene prevalentemente su infrastruttura statunitense, con le clausole contrattuali standard a copertura del trasferimento. Il sito non conserva il file caricato né i dati estratti. Il trattamento avviene sotto la responsabilità del professionista o dell'organismo che utilizza lo strumento, quale titolare, tenuto a verificare la sussistenza di un'idonea base giuridica e a informare l'interessato. La modalità predefinita di riconoscimento (OCR) opera invece interamente nel browser, senza trasmissione dei file. I dati estratti sono comunque sottoposti a controllo umano prima dell'inserimento.</p>
+          <Section title="7. Natura del conferimento e responsabilità professionale">
+            <p>I dati necessari alla funzione richiesta devono essere conferiti per usarla; il mancato conferimento impedisce l'elaborazione. Quando un professionista inserisce dati di terzi per una propria pratica, opera secondo il ruolo privacy che gli compete e resta responsabile della liceità, necessità e correttezza dei dati immessi.</p>
           </Section>
 
-          <Section title="7. Diritti dell'Interessato">
-            <p>Ai sensi degli artt. 15-22 del GDPR, l'utente ha diritto di:</p>
-            <ul className="list-disc list-inside space-y-1 ml-4">
-              <li><strong>Accesso:</strong> ottenere conferma dell'esistenza di dati personali che lo riguardano e la loro comunicazione in forma intelligibile</li>
-              <li><strong>Rettifica:</strong> ottenere la correzione di dati inesatti o l'integrazione di dati incompleti</li>
-              <li><strong>Cancellazione:</strong> ottenere la cancellazione dei propri dati personali ("diritto all'oblio")</li>
-              <li><strong>Limitazione:</strong> ottenere la limitazione del trattamento in determinati casi</li>
-              <li><strong>Portabilità:</strong> ricevere i propri dati in un formato strutturato e leggibile da dispositivo automatico</li>
-              <li><strong>Opposizione:</strong> opporsi al trattamento dei propri dati personali</li>
-            </ul>
-            <p className="mt-2">Per esercitare tali diritti, è possibile contattare il Titolare tramite la pagina <Link href="/contatti"><span className="underline cursor-pointer" style={{ color: 'var(--primary)' }}>Contatti</span></Link>.</p>
-            <p>L'utente ha inoltre il diritto di proporre reclamo al Garante per la Protezione dei Dati Personali (<a href="https://www.garanteprivacy.it" target="_blank" rel="noopener noreferrer" className="underline" style={{ color: 'var(--primary)' }}>www.garanteprivacy.it</a>).</p>
+          <Section title="8. Diritti degli interessati">
+            <p>Nei casi previsti dagli artt. 15-22 GDPR, l'interessato può chiedere accesso, rettifica, cancellazione, limitazione, portabilità e opposizione, nonché revocare il consenso senza pregiudicare la liceità del trattamento precedente. Le richieste possono essere presentate attraverso la pagina <Link href="/contatti"><span className="underline cursor-pointer text-primary">Contatti</span></Link>.</p>
+            <p>È inoltre possibile proporre reclamo al <a href="https://www.garanteprivacy.it" target="_blank" rel="noopener noreferrer" className="underline text-primary">Garante per la protezione dei dati personali</a>.</p>
           </Section>
 
-          <Section title="8. Cookie">
-            <p>Per informazioni dettagliate sull'utilizzo dei cookie, si rinvia alla <Link href="/cookie-policy"><span className="underline cursor-pointer" style={{ color: 'var(--primary)' }}>Cookie Policy</span></Link>.</p>
-          </Section>
-
-          <Section title="9. Modifiche alla Privacy Policy">
-            <p>Il Titolare si riserva il diritto di apportare modifiche alla presente Privacy Policy in qualunque momento, dandone informazione agli utenti su questa pagina. Si prega di consultare periodicamente questa pagina per verificare eventuali aggiornamenti.</p>
+          <Section title="9. Cookie e aggiornamenti">
+            <p>Per cookie, strumenti di misurazione e modalità di revoca consulta la <Link href="/cookie-policy"><span className="underline cursor-pointer text-primary">Cookie Policy</span></Link>. Gli aggiornamenti sostanziali dell'informativa saranno pubblicati su questa pagina con la nuova data.</p>
           </Section>
         </div>
       </div>
@@ -106,9 +87,9 @@ export default function PrivacyPolicy() {
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <div className="space-y-3">
+    <section className="space-y-3">
       <h2 className="text-lg font-bold" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>{title}</h2>
       <div className="text-sm leading-relaxed space-y-2 opacity-90">{children}</div>
-    </div>
+    </section>
   );
 }

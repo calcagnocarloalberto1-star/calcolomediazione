@@ -23,7 +23,10 @@ const MAX_CONTINUATIONS = 4;
 let geminiClient: GoogleGenerativeAI | null = null;
 function getGeminiClient(): GoogleGenerativeAI | null {
 if (geminiClient) return geminiClient;
-if (process.env.GEMINI_API_KEY) {
+// La Gemini API gratuita può prevedere usi dei contenuti incompatibili con
+// fascicoli professionali. Il fallback è quindi attivo solo dopo attestazione
+// esplicita, in ambiente, dell'uso di un servizio paid con condizioni idonee.
+if (process.env.GEMINI_API_KEY && process.env.GEMINI_PAID_SERVICE_ACKNOWLEDGED === "true") {
 geminiClient = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 return geminiClient;
 }
@@ -42,7 +45,10 @@ return null;
 
 // True se almeno un provider AI e' configurato (chiave presente).
 export function serviziAIDisponibili(): boolean {
-return !!(process.env.ANTHROPIC_API_KEY || process.env.GEMINI_API_KEY);
+return !!(
+process.env.ANTHROPIC_API_KEY ||
+(process.env.GEMINI_API_KEY && process.env.GEMINI_PAID_SERVICE_ACKNOWLEDGED === "true")
+);
 }
 
 // ─── FORMAT CONSTRAINT ────────────────────────────────────────────────────
@@ -211,7 +217,7 @@ contents: GeminiContent[],
 cap: number
 ): Promise<{ text: string; finishReason: string | null } | null> {
 const geminiKey = process.env.GEMINI_API_KEY;
-if (!geminiKey) return null;
+if (!geminiKey || process.env.GEMINI_PAID_SERVICE_ACKNOWLEDGED !== "true") return null;
 
 try {
 const url = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${geminiKey}`;

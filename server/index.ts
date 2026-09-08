@@ -5,6 +5,9 @@ import { serveStatic } from "./static";
 import { createServer } from "http";
 
 const app = express();
+// Render inoltra il traffico attraverso un solo proxy. Limitare il trust al
+// primo hop impedisce al client di falsificare req.ip tramite X-Forwarded-For.
+app.set("trust proxy", 1);
 // SEO-05: rimuove "X-Powered-By: Express", che rivela pubblicamente lo stack
 // tecnico del server (informazione utile solo a chi cerca vulnerabilità note).
 app.disable("x-powered-by");
@@ -35,13 +38,37 @@ const CSP_REPORT_ONLY =
   "base-uri 'self'; " +
   "form-action 'self'";
 
+// Baseline applicata subito anche mentre la policy più restrittiva resta in
+// osservazione: blocca plugin, framing esterno, base URL e invii cross-origin
+// senza interferire con gli script JSON-LD dinamici usati per la SEO.
+const CSP_ENFORCED =
+  "object-src 'none'; " +
+  "base-uri 'self'; " +
+  "frame-ancestors 'self'; " +
+  "form-action 'self'; " +
+  "upgrade-insecure-requests";
+
 // Header di sicurezza di base.
 app.use((_req, res, next) => {
   res.setHeader("X-Content-Type-Options", "nosniff");
   res.setHeader("X-Frame-Options", "SAMEORIGIN");
   res.setHeader("Referrer-Policy", "strict-origin-when-cross-origin");
   res.setHeader("Strict-Transport-Security", "max-age=31536000; includeSubDomains");
+  res.setHeader("Permissions-Policy", "camera=(), microphone=(), geolocation=(), payment=(), usb=(), browsing-topics=()");
+  res.setHeader("Cross-Origin-Opener-Policy", "same-origin");
+  res.setHeader("Cross-Origin-Resource-Policy", "same-site");
+  res.setHeader("X-Permitted-Cross-Domain-Policies", "none");
+  res.setHeader("Origin-Agent-Cluster", "?1");
+  res.setHeader("Content-Security-Policy", CSP_ENFORCED);
   res.setHeader("Content-Security-Policy-Report-Only", CSP_REPORT_ONLY);
+  next();
+});
+
+// Le risposte API possono contenere fascicoli, nominativi e risultati delle
+// analisi: non devono essere memorizzate da browser o proxy intermedi.
+app.use("/api", (_req, res, next) => {
+  res.setHeader("Cache-Control", "no-store, private, max-age=0");
+  res.setHeader("Pragma", "no-cache");
   next();
 });
 
@@ -53,7 +80,7 @@ declare module "http" {
 
 app.use(
   express.json({
-    limit: '10mb',
+    limit: "2mb",
     verify: (req, _res, buf) => {
       req.rawBody = buf;
     },
@@ -101,7 +128,6 @@ app.use((req, res, next) => {
 
   app.use((err: any, _req: Request, res: Response, next: NextFunction) => {
     const status = err.status || err.statusCode || 500;
-    const message = err.message || "Internal Server Error";
 
     console.error("Internal Server Error:", err);
 
@@ -109,6 +135,8 @@ app.use((req, res, next) => {
       return next(err);
     }
 
+    // Non propagare messaggi interni, query o dettagli dei provider al client.
+    const message = status >= 500 ? "Errore interno del server" : (err.message || "Richiesta non valida");
     return res.status(status).json({ message });
   });
 

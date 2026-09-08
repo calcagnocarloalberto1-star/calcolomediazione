@@ -8,7 +8,7 @@ export interface IStorage {
   getAnalisi(id: number, accessToken?: string): Promise<AnalisiCaso | undefined>;
   getAllAnalisi(): Promise<AnalisiCaso[]>;
   updateAnalisi(id: number, data: Partial<AnalisiCaso>): Promise<AnalisiCaso | undefined>;
-  deleteAnalisi(id: number): Promise<boolean>;
+  deleteAnalisi(id: number, accessToken: string): Promise<boolean>;
   createCalcolo(data: InsertCalcolo): Promise<Calcolo>;
   getAllCalcoli(): Promise<Calcolo[]>;
 }
@@ -213,8 +213,11 @@ export async function incrementaContatoreVisite(): Promise<number> { const res =
     return res.rows[0] ? rowToAnalisi(res.rows[0]) : undefined;
   }
 
-  async deleteAnalisi(id: number): Promise<boolean> {
-    const res = await pool.query(`DELETE FROM analisi_casi WHERE id = $1`, [id]);
+  async deleteAnalisi(id: number, accessToken: string): Promise<boolean> {
+    const res = await pool.query(
+      `DELETE FROM analisi_casi WHERE id = $1 AND access_token = $2`,
+      [id, accessToken],
+    );
     return (res.rowCount ?? 0) > 0;
   }
 

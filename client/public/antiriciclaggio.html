@@ -206,7 +206,7 @@ margin-bottom:2cm;
 <button class="btn-primary" type="button" id="assist_btn" onclick="assistEstrai()">Chiedi all'assistente e compila</button>
 <button class="btn-ghost" type="button" onclick="assistReset()">Pulisci</button>
 </div>
-<div class="ocr-warn" style="margin-top:8px"><b>Come funziona.</b> Questa funzione <b>trasmette i documenti caricati all'API di Anthropic</b>, che li legge e ne estrae i dati (stesse garanzie dell'estrazione «alta precisione»: per contratto Anthropic non usa i documenti per addestrare i propri modelli e conserva i log tecnici al massimo 7 giorni; il sito non salva né conserva file o dati estratti). I campi vengono scritti nel modulo solo dopo la tua conferma. Usa questa funzione come titolare del trattamento, con idonea base giuridica e informativa all'interessato.</div>
+<div class="ocr-warn" style="margin-top:8px"><b>Come funziona.</b> Questa funzione <b>trasmette i documenti caricati all'API commerciale di Anthropic</b>, che li legge e ne estrae i dati. Il sito elabora i file in memoria e non li archivia dopo la risposta; l'eventuale conservazione tecnica del fornitore segue il piano e i termini applicabili. I campi vengono scritti nel modulo solo dopo la tua conferma. Usa questa funzione come titolare del trattamento, con idonea base giuridica, informativa all'interessato e minimizzazione dei dati.</div>
 <div id="assist_status" role="status" aria-live="polite"></div>
 <div id="assist_answer" class="box" style="display:none;margin-top:10px" role="status" aria-live="polite"></div>
 <div id="assist_review" style="display:none">
@@ -2328,7 +2328,7 @@ if(!files.length){ assistSetStatus("Carica almeno un documento del fascicolo pri
 const ok = confirm(
 "Assistente AI di compilazione\n\n" +
 "I documenti caricati verranno trasmessi all'API di Anthropic per leggerli e proporre la compilazione dei campi. " +
-"Per contratto (DPA conforme al GDPR) Anthropic non usa i documenti per addestrare i propri modelli e conserva i log al massimo 7 giorni; il sito non salva ne' conserva i file o i dati estratti. " +
+"Il sito elabora i file in memoria e non li archivia dopo la risposta; l'eventuale conservazione tecnica di Anthropic segue il piano commerciale e i termini applicabili. " +
 "Procedi solo se hai una base giuridica e ne hai informato l'interessato.\n\n" +
 "Nulla verra' scritto nei campi finche' non lo confermi tu.\n\nInviare i documenti e procedere?"
 );

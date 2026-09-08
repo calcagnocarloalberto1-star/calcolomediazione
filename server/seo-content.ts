@@ -319,43 +319,33 @@ export const SEO_CONTENT: Record<string, string> = {
 </div>`,
 
   "/privacy-policy": `<div style="max-width:900px;margin:0 auto;padding:40px 20px;font-family:Inter,sans-serif;color:#2d2926">
-<h1 style="font-size:2rem;font-family:'Space Grotesk',sans-serif">Privacy Policy</h1>
-<p>Informativa sul trattamento dei dati personali degli utenti di CalcoloMediazione.it, ai sensi del Regolamento UE 2016/679 (GDPR).</p>
+<h1 style="font-size:2rem;font-family:'Space Grotesk',sans-serif">Informativa sul trattamento dei dati personali</h1>
+<p>Ultimo aggiornamento: 8 settembre 2026.</p>
 <h2>Titolare del trattamento</h2>
-<p>Il titolare del trattamento e Carlo Alberto Calcagno, responsabile del sito CalcoloMediazione.it.</p>
-<h2>Dati raccolti</h2>
-<ul>
-<li>Dati di navigazione: indirizzo IP, tipo di browser, pagine visitate, orario di accesso</li>
-<li>Dati forniti volontariamente nei form di contatto o nei calcolatori</li>
-<li>Dati di analisi AI, salvati sul server per un massimo di 30 giorni (non a tempo indeterminato)</li>
-</ul>
-<h2>Finalita e base giuridica</h2>
-<p>I dati sono trattati per erogare i servizi di calcolo e analisi del sito, rispondere alle richieste di contatto, adempiere a obblighi di legge ed effettuare analisi statistiche aggregate, sulla base del consenso, dell'esecuzione di un contratto, del legittimo interesse o di un obbligo legale (art. 6 GDPR).</p>
-<h2>Conservazione dei dati</h2>
-<p>I dati di navigazione sono conservati fino a 12 mesi; i dati dei calcoli non sono conservati in modo permanente; le eventuali analisi AI salvate sono eliminate entro 30 giorni; i dati di contatto sono conservati per il tempo necessario a evadere la richiesta.</p>
-<h2>Analisi AI del Caso</h2>
-<p>Titolo, descrizione e parti del caso vengono trasmessi all'API di Anthropic (Claude) o, in fallback, di Google (Gemini) per generare l'analisi. Prima dell'invio, i nomi delle parti e alcuni identificatori diretti (email, codice fiscale, IBAN, telefono) individuati nel testo vengono sostituiti con codici anonimi; i valori reali sono ripristinati solo nel risultato mostrato all'utente. I fornitori non utilizzano i dati per addestrare i propri modelli; l'elaborazione avviene su infrastruttura statunitense, con le clausole contrattuali standard a copertura del trasferimento extra-UE.</p>
-<h2>Compilazione automatica dei modelli antiriciclaggio con AI</h2>
-<p>Su scelta esplicita dell'utente, la modalita ad alta precisione dello strumento antiriciclaggio trasmette il documento caricato all'API di un fornitore di intelligenza artificiale (Anthropic) al solo fine di estrarne i dati per la compilazione dei modelli. Il fornitore non utilizza i dati per addestrare i propri modelli e conserva i log tecnici per un massimo di 7 giorni; il sito non conserva il file caricato ne i dati estratti. La modalita predefinita di riconoscimento (OCR) opera invece interamente nel browser, senza trasmissione dei file.</p>
-<h2>Diritti dell'interessato</h2>
-<p>Ai sensi degli artt. 15-22 GDPR, l'utente ha diritto di accesso, rettifica, cancellazione, limitazione, portabilita e opposizione al trattamento, oltre al diritto di proporre reclamo al Garante per la Protezione dei Dati Personali. Per informazioni sui cookie si rinvia alla <a href="/cookie-policy">Cookie Policy</a>.</p>
+<p>Il titolare del trattamento e Carlo Alberto Calcagno, responsabile di CalcoloMediazione.it. Le richieste privacy possono essere inviate mediante i recapiti della pagina Contatti.</p>
+<h2>Dati trattati</h2>
+<p>Il server riceve i dati tecnici necessari alla connessione e alla sicurezza. La statistica interna delle pagine e aggregata, volatile e non conserva indirizzi IP o user-agent. Le funzioni IA possono trattare titolo, descrizione, parti, parametri economici, testo estratto dai PDF, risultati e messaggi della chat.</p>
+<h2>Finalita e basi giuridiche</h2>
+<p>I dati sono trattati per erogare il servizio richiesto, proteggere e diagnosticare il servizio, adempiere agli obblighi di legge e produrre statistiche interne aggregate. Google Analytics e utilizzato esclusivamente previo consenso, revocabile dal link Preferenze cookie nel footer.</p>
+<h2>Servizi di intelligenza artificiale</h2>
+<p>I contenuti inviati alle funzioni IA sono trasmessi ad Anthropic Claude e, solo se tecnicamente configurato come fallback in un ambiente commerciale idoneo, a Google Gemini. I fornitori possono trattare dati fuori dallo Spazio economico europeo secondo i relativi accordi sul trattamento e meccanismi di trasferimento applicabili. Prima di inserire dati di terzi, il professionista deve disporre di una base giuridica idonea e applicare minimizzazione e pseudonimizzazione.</p>
+<h2>Conservazione</h2>
+<p>Le analisi del caso sono conservate nel database del sito per un massimo di 30 giorni e possono essere eliminate prima mediante il token segreto nel browser. I file PDF dell'Analisi del caso sono elaborati in memoria; il testo estratto confluisce nell'analisi. I documenti AML inviati all'IA non sono archiviati dal sito dopo la risposta; i tempi tecnici del fornitore dipendono dal servizio e dal piano applicato.</p>
+<h2>Sicurezza e diritti</h2>
+<p>Il sito usa HTTPS, risposte API non memorizzabili, token casuali, controlli di origine, limiti di frequenza e dimensione, validazione dei file e minimizzazione dei log. Ai sensi degli artt. 15-22 GDPR, l'interessato puo esercitare i diritti applicabili e proporre reclamo al Garante. Per maggiori dettagli consultare la pagina completa nel browser e la <a href="/cookie-policy">Cookie Policy</a>.</p>
 </div>`,
 
   "/cookie-policy": `<div style="max-width:900px;margin:0 auto;padding:40px 20px;font-family:Inter,sans-serif;color:#2d2926">
 <h1 style="font-size:2rem;font-family:'Space Grotesk',sans-serif">Cookie Policy</h1>
-<p>Informativa sull'utilizzo dei cookie sul sito CalcoloMediazione.it.</p>
-<h2>Cookie tecnici</h2>
-<p>Cookie di sessione e funzionali, necessari al funzionamento del sito, che non richiedono il consenso preventivo dell'utente.</p>
-<h2>Cookie analitici (Google Analytics)</h2>
-<p>Il sito utilizza Google Analytics per raccogliere statistiche aggregate di utilizzo. I cookie analitici vengono installati solo dopo che l'utente ha espresso il consenso tramite il banner presente sul sito; senza consenso, Google Analytics non viene caricato.</p>
-<h2>Cookie e servizi di terze parti</h2>
-<ul>
-<li>Google Analytics - statistiche di navigazione, richiede consenso</li>
-<li>Servizi AI (Anthropic Claude, Google Gemini in fallback) - elaborazione delle analisi AI e, solo su richiesta dell'utente, lettura dei documenti caricati nello strumento antiriciclaggio</li>
-<li>Google Fonts - caricamento dei font tipografici del sito</li>
-</ul>
-<h2>Gestione dei cookie</h2>
-<p>L'utente puo gestire le preferenze sui cookie direttamente dal proprio browser (Chrome, Firefox, Safari, Edge); la disattivazione dei cookie tecnici puo compromettere il funzionamento di alcune funzionalita del sito. Per informazioni generali sul trattamento dei dati si rinvia alla <a href="/privacy-policy">Privacy Policy</a>.</p>
+<p>Ultimo aggiornamento: 8 settembre 2026.</p>
+<h2>Scelte disponibili</h2>
+<p>Il sito usa il cookie tecnico cm_consent per ricordare la scelta: 12 mesi in caso di accettazione e 6 mesi in caso di rifiuto. Google Analytics viene caricato soltanto dopo un consenso esplicito; il rifiuto non limita le funzioni essenziali.</p>
+<h2>Google Analytics</h2>
+<p>I cookie _ga e _ga_* sono usati per la misurazione statistica soltanto dopo il consenso. La configurazione disabilita i segnali Google e la personalizzazione pubblicitaria.</p>
+<h2>Statistiche interne e memoria locale</h2>
+<p>Il sito conta le visualizzazioni delle pagine sul proprio server senza cookie, profili, indirizzi IP o user-agent; il conteggio resta in memoria fino al riavvio del servizio. Alcune funzioni usano localStorage per preferenze, modelli di lavoro, token casuali e uno storico tecnico minimizzato.</p>
+<h2>Revoca</h2>
+<p>La scelta puo essere modificata in qualsiasi momento dal link Preferenze cookie nel footer o dalla pagina completa nel browser. La revoca disabilita Analytics e tenta di eliminare i relativi cookie di prima parte. Per il trattamento dei dati si rinvia alla <a href="/privacy-policy">Privacy Policy</a>.</p>
 </div>`,
 
   "/termini-condizioni": `<div style="max-width:900px;margin:0 auto;padding:40px 20px;font-family:Inter,sans-serif;color:#2d2926">

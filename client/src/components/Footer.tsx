@@ -1,5 +1,6 @@
 import { Link } from "wouter";
 import { Scale, HelpCircle, BookOpen, FileText, ExternalLink } from "lucide-react";
+import { OPEN_COOKIE_PREFERENCES_EVENT } from "@/components/CookieConsent";
 
 export default function Footer() {
   /* ACC-04: --primary (#a03317) dà solo 2.79:1 sullo sfondo scuro del footer
@@ -89,6 +90,15 @@ export default function Footer() {
               <li><FooterLink href="/contatti">Contatti</FooterLink></li>
               <li><FooterLink href="/privacy-policy">Privacy Policy</FooterLink></li>
               <li><FooterLink href="/cookie-policy">Cookie Policy</FooterLink></li>
+              <li>
+                <button
+                  type="button"
+                  onClick={() => window.dispatchEvent(new Event(OPEN_COOKIE_PREFERENCES_EVENT))}
+                  className="block w-full py-2 text-left text-sm text-background/90 hover:text-background transition-colors duration-150"
+                >
+                  Preferenze cookie
+                </button>
+              </li>
               <li><FooterLink href="/termini-condizioni">Termini e Condizioni</FooterLink></li>
             </ul>
           </div>

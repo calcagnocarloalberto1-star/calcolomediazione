@@ -5,8 +5,6 @@ interface StatEntry {
   timestamp: Date;
   type: string; // 'page_view' | 'analisi_ai' | 'calcolo' | 'pdf_export' | 'procura_view' | 'chat_message' | 'upload_pdf'
   path?: string;
-  userAgent?: string;
-  ip?: string;
 }
 
 class StatsTracker {
@@ -26,9 +24,9 @@ class StatsTracker {
   private hourlyViews: Record<string, number> = {}; // 'YYYY-MM-DD HH' -> count
   private dailyViews: Record<string, number> = {}; // 'YYYY-MM-DD' -> count
 
-  track(type: string, path?: string, userAgent?: string, ip?: string) {
+  track(type: string, path?: string) {
     const now = new Date();
-    this.entries.push({ timestamp: now, type, path, userAgent, ip });
+    this.entries.push({ timestamp: now, type, path });
 
     // Keep only last 10000 entries to prevent memory issues
     if (this.entries.length > 10000) {
@@ -82,9 +80,6 @@ class StatsTracker {
     const last24h = new Date(now.getTime() - 24 * 60 * 60 * 1000);
     const recentEntries = this.entries.filter(e => e.timestamp > last24h);
 
-    // Unique IPs in last 24h (approximate unique visitors)
-    const uniqueIps = new Set(recentEntries.filter(e => e.ip).map(e => e.ip)).size;
-
     // Last 7 days daily views
     const last7Days: Record<string, number> = {};
     for (let i = 6; i >= 0; i--) {
@@ -117,7 +112,6 @@ class StatsTracker {
       uptime: `${uptimeHours}h ${uptimeMinutes}m`,
       startTime: this.startTime.toISOString(),
       counters: this.counters,
-      uniqueVisitors24h: uniqueIps,
       pageViews24h: recentEntries.filter(e => e.type === 'page_view').length,
       last7Days,
       last24hHourly,
