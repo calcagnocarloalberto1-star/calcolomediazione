@@ -268,7 +268,7 @@ margin-bottom:2cm;
 <p><b>3) Soggetti con stretti legami notori</b> — chi detiene congiuntamente alla PEP la titolarità effettiva di enti o trust, o intrattiene con essa stretti rapporti d'affari; chi detiene solo formalmente il controllo totalitario di un'entità di fatto costituita nell'interesse della PEP.</p>
 </div>
 </details>
-<h3 class="grouph">7 — Titolare effettivo</h3><div class="hint" style="margin-bottom:8px">La persona fisica, diversa dalla parte, nel cui interesse ultimo la prestazione è resa o l'operazione eseguita (art. 1, co. 2, lett. pp, D.Lgs. 231/2007).</div><div id="tePfOptionWrap"><div class="field"><label for="te_pf_opzione">Se la parte è persona fisica</label><div class="hint">Indicare se agisce per sé oppure per conto di un terzo titolare effettivo.</div><select id="te_pf_opzione" ><option value="proprio">Agisce nel proprio esclusivo interesse — nessun titolare effettivo diverso dalla parte</option><option value="terzo">Agisce nell'interesse o per conto di un soggetto terzo</option></select></div></div><div class="subblock" id="teTerzoBlock" style="display:none"><div class="grid"><div class="field"><label for="te3_nome">Cognome e nome del titolare effettivo</label><div class="hint">Nome e cognome del terzo nel cui interesse la parte agisce.</div><input id="te3_nome" type="text" placeholder="..." ></div><div class="field"><label for="te3_nascita">Luogo e data di nascita</label><div class="hint">Luogo e data di nascita del titolare effettivo terzo.</div><input id="te3_nascita" type="text" placeholder="..." ></div><div class="field"><label for="te3_cf">Codice fiscale</label><div class="hint">Codice fiscale del titolare effettivo terzo.</div><input id="te3_cf" type="text" placeholder="..." ></div><div class="field"><label for="te3_res">Residenza</label><div class="hint">Indirizzo di residenza del titolare effettivo terzo.</div><input id="te3_res" type="text" placeholder="..." ></div><div class="field"><label for="te3_cittadinanza">Cittadinanza</label><div class="hint">Cittadinanza del titolare effettivo terzo.</div><input id="te3_cittadinanza" type="text" placeholder="..." ></div><div class="field"><label for="te3_doc">Documento di identità (tipo e n.)</label><div class="hint">Documento del titolare effettivo terzo, se disponibile.</div><input id="te3_doc" type="text" placeholder="..." ></div></div></div><div class="subblock" id="tePgBlock" style="display:none"><div class="hint">Se la parte è persona giuridica: individuazione del titolare effettivo ai sensi dell'art. 20 D.Lgs. 231/2007.</div><div class="field checklist"><label for="cb_tecrit_propdiretta">Criterio di individuazione</label><div class="hint">Come è stato individuato il titolare effettivo (più opzioni possibili).</div><div class="cbwrap"><label class="cbrow"><input type="checkbox" id="cb_tecrit_propdiretta"> Proprietà diretta</label><label class="cbrow"><input type="checkbox" id="cb_tecrit_propindiretta"> Proprietà indiretta</label><label class="cbrow"><input type="checkbox" id="cb_tecrit_controllo"> Controllo</label><label class="cbrow"><input type="checkbox" id="cb_tecrit_poteri"> Poteri di amministrazione o direzione</label><label class="cbrow cbother-row"><input type="checkbox" id="cb_tecrit_altro"> Altro:</label><input id="tecrit_altro_txt" class="cbother" placeholder="specificare" aria-label="Altro — specificare il criterio di individuazione del titolare effettivo"></div></div><div class="grid"><div class="field"><label for="te_percentuale">% di partecipazione</label><div class="hint">Da indicare se il criterio è la percentuale di partecipazione al capitale.</div><input id="te_percentuale" type="text" placeholder="es. 30%" ></div><div class="field"><label for="te_nome">Cognome e nome del titolare effettivo</label><div class="hint">Persona fisica individuata come titolare effettivo della società/ente.</div><input id="te_nome" type="text" placeholder="..." ></div><div class="field"><label for="te_nascita">Luogo e data di nascita</label><div class="hint">Luogo e data di nascita del titolare effettivo.</div><input id="te_nascita" type="text" placeholder="..." ></div><div class="field"><label for="te_cf">Codice fiscale</label><div class="hint">Codice fiscale del titolare effettivo.</div><input id="te_cf" type="text" placeholder="..." ></div><div class="field"><label for="te_numero">Numero dei titolari effettivi individuati</label><div class="hint">Indicare il numero complessivo, se più di uno (aggiungere una sezione per ciascuno).</div><input id="te_numero" type="number" placeholder="es. 1" ></div><div class="field"><label for="te_esito">Esito della verifica</label><div class="hint">La conclusione della verifica sul titolare effettivo.</div><select id="te_esito" ><option value="completata">Verifica completata</option><option value="integrare">Documentazione da integrare</option><option value="approfondimento">Necessario approfondimento</option></select></div></div><div class="field checklist"><label for="cb_tefonte_visura">Fonte documentale utilizzata</label><div class="hint">Da dove provengono le informazioni sul titolare effettivo (più opzioni possibili).</div><div class="cbwrap"><label class="cbrow"><input type="checkbox" id="cb_tefonte_visura"> Visura camerale</label><label class="cbrow"><input type="checkbox" id="cb_tefonte_statuto"> Statuto</label><label class="cbrow"><input type="checkbox" id="cb_tefonte_libro"> Libro soci</label><label class="cbrow"><input type="checkbox" id="cb_tefonte_assetto"> Assetto proprietario dichiarato</label><label class="cbrow"><input type="checkbox" id="cb_tefonte_docsoc"> Documentazione societaria</label><label class="cbrow"><input type="checkbox" id="cb_tefonte_dichparte"> Dichiarazione della parte</label><label class="cbrow cbother-row"><input type="checkbox" id="cb_tefonte_altro"> Altro:</label><input id="tefonte_altro_txt" class="cbother" placeholder="specificare" aria-label="Altro — specificare la fonte documentale utilizzata"></div></div><div class="field"><label for="te_motivazione">Motivazione della valutazione</label><div class="hint">Sintesi delle ragioni dell'esito indicato (utile in caso di verifica da integrare/approfondire).</div><textarea id="te_motivazione" rows="2" placeholder="" ></textarea></div></div><h3 class="grouph">8 — Prestazione: oggetto, valore e fondi</h3><div class="grid"><div class="field"><label for="proc_ogg">Oggetto della mediazione</label><div class="hint">Sintesi dell'oggetto della controversia (es. contratto di appalto, locazione, divisione ereditaria).</div><input id="proc_ogg" type="text" placeholder="es. contratto di appalto" ></div><div class="field"><label for="op_materia">Materia</label><div class="hint">Materia della controversia (es. condominio, diritti reali, famiglia, contratti bancari).</div><input id="op_materia" type="text" placeholder="..." ></div><div class="field"><label for="op_valore">Valore della controversia</label><div class="hint">Valore economico della lite, come indicato nella domanda.</div><input id="op_valore" type="text" placeholder="es. € 50.000" ></div><div class="field"><label for="op_importo">Importo previsto per l'esecuzione dell'accordo (€)</label><div class="hint">Importo che verrà effettivamente movimentato in caso di accordo, se noto.</div><input id="op_importo" type="text" placeholder="es. 20.000" ></div></div><div class="field"><label for="op_descrizione">Breve descrizione</label><div class="hint">Sintesi della vertenza e delle richieste presentate al mediatore.</div><textarea id="op_descrizione" rows="3" placeholder="" ></textarea></div><div class="field checklist"><label for="cb_accordo_nessuntrasf">L'eventuale accordo potrà prevedere</label><div class="hint">Una o più delle seguenti conseguenze patrimoniali (più opzioni possibili).</div><div class="cbwrap"><label class="cbrow"><input type="checkbox" id="cb_accordo_nessuntrasf"> Nessun trasferimento patrimoniale</label><label class="cbrow"><input type="checkbox" id="cb_accordo_pagamento"> Pagamento di somme di denaro</label><label class="cbrow"><input type="checkbox" id="cb_accordo_immobile"> Trasferimento di beni immobili</label><label class="cbrow"><input type="checkbox" id="cb_accordo_quote"> Trasferimento di quote societarie</label><label class="cbrow"><input type="checkbox" id="cb_accordo_azienda"> Trasferimento di aziende</label><label class="cbrow"><input type="checkbox" id="cb_accordo_dirittireali"> Costituzione o trasferimento di diritti reali</label><label class="cbrow"><input type="checkbox" id="cb_accordo_farenonfare"> Obblighi di fare o non fare</label><label class="cbrow cbother-row"><input type="checkbox" id="cb_accordo_altro"> Altro:</label><input id="accordo_altro_txt" class="cbother" placeholder="specificare" aria-label="Altro — specificare cos'altro potrà prevedere l'accordo"></div></div><div class="field checklist"><label for="cb_provenienza_redditolav">Provenienza delle somme o delle risorse economiche</label><div class="hint">Da dove derivano i fondi destinati all'esecuzione dell'accordo (più opzioni possibili).</div><div class="cbwrap"><label class="cbrow"><input type="checkbox" id="cb_provenienza_redditolav"> Reddito da lavoro dipendente</label><label class="cbrow"><input type="checkbox" id="cb_provenienza_redditoauton"> Reddito da lavoro autonomo</label><label class="cbrow"><input type="checkbox" id="cb_provenienza_redditoimpresa"> Reddito d'impresa</label><label class="cbrow"><input type="checkbox" id="cb_provenienza_disponente"> Disponibilità dell'ente/società</label><label class="cbrow"><input type="checkbox" id="cb_provenienza_finanziamento"> Finanziamento bancario</label><label class="cbrow"><input type="checkbox" id="cb_provenienza_mutuo"> Mutuo</label><label class="cbrow"><input type="checkbox" id="cb_provenienza_donazione"> Donazione</label><label class="cbrow"><input type="checkbox" id="cb_provenienza_eredita"> Eredità</label><label class="cbrow"><input type="checkbox" id="cb_provenienza_venditabeni"> Vendita di beni</label><label class="cbrow"><input type="checkbox" id="cb_provenienza_investimenti"> Investimenti</label><label class="cbrow"><input type="checkbox" id="cb_provenienza_risparmi"> Risparmi</label><label class="cbrow cbother-row"><input type="checkbox" id="cb_provenienza_altro"> Altro:</label><input id="provenienza_altro_txt" class="cbother" placeholder="specificare" aria-label="Altro — specificare la provenienza delle somme o delle risorse"></div></div><div class="field checklist"><label for="cb_pagamento_bonifico">Modalità di pagamento previste</label><div class="hint">Come verranno eseguiti i pagamenti dell'eventuale accordo (più opzioni possibili).</div><div class="cbwrap"><label class="cbrow"><input type="checkbox" id="cb_pagamento_bonifico"> Bonifico bancario</label><label class="cbrow"><input type="checkbox" id="cb_pagamento_assegnocirc"> Assegno circolare</label><label class="cbrow"><input type="checkbox" id="cb_pagamento_assegnobanc"> Assegno bancario</label><label class="cbrow cbother-row"><input type="checkbox" id="cb_pagamento_altro"> Altro:</label><input id="pagamento_altro_txt" class="cbother" placeholder="specificare" aria-label="Altro — specificare la modalità di pagamento prevista"></div></div><h3 class="grouph">9 — Valutazione del rischio della parte</h3>
+<h3 class="grouph">7 — Titolare effettivo</h3><div class="hint" style="margin-bottom:8px">La persona fisica, diversa dalla parte, nel cui interesse ultimo la prestazione è resa o l'operazione eseguita (art. 1, co. 2, lett. pp, D.Lgs. 231/2007).</div><div id="tePfOptionWrap"><div class="field"><label for="te_pf_opzione">Se la parte è persona fisica</label><div class="hint">Indicare se agisce per sé oppure per conto di un terzo titolare effettivo.</div><select id="te_pf_opzione" ><option value="proprio">Agisce nel proprio esclusivo interesse — nessun titolare effettivo diverso dalla parte</option><option value="terzo">Agisce nell'interesse o per conto di un soggetto terzo</option></select></div></div><div class="subblock" id="teTerzoBlock" style="display:none"><div class="grid"><div class="field"><label for="te3_nome">Cognome e nome del titolare effettivo</label><div class="hint">Nome e cognome del terzo nel cui interesse la parte agisce.</div><input id="te3_nome" type="text" placeholder="..." ></div><div class="field"><label for="te3_nascita">Luogo e data di nascita</label><div class="hint">Luogo e data di nascita del titolare effettivo terzo.</div><input id="te3_nascita" type="text" placeholder="..." ></div><div class="field"><label for="te3_cf">Codice fiscale</label><div class="hint">Codice fiscale del titolare effettivo terzo.</div><input id="te3_cf" type="text" placeholder="..." ></div><div class="field"><label for="te3_res">Residenza</label><div class="hint">Indirizzo di residenza del titolare effettivo terzo.</div><input id="te3_res" type="text" placeholder="..." ></div><div class="field"><label for="te3_cittadinanza">Cittadinanza</label><div class="hint">Cittadinanza del titolare effettivo terzo.</div><input id="te3_cittadinanza" type="text" placeholder="..." ></div><div class="field"><label for="te3_doc">Documento di identità (tipo e n.)</label><div class="hint">Documento del titolare effettivo terzo, se disponibile.</div><input id="te3_doc" type="text" placeholder="..." ></div></div></div><div class="subblock" id="tePgBlock" style="display:none"><div class="hint">Se la parte è persona giuridica: individuazione del titolare effettivo ai sensi dell'art. 20 D.Lgs. 231/2007.</div><div class="field checklist"><label for="cb_tecrit_propdiretta">Criterio di individuazione</label><div class="hint">Come è stato individuato il titolare effettivo (più opzioni possibili).</div><div class="cbwrap"><label class="cbrow"><input type="checkbox" id="cb_tecrit_propdiretta"> Proprietà diretta</label><label class="cbrow"><input type="checkbox" id="cb_tecrit_propindiretta"> Proprietà indiretta</label><label class="cbrow"><input type="checkbox" id="cb_tecrit_controllo"> Controllo</label><label class="cbrow"><input type="checkbox" id="cb_tecrit_poteri"> Poteri di amministrazione o direzione</label><label class="cbrow cbother-row"><input type="checkbox" id="cb_tecrit_altro"> Altro:</label><input id="tecrit_altro_txt" class="cbother" placeholder="specificare" aria-label="Altro — specificare il criterio di individuazione del titolare effettivo"></div></div><div class="grid"><div class="field"><label for="te_percentuale">% di partecipazione</label><div class="hint">Da indicare se il criterio è la percentuale di partecipazione al capitale.</div><input id="te_percentuale" type="text" placeholder="es. 30%" ></div><div class="field"><label for="te_nome">Cognome e nome del titolare effettivo</label><div class="hint">Persona fisica individuata come titolare effettivo della società/ente.</div><input id="te_nome" type="text" placeholder="..." ></div><div class="field"><label for="te_nascita">Luogo e data di nascita</label><div class="hint">Luogo e data di nascita del titolare effettivo.</div><input id="te_nascita" type="text" placeholder="..." ></div><div class="field"><label for="te_cf">Codice fiscale</label><div class="hint">Codice fiscale del titolare effettivo.</div><input id="te_cf" type="text" placeholder="..." ></div><div class="field"><label for="te_numero">Numero dei titolari effettivi individuati</label><div class="hint">Indicare il numero complessivo, se più di uno (aggiungere una sezione per ciascuno).</div><input id="te_numero" type="number" placeholder="es. 1" ></div><div class="field"><label for="te_esito">Esito della verifica</label><div class="hint">La conclusione della verifica sul titolare effettivo.</div><select id="te_esito" ><option value="completata">Verifica completata</option><option value="integrare">Documentazione da integrare</option><option value="approfondimento">Necessario approfondimento</option></select></div></div><div class="field checklist"><label for="cb_tefonte_visura">Fonte documentale utilizzata</label><div class="hint">Da dove provengono le informazioni sul titolare effettivo (più opzioni possibili).</div><div class="cbwrap"><label class="cbrow"><input type="checkbox" id="cb_tefonte_visura"> Visura camerale</label><label class="cbrow"><input type="checkbox" id="cb_tefonte_statuto"> Statuto</label><label class="cbrow"><input type="checkbox" id="cb_tefonte_libro"> Libro soci</label><label class="cbrow"><input type="checkbox" id="cb_tefonte_assetto"> Assetto proprietario dichiarato</label><label class="cbrow"><input type="checkbox" id="cb_tefonte_docsoc"> Documentazione societaria</label><label class="cbrow"><input type="checkbox" id="cb_tefonte_dichparte"> Dichiarazione della parte</label><label class="cbrow cbother-row"><input type="checkbox" id="cb_tefonte_altro"> Altro:</label><input id="tefonte_altro_txt" class="cbother" placeholder="specificare" aria-label="Altro — specificare la fonte documentale utilizzata"></div></div><div class="field"><label for="te_motivazione">Motivazione della valutazione</label><div class="hint">Sintesi delle ragioni dell'esito indicato (utile in caso di verifica da integrare/approfondire).</div><textarea id="te_motivazione" rows="2" placeholder="" ></textarea></div></div><h3 class="grouph">7 bis — Valutazione del rischio del titolare effettivo</h3><div class="hint" style="margin-bottom:8px">Da compilare solo se è stato individuato un titolare effettivo diverso dalla parte (v. sezione 7 sopra). Stessi criteri orientativi basso/medio/alto della valutazione del rischio della parte.</div><table class="risktable"><tr><th>Elemento</th><th>Livello attribuito</th></tr><tr><td class="elname">Caratteristiche personali/professionali e attività svolta</td><td><select id="te_risk_caratteristiche" aria-label="Titolare effettivo — Caratteristiche personali/professionali e attività svolta"><option value="basso">Basso</option><option value="medio">Medio</option><option value="alto">Alto</option></select></td></tr><tr><td class="elname">Natura e caratteristiche del rapporto con il Cliente</td><td><select id="te_risk_rapporto" aria-label="Titolare effettivo — Natura e caratteristiche del rapporto con il Cliente"><option value="basso">Basso</option><option value="medio">Medio</option><option value="alto">Alto</option></select></td></tr><tr><td class="elname">Comportamento, ove rilevabile</td><td><select id="te_risk_comportamento" aria-label="Titolare effettivo — Comportamento, ove rilevabile"><option value="basso">Basso</option><option value="medio">Medio</option><option value="alto">Alto</option></select></td></tr><tr><td class="elname">Area geografica di residenza</td><td><select id="te_risk_areageo" aria-label="Titolare effettivo — Area geografica di residenza"><option value="basso">Basso</option><option value="medio">Medio</option><option value="alto">Alto</option></select></td></tr></table><h3 class="grouph">7 ter — Sanzioni finanziarie mirate</h3><div class="hint" style="margin-bottom:8px">Misure di congelamento e divieto di messa a disposizione di fondi o risorse economiche nei confronti di soggetti designati (liste UE/ONU). Dichiarazione della parte e, separatamente, verifica del mediatore sul titolare effettivo.</div><div class="field checklist"><label for="cb_sfm_parte_ok">Dichiarazione della parte (Modulo AV, Sezione F)</label><div class="hint">Il dichiarante attesta, per quanto a propria conoscenza, che i seguenti soggetti non sono destinatari di sanzioni finanziarie mirate.</div><div class="cbwrap"><label class="cbrow"><input type="checkbox" id="cb_sfm_parte_ok"> La Parte/Cliente, se persona fisica, non è soggetto destinatario di sanzioni finanziarie mirate</label><label class="cbrow"><input type="checkbox" id="cb_sfm_esecutore_ok"> L'Esecutore non è soggetto destinatario di sanzioni finanziarie mirate</label><label class="cbrow"><input type="checkbox" id="cb_sfm_te_ok"> Il Titolare effettivo non è soggetto destinatario di sanzioni finanziarie mirate</label></div></div><div class="grid"><div class="field"><label for="sfm_verifica_effettuata">Verifica sul titolare effettivo effettuata dal mediatore</label><div class="hint">Per la Scheda di valutazione del rischio: verifica indipendente, distinta dalla dichiarazione della parte.</div><select id="sfm_verifica_effettuata" ><option value="">—</option><option value="si">Sì</option></select></div><div class="field"><label for="sfm_esito">Esito della verifica</label><div class="hint">L'esito del riscontro sulle liste dei soggetti designati.</div><select id="sfm_esito" ><option value="">—</option><option value="non_risultano">Non risultano corrispondenze</option><option value="possibile">Possibile corrispondenza — necessari approfondimenti</option><option value="rilevata">Corrispondenza rilevata</option></select></div><div class="field"><label for="sfm_data">Data della verifica</label><div class="hint">Data in cui è stata effettuata la verifica sulle liste.</div><input id="sfm_data" type="date" placeholder="" ></div><div class="field"><label for="sfm_fonte">Fonte consultata</label><div class="hint">Es. elenco UE delle misure restrittive, liste ONU, applicativo utilizzato.</div><input id="sfm_fonte" type="text" placeholder="..." ></div></div><div class="field"><label for="sfm_estremi">Estremi e fonte normativa dell'atto/provvedimento di designazione</label><div class="hint">Da compilare solo in caso di corrispondenza rilevata o possibile.</div><input id="sfm_estremi" type="text" placeholder="..." ></div><div class="field"><label for="sfm_annotazioni">Annotazioni</label><div class="hint">Eventuali note sulla verifica effettuata.</div><textarea id="sfm_annotazioni" rows="2" placeholder="" ></textarea></div><div class="grid"><div class="field"><label for="sfm_variazione">Eventuale variazione delle misure nel corso della procedura</label><div class="hint">Se le misure di adeguata verifica applicate sono state successivamente modificate.</div><select id="sfm_variazione" ><option value="no">No</option><option value="si">Sì — specificare</option></select></div><div class="field"><label for="sfm_variazione_dettaglio">Se «Sì», specificare</label><div class="hint">Cosa è cambiato e perché.</div><input id="sfm_variazione_dettaglio" type="text" placeholder="..." ></div></div><h3 class="grouph">8 — Prestazione: oggetto, valore e fondi</h3><div class="grid"><div class="field"><label for="proc_ogg">Oggetto della mediazione</label><div class="hint">Sintesi dell'oggetto della controversia (es. contratto di appalto, locazione, divisione ereditaria).</div><input id="proc_ogg" type="text" placeholder="es. contratto di appalto" ></div><div class="field"><label for="op_materia">Materia</label><div class="hint">Materia della controversia (es. condominio, diritti reali, famiglia, contratti bancari).</div><input id="op_materia" type="text" placeholder="..." ></div><div class="field"><label for="op_valore">Valore della controversia</label><div class="hint">Valore economico della lite, come indicato nella domanda.</div><input id="op_valore" type="text" placeholder="es. € 50.000" ></div><div class="field"><label for="op_importo">Importo previsto per l'esecuzione dell'accordo (€)</label><div class="hint">Importo che verrà effettivamente movimentato in caso di accordo, se noto.</div><input id="op_importo" type="text" placeholder="es. 20.000" ></div></div><div class="field"><label for="op_descrizione">Breve descrizione</label><div class="hint">Sintesi della vertenza e delle richieste presentate al mediatore.</div><textarea id="op_descrizione" rows="3" placeholder="" ></textarea></div><div class="field checklist"><label for="cb_accordo_nessuntrasf">L'eventuale accordo potrà prevedere</label><div class="hint">Una o più delle seguenti conseguenze patrimoniali (più opzioni possibili).</div><div class="cbwrap"><label class="cbrow"><input type="checkbox" id="cb_accordo_nessuntrasf"> Nessun trasferimento patrimoniale</label><label class="cbrow"><input type="checkbox" id="cb_accordo_pagamento"> Pagamento di somme di denaro</label><label class="cbrow"><input type="checkbox" id="cb_accordo_immobile"> Trasferimento di beni immobili</label><label class="cbrow"><input type="checkbox" id="cb_accordo_quote"> Trasferimento di quote societarie</label><label class="cbrow"><input type="checkbox" id="cb_accordo_azienda"> Trasferimento di aziende</label><label class="cbrow"><input type="checkbox" id="cb_accordo_dirittireali"> Costituzione o trasferimento di diritti reali</label><label class="cbrow"><input type="checkbox" id="cb_accordo_farenonfare"> Obblighi di fare o non fare</label><label class="cbrow cbother-row"><input type="checkbox" id="cb_accordo_altro"> Altro:</label><input id="accordo_altro_txt" class="cbother" placeholder="specificare" aria-label="Altro — specificare cos'altro potrà prevedere l'accordo"></div></div><div class="field checklist"><label for="cb_provenienza_redditolav">Provenienza delle somme o delle risorse economiche</label><div class="hint">Da dove derivano i fondi destinati all'esecuzione dell'accordo (più opzioni possibili).</div><div class="cbwrap"><label class="cbrow"><input type="checkbox" id="cb_provenienza_redditolav"> Reddito da lavoro dipendente</label><label class="cbrow"><input type="checkbox" id="cb_provenienza_redditoauton"> Reddito da lavoro autonomo</label><label class="cbrow"><input type="checkbox" id="cb_provenienza_redditoimpresa"> Reddito d'impresa</label><label class="cbrow"><input type="checkbox" id="cb_provenienza_disponente"> Disponibilità dell'ente/società</label><label class="cbrow"><input type="checkbox" id="cb_provenienza_finanziamento"> Finanziamento bancario</label><label class="cbrow"><input type="checkbox" id="cb_provenienza_mutuo"> Mutuo</label><label class="cbrow"><input type="checkbox" id="cb_provenienza_donazione"> Donazione</label><label class="cbrow"><input type="checkbox" id="cb_provenienza_eredita"> Eredità</label><label class="cbrow"><input type="checkbox" id="cb_provenienza_venditabeni"> Vendita di beni</label><label class="cbrow"><input type="checkbox" id="cb_provenienza_investimenti"> Investimenti</label><label class="cbrow"><input type="checkbox" id="cb_provenienza_risparmi"> Risparmi</label><label class="cbrow cbother-row"><input type="checkbox" id="cb_provenienza_altro"> Altro:</label><input id="provenienza_altro_txt" class="cbother" placeholder="specificare" aria-label="Altro — specificare la provenienza delle somme o delle risorse"></div></div><div class="field checklist"><label for="cb_pagamento_bonifico">Modalità di pagamento previste</label><div class="hint">Come verranno eseguiti i pagamenti dell'eventuale accordo (più opzioni possibili).</div><div class="cbwrap"><label class="cbrow"><input type="checkbox" id="cb_pagamento_bonifico"> Bonifico bancario</label><label class="cbrow"><input type="checkbox" id="cb_pagamento_assegnocirc"> Assegno circolare</label><label class="cbrow"><input type="checkbox" id="cb_pagamento_assegnobanc"> Assegno bancario</label><label class="cbrow cbother-row"><input type="checkbox" id="cb_pagamento_altro"> Altro:</label><input id="pagamento_altro_txt" class="cbother" placeholder="specificare" aria-label="Altro — specificare la modalità di pagamento prevista"></div></div><h3 class="grouph">9 — Valutazione del rischio della parte</h3>
 <div class="legend-box"><b>Come classificare basso / medio / alto (criteri orientativi)</b>
 <table>
 <tr><td><b>Natura giuridica</b></td><td>Basso: persona fisica o ente con assetto semplice e trasparente. Medio: società con struttura ordinaria. Alto: trust, società estera o struttura articolata e non immediatamente trasparente.</td></tr>
@@ -337,6 +337,17 @@ margin-bottom:2cm;
 <p>Compila i campi sopra direttamente a video, poi genera e stampa subito il fascicolo nel formato ufficiale Genova, senza passare dal file Word.</p>
 <div class="row-btns">
 <button class="btn-primary" onclick="stampaVideoGenova()">🖨️ Genera e stampa (formato Genova)</button>
+</div>
+</div>
+</details>
+
+<details style="margin-top:10px">
+<summary>5 — Scheda di Verifica del Responsabile/RAR — formato Genova <span class="chev">&rsaquo;</span></summary>
+<div class="inner">
+<p>Documento unico per l'intero procedimento (art. 6, comma 5, del Protocollo interno), distinto dalla Scheda di valutazione del rischio di ciascuna parte: qui il Responsabile dell'Organismo/RAR documenta il controllo di secondo livello su tutte le parti già trattate. Elenca automaticamente, in Sezione A, le parti di questa procedura già salvate su questo browser; il resto — esiti, verifiche, determinazioni — resta da compilare a mano, a cura del Responsabile.</p>
+<div class="row-btns">
+<button class="btn-primary" onclick="generaSchedaVerificaRAR()">Genera la Scheda di Verifica RAR</button>
+<button class="btn-ghost" onclick="scaricaSchedaVerificaRAR()">📄 Scarica (apri in Word)</button>
 </div>
 </div>
 </details>
@@ -1091,7 +1102,13 @@ h += goRow([goCkBox("cb_tefonte_assetto","Assetto proprietario dichiarato"), goC
 h += '<p class="go-note" style="font-family:'+GO_FONT+'">Aggiungere sezione in caso di più titolari effettivi.</p>';
 }
 
-h += goBar("SEZIONE F — NATURA, VALORE E FONDI DELLA PRESTAZIONE");
+h += goBar("SEZIONE F — SANZIONI FINANZIARIE MIRATE");
+h += '<p class="go-note" style="font-family:'+GO_FONT+'">Il dichiarante, per quanto a propria conoscenza, dichiara che:</p>';
+h += goRow([goCkBox("cb_sfm_parte_ok","La Parte/Cliente, se persona fisica, non è soggetto destinatario di sanzioni finanziarie mirate")]);
+h += goRow([goCkBox("cb_sfm_esecutore_ok","L'Esecutore non è soggetto destinatario di sanzioni finanziarie mirate")]);
+h += goRow([goCkBox("cb_sfm_te_ok","Il Titolare effettivo non è soggetto destinatario di sanzioni finanziarie mirate")]);
+
+h += goBar("SEZIONE G — NATURA, VALORE E FONDI DELLA PRESTAZIONE");
 h += goField("Oggetto della mediazione", v("proc_ogg"));
 h += goField("Breve descrizione", v("op_descrizione"));
 h += goField("Valore della controversia", v("op_valore"));
@@ -1109,14 +1126,14 @@ h += goSub("Le somme saranno corrisposte mediante");
 h += goRow([goCkBox("cb_pagamento_bonifico","Bonifico bancario"), goCkBox("cb_pagamento_assegnocirc","Assegno circolare"), goCkBox("cb_pagamento_assegnobanc","Assegno bancario")]);
 h += goRow([goCkBox("cb_pagamento_altro","Altro"+($("cb_pagamento_altro")&&$("cb_pagamento_altro").checked?": "+v("pagamento_altro_txt"):""))]);
 
-h += goBar("SEZIONE G — DICHIARAZIONI");
+h += goBar("SEZIONE H — DICHIARAZIONI");
 h += goRow([goCkBox("cb_dich_veritieri","Che i dati sono veritieri, completi e aggiornati")]);
 h += goRow([goCkBox("cb_dich_impegno","Di impegnarsi a comunicare all'Organismo eventuali variazioni rilevanti entro 30 giorni")]);
 h += goRow([goCkSel("dich_carichi","nessuno","Che non sono in corso carichi pendenti per reati in materia economica/tributaria/societaria")]);
 if(v("dich_carichi")==="presenti") h += goField("Specificare", v("dich_carichi_dettaglio"));
 h += goRow([goCkBox("cb_dich_privacy","Di aver ricevuto e preso visione dell'informativa sul trattamento dei dati personali (artt. 13-14 Reg. UE 2016/679)")]);
 
-h += goBar("SEZIONE H — DOCUMENTI");
+h += goBar("SEZIONE I — DOCUMENTI");
 h += '<p class="go-note" style="font-family:'+GO_FONT+'">Il dichiarante allega:</p>';
 h += goRow([goCkBox("cb_docacq_identita","Documento identità"), goCkBox("cb_docacq_cf","Codice fiscale"), goCkBox("cb_docacq_visura","Visura camerale")]);
 h += goRow([goCkBox("cb_docacq_procalliti","Procura alle liti"), goCkBox("cb_docacq_procspec","Procura sostanziale"), goCkBox("cb_docacq_procnot","Procura notarile")]);
@@ -1222,6 +1239,14 @@ h += goRiskTable([
 ["Trasparenza titolare effettivo","rp_trasparenza_te"],["Qualifica PEP","rp_pep"]
 ], false);
 
+h += goBar("7 BIS – VALUTAZIONE DEL RISCHIO DEL TITOLARE EFFETTIVO");
+h += goRiskTable([
+["Caratteristiche personali/professionali e attività svolta","te_risk_caratteristiche"],
+["Natura e caratteristiche del rapporto con il Cliente","te_risk_rapporto"],
+["Comportamento, ove rilevabile sulla base degli elementi legittimamente disponibili","te_risk_comportamento"],
+["Area geografica di residenza","te_risk_areageo"]
+], false);
+
 h += goBar("8 – VALUTAZIONE DELLA PRESTAZIONE");
 h += goRiskTable([
 ["Tipologia della controversia","vp_tipologia"],["Valore economico","vp_valore"],
@@ -1273,6 +1298,17 @@ h += goSub("Misure rafforzate adottate");
 h += goRow([goCkBox("cb_avmis_docint","Acquisizione di ulteriore documentazione"), goCkBox("cb_avmis_approftit","Approfondimento sul titolare effettivo")]);
 h += goRow([goCkBox("cb_avmis_provfondi","Verifica della provenienza dei fondi"), goCkBox("cb_avmis_benef","Verifica del beneficiario dell'operazione")]);
 h += goRow([goCkBox("cb_avmis_terzi","Verifica di eventuali soggetti terzi coinvolti"), goCkBox("cb_avmis_altro","Altro"+($("cb_avmis_altro")&&$("cb_avmis_altro").checked?": "+v("avmis_altro_txt"):""))]);
+h += goSub("Eventuale variazione delle misure nel corso della procedura");
+h += goRow([goCkSel("sfm_variazione","no","No"), goCk(v("sfm_variazione")==="si","Sì"+(v("sfm_variazione")==="si"&&v("sfm_variazione_dettaglio")?" — "+v("sfm_variazione_dettaglio"):""))]);
+
+h += goSub("Verifica delle sanzioni finanziarie mirate");
+h += goField("Titolare effettivo", isPG ? v("te_nome") : (v("te_pf_opzione")==="terzo" ? v("te3_nome") : ""));
+h += goRow([goCkSel("sfm_verifica_effettuata","si","Verifica effettuata")]);
+h += goRow([goCkSel("sfm_esito","non_risultano","Non risultano corrispondenze"), goCkSel("sfm_esito","possibile","Possibile corrispondenza — necessari approfondimenti"), goCkSel("sfm_esito","rilevata","Corrispondenza rilevata")]);
+h += goField("Estremi e fonte normativa dell'atto/provvedimento di designazione", v("sfm_estremi"));
+h += goField("Fonte consultata per la verifica", v("sfm_fonte"));
+h += goField("Annotazioni", v("sfm_annotazioni"));
+h += goField("Data della verifica", v("sfm_data")?dateIt("sfm_data"):"");
 
 h += goBar("12 – ESITO COMPLESSIVO SULLA PARTE E DETERMINAZIONI FINALI");
 h += goRow([goCkBox("cb_esito_nessuno","Nessun elemento di anomalia")]);
@@ -1300,6 +1336,102 @@ h += goLegendaRischio();
 return docBlockGO("mSVR", h);
 }
 
+// -------- Scheda di Verifica del Responsabile dell'Organismo / RAR (formato Genova) --------
+// A differenza di modAVGenova()/modSchedaRischioGenova() — una coppia di documenti per CIASCUNA
+// parte — questo documento è UNICO per l'intero procedimento di mediazione (art. 6, comma 5, del
+// Protocollo interno COA Genova: "Scheda di Verifica del Responsabile dell'Organismo/RAR, unica
+// per il procedimento di mediazione e riferita alle singole Schede di Valutazione del Rischio
+// esaminate"). Per questo legge — invece dei soli campi a video della parte attualmente aperta —
+// lo storico di TUTTE le parti già salvate su questo browser per il numero di procedura corrente
+// (stessa fonte, AML_DATI_KEY, usata da "Procedure con dati salvati su questo browser").
+// Le valutazioni proprie del Responsabile/RAR (esito di ciascuna Scheda, verifica sanzioni
+// finanziarie mirate, frequenza/volume delle operazioni, determinazioni finali) restano
+// volutamente IN BIANCO: sono giudizi professionali del Responsabile/RAR, non desumibili dai
+// dati compilati dal Mediatore — coerentemente con "compilabile anche a mano" già usato per gli
+// altri moduli COA Genova.
+function partiSalvateProcedura(){
+const procKey = amlProcKey();
+if(!procKey) return [];
+const parti = amlDatiLoadAll()[procKey] || {};
+return Object.keys(parti).map(nome => ({ nome: nome, campi: (parti[nome] && parti[nome].campi) || {} }));
+}
+function ruoloLabelDaCampi(campi){
+const map = { istante:"Istante", aderente:"Aderente", terzo:"Terzo chiamato" };
+if(campi.p_ruolo === "altro") return campi.p_ruolo_altro || "Altro";
+return map[campi.p_ruolo] || "Altra Parte";
+}
+function titolareEffettivoDaCampi(campi){
+if(campi.p_tipo === "pg") return campi.te_nome || "";
+if(campi.te_pf_opzione === "terzo") return campi.te3_nome || "";
+return "";
+}
+function modSchedaVerificaRARGenova(){
+const parti = partiSalvateProcedura();
+// Se la parte attualmente a video non risulta ancora salvata nello storico (procedura appena
+// iniziata, autosave non ancora scattato dopo mezzo secondo), la si aggiunge comunque cosi'
+// compare in Sezione A senza dover attendere il salvataggio automatico.
+const partyKeyAttuale = amlPartyKey();
+if(v("proc_n") && partyKeyAttuale !== "(parte senza nome)" && !parti.some(p=>p.nome===partyKeyAttuale)){
+parti.push({ nome: partyKeyAttuale, campi: amlRaccogliCampi() });
+}
+
+let h = goHeader();
+h += goTitle("SCHEDA DI VERIFICA DEL RESPONSABILE DELL'ORGANISMO / RAR");
+h += goNote("Documento unico per il procedimento di mediazione (art. 6, comma 5, Protocollo interno), riferito alle Schede di valutazione del rischio delle singole Parti. Riservato al controllo di secondo livello del Responsabile dell'Organismo/RAR: le valutazioni sotto indicate restano da apporre a cura del Responsabile, anche a mano.");
+
+h += goBar("1 — DATI DEL PROCEDIMENTO E VERIFICA DELLE SCHEDE DI VALUTAZIONE DEL RISCHIO");
+h += goField("Procedimento di mediazione n.", v("proc_n"));
+h += goField("Mediatore incaricato", v("proc_med"));
+h += goField("Data della verifica", today());
+
+h += goSub("A. Schede di valutazione del rischio esaminate");
+if(parti.length){
+parti.forEach(p=>{ h += goField(ruoloLabelDaCampi(p.campi), p.nome); });
+} else {
+h += goNote("Nessuna parte risulta ancora salvata su questo browser per questa procedura: indicare a mano le Parti/Schede esaminate.");
+}
+h += goField("Numero complessivo delle Schede esaminate", parti.length ? String(parti.length) : "");
+
+h += goSub("B. Esito della verifica di ciascuna Scheda");
+h += goNote("Da compilare a cura del Responsabile/RAR per ciascuna Parte sopra elencata.");
+if(parti.length){
+parti.forEach(p=>{
+h += goRow([goCk(false, ruoloLabelDaCampi(p.campi)+" — "+p.nome), goCk(false,"Conforme"), goCk(false,"Da integrare"), goCk(false,"Approfondimenti")]);
+});
+}
+
+h += goBar("C — VERIFICHE ULTERIORI DI COMPETENZA");
+h += goSub("1. Sanzioni finanziarie mirate — Titolare effettivo");
+const partiConTE = parti.filter(p=>titolareEffettivoDaCampi(p.campi));
+if(partiConTE.length){
+partiConTE.forEach(p=>{
+h += goField("Parte/Cliente", p.nome + " (" + ruoloLabelDaCampi(p.campi) + ")");
+h += goField("Titolare effettivo verificato", titolareEffettivoDaCampi(p.campi));
+h += goRow([goCk(false,"Non applicabile"), goCk(false,"Verifica effettuata — nessuna corrispondenza rilevata"), goCk(false,"Possibile corrispondenza"), goCk(false,"Corrispondenza rilevata")]);
+h += goField("Fonte consultata", "");
+h += goField("Data della verifica", "");
+h += goField("Note", "");
+});
+} else {
+h += goNote("Nessun titolare effettivo distinto dalla parte risulta individuato tra le parti sopra elencate; verificare comunque a mano ove pertinente, anche con riferimento a parti non ancora salvate su questo browser.");
+}
+
+h += goSub("2. Frequenza e volume delle operazioni / precedenti procedure");
+h += goNote("Da compilare a cura del Responsabile/RAR sulla base delle informazioni legittimamente accessibili, nel rispetto del Protocollo interno e degli obblighi di riservatezza.");
+h += goRow([goCk(false,"Verifica non applicabile / informazioni non disponibili"), goCk(false,"Nessun elemento rilevante emerso"), goCk(false,"Emersi elementi che richiedono approfondimento")]);
+h += goField("Precedenti procedure/operazioni ritenute rilevanti e ragioni della rilevanza", "");
+h += goField("Motivazione della valutazione complessiva del RAR", "");
+
+h += goBar("3. DETERMINAZIONI FINALI");
+h += goRow([goCk(false,"Nessun ulteriore adempimento"), goCk(false,"Richiesta di integrazione/approfondimento")]);
+h += goField("Integrazioni/approfondimenti da effettuare, ove richiesti", "");
+h += goRow([goCk(false,"Prosecuzione del monitoraggio"), goCk(false,"Applicazione/prosecuzione di misure rafforzate di adeguata verifica")]);
+h += goRow([goCk(false,"Acquisizione di ulteriori informazioni/documentazione"), goCk(false,"Trasmissione degli elementi al Referente SOS ai sensi dell'art. 9-bis del Protocollo interno")]);
+h += goField("Motivazione delle determinazioni adottate", "");
+h += '<div class="go-sign" style="font-family:'+GO_FONT+'"><div>Luogo e data: '+blank+'</div><div style="margin-top:10px">Firma del Responsabile dell\'Organismo / RAR: '+blank+'</div></div>';
+
+return docBlockGO("mRAR", h);
+}
 
 // Accumula il fascicolo generato per CIASCUNA parte della procedura corrente, cosi'
 // che lo scarico/la stampa finali possano includere TUTTE le parti trattate finora
@@ -2355,6 +2487,24 @@ window.print();
 // (es. stampa annullata in certi contesti); un fallback più lungo del precedente evita
 // che il contenuto resti bloccato sul fascicolo stampato se l'evento non arriva mai.
 setTimeout(ripristina, 5000);
+}
+
+// Sezione 5 "Scheda di Verifica del Responsabile/RAR": documento a sé, non incluso nel
+// fascicolo per-parte (av/svr/coa) né nell'accumulo multi-parte, perché è unico per l'intera
+// procedura e va generato una sola volta dal Responsabile/RAR, non ad ogni parte trattata.
+function nomeFileSchedaVerificaRAR(){
+const proc = (v("proc_n")||"procedura").replace(/[^\w]/g,"_");
+return "Scheda_Verifica_RAR_COA_Genova_" + proc + ".doc";
+}
+function generaSchedaVerificaRAR(){
+const out = $("out");
+out.innerHTML = modSchedaVerificaRARGenova();
+out.style.display = "block";
+out.scrollIntoView({behavior:"smooth"});
+}
+function scaricaSchedaVerificaRAR(){
+if(!$("out").innerHTML) generaSchedaVerificaRAR();
+esportaDocSingoloWord("Scheda di Verifica del Responsabile dell'Organismo / RAR", modSchedaVerificaRARGenova(), nomeFileSchedaVerificaRAR());
 }
 
 // Esporta gli stessi modelli in un file .doc apribile direttamente in Microsoft Word: il contenuto
