@@ -2,7 +2,7 @@ import { useState, useRef, useCallback } from "react";
 import { Link, useLocation } from "wouter";
 import { Scale, Menu, X, Brain, Calculator, ChevronDown, BarChart3, FileText, BookOpen, TrendingUp, Shield } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"; import ContatoreVisite from "./ContatoreVisite";
 export default function Header() {
   const [location] = useLocation();
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -35,7 +35,7 @@ export default function Header() {
     <header className="sticky top-0 z-50 w-full border-b-[3px] border-foreground bg-card" data-testid="header">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
-          {/* Logo */}
+          {/* Logo + contatore visite */} <div className="flex items-center gap-3">
           <Link href="/" data-testid="link-home" aria-label="CalcoloMediazione — torna alla home">
             <div className="flex items-center gap-2 cursor-pointer">
               <div className="w-9 h-9 bg-primary flex items-center justify-center border-2 border-foreground shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]">
@@ -46,7 +46,7 @@ export default function Header() {
               </span>
             </div>
           </Link>
-          {/* Desktop nav — FIX: aria-label per identificare la navigazione */}
+          <ContatoreVisite /> </div> {/* Desktop nav — FIX: aria-label per identificare la navigazione */}
           <nav className="hidden md:flex items-center gap-1" aria-label="Navigazione principale" data-testid="nav-desktop">
             {/* Dropdown Strumenti — FIX: aria-expanded + aria-haspopup */}
             <div
