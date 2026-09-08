@@ -327,12 +327,14 @@ export const SEO_CONTENT: Record<string, string> = {
 <ul>
 <li>Dati di navigazione: indirizzo IP, tipo di browser, pagine visitate, orario di accesso</li>
 <li>Dati forniti volontariamente nei form di contatto o nei calcolatori</li>
-<li>Dati di analisi AI, elaborati in tempo reale e non conservati in modo permanente dopo la chiusura della sessione</li>
+<li>Dati di analisi AI, salvati sul server per un massimo di 30 giorni (non a tempo indeterminato)</li>
 </ul>
 <h2>Finalita e base giuridica</h2>
 <p>I dati sono trattati per erogare i servizi di calcolo e analisi del sito, rispondere alle richieste di contatto, adempiere a obblighi di legge ed effettuare analisi statistiche aggregate, sulla base del consenso, dell'esecuzione di un contratto, del legittimo interesse o di un obbligo legale (art. 6 GDPR).</p>
 <h2>Conservazione dei dati</h2>
 <p>I dati di navigazione sono conservati fino a 12 mesi; i dati dei calcoli non sono conservati in modo permanente; le eventuali analisi AI salvate sono eliminate entro 30 giorni; i dati di contatto sono conservati per il tempo necessario a evadere la richiesta.</p>
+<h2>Analisi AI del Caso</h2>
+<p>Titolo, descrizione e parti del caso vengono trasmessi all'API di Anthropic (Claude) o, in fallback, di Google (Gemini) per generare l'analisi. Prima dell'invio, i nomi delle parti e alcuni identificatori diretti (email, codice fiscale, IBAN, telefono) individuati nel testo vengono sostituiti con codici anonimi; i valori reali sono ripristinati solo nel risultato mostrato all'utente. I fornitori non utilizzano i dati per addestrare i propri modelli; l'elaborazione avviene su infrastruttura statunitense, con le clausole contrattuali standard a copertura del trasferimento extra-UE.</p>
 <h2>Compilazione automatica dei modelli antiriciclaggio con AI</h2>
 <p>Su scelta esplicita dell'utente, la modalita ad alta precisione dello strumento antiriciclaggio trasmette il documento caricato all'API di un fornitore di intelligenza artificiale (Anthropic) al solo fine di estrarne i dati per la compilazione dei modelli. Il fornitore non utilizza i dati per addestrare i propri modelli e conserva i log tecnici per un massimo di 7 giorni; il sito non conserva il file caricato ne i dati estratti. La modalita predefinita di riconoscimento (OCR) opera invece interamente nel browser, senza trasmissione dei file.</p>
 <h2>Diritti dell'interessato</h2>
