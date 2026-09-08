@@ -591,10 +591,18 @@ next();
 // ─── AUTENTICAZIONE ADMIN: token firmato HMAC con scadenza ────────────────
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "";
 const ADMIN_SECRET = process.env.ADMIN_SECRET || crypto.randomBytes(32).toString("hex");
+if (!process.env.ADMIN_SECRET) {
+  console.warn(
+    "[ADMIN_SECRET] Variabile non impostata: generato un valore casuale solo per questo processo. " +
+    "Tutti i token admin emessi finora diventeranno invalidi al prossimo riavvio/deploy. " +
+    "Imposta ADMIN_SECRET come variabile d'ambiente fissa per evitare logout forzati ripetuti."
+    );
+}
 const ADMIN_TTL_MS = 8 * 60 * 60 * 1000;
 function signAdminToken(): string {
 const exp = Date.now() + ADMIN_TTL_MS;
 const payload = `admin:${exp}`;
+  
 const sig = crypto.createHmac("sha256", ADMIN_SECRET).update(payload).digest("hex");
 return Buffer.from(`${payload}:${sig}`).toString("base64");
 }
