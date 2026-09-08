@@ -12,7 +12,7 @@ import { compatibilitaInteressi } from "./ai/compatibilita-interessi.js";
 import { controlloBiasCognitivi } from "./ai/controllo-cognitivo.js";
 import { bozzaAccordo } from "./ai/bozza-accordo.js";
 import { analisiEconomica } from "./ai/analisi-economica.js";
-import { redigiDati, ripristinaTesto } from "./ai/redazione.js";
+import { redigiDati, ripristinaTesto, redigiMultiplo } from "./ai/redazione.js";
 import { callLLM, estraiDocumentoAI, assistenteCompilazioneAI, cercaGiurisprudenzaAI, rispostaAssistente, serviziAIDisponibili } from "./ai/llm.js";
 import { BASE_CONOSCENZA } from "./ai/assistente-kb.js";
 import { generateAnalisiPdf } from "./pdf-export.js";
@@ -957,20 +957,18 @@ res.status(500).json({ error: "Errore interno del server" });
 }
 });
 
-// GET /api/analisi — solo admin
+// PRIV-09 — questa route elencava TUTTE le analisi salvate (dati reali di
+// tutte le parti: nomi, importi, situazioni familiari) verificando solo che
+// il token, decodificato da base64, iniziasse con la stringa letterale
+// "admin:" — un controllo che chiunque puo' soddisfare senza conoscere
+// alcun segreto (es. Buffer.from("admin:x").toString("base64")), diversamente
+// dalle altre route admin del sito che usano correttamente verifyAdminToken()
+// (HMAC-SHA256 con scadenza e confronto a tempo costante, vedi sopra). Corretto
+// per riusare la stessa verifica.
 app.get("/api/analisi", async (req, res) => {
 const auth = req.headers.authorization;
-if (!auth || !auth.startsWith("Bearer ")) {
+if (!auth || !auth.startsWith("Bearer ") || !verifyAdminToken(auth.slice(7))) {
 return res.status(401).json({ error: "Non autorizzato" });
-}
-const token = auth.slice(7);
-try {
-const decoded = Buffer.from(token, "base64").toString();
-if (!decoded.startsWith("admin:")) {
-return res.status(401).json({ error: "Token non valido" });
-}
-} catch {
-return res.status(401).json({ error: "Token non valido" });
 }
 const analisi = await storage.getAllAnalisi();
 res.json(analisi);
@@ -1089,11 +1087,26 @@ analisi.bozzaAccordo ? `Bozza Accordo:\n${analisi.bozzaAccordo}` : "",
 analisi.analisiEconomica ? `Analisi Economica Comparativa:\n${analisi.analisiEconomica}` : "",
 ].filter(Boolean).join("\n\n---\n\n");
 
-const partiStr = (analisi.parti as Array<{nome: string; ruolo: string}>)?.map(p => `${p.nome} (${p.ruolo})`).join(", ") || "Non specificate";
-const systemPrompt = `Sei un assistente AI specializzato in mediazione civile e commerciale italiana. Hai già analizzato il seguente caso:\n\nTitolo: ${analisi.titolo}\nDescrizione: ${analisi.descrizione}\nParti: ${partiStr}\nValore della lite: ${analisi.valoreLite ? `EUR ${analisi.valoreLite}` : "Non specificato"}\nTipo analisi: ${analisi.tipoAnalisi}\n\nRisultati dell'analisi:\n${context}\n\nRispondi alle domande dell'utente sul caso, fornendo approfondimenti, chiarimenti e suggerimenti aggiuntivi. Usa un linguaggio professionale ma accessibile. Formatta le risposte in Markdown.`;
 const prevMessages = chatHistory.map((m: any) => `${m.role === "user" ? "Utente" : "AI"}: ${m.content}`).join("\n");
-const userPrompt = prevMessages ? `${prevMessages}\n\nUtente: ${message}` : message;
-const aiResponse = await callLLM(systemPrompt, userPrompt);
+
+// PRIV-09 — questo endpoint riparte da un'analisi gia' completata e quindi
+// gia' salvata con i nomi reali ripristinati (vedi runPipeline): senza
+// redazione, titolo/descrizione/contesto/cronologia/messaggio finirebbero
+// per intero nel prompt al modello AI a ogni domanda di follow-up, vanificando
+// la redazione preventiva applicata in fase di creazione. redigiMultiplo()
+// tokenizza tutti i pezzi con una mappa condivisa; il ripristino avviene solo
+// sulla risposta salvata/restituita all'utente.
+const parti = (analisi.parti as Array<{ nome: string; ruolo: string }>) || [];
+const { pezziRedatti, partiRedatte, mappa } = redigiMultiplo(
+[analisi.titolo, analisi.descrizione, context, prevMessages, message],
+parti
+);
+const [titoloRedatto, descrizioneRedatta, contextRedatto, prevMessagesRedatto, messageRedatto] = pezziRedatti;
+const partiStr = partiRedatte.map(p => `${p.nome} (${p.ruolo})`).join(", ") || "Non specificate";
+const systemPrompt = `Sei un assistente AI specializzato in mediazione civile e commerciale italiana. Hai già analizzato il seguente caso:\n\nTitolo: ${titoloRedatto}\nDescrizione: ${descrizioneRedatta}\nParti: ${partiStr}\nValore della lite: ${analisi.valoreLite ? `EUR ${analisi.valoreLite}` : "Non specificato"}\nTipo analisi: ${analisi.tipoAnalisi}\n\nRisultati dell'analisi:\n${contextRedatto}\n\nRispondi alle domande dell'utente sul caso, fornendo approfondimenti, chiarimenti e suggerimenti aggiuntivi. Usa un linguaggio professionale ma accessibile. Formatta le risposte in Markdown.`;
+const userPrompt = prevMessagesRedatto ? `${prevMessagesRedatto}\n\nUtente: ${messageRedatto}` : messageRedatto;
+const aiResponseRedatta = await callLLM(systemPrompt, userPrompt);
+const aiResponse = ripristinaTesto(aiResponseRedatta, mappa);
 
 const now = new Date().toISOString();
 chatHistory.push({ role: "user", content: message, timestamp: now });
