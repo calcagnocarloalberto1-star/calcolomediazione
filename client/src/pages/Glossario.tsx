@@ -88,8 +88,8 @@ const glossaryEntries: GlossaryEntry[] = [
   },
   {
     term: "Imposta di registro",
-    definition: "Tributo dovuto per la registrazione di atti giuridici. Nella mediazione con accordo, l'imposta di registro è esente fino al valore di 100.000 euro (art. 17, comma 3, D.Lgs. 28/2010). Per la parte eccedente, l'imposta è del 3%. Nelle sentenze giudiziarie l'esenzione non si applica.",
-    references: "Art. 17, co. 3, D.Lgs. 28/2010"
+    definition: "Tributo dovuto per la registrazione di atti giuridici. Nella mediazione con accordo, l'imposta di registro è esente fino al valore di 100.000 euro (art. 17, comma 2, D.Lgs. 28/2010). Per la parte eccedente, si applicano le aliquote ordinarie (2% per la prima casa, 9% per gli altri immobili). Nelle sentenze giudiziarie l'esenzione non si applica.",
+    references: "Art. 17, co. 2, D.Lgs. 28/2010"
   },
   {
     term: "Imposte trasferimento immobiliare",
