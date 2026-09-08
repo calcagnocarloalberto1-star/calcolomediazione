@@ -124,7 +124,7 @@ const faqSections: FAQSection[] = [
       },
       {
         q: "Entro quando va presentata la domanda?",
-        a: "Ai sensi dell\u2019art. 3, commi 1 e 5, del D.M. 1\u00b0 agosto 2023, la domanda di attribuzione del credito d\u2019imposta deve essere presentata, a pena di inammissibilit\u00e0, tramite la piattaforma online ministeriale entro il 31 marzo dell\u2019anno successivo a quello di conclusione della procedura di mediazione. Per le mediazioni concluse nel 2025, la scadenza \u00e8 il 31 marzo 2026. Decorso inutilmente tale termine, non sar\u00e0 pi\u00f9 possibile ottenere il beneficio fiscale.",
+        a: "Ai sensi dell\u2019art. 3, commi 1 e 5, del D.M. 1\u00b0 agosto 2023, la domanda di attribuzione del credito d\u2019imposta deve essere presentata, a pena di inammissibilit\u00e0, tramite la piattaforma online ministeriale entro il 31 marzo dell\u2019anno successivo a quello di conclusione della procedura di mediazione. Per le mediazioni concluse nel 2026, la scadenza \u00e8 il 31 marzo 2027. Decorso inutilmente tale termine, non sar\u00e0 pi\u00f9 possibile ottenere il beneficio fiscale.",
       },
       {
         q: "Come si presenta la domanda?",
@@ -246,7 +246,7 @@ const faqSections: FAQSection[] = [
       },
       {
         q: "Come ottenere un modello aggiornato di procura speciale sostanziale per la mediazione?",
-        a: "Il <a href=\"/generatore-procura\" class=\"underline text-primary\">Generatore Procura</a> di calcolomediazione.it produce gratuitamente un modello di procura speciale sostanziale conforme all’orientamento giurisprudenziale più recente (Cass. 8473/2019, 14676/2025, 9608/2026, 10978/2026). Il modello è separato dalla procura alle liti, contiene clausole specifiche per i poteri dispositivi (conciliare, transigere, sottoscrivere l’accordo, rinunciare, riscuotere), include una nota di richiamo agli arresti di legittimità e si adatta automaticamente alla materia (diritti reali, condominio, locazione, ecc.). È possibile scaricare il documento in formato PDF o DOCX e personalizzarlo. La <a href=\"/giurisprudenza\" class=\"underline text-primary\">banca dati giurisprudenza</a> contiene 100 pronunce, di cui 14 dedicate alla procura sostanziale.",
+        a: "Il <a href=\"/generatore-procura\" class=\"underline text-primary\">Generatore Procura</a> di calcolomediazione.it produce gratuitamente un modello di procura speciale sostanziale conforme all’orientamento giurisprudenziale più recente (Cass. 8473/2019, 14676/2025, 9608/2026, 10978/2026). Il modello è separato dalla procura alle liti, contiene clausole specifiche per i poteri dispositivi (conciliare, transigere, sottoscrivere l’accordo, rinunciare, riscuotere), include una nota di richiamo agli arresti di legittimità e si adatta automaticamente alla materia (diritti reali, condominio, locazione, ecc.). È possibile scaricare il documento in formato PDF o DOCX e personalizzarlo. La <a href=\"/giurisprudenza\" class=\"underline text-primary\">banca dati giurisprudenza</a> contiene 96 pronunce, di cui 16 dedicate alla procura sostanziale.",
       },
     ],
   },
@@ -260,7 +260,7 @@ const faqSections: FAQSection[] = [
       },
       {
         q: "I dati inseriti sono sicuri e riservati?",
-        a: "S\u00ec. La sicurezza e la riservatezza dei dati sono una priorit\u00e0 assoluta. Tutti i dati vengono trasmessi tramite connessione crittografata (HTTPS/TLS). I documenti caricati vengono elaborati in tempo reale e non vengono conservati sui nostri server; le analisi salvate vengono eliminate automaticamente entro 30 giorni. Il trattamento dei dati \u00e8 conforme al GDPR (Regolamento UE 2016/679) e alla normativa italiana sulla privacy. Le funzioni basate su intelligenza artificiale (analisi del caso e, su scelta esplicita dell\u2019utente, la lettura AI dei documenti nell\u2019antiriciclaggio) trasmettono i dati necessari all\u2019API di Anthropic. In base ai termini commerciali e al relativo accordo sul trattamento dei dati (DPA, conforme al GDPR), Anthropic non utilizza tali dati per addestrare i propri modelli, li elabora al solo fine di fornire il risultato richiesto e ne conserva i log tecnici per un massimo di 7 giorni; l\u2019elaborazione avviene prevalentemente su infrastruttura statunitense, con le clausole contrattuali standard per il trasferimento. Titolare del trattamento resta il professionista o l\u2019organismo che utilizza lo strumento.",
+        a: "S\u00ec. La sicurezza e la riservatezza dei dati sono una priorit\u00e0 assoluta. Tutti i dati vengono trasmessi tramite connessione crittografata (HTTPS/TLS). I documenti caricati vengono elaborati in tempo reale e non vengono conservati sui nostri server; le analisi salvate vengono eliminate automaticamente entro 30 giorni. Il trattamento dei dati \u00e8 conforme al GDPR (Regolamento UE 2016/679) e alla normativa italiana sulla privacy. Prima di essere inviati al modello di intelligenza artificiale, i nomi delle parti e i principali identificatori diretti presenti nel testo (email, codice fiscale, IBAN, telefono) vengono sostituiti automaticamente con token pseudonimizzati; i valori reali sono ripristinati solo negli output destinati al salvataggio o alla visualizzazione dell’utente, mai nelle chiamate successive al modello. Si tratta di una pseudonimizzazione best-effort, non di un’anonimizzazione in senso GDPR: dettagli indiretti nel testo libero possono comunque rendere la parte identificabile da chi conosce già il contesto. Le funzioni basate su intelligenza artificiale (analisi del caso e, su scelta esplicita dell\u2019utente, la lettura AI dei documenti nell\u2019antiriciclaggio) trasmettono i dati necessari all\u2019API di Anthropic Claude, fornitore primario, con Google Gemini utilizzato come fallback in caso di indisponibilità del primo. In base ai termini commerciali e ai relativi accordi sul trattamento dei dati (DPA, conformi al GDPR), i fornitori non utilizzano tali dati per addestrare i propri modelli e li elaborano al solo fine di fornire il risultato richiesto; Anthropic ne conserva i log tecnici per un massimo di 7 giorni. L\u2019elaborazione avviene prevalentemente su infrastruttura statunitense, con le clausole contrattuali standard per il trasferimento. Titolare del trattamento resta il professionista o l\u2019organismo che utilizza lo strumento.",
       },
       {
         q: "L\u2019analisi AI sostituisce il parere di un avvocato?",
@@ -333,7 +333,7 @@ export default function FAQ() {
           </p>
           {/* DATA-04 / PRIV-07: data dell'ultima verifica normativa, aggiornata
               manualmente ad ogni revisione periodica (v. processo PRIV-07). */}
-          <p className="text-sm text-muted-foreground/70 mt-2">Ultima verifica normativa: agosto 2026</p>
+          <p className="text-sm text-muted-foreground/70 mt-2">Ultima verifica normativa: settembre 2026</p>
         </div>
 
         <div className="space-y-8">
