@@ -11,7 +11,7 @@
  * di interesse trasversale (procura sostanziale, condizione di
  * procedibilità, art. 17 esenzioni fiscali).
  *
- * Aggiornato a giugno 2026 - 6 pronunce di riferimento sul tema
+  * Aggiornato a settembre 2026 - 7 pronunce di riferimento sul tema
  * "procura sostanziale e rappresentanza in mediazione".
  * ============================================================
  */
@@ -251,6 +251,39 @@ export const PRONUNCE_LEGITTIMITA_MEDIAZIONE: PronunciaAI[] = [
     ],
     fonteUrl:
       "https://www.mondoadr.it/giurisprudenza_art/domanda-mediazione-e-giudiziale-la-mancata-simmetria-comporta-limprocedibilita/",
+  },
+
+  {
+    id: "cass-21405-2026",
+    organo: "Cassazione",
+    numero: "21405",
+    anno: 2026,
+    data: "2026-06-23",
+    titolo:
+      "Rappresentanza sostanziale in mediazione: l'avvocato puo' cumulare i ruoli di difensore e delegato, ma solo con procura ad negotia dai poteri dispositivi reali",
+    tema: "procura_sostanziale",
+    massima:
+      "Nella mediazione obbligatoria o demandata, la parte puo' farsi sostituire da un rappresentante sostanziale, anche dal medesimo avvocato che la assiste, purche' questi sia investito di una procura speciale sostanziale ad negotia da cui risultino chiaramente il potere di partecipare al procedimento e di disporre dei diritti sostanziali controversi. Una delega limitata ad autorizzare la mera presenza all'incontro, priva di poteri dispositivi effettivi, non soddisfa la condizione di procedibilita'.",
+    principio:
+      "Il cumulo tra funzione difensiva e rappresentanza sostanziale in capo all'avvocato e' ammissibile - e non e' vietato dall'ordinanza n. 9608/2026, della quale questa pronuncia chiarisce la corretta portata - a condizione che il difensore riceva una procura speciale sostanziale ad negotia con poteri dispositivi reali; resta comunque un'eccezione rispetto al modello fisiologico della partecipazione personale della parte.",
+    citazioneFormale: "Cass. civ., ord. 23 giugno 2026, n. 21405",
+    riferimenti: [
+      "Art. 5, comma 2, D.Lgs. 28/2010",
+      "Art. 8 D.Lgs. 28/2010",
+      "Cass. 8473/2019",
+      "Cass. 14676/2025",
+      "Cass. 9608/2026",
+    ],
+    tag: [
+      "procura sostanziale",
+      "rappresentanza in mediazione",
+      "cumulo ruoli avvocato",
+      "delega meramente formale",
+      "poteri dispositivi",
+      "mediazione demandata",
+    ],
+    fonteUrl:
+      "https://www.cfnews.it/avvocatura/la-rappresentanza-sostanziale-dell-avvocato-in-mediazione-l-ordinanza-della-cassazione-n-214052026-consolida-l-orientamento-di-legittimita/",
   },
 ];
 
