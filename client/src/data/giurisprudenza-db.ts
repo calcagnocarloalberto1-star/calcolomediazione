@@ -1,7 +1,7 @@
 // ═══════════════════════════════════════════════════════════════════════════
 // Database giurisprudenziale sulla mediazione civile e commerciale
 // Dal 2010 (D.Lgs. 28/2010) ad oggi
-// Aggiornato a luglio 2026 — 100 pronunce
+// Aggiornato a settembre 2026 — 96 pronunce
 // ═══════════════════════════════════════════════════════════════════════════
 
 export interface Sentenza {
