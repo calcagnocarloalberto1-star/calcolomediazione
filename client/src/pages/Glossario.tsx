@@ -220,7 +220,7 @@ export default function Glossario() {
         </p>
         {/* DATA-04 / PRIV-07: data dell'ultima verifica normativa, aggiornata
             manualmente ad ogni revisione periodica (v. processo PRIV-07). */}
-        <p className="text-sm opacity-60 mb-6">Ultima verifica normativa: agosto 2026</p>
+        <p className="text-sm opacity-60 mb-6">Ultima verifica normativa: settembre 2026</p>
 
         <div className="relative mb-6">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 opacity-40" />
