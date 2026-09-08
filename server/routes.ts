@@ -12,6 +12,7 @@ import { compatibilitaInteressi } from "./ai/compatibilita-interessi.js";
 import { controlloBiasCognitivi } from "./ai/controllo-cognitivo.js";
 import { bozzaAccordo } from "./ai/bozza-accordo.js";
 import { analisiEconomica } from "./ai/analisi-economica.js";
+import { redigiDati, ripristinaTesto } from "./ai/redazione.js";
 import { callLLM, estraiDocumentoAI, assistenteCompilazioneAI, cercaGiurisprudenzaAI, rispostaAssistente, serviziAIDisponibili } from "./ai/llm.js";
 import { BASE_CONOSCENZA } from "./ai/assistente-kb.js";
 import { generateAnalisiPdf } from "./pdf-export.js";
@@ -1292,65 +1293,77 @@ catch (err) { console.error(`Errore step ${stepName}:`, err); return fallback; }
 };
 
 try {
+// PRIV-08 — redazione preventiva: descrizione/parti/documentiText vengono
+// sostituiti con token PRIMA di essere inviati al modello AI (Anthropic/
+// Gemini). Da qui in poi, tutte le chiamate AI della pipeline usano SOLO le
+// versioni redatte; i valori reali vengono ripristinati esclusivamente sui
+// campi salvati con storage.updateAnalisi (quello che l'utente legge), mai
+// su quanto viene rimandato in input alle chiamate successive — altrimenti
+// i nomi reali finirebbero comunque nei prompt a valle. Vedi server/ai/
+// redazione.ts per i limiti noti (pseudonimizzazione best-effort, non
+// anonimizzazione in senso GDPR).
+const { descrizioneRedatta, documentiTextRedatto, partiRedatte, mappa } =
+redigiDati(descrizione, parti, documentiText);
+
 // ─── LIVELLO 0: NER (radice, nessuna dipendenza) ──────────────────────
 const nerResult = await safeStep(
-() => estrazioneEntita(descrizione, parti, documentiText),
+() => estrazioneEntita(descrizioneRedatta, partiRedatte, documentiTextRedatto),
 '[Estrazione entita non disponibile]', 'NER'
 );
-await storage.updateAnalisi(id, { prospettoEconomico: nerResult });
+await storage.updateAnalisi(id, { prospettoEconomico: ripristinaTesto(nerResult, mappa) });
 
 // ─── LIVELLO 1: Giuridica + Strategica (dipendono solo dal NER) ────────
 // Girano in parallelo: la Strategica non deve piu' aspettare la Giuridica.
 const [giuridicaResult, strategicaResult] = await Promise.all([
 safeStep(
-() => analisiGiuridica(descrizione, parti, truncate(nerResult), tipoAnalisi),
+() => analisiGiuridica(descrizioneRedatta, partiRedatte, truncate(nerResult), tipoAnalisi),
 '[Analisi giuridica non disponibile]', 'Giuridica'
 ),
 safeStep(
-() => guidaStrategica(descrizione, parti, truncate(nerResult)),
+() => guidaStrategica(descrizioneRedatta, partiRedatte, truncate(nerResult)),
 '[Guida strategica non disponibile]', 'Strategica'
 ),
 ]);
 await storage.updateAnalisi(id, {
-analisiGiuridica: giuridicaResult,
-guidaStrategica: strategicaResult,
+analisiGiuridica: ripristinaTesto(giuridicaResult, mappa),
+guidaStrategica: ripristinaTesto(strategicaResult, mappa),
 });
 
 // ─── LIVELLO 2: MAAN + Bias + Economica (dipendono solo dalla Giuridica) ─
 // Tre chiamate in parallelo.
 const [maanResult, biasResult, economicaResult] = await Promise.all([
 safeStep(
-() => analisiMaanBatna(descrizione, parti, valoreLite, truncate(giuridicaResult)),
+() => analisiMaanBatna(descrizioneRedatta, partiRedatte, valoreLite, truncate(giuridicaResult)),
 '[Analisi MAAN/BATNA non disponibile]', 'MAAN/BATNA'
 ),
 safeStep(
-() => controlloBiasCognitivi(descrizione, parti, teorieSelezionate, truncate(giuridicaResult)),
+() => controlloBiasCognitivi(descrizioneRedatta, partiRedatte, teorieSelezionate, truncate(giuridicaResult)),
 '[Controllo bias non disponibile]', 'Bias'
 ),
 safeStep(
-() => analisiEconomica(descrizione, parti, valoreLite, tipoAnalisi, truncate(giuridicaResult), opzioniEconomiche),
+() => analisiEconomica(descrizioneRedatta, partiRedatte, valoreLite, tipoAnalisi, truncate(giuridicaResult), opzioniEconomiche),
 '[Analisi economica non disponibile]', 'Economica'
 ),
 ]);
 await storage.updateAnalisi(id, {
-analisiMaanBatna: maanResult,
-controlloBiasCognitivi: biasResult,
-analisiEconomica: economicaResult,
+analisiMaanBatna: ripristinaTesto(maanResult, mappa),
+controlloBiasCognitivi: ripristinaTesto(biasResult, mappa),
+analisiEconomica: ripristinaTesto(economicaResult, mappa),
 });
 
 // ─── LIVELLO 3: Compatibilita (dipende da Giuridica + MAAN) ────────────
 const compatibilitaResult = await safeStep(
-() => compatibilitaInteressi(descrizione, parti, `${truncate(giuridicaResult, 8000)}\n\n${truncate(maanResult, 8000)}`),
+() => compatibilitaInteressi(descrizioneRedatta, partiRedatte, `${truncate(giuridicaResult, 8000)}\n\n${truncate(maanResult, 8000)}`),
 '[Compatibilita interessi non disponibile]', 'Compatibilita'
 );
-await storage.updateAnalisi(id, { compatibilitaInteressi: compatibilitaResult });
+await storage.updateAnalisi(id, { compatibilitaInteressi: ripristinaTesto(compatibilitaResult, mappa) });
 
 // ─── LIVELLO 4: Bozza accordo (dipende da Giuridica + Compatibilita) ───
 const bozzaResult = await safeStep(
-() => bozzaAccordo(descrizione, parti, valoreLite, `${truncate(giuridicaResult, 8000)}\n\n${truncate(compatibilitaResult, 8000)}`),
+() => bozzaAccordo(descrizioneRedatta, partiRedatte, valoreLite, `${truncate(giuridicaResult, 8000)}\n\n${truncate(compatibilitaResult, 8000)}`),
 '[Bozza accordo non disponibile]', 'Accordo'
 );
-await storage.updateAnalisi(id, { bozzaAccordo: bozzaResult, stato: "completata" });
+await storage.updateAnalisi(id, { bozzaAccordo: ripristinaTesto(bozzaResult, mappa), stato: "completata" });
 stats.track('analisi_complete');
 
 } catch (error) {
