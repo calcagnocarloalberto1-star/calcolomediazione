@@ -10,7 +10,7 @@ Non posso creare l'account Northflank, collegare GitHub via OAuth, né operare s
 
 1. Crea un account su northflank.com (piano free "Sandbox": 2 servizi always-on + 1 database + 2 cron job, gratis).
 2. Collega il tuo account GitHub e autorizza l'accesso al repo `calcagnocarloalberto1-star/calcolomediazione`.
-3. Crea un nuovo progetto, regione **europe-west-frankfurt** (dati in UE, coerente con quanto scritto nel registro trattamenti).
+3. Crea un nuovo progetto, regione **Europe - West (London)** (dati in UE, coerente con quanto scritto nel registro trattamenti).
 
 ## 2. Servizio web
 
@@ -65,4 +65,4 @@ Da eseguire da te (o con mia assistenza sui comandi), non da me direttamente con
 
 ## 7. Dopo la migrazione
 
-Aggiornare `docs/PRIV-11-registro-trattamenti.md` (subprocessor: Render → Northflank, regione Frankfurt confermata) solo a migrazione conclusa e verificata — non prima, per non anticipare un fatto non ancora accaduto.
+Aggiornare `docs/PRIV-11-registro-trattamenti.md` (subprocessor: Render → Northflank, regione Europe - West (London) confermata) solo a migrazione conclusa e verificata — non prima, per non anticipare un fatto non ancora accaduto.
