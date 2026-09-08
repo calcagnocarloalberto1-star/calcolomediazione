@@ -1580,6 +1580,41 @@ export const sentenze: Sentenza[] = [
     temiChiave: ["mancata partecipazione", "sanzioni", "art. 12-bis", "argomento di prova", "locazione"],
     fonteUrl: "https://www.101mediatori.it/sentenze-mediazione/la-mediazione-come-obbligo-partecipativo-sanzioni-e-valorizzazione-processuale-dell-assenza-ingiustificata-1787.aspx",
   },
+  // ─── NUOVE PRONUNCE SETTEMBRE 2026 (2) ────────────────────────────────────────
+
+  {
+    id: 101,
+    organo: "Tribunale di Parma",
+    tipoOrgano: "tribunale",
+    numero: "512",
+    anno: 2026,
+    data: "2026-05-04",
+    titolo: "La mediazione demandata dal giudice ex art. 5-quater è autonoma: non la sostituisce una mediazione volontaria già esperita con esito negativo",
+    categoria: "Mediazione demandata",
+    massima: "La mediazione disposta dal giudice nel corso del giudizio ai sensi dell'art. 5-quater D.Lgs. 28/2010 costituisce un adempimento autonomo e distinto rispetto a qualsiasi mediazione precedentemente esperita tra le parti, volontaria o obbligatoria che sia. La mediazione pre-processuale, anche se relativa al medesimo oggetto e conclusasi con esito negativo, non può assurgere ad adempimento anticipato della mediazione successivamente disposta dal giudice: la parte che non rispetta l'ordine di mediazione demandata vede la propria domanda dichiarata improcedibile, indipendentemente da quanto già tentato prima dell'instaurazione del giudizio.",
+    principioDiDiritto: "La mediazione demandata ex art. 5-quater D.Lgs. 28/2010 nasce da una valutazione del giudice, effettuata a giudizio già avviato e con piena cognizione delle posizioni delle parti, sulla concreta possibilità di comporre la lite in quella specifica fase processuale; ha pertanto funzione e presupposti diversi dalla mediazione pre-processuale e non è sostituibile da essa.",
+    nota: "Caso di opposizione a decreto ingiuntivo per obbligazione fideiussoria (materia non soggetta a mediazione obbligatoria ab origine). Il giudice, rigettata l'istanza di provvisoria esecuzione, aveva disposto la mediazione facoltativa ex art. 5-quater; la parte opposta non vi ha dato corso, ritenendo assorbita l'incombenza da una precedente mediazione volontaria infruttuosa. Il Tribunale ha dichiarato improcedibile la domanda monitoria.",
+    riferimentiNormativi: ["Art. 5-quater D.Lgs. 28/2010", "Art. 5 D.Lgs. 28/2010"],
+    temiChiave: ["mediazione demandata", "iussu iudicis", "autonomia del provvedimento del giudice", "esito negativo mediazione precedente", "decreto ingiuntivo", "improcedibilità"],
+    fonteUrl: "https://www.laleggepertutti.it/799072_se-il-giudice-ordina-una-nuova-mediazione-quella-gia-fatta-in-precedenza-e-sufficiente",
+  },
+
+  {
+    id: 102,
+    organo: "Cassazione",
+    tipoOrgano: "cassazione",
+    numero: "21405",
+    anno: 2026,
+    data: "2026-06-23",
+    titolo: "Rappresentanza sostanziale in mediazione: l'avvocato può cumulare i ruoli di difensore e delegato, ma solo con procura speciale ad negotia dai poteri dispositivi reali",
+    categoria: "Procura sostanziale",
+    massima: "Nella mediazione obbligatoria o demandata, la parte può farsi sostituire da un rappresentante sostanziale — anche dal medesimo avvocato che la assiste — purché questi sia investito di una procura speciale sostanziale ad negotia da cui risultino chiaramente il potere di partecipare al procedimento e di disporre dei diritti sostanziali controversi ai fini dell'eventuale accordo. Una delega che si limiti ad autorizzare il rappresentante a «presenziare» all'incontro, priva di poteri dispositivi effettivi, non soddisfa la condizione di procedibilità: la partecipazione si riduce a presenza meramente formale, incompatibile con la funzione stessa della mediazione.",
+    principioDiDiritto: "Il cumulo, in capo all'avvocato, della funzione difensiva e della rappresentanza sostanziale della parte in mediazione è ammissibile — e non è vietato dall'ordinanza n. 9608/2026, della quale l'ordinanza chiarisce la corretta portata — a condizione che il difensore riceva una procura speciale sostanziale ad negotia con poteri dispositivi reali sui diritti controversi; resta fermo che tale soluzione è un'eccezione rispetto al modello fisiologico della partecipazione personale della parte, e non è di per sé auspicabile.",
+    nota: "Caso di mediazione demandata in appello (art. 5, comma 2, D.Lgs. 28/2010) su domanda di pagamento per fornitura idrica: al primo incontro comparivano il difensore della società, munito di procura alle liti, e una dipendente delegata con delega scritta limitata a «presenziare» all'incontro. La Corte d'Appello di Napoli aveva dichiarato improcedibile l'appello per mancato valido esperimento della mediazione; la Cassazione conferma. La pronuncia risolve un dubbio interpretativo sorto dopo l'ordinanza n. 9608/2026 (già in questo database), chiarendo che quest'ultima non vieta il cumulo dei ruoli in sé, ma esige che la procura conferita al difensore abbia contenuto sostanziale e non meramente processuale.",
+    riferimentiNormativi: ["Art. 5, comma 2, D.Lgs. 28/2010", "Art. 8 D.Lgs. 28/2010"],
+    temiChiave: ["procura sostanziale", "rappresentanza in mediazione", "cumulo ruoli avvocato", "delega meramente formale", "poteri dispositivi", "mediazione demandata", "effettività della partecipazione"],
+    fonteUrl: "https://www.cfnews.it/avvocatura/la-rappresentanza-sostanziale-dell-avvocato-in-mediazione-l-ordinanza-della-cassazione-n-214052026-consolida-l-orientamento-di-legittimita/",
+  },
 ];
 
 // ─── FUNZIONE DI RICERCA ──────────────────────────────────────────────────────
