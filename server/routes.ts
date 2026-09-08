@@ -3,7 +3,7 @@ import { createServer, type Server } from "http";
 import multer from "multer";
 import crypto from "crypto";
 import { PDFParse } from "pdf-parse";
-import { storage } from "./storage.js";
+import { storage, incrementaContatoreVisite, getContatoreVisite } from "./storage.js";
 import { estrazioneEntita } from "./ai/ner-extraction.js";
 import { analisiGiuridica } from "./ai/analisi-giuridica.js";
 import { guidaStrategica } from "./ai/guida-strategica.js";
@@ -705,11 +705,11 @@ const { path } = req.body;
 const ip = req.headers['x-forwarded-for'] as string || req.socket.remoteAddress || '';
 const userAgent = req.headers['user-agent'] || '';
 stats.track('page_view', path, userAgent, ip);
-res.json({ ok: true });
+incrementaContatoreVisite().catch(() => {}); res.json({ ok: true });
 });
 
 // ─── CLIENT ERROR LOGGING ────────────────────────────────────────────────
-// Riceve eccezioni JS dal browser (window.onerror, unhandledrejection, ErrorBoundary)
+app.get("/api/contatore-visite", async (_req, res) => { const totale = await getContatoreVisite(); res.json({ totale }); }); // Riceve eccezioni JS dal browser (window.onerror, unhandledrejection, ErrorBoundary)
 // e le inoltra a un Google Apps Script Web App (ERROR_LOG_WEBHOOK_URL).
 registerClientErrorRoute(app);
 
