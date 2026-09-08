@@ -61,8 +61,10 @@ const HANDLER_FNS = [
   "aggiungiAggiornamento", "amlCancellaDatiProcedura", "amlCancellaTuttiIDati",
   "amlNuovaParte", "analizzaTrigger", "assistAggiungiFile", "assistEstrai",
   "assistReset", "cancellaStoricoProcedura", "copyMot", "generaFormato",
-  "moduliBianco", "resetTrigger", "rimuoviAggiornamento", "scaricaWord",
-  "stampaVideoGenova", "toggleTrig",
+  "generaSOSRiservato", "generaSchedaVerificaRAR", "moduliBianco",
+  "mostraSelettoreDocumento", "resetTrigger", "rimuoviAggiornamento",
+  "scaricaSOSRiservato", "scaricaSchedaVerificaRAR", "scaricaWord",
+  "sceltaDocumento", "stampaVideoGenova", "toggleTrig",
 ];
 const HANDLER_FN_PATTERN = new RegExp(`\\b(${HANDLER_FNS.join("|")})\\(`, "g");
 
