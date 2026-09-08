@@ -34,7 +34,7 @@ let anthropicClient: Anthropic | null = null;
 function getAnthropicClient(): Anthropic | null {
 if (anthropicClient) return anthropicClient;
 if (process.env.ANTHROPIC_API_KEY) {
-anthropicClient = new Anthropic();
+anthropicClient = new Anthropic({ timeout: 90_000, maxRetries: 1 });
 return anthropicClient;
 }
 return null;
@@ -228,6 +228,7 @@ const resp = await fetch(url, {
 method: "POST",
 headers: { "Content-Type": "application/json" },
 body: JSON.stringify(body),
+signal: AbortSignal.timeout(90_000),
 });
 const data = await resp.json() as any;
 
