@@ -16,7 +16,7 @@
  * - Indennità mediazione: D.M. 150/2023
  * - Imposta di registro: D.P.R. 131/1986, art. 8 Tariffa Parte I
  * - Esenzioni mediazione: D.Lgs. 28/2010, art. 17
- * - Gratuito Patrocinio: D.P.R. 115/2002, art. 76 — limite 2025: €13.659,64
+ * - Gratuito Patrocinio: D.P.R. 115/2002, art. 76 — limite D.M. 22/04/2025 (invariato nel 2026): €13.659,64
  */
 
 import { formatEuro, type ModalitaTariffaria } from "./calcolo-indennita.js";
