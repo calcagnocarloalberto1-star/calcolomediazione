@@ -97,14 +97,14 @@ export const SEO_CONTENT: Record<string, string> = {
 <p><strong>Quando serve il notaio?</strong> L'intervento del notaio e necessario quando l'accordo riguarda atti soggetti a trascrizione (art. 2643 c.c.): trasferimenti immobiliari, servitu, usucapione, divisioni.</p>
 <p><strong>L'accordo gode di esenzioni fiscali?</strong> Si, ai sensi dell'art. 17 D.Lgs. 28/2010: esenzione imposta di registro fino a 100.000 euro, esenzione imposte ipotecarie e catastali (Risposta AdE n. 235/2020).</p>
 <h2>Credito d'Imposta in Mediazione</h2>
-<p>Il credito d'imposta per la mediazione (art. 20 D.Lgs. 28/2010, D.M. 1 agosto 2023) prevede fino a 600 euro per indennita organismo, fino a 600 euro per compenso avvocato, fino a 518 euro per contributo unificato. Scadenza domanda: 31 marzo dell'anno successivo.</p>
+<p>Il credito d'imposta per la mediazione (art. 20 D.Lgs. 28/2010, D.M. 1 agosto 2023) prevede fino a 600 euro per indennita organismo e fino a 600 euro per compenso avvocato, cumulabili tra loro fino a un tetto di 600 euro per procedura, piu fino a 518 euro per contributo unificato (solo mediazione demandata con accordo): totale massimo 1.118 euro per procedura. Scadenza domanda: 31 marzo dell'anno successivo.</p>
 </div>`,
 
   "/credito-imposta": `<div style="max-width:900px;margin:0 auto;padding:40px 20px;font-family:Inter,sans-serif;color:#2d2926">
 <h1 style="font-size:2rem;font-family:'Space Grotesk',sans-serif">Credito d'Imposta e Gratuito Patrocinio in Mediazione</h1>
 <p>Guida completa al credito d'imposta per la mediazione civile (art. 20 D.Lgs. 28/2010, D.M. 1 agosto 2023) e al gratuito patrocinio (artt. 15-bis/15-undecies D.Lgs. 28/2010).</p>
 <h2>Credito d'Imposta</h2>
-<p>Importi massimi: fino a 600 euro per indennita organismo (300 senza accordo), fino a 600 euro per compenso avvocato (solo mediazione obbligatoria/demandata), fino a 518 euro per contributo unificato (solo mediazione demandata con accordo). Tetto annuale: 2.400 euro persone fisiche, 24.000 euro persone giuridiche.</p>
+<p>Importi massimi: fino a 600 euro per indennita organismo (300 senza accordo) e fino a 600 euro per compenso avvocato (solo mediazione obbligatoria/demandata), ma i due crediti sono cumulabili solo fino a un tetto di 600 euro per procedura; a questo si aggiunge fino a 518 euro per contributo unificato (solo mediazione demandata con accordo), per un totale massimo di 1.118 euro per procedura. Tetto annuale: 2.400 euro persone fisiche, 24.000 euro persone giuridiche.</p>
 <h2>Gratuito Patrocinio</h2>
 <p>Il patrocinio a spese dello Stato in mediazione (Riforma Cartabia) consente alle persone in condizioni economiche disagiate di accedere alla mediazione obbligatoria senza sostenere costi per indennita organismo e compenso avvocato.</p>
 </div>`,
