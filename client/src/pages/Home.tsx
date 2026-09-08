@@ -71,7 +71,7 @@ const features = [
   {
     icon: TrendingUp,
     title: "Credito d'Imposta",
-    description: "Calcola il credito d'imposta per mediazione civile (art. 20, D.Lgs. 28/2010). Scadenza domanda: 31 marzo 2026.",
+    description: "Calcola il credito d'imposta per mediazione civile (art. 20, D.Lgs. 28/2010). Domanda entro il 31 marzo dell'anno successivo alla conclusione.",
     href: "/credito-imposta",
     active: true,
   },
