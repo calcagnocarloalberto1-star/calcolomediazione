@@ -51,4 +51,4 @@ export const insertCalcoloSchema = createInsertSchema(calcoli).omit({
 });
 
 export type InsertCalcolo = z.infer<typeof insertCalcoloSchema>;
-export type Calcolo = typeof calcoli.$inferSelect;
+export type Calcolo = typeof calcoli.$inferSelect; export const contatoreVisite = pgTable("contatore_visite", { id: integer("id").primaryKey().default(1), totale: integer("totale").notNull().default(0), }); export type ContatoreVisite = typeof contatoreVisite.$inferSelect;
