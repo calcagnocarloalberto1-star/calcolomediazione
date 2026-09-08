@@ -103,10 +103,21 @@ function rowToAnalisi(row: any): AnalisiCaso {
   };
 }
 
+// PRIV-09 — la retention a 30 giorni (dichiarata in privacy policy) girava
+// SOLO come effetto collaterale di createAnalisi(): se per un periodo non
+// arrivava nessuna nuova analisi, quelle vecchie non venivano mai cancellate
+// nonostante la promessa fatta agli utenti. Estratta in una funzione a se'
+// stante cosi' da poterla anche schedulare in modo indipendente (vedi
+// server/index.ts) invece di legarla solo alla creazione di una nuova analisi.
+export async function eliminaAnalisiScadute(): Promise<void> {
+  await pool.query("DELETE FROM analisi_casi WHERE created_at < now() - interval '30 days'");
+}
+
 export class DatabaseStorage implements IStorage {
   async createAnalisi(data: InsertAnalisiCaso): Promise<AnalisiCaso & { accessToken: string }> {
-    // Retention: elimina le analisi piu' vecchie di 30 giorni (best-effort, non blocca la creazione).
-    pool.query("DELETE FROM analisi_casi WHERE created_at < now() - interval '30 days'").catch(() => {});
+    // Retention best-effort immediata: non blocca la creazione. Lo scheduler
+    // periodico in server/index.ts resta la garanzia indipendente dal traffico.
+    eliminaAnalisiScadute().catch(() => {});
     const accessToken = crypto.randomBytes(32).toString("hex");
 
     const res = await pool.query(
