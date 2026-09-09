@@ -55,7 +55,7 @@
 .ac-embed input:focus, .ac-embed select:focus, .ac-embed textarea:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px rgba(160,51,23,.15)}
 .ac-embed .field{margin-bottom:2px}
 .ac-embed .roles{display:flex;flex-wrap:wrap;gap:10px;margin:4px 0 6px}
-.ac-embed .role{flex:1;min-width:180px;border:1px solid var(--line);border-radius:10px;padding:10px 12px;cursor:pointer;font-size:13.5px;background:#fff;transition:.15s}
+.ac-embed .role{flex:1;min-width:180px;border:1px solid var(--line);border-radius:10px;padding:10px 12px;cursor:pointer;font-size:13.5px;background:#fff;color:var(--ink);text-align:left;appearance:none;transition:.15s}
 .ac-embed .role.active{border-color:var(--blue);background:var(--light);box-shadow:0 0 0 2px rgba(160,51,23,.18)}
 .ac-embed .role b{display:block;color:var(--navy)}
 .ac-embed .role small{color:var(--muted)}

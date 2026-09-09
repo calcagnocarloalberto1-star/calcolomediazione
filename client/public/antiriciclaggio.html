@@ -41,7 +41,7 @@ input,select,textarea{width:100%;padding:9px 10px;border:1px solid var(--line);b
 input:focus,select:focus,textarea:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px rgba(160,51,23,.15)}
 .field{margin-bottom:2px}
 .roles{display:flex;flex-wrap:wrap;gap:10px;margin:4px 0 6px}
-.role{flex:1;min-width:180px;border:1px solid var(--line);border-radius:10px;padding:10px 12px;cursor:pointer;font-size:13.5px;background:#fff;transition:.15s}
+.role{flex:1;min-width:180px;border:1px solid var(--line);border-radius:10px;padding:10px 12px;cursor:pointer;font-size:13.5px;background:#fff;color:var(--ink);text-align:left;appearance:none;transition:.15s}
 .role.active{border-color:var(--blue);background:var(--light);box-shadow:0 0 0 2px rgba(160,51,23,.18)}
 .role b{display:block;color:var(--navy)}
 .role small{color:var(--muted)}
@@ -164,16 +164,16 @@ margin-bottom:2cm;
 <h3 class="grouph">Che documento devi predisporre?</h3>
 <p class="sub">Scegli subito che cosa ti serve: lo strumento chiede comunque tutti i dati del fascicolo qui sotto, ma la sezione finale di generazione mostra da subito solo il pulsante che ti serve. Puoi cambiare scelta in qualsiasi momento con «Cambia scelta».</p>
 <div class="roles" id="docChoices" style="margin-top:10px">
-<div class="role" data-doc="av" onclick="sceltaDocumento('av')"><b>Adeguata verifica della parte</b><small>Modulo AV, da far firmare alla parte</small></div>
-<div class="role" data-doc="svr" onclick="sceltaDocumento('svr')"><b>Valutazione del rischio</b><small>Scheda di valutazione del rischio, ad uso del mediatore</small></div>
-<div class="role" data-doc="dich" onclick="sceltaDocumento('dich')"><b>Dichiarazione del cliente</b><small>Dichiarazione ex art. 22 D.Lgs. 231/2007</small></div>
-<div class="role" data-doc="coa" onclick="sceltaDocumento('coa')"><b>Proposta di compilazione per i mediatori dell'Organismo del Coa Genova</b><small>Modulo AV + Scheda rischio, formato Organismo di Mediazione COA Genova — compilabile anche a mano</small></div>
+<button type="button" class="role" data-doc="av" aria-pressed="false" onclick="sceltaDocumento('av')"><b>Adeguata verifica della parte</b><small>Modulo AV, da far firmare alla parte</small></button>
+<button type="button" class="role" data-doc="svr" aria-pressed="false" onclick="sceltaDocumento('svr')"><b>Valutazione del rischio</b><small>Scheda di valutazione del rischio, ad uso del mediatore</small></button>
+<button type="button" class="role" data-doc="dich" aria-pressed="false" onclick="sceltaDocumento('dich')"><b>Dichiarazione del cliente</b><small>Dichiarazione ex art. 22 D.Lgs. 231/2007</small></button>
+<button type="button" class="role" data-doc="coa" aria-pressed="false" onclick="sceltaDocumento('coa')"><b>Proposta di compilazione per i mediatori dell'Organismo del Coa Genova</b><small>Modulo AV + Scheda rischio, formato Organismo di Mediazione COA Genova — compilabile anche a mano</small></button>
 </div>
 <details style="margin-top:10px">
 <summary>Fascicolo AML completo (opzione avanzata) <span class="chev">&rsaquo;</span></summary>
 <div class="inner">
 <p class="sub" style="margin-top:8px">Tutti i moduli del fascicolo insieme (informativa, AV, scheda rischio, dichiarazione, annotazione, checklist e, se il rischio è alto, il promemoria riservato per il RAR). Utile se vuoi predisporre subito l'intero fascicolo invece di un documento alla volta.</p>
-<div class="row-btns" style="margin-top:0"><button class="btn-ghost" type="button" onclick="sceltaDocumento('fascicolo')">Scegli: fascicolo AML completo</button></div>
+<div class="row-btns" style="margin-top:0"><button class="btn-ghost" type="button" aria-label="Scegli il fascicolo antiriciclaggio completo" onclick="sceltaDocumento('fascicolo')">Scegli: fascicolo AML completo</button></div>
 </div>
 </details>
 </div>
@@ -221,8 +221,8 @@ margin-bottom:2cm;
 
 <div class="roles" id="roles">
 <div class="role active" data-role="odm"><b>Organismo di mediazione</b><small>compila per la procedura</small></div>
-<div class="role" data-role="mediatore"><b>Mediatore designato</b><small>per conto dell'ODM</small></div>
-<div class="role" data-role="avvocato"><b>Avvocato di parte</b><small>solo se operazione ex art. 3 c.4 c)</small></div>
+<button type="button" class="role" data-role="mediatore" aria-pressed="false"><b>Mediatore designato</b><small>per conto dell'ODM</small></button>
+<button type="button" class="role" data-role="avvocato" aria-pressed="false"><b>Avvocato di parte</b><small>solo se operazione ex art. 3 c.4 c)</small></button>
 </div>
 <div class="ocrbox" id="procedureSalvateBox">
 <h3 class="grouph">Procedure con dati salvati su questo browser</h3>
@@ -391,9 +391,9 @@ try{ usaFormatoGenova = localStorage.getItem(USA_FORMATO_GENOVA_KEY) === "1"; } 
 // Resta in memoria per la sola sessione del browser, come il resto del modulo, e viene riportata
 // nella Scheda di valutazione del rischio generata e scaricabile.
 let mediatoreLog = [];
-document.querySelectorAll(".role").forEach(el=>el.addEventListener("click",()=>{
-document.querySelectorAll(".role").forEach(r=>r.classList.remove("active"));
-el.classList.add("active"); role = el.dataset.role;
+document.querySelectorAll(".role[data-role]").forEach(el=>el.addEventListener("click",()=>{
+document.querySelectorAll(".role[data-role]").forEach(r=>{ r.classList.remove("active"); r.setAttribute("aria-pressed","false"); });
+el.classList.add("active"); el.setAttribute("aria-pressed","true"); role = el.dataset.role;
 if(typeof amlAutosaveSchedule === "function") amlAutosaveSchedule();
 }));
 document.addEventListener("input", (e)=>{
@@ -1538,7 +1538,11 @@ usaFormatoGenova = true;
 try{ localStorage.setItem(USA_FORMATO_GENOVA_KEY, "1"); } catch(e){ /* storage non disponibile: si prosegue senza persistenza */ }
 const selFormato = $("formato_modello"); if(selFormato) selFormato.value = "genova";
 }
-document.querySelectorAll("#docChoices .role").forEach(r=>r.classList.toggle("active", r.dataset.doc===tipo));
+document.querySelectorAll("#docChoices .role").forEach(r=>{
+const selected = r.dataset.doc===tipo;
+r.classList.toggle("active", selected);
+r.setAttribute("aria-pressed", selected ? "true" : "false");
+});
 aggiornaBarraDocTarget();
 aggiornaSezione19();
 const box = $("docSelectBox"); if(box) box.style.display = "none";
@@ -1898,9 +1902,9 @@ el.dispatchEvent(new Event("change",{bubbles:true}));
 }catch(e){ /* campo non ripristinabile: si prosegue con gli altri */ }
 });
 if(saved.role){
-document.querySelectorAll(".role").forEach(r=>r.classList.remove("active"));
+document.querySelectorAll(".role[data-role]").forEach(r=>{ r.classList.remove("active"); r.setAttribute("aria-pressed","false"); });
 const card = document.querySelector('.role[data-role="'+saved.role+'"]');
-if(card) card.classList.add("active");
+if(card){ card.classList.add("active"); card.setAttribute("aria-pressed","true"); }
 role = saved.role;
 }
 riskLivelloManual = !!saved.riskLivelloManual;
@@ -2476,6 +2480,7 @@ toast(applied>0 ? "Assistente: dati applicati a "+applied+" camp"+(applied===1?"
 function assistReset(){
 const f = $("assist_files"); if(f) f.value = "";
 const fold = $("assist_folder"); if(fold) fold.value = "";
+const richiesta = $("assist_richiesta"); if(richiesta) richiesta.value = "";
 assistSelectedFiles = [];
 assistRenderFileList();
 const rev = $("assist_review"); if(rev) rev.style.display = "none";
@@ -2922,7 +2927,11 @@ buildTriggers();
 // o una nuova): mostra subito la barra "Stai compilando" e il pulsante giusto
 // in sezione 19, senza dover ripetere la scelta ad ogni apertura della pagina.
 if(documentoTarget){
-document.querySelectorAll("#docChoices .role").forEach(r=>r.classList.toggle("active", r.dataset.doc===documentoTarget));
+document.querySelectorAll("#docChoices .role").forEach(r=>{
+const selected = r.dataset.doc===documentoTarget;
+r.classList.toggle("active", selected);
+r.setAttribute("aria-pressed", selected ? "true" : "false");
+});
 const box = $("docSelectBox"); if(box) box.style.display = "none";
 }
 aggiornaBarraDocTarget();
