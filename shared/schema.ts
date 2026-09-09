@@ -23,16 +23,23 @@ export const analisiCasi = pgTable("analisi_casi", {
   prospettoEconomico: text("prospetto_economico"),
   // Chat history
   chatHistory: jsonb("chat_history").$type<Array<{ role: string; content: string; timestamp: string }>>().default([]),
+  accessTokenHash: text("access_token"),
+  securePayload: text("secure_payload"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
 export const insertAnalisiCasoSchema = createInsertSchema(analisiCasi).omit({
   id: true,
+  accessTokenHash: true,
+  securePayload: true,
   createdAt: true,
 });
 
 export type InsertAnalisiCaso = z.infer<typeof insertAnalisiCasoSchema>;
-export type AnalisiCaso = typeof analisiCasi.$inferSelect;
+export type AnalisiCaso = Omit<
+  typeof analisiCasi.$inferSelect,
+  "accessTokenHash" | "securePayload"
+>;
 
 // Storico calcoli indennità
 export const calcoli = pgTable("calcoli", {

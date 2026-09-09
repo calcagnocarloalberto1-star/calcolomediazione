@@ -193,23 +193,47 @@ function HorizontalBar({ label, value, max }: { label: string; value: number; ma
 // ─── Main Admin Page ──────────────────────────────────────────────────────────
 
 export default function Admin() {
-  const [token, setToken] = useState<string | null>(null);
+  const [authenticated, setAuthenticated] = useState(false);
+  const [checkingSession, setCheckingSession] = useState(true);
+  const [totpRequired, setTotpRequired] = useState(false);
   const [password, setPassword] = useState("");
+  const [totp, setTotp] = useState("");
   const [loginError, setLoginError] = useState("");
   const [lastRefresh, setLastRefresh] = useState<Date>(new Date());
 
+  useEffect(() => {
+    Promise.all([
+      fetch("/api/admin/session", { credentials: "same-origin" }).then((res) => res.json()),
+      fetch("/api/admin/security-config", { credentials: "same-origin" }).then((res) => res.json()),
+    ])
+      .then(([session, config]) => {
+        setAuthenticated(session.authenticated === true);
+        setTotpRequired(config.totpRequired === true);
+      })
+      .catch(() => {
+        setAuthenticated(false);
+        setLoginError("Impossibile verificare la sessione. Riprova.");
+      })
+      .finally(() => setCheckingSession(false));
+  }, []);
+
   // Login mutation
   const loginMutation = useMutation({
-    mutationFn: async (pwd: string) => {
-      const res = await apiRequest("POST", "/api/admin/login", { password: pwd });
-      return res.json() as Promise<{ success: boolean; token: string }>;
+    mutationFn: async ({ pwd, otp }: { pwd: string; otp: string }) => {
+      const res = await apiRequest("POST", "/api/admin/login", {
+        password: pwd,
+        totp: otp,
+      });
+      return res.json() as Promise<{ success: boolean }>;
     },
-    onSuccess: (data) => {
-      setToken(data.token);
+    onSuccess: () => {
+      setAuthenticated(true);
+      setPassword("");
+      setTotp("");
       setLoginError("");
     },
     onError: () => {
-      setLoginError("Password errata. Riprova.");
+      setLoginError("Credenziali non valide. Riprova.");
     },
   });
 
@@ -220,29 +244,32 @@ export default function Admin() {
     refetch,
     isError,
   } = useQuery<AdminStats>({
-    queryKey: ["/api/admin/stats", token],
+    queryKey: ["/api/admin/stats"],
     queryFn: async () => {
-      if (!token) throw new Error("Non autorizzato");
       const res = await fetch(`${("__PORT_5000__".startsWith("__") ? "" : "__PORT_5000__")}/api/admin/stats`, {
-        headers: { Authorization: `Bearer ${token}` },
+        credentials: "same-origin",
       });
-      if (!res.ok) throw new Error("Non autorizzato");
+      if (res.status === 401) {
+        setAuthenticated(false);
+        throw new Error("Sessione scaduta");
+      }
+      if (!res.ok) throw new Error("Impossibile caricare le statistiche");
       return res.json();
     },
-    enabled: !!token,
+    enabled: authenticated,
     refetchInterval: false,
     staleTime: 0,
   });
 
   // Auto-refresh every 30 seconds
   useEffect(() => {
-    if (!token) return;
+    if (!authenticated) return;
     const interval = setInterval(() => {
       refetch();
       setLastRefresh(new Date());
     }, 30000);
     return () => clearInterval(interval);
-  }, [token, refetch]);
+  }, [authenticated, refetch]);
 
   const handleRefresh = useCallback(() => {
     refetch();
@@ -251,17 +278,27 @@ export default function Admin() {
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    loginMutation.mutate(password);
+    loginMutation.mutate({ pwd: password, otp: totp });
   };
 
-  const handleLogout = () => {
-    setToken(null);
+  const handleLogout = async () => {
+    await apiRequest("POST", "/api/admin/logout");
+    setAuthenticated(false);
     setPassword("");
+    setTotp("");
     queryClient.removeQueries({ queryKey: ["/api/admin/stats"] });
   };
 
   // ─── Login Screen ───────────────────────────────────────────────────────────
-  if (!token) {
+  if (checkingSession) {
+    return (
+      <div style={{ minHeight: "100vh", background: "#f5f0eb", display: "grid", placeItems: "center" }}>
+        <span style={{ fontFamily: "Inter, sans-serif", color: "#2d2926" }}>Verifica sessione sicura…</span>
+      </div>
+    );
+  }
+
+  if (!authenticated) {
     return (
       <div
         style={{
@@ -300,6 +337,8 @@ export default function Admin() {
               </label>
               <input
                 type="password"
+                required
+                autoComplete="current-password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Inserisci la password..."
@@ -318,6 +357,40 @@ export default function Admin() {
                 }}
               />
             </div>
+
+            {totpRequired && (
+              <div>
+                <label
+                  style={{ fontFamily: "Inter, sans-serif", fontSize: 13, fontWeight: 600, color: "#2d2926", display: "block", marginBottom: 6 }}
+                >
+                  Codice di autenticazione a 6 cifre
+                </label>
+                <input
+                  type="text"
+                  inputMode="numeric"
+                  autoComplete="one-time-code"
+                  pattern="[0-9]{6}"
+                  maxLength={6}
+                  required
+                  value={totp}
+                  onChange={(e) => setTotp(e.target.value.replace(/\D/g, "").slice(0, 6))}
+                  data-testid="input-admin-totp"
+                  style={{
+                    width: "100%",
+                    padding: "10px 14px",
+                    border: "2px solid #2d2926",
+                    borderRadius: 0,
+                    fontFamily: "JetBrains Mono, monospace",
+                    fontSize: 16,
+                    letterSpacing: 4,
+                    background: "#f5f0eb",
+                    color: "#2d2926",
+                    outline: "none",
+                    boxSizing: "border-box",
+                  }}
+                />
+              </div>
+            )}
 
             {loginError && (
               <div
