@@ -22,9 +22,6 @@ La sicurezza assoluta non può essere garantita da una revisione puntuale. La co
 - **Rischio ridotto:** lo storico locale conteneva titolo della pratica, valore e nominativi delle parti.
 - **Intervento:** lo storico conserva soltanto ID, stato, data e token necessario a riaprire o cancellare la pratica. Titoli, importi e nomi non sono più duplicati nel browser.
 - **Nota:** il token resta nel dispositivo fino alla cancellazione della pratica o dei dati del sito. Su postazioni condivise occorre eliminare lo storico al termine del lavoro.
-- **Cifratura applicativa:** le nuove analisi sono salvate in un payload autenticato AES-256-GCM; le colonne storiche sensibili restano vuote o contengono un marcatore non informativo.
-- **Token nel database:** i nuovi token di accesso sono memorizzati soltanto come hash SHA-256. I token preesistenti restano compatibili e vengono convertiti in hash al primo accesso o tramite la migrazione controllata.
-- **Area amministrativa:** il token Bearer leggibile da JavaScript è stato sostituito da un cookie HttpOnly, Secure in produzione e SameSite=Strict, con scadenza di 30 minuti e logout server-side. È disponibile l'autenticazione TOTP quando viene configurato `ADMIN_TOTP_SECRET`.
 
 ### Flusso IA e documenti
 
@@ -73,7 +70,7 @@ La sicurezza assoluta non può essere garantita da una revisione puntuale. La co
 
 1. Verificare e conservare DPA, SCC e condizioni del piano commerciale Anthropic.
 2. Lasciare `GEMINI_PAID_SERVICE_ACKNOWLEDGED=false` finché non sia documentato un piano Gemini paid idoneo al trattamento previsto.
-3. Verificare il DPA dell'hosting e del database, la regione effettiva, la cifratura infrastrutturale a riposo e la retention dei backup. La cifratura applicativa aggiunta non sostituisce questi controlli.
+3. Verificare il DPA dell'hosting e del database, la regione effettiva, la cifratura a riposo e la retention dei backup.
 4. Impostare `ADMIN_PASSWORD` robusta e `ADMIN_SECRET` persistente; limitare l'accesso alle variabili d'ambiente.
 5. Verificare il destinatario e la retention di `ERROR_LOG_WEBHOOK_URL`; disabilitarlo se non coperto dal registro dei trattamenti e da adeguate autorizzazioni.
 6. Eseguire una prova periodica della cancellazione entro 30 giorni, inclusi eventuali backup secondo la relativa policy.

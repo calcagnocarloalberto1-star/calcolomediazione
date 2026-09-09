@@ -3,7 +3,7 @@ import { createServer, type Server } from "http";
 import multer from "multer";
 import crypto from "crypto";
 import { PDFParse } from "pdf-parse";
-import { storage, incrementaContatoreVisite, getContatoreVisite, verifyStorageHealth } from "./storage.js";
+import { storage, incrementaContatoreVisite, getContatoreVisite } from "./storage.js";
 import { estrazioneEntita } from "./ai/ner-extraction.js";
 import { analisiGiuridica } from "./ai/analisi-giuridica.js";
 import { guidaStrategica } from "./ai/guida-strategica.js";
@@ -608,10 +608,9 @@ UPLOAD_HITS.set(ip, arr);
 next();
 }
 
-// ─── AUTENTICAZIONE ADMIN: sessione firmata in cookie HttpOnly ────────────
+// ─── AUTENTICAZIONE ADMIN: token firmato HMAC con scadenza ────────────────
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "";
 const ADMIN_SECRET = process.env.ADMIN_SECRET || crypto.randomBytes(32).toString("hex");
-const ADMIN_TOTP_SECRET = (process.env.ADMIN_TOTP_SECRET || "").replace(/\s+/g, "").toUpperCase();
 if (!process.env.ADMIN_SECRET) {
   console.warn(
     "[ADMIN_SECRET] Variabile non impostata: generato un valore casuale solo per questo processo. " +
@@ -619,150 +618,30 @@ if (!process.env.ADMIN_SECRET) {
     "Imposta ADMIN_SECRET come variabile d'ambiente fissa per evitare logout forzati ripetuti."
     );
 }
-const ADMIN_TTL_MS = 30 * 60 * 1000;
-const ADMIN_COOKIE = process.env.NODE_ENV === "production" ? "__Host-cm_admin" : "cm_admin";
-const ADMIN_SESSIONS = new Map<string, number>();
-let lastAcceptedTotpCounter = -1;
+const ADMIN_TTL_MS = 8 * 60 * 60 * 1000;
 function signAdminToken(): string {
 const exp = Date.now() + ADMIN_TTL_MS;
-const nonce = crypto.randomBytes(16).toString("hex");
-const payload = `admin:${exp}:${nonce}`;
+const payload = `admin:${exp}`;
   
 const sig = crypto.createHmac("sha256", ADMIN_SECRET).update(payload).digest("hex");
-ADMIN_SESSIONS.set(nonce, exp);
-return Buffer.from(`${payload}:${sig}`).toString("base64url");
+return Buffer.from(`${payload}:${sig}`).toString("base64");
 }
 function verifyAdminToken(token: string): boolean {
 try {
-const decoded = Buffer.from(token, "base64url").toString();
-const m = decoded.match(/^admin:(\d+):([0-9a-f]{32}):([0-9a-f]{64})$/);
+const decoded = Buffer.from(token, "base64").toString();
+const m = decoded.match(/^admin:(\d+):([0-9a-f]{64})$/);
 if (!m) return false;
 if (Date.now() > Number(m[1])) return false;
-if (ADMIN_SESSIONS.get(m[2]) !== Number(m[1])) return false;
-const expected = crypto.createHmac("sha256", ADMIN_SECRET).update(`admin:${m[1]}:${m[2]}`).digest("hex");
-const a = Buffer.from(m[3], "hex"), b = Buffer.from(expected, "hex");
+const expected = crypto.createHmac("sha256", ADMIN_SECRET).update(`admin:${m[1]}`).digest("hex");
+const a = Buffer.from(m[2], "hex"), b = Buffer.from(expected, "hex");
 return a.length === b.length && crypto.timingSafeEqual(a, b);
 } catch { return false; }
 }
-
-function revokeAdminToken(token: string): void {
-  try {
-    const decoded = Buffer.from(token, "base64url").toString();
-    const match = decoded.match(/^admin:\d+:([0-9a-f]{32}):/);
-    if (match) ADMIN_SESSIONS.delete(match[1]);
-  } catch {
-    // Un cookie malformato viene semplicemente ignorato.
-  }
-}
-
-function readCookie(req: any, name: string): string {
-  const raw = typeof req.headers.cookie === "string" ? req.headers.cookie : "";
-  for (const part of raw.split(";")) {
-    const [key, ...rest] = part.trim().split("=");
-    if (key === name) return decodeURIComponent(rest.join("="));
-  }
-  return "";
-}
-
-function setAdminCookie(res: any, token: string): void {
-  const secure = process.env.NODE_ENV === "production" ? "; Secure" : "";
-  res.setHeader(
-    "Set-Cookie",
-    `${ADMIN_COOKIE}=${encodeURIComponent(token)}; Path=/; HttpOnly; SameSite=Strict; Max-Age=${Math.floor(ADMIN_TTL_MS / 1000)}${secure}`,
-  );
-}
-
-function clearAdminCookie(res: any): void {
-  const secure = process.env.NODE_ENV === "production" ? "; Secure" : "";
-  res.setHeader(
-    "Set-Cookie",
-    `${ADMIN_COOKIE}=; Path=/; HttpOnly; SameSite=Strict; Max-Age=0${secure}`,
-  );
-}
-
-function adminAuthenticated(req: any): boolean {
-  return verifyAdminToken(readCookie(req, ADMIN_COOKIE));
-}
-
-function decodeBase32(value: string): Buffer {
-  const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";
-  let bits = "";
-  for (const char of value.replace(/=+$/g, "")) {
-    const index = alphabet.indexOf(char);
-    if (index < 0) throw new Error("Segreto TOTP non valido");
-    bits += index.toString(2).padStart(5, "0");
-  }
-  const bytes: number[] = [];
-  for (let i = 0; i + 8 <= bits.length; i += 8) {
-    bytes.push(parseInt(bits.slice(i, i + 8), 2));
-  }
-  return Buffer.from(bytes);
-}
-
-function totpAt(secret: string, counter: number): string {
-  const message = Buffer.alloc(8);
-  message.writeBigUInt64BE(BigInt(counter));
-  const digest = crypto.createHmac("sha1", decodeBase32(secret)).update(message).digest();
-  const offset = digest[digest.length - 1] & 0x0f;
-  const code =
-    (((digest[offset] & 0x7f) << 24) |
-      ((digest[offset + 1] & 0xff) << 16) |
-      ((digest[offset + 2] & 0xff) << 8) |
-      (digest[offset + 3] & 0xff)) %
-    1_000_000;
-  return code.toString().padStart(6, "0");
-}
-
-function verifyTotp(code: string): boolean {
-  if (!ADMIN_TOTP_SECRET) return true;
-  if (!/^\d{6}$/.test(code)) return false;
-  try {
-    const current = Math.floor(Date.now() / 30_000);
-    for (const offset of [-1, 0, 1]) {
-      const counter = current + offset;
-      const expected = totpAt(ADMIN_TOTP_SECRET, current + offset);
-      if (
-        crypto.timingSafeEqual(Buffer.from(code), Buffer.from(expected)) &&
-        counter > lastAcceptedTotpCounter
-      ) {
-        lastAcceptedTotpCounter = counter;
-        return true;
-      }
-    }
-    return false;
-  } catch {
-    console.error("[ADMIN_TOTP_SECRET] Configurazione Base32 non valida");
-    return false;
-  }
-}
-
-if (ADMIN_TOTP_SECRET) {
-  const decodedTotpSecret = decodeBase32(ADMIN_TOTP_SECRET);
-  if (decodedTotpSecret.length < 20) {
-    throw new Error("ADMIN_TOTP_SECRET deve contenere almeno 160 bit");
-  }
-}
-
-setInterval(() => {
-  const now = Date.now();
-  for (const [nonce, expiresAt] of ADMIN_SESSIONS) {
-    if (expiresAt <= now) ADMIN_SESSIONS.delete(nonce);
-  }
-}, 10 * 60 * 1000).unref();
 
 export async function registerRoutes(
 httpServer: Server,
 app: Express
 ): Promise<Server> {
-
-app.get("/api/health", async (_req, res) => {
-try {
-await verifyStorageHealth();
-res.json({ ok: true });
-} catch {
-res.status(503).json({ ok: false });
-}
-});
 
 // ─── REDIRECT WWW → NON-WWW (301 permanente) ──────────────────────────────
 // Risolve "Pagina alternativa con tag canonical" in Google Search Console
@@ -877,40 +756,24 @@ app.get("/api/contatore-visite", async (_req, res) => { const totale = await get
 // e le inoltra a un Google Apps Script Web App (ERROR_LOG_WEBHOOK_URL).
 registerClientErrorRoute(app);
 
-// ─── ADMIN (password da env, cookie HttpOnly breve, TOTP opzionale) ───────
-app.get("/api/admin/security-config", (_req, res) => {
-res.json({ totpRequired: Boolean(ADMIN_TOTP_SECRET) });
-});
-
+// ─── ADMIN (password da env obbligatoria; token firmato HMAC con scadenza) ──
 app.post("/api/admin/login", loginRateLimit, (req, res) => {
 if (!ADMIN_PASSWORD) {
 return res.status(503).json({ error: "Area amministrativa non configurata." });
 }
 const pw = typeof req.body?.password === "string" ? req.body.password : "";
-const totp = typeof req.body?.totp === "string" ? req.body.totp : "";
-const suppliedDigest = crypto.createHash("sha256").update(pw, "utf8").digest();
-const expectedDigest = crypto.createHash("sha256").update(ADMIN_PASSWORD, "utf8").digest();
-const ok = crypto.timingSafeEqual(suppliedDigest, expectedDigest);
-if (ok && verifyTotp(totp)) {
-setAdminCookie(res, signAdminToken());
-res.json({ success: true });
+const ok = pw.length === ADMIN_PASSWORD.length &&
+crypto.timingSafeEqual(Buffer.from(pw), Buffer.from(ADMIN_PASSWORD));
+if (ok) {
+res.json({ success: true, token: signAdminToken() });
 } else {
-res.status(401).json({ error: "Credenziali non valide" });
+res.status(401).json({ error: "Password errata" });
 }
 });
 
-app.get("/api/admin/session", (req, res) => {
-res.json({ authenticated: adminAuthenticated(req) });
-});
-
-app.post("/api/admin/logout", (req, res) => {
-revokeAdminToken(readCookie(req, ADMIN_COOKIE));
-clearAdminCookie(res);
-res.json({ success: true });
-});
-
 app.get("/api/admin/stats", (req, res) => {
-if (!adminAuthenticated(req)) {
+const auth = req.headers.authorization || "";
+if (!auth.startsWith("Bearer ") || !verifyAdminToken(auth.slice(7))) {
 return res.status(401).json({ error: "Non autorizzato" });
 }
 res.json(stats.getStats());
@@ -1163,7 +1026,8 @@ res.status(500).json({ error: "Errore interno del server" });
 // (HMAC-SHA256 con scadenza e confronto a tempo costante, vedi sopra). Corretto
 // per riusare la stessa verifica.
 app.get("/api/analisi", async (req, res) => {
-if (!adminAuthenticated(req)) {
+const auth = req.headers.authorization;
+if (!auth || !auth.startsWith("Bearer ") || !verifyAdminToken(auth.slice(7))) {
 return res.status(401).json({ error: "Non autorizzato" });
 }
 const analisi = await storage.getAllAnalisi();
@@ -1256,7 +1120,7 @@ res.status(500).json({ error: "Errore nella generazione del PDF" });
 app.delete("/api/analisi/:id", async (req, res) => {
 const id = parseInt(req.params.id);
 const accessToken = req.headers["x-access-token"] as string | undefined;
-if (!Number.isSafeInteger(id) || !accessToken || !/^[a-f0-9]{32}$|^[a-f0-9]{64}$/i.test(accessToken)) {
+if (!Number.isSafeInteger(id) || !accessToken || !/^[a-f0-9]{64}$/i.test(accessToken)) {
 return res.status(401).json({ error: "Token di accesso mancante o non valido" });
 }
 const deleted = await storage.deleteAnalisi(id, accessToken);
@@ -1309,12 +1173,11 @@ const aiResponseRedatta = await callLLM(systemPrompt, userPrompt);
 const aiResponse = ripristinaTesto(aiResponseRedatta, mappa);
 
 const now = new Date().toISOString();
+chatHistory.push({ role: "user", content: message, timestamp: now });
+chatHistory.push({ role: "assistant", content: aiResponse, timestamp: now });
 stats.track('chat_message');
-const updated = await storage.appendChatMessages(id, [
-{ role: "user", content: message, timestamp: now },
-{ role: "assistant", content: aiResponse, timestamp: now },
-]);
-res.json({ response: aiResponse, chatHistory: updated?.chatHistory || chatHistory });
+await storage.updateAnalisi(id, { chatHistory });
+res.json({ response: aiResponse, chatHistory });
 } catch (error) {
 console.error("Errore chat:", error);
 res.status(500).json({ error: "Errore nella risposta AI" });

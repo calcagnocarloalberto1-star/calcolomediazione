@@ -54,7 +54,7 @@ export default function PrivacyPolicy() {
 
           <Section title="5. Conservazione e cancellazione">
             <ul className="list-disc space-y-2 ml-5">
-              <li><strong>Analisi del caso:</strong> massimo 30 giorni sul database del sito. I contenuti delle nuove analisi sono protetti a livello applicativo con cifratura autenticata AES-256-GCM; l'utente può cancellarli prima dallo storico mediante il token segreto memorizzato nel proprio browser.</li>
+              <li><strong>Analisi del caso:</strong> massimo 30 giorni sul database del sito. L'utente può cancellarla prima dallo storico mediante il token segreto memorizzato nel proprio browser.</li>
               <li><strong>PDF caricati nell'Analisi del caso:</strong> usati in memoria per estrarre il testo e non archiviati come file; il testo estratto confluisce nell'analisi conservata fino a 30 giorni.</li>
               <li><strong>Documenti AML inviati all'IA:</strong> elaborati in memoria e non archiviati dal sito dopo la risposta. I tempi tecnici del fornitore dipendono dal servizio e dal piano contrattuale applicato.</li>
               <li><strong>Statistiche interne:</strong> il totale complessivo delle visualizzazioni è conservato nel database come numero aggregato; il dettaglio per pagina resta in memoria fino al riavvio del servizio. Nessuno dei due contiene IP, user-agent o identificatori del visitatore.</li>
@@ -64,8 +64,7 @@ export default function PrivacyPolicy() {
 
           <Section title="6. Destinatari e misure di sicurezza">
             <p>I dati possono essere trattati dai fornitori necessari all'hosting, al database, alla diagnostica tecnica e alle API IA, nei limiti delle funzioni utilizzate. Non sono venduti né diffusi.</p>
-            <p>Il sito usa HTTPS, cifratura applicativa autenticata AES-256-GCM per i contenuti delle nuove analisi conservate, token casuali memorizzati nel database soltanto in forma di hash SHA-256, risposte API non memorizzabili, cancellazione automatica, controlli di origine, limiti di frequenza e dimensione, validazione dei file e minimizzazione dei log. La chiave di cifratura è gestita separatamente dal database nell'ambiente protetto del servizio.</p>
-            <p>Nessuna misura elimina ogni rischio: l'utente deve proteggere il proprio dispositivo e non condividere il token di accesso. La cifratura applicativa protegge il contenuto memorizzato, ma non impedisce il trattamento temporaneo necessario sul server e presso il fornitore IA durante l'elaborazione richiesta.</p>
+            <p>Il sito usa HTTPS, risposte API non memorizzabili, token casuali per l'accesso alle analisi, cancellazione automatica, controlli di origine, limiti di frequenza e dimensione, validazione dei file e minimizzazione dei log. Nessuna misura elimina ogni rischio: l'utente deve proteggere il proprio dispositivo e non condividere il token di accesso.</p>
           </Section>
 
           <Section title="7. Natura del conferimento e responsabilità professionale">

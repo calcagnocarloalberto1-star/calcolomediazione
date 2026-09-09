@@ -12,9 +12,7 @@
     "start": "NODE_ENV=production node dist/index.cjs",
     "check": "tsc",
     "db:push": "drizzle-kit push",
-    "security:encrypt-legacy": "tsx script/encrypt-legacy-analyses.ts",
-    "security:rollback-encryption": "tsx script/rollback-encrypted-analyses.ts",
-    "test": "tsx server/security/data-protection.test.ts && tsx shared/calcolo-indennita.test.ts && tsx shared/notarile.test.ts && tsx shared/valore-catastale.test.ts && tsx shared/sentenza-slug.test.ts"
+    "test": "tsx shared/calcolo-indennita.test.ts && tsx shared/notarile.test.ts && tsx shared/valore-catastale.test.ts && tsx shared/sentenza-slug.test.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.115.0",
