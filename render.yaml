@@ -1,0 +1,27 @@
+services:
+  - type: web
+    name: calcolomediazione
+    runtime: node
+    plan: free
+    buildCommand: npm install && npm run build
+    startCommand: NODE_ENV=production node dist/index.cjs
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: ANTHROPIC_API_KEY
+        sync: false
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: GEMINI_PAID_SERVICE_ACKNOWLEDGED
+        value: "false"
+      - key: ADMIN_PASSWORD
+        sync: false
+      - key: ADMIN_SECRET
+        generateValue: true
+      - key: DATA_ENCRYPTION_KEY
+        sync: false
+      - key: DATA_ENCRYPTION_KEY_PREVIOUS
+        sync: false
+      - key: ADMIN_TOTP_SECRET
+        sync: false

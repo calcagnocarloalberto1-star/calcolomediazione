@@ -82,4 +82,4 @@ La sicurezza assoluta non può essere garantita da una revisione puntuale. La co
 
 ## Limiti della revisione
 
-Non sono stati usati dati personali reali né inviati documenti ai provider IA. Non sono stati ispezionati dashboard, contratti o configurazioni private di Northflank, PostgreSQL, Anthropic, Google o Google Apps Script. Il documento è una revisione tecnica e informativa, non una certificazione di conformità né un parere legale definitivo.
+Non sono stati usati dati personali reali né inviati documenti ai provider IA. Non sono stati ispezionati dashboard, contratti o configurazioni private di Render, PostgreSQL, Anthropic, Google o Google Apps Script. Il documento è una revisione tecnica e informativa, non una certificazione di conformità né un parere legale definitivo.
