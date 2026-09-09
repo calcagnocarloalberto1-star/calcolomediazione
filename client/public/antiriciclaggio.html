@@ -193,7 +193,7 @@ margin-bottom:2cm;
 <textarea id="assist_richiesta" rows="2" placeholder="Es. Mi compili il modulo AV e la scheda di valutazione del rischio alla luce di questi documenti?">Mi compili il modulo AV e la scheda di valutazione del rischio alla luce di questi documenti?</textarea>
 </div>
 <div class="field">
-<label for="assist_files">Documenti del fascicolo (anche più file insieme, o un'intera cartella)</label>
+<label for="assist_files">Documenti del fascicolo (massimo 10 per ogni analisi, anche da una cartella)</label>
 <div class="hint">Immagini (JPG/PNG) o PDF, anche di tipo diverso tra loro. Puoi selezionare i singoli file oppure caricare direttamente una cartella: tutti i documenti al suo interno (anche nelle sottocartelle) vengono aggiunti automaticamente, i file di altro formato vengono ignorati e segnalati. Se i documenti riguardano più parti, l'assistente compila la prima parte istante e ti segnala nella risposta come gestire le altre (pulsante «+ Nuova parte per questa procedura» più sotto nel modulo).</div>
 <input type="file" id="assist_files" accept="image/*,.pdf" multiple onchange="assistAggiungiFile(this.files)">
 <input type="file" id="assist_folder" webkitdirectory directory multiple style="display:none" onchange="assistAggiungiFile(this.files)">
@@ -2197,6 +2197,7 @@ function assistSetStatus(msg){ const el = $("assist_status"); if(el) el.textCont
 // Accumula in un array unico i file scelti dall'input normale e da quello cartella,
 // cosi' l'utente puo' combinare piu' selezioni senza perdere quelle precedenti.
 let assistSelectedFiles = [];
+const ASSIST_MAX_FILES = 10;
 // Oltre al MIME type, controlliamo anche l'estensione: alcuni browser/sistemi operativi (in
 // particolare quando si seleziona un'intera cartella) non riescono a determinare il MIME type di
 // ogni file e restituiscono f.type vuoto — senza questo controllo di riserva, tutte le immagini di
@@ -2217,7 +2218,8 @@ return f.type === "application/pdf" || /\.pdf$/i.test(f.name)
 function assistRenderFileList(){
 const el = $("assist_filelist"); if(!el) return;
 if(!assistSelectedFiles.length){ el.textContent = ""; return; }
-el.textContent = assistSelectedFiles.length + " documento/i pronto/i: " + assistSelectedFiles.map(f=>f.name).join(", ");
+el.textContent = assistSelectedFiles.length + " documento/i pronto/i su " + ASSIST_MAX_FILES
++ ": " + assistSelectedFiles.map(f=>f.name).join(", ");
 }
 function assistAggiungiFile(fileList){
 const arr = Array.from(fileList || []);
@@ -2229,12 +2231,19 @@ assistSetStatus("Nessun file trovato nella cartella selezionata. Se i file sono 
 return;
 }
 const p7m = arr.filter(f => ASSIST_EXT_P7M.test(f.name));
-const accettati = arr.filter(f => !ASSIST_EXT_P7M.test(f.name) && assistFileAccettato(f));
-const scartatiAltri = arr.length - accettati.length - p7m.length;
+const compatibili = arr.filter(f => !ASSIST_EXT_P7M.test(f.name) && assistFileAccettato(f));
+const spazioDisponibile = Math.max(0, ASSIST_MAX_FILES - assistSelectedFiles.length);
+const accettati = compatibili.slice(0, spazioDisponibile);
+const eccedenti = compatibili.slice(spazioDisponibile);
+const scartatiAltri = arr.length - compatibili.length - p7m.length;
 assistSelectedFiles = assistSelectedFiles.concat(accettati);
 assistRenderFileList();
 const parti = [];
 if(accettati.length) parti.push(accettati.length + " documento/i aggiunto/i");
+if(eccedenti.length) parti.push(
+eccedenti.length + " documento/i non aggiunto/i: il limite di sicurezza e' " + ASSIST_MAX_FILES
++ " file per ogni analisi. Premi Pulisci e analizza i documenti rimanenti in un secondo gruppo"
+);
 if(p7m.length) parti.push(
 p7m.length + " file firmato/i digitalmente (" + p7m.map(f=>f.name).join(", ") + ") NON caricato/i: " +
 "e' un file .p7m, un involucro di firma digitale che racchiude il PDF ma non e' esso stesso un PDF leggibile. " +
@@ -2395,8 +2404,8 @@ const img = await ocrAImgToJpegBlob(f);
 docs.push({ blob: img, ext: "jpg", vuoto: img ? !!img.ocrVuoto : true });
 }
 }
-// Limite prudenziale sul numero di documenti per richiesta (il backend ne accetta al massimo 40)
-if(docs.length > 40){ docs = docs.slice(0, 40); }
+// Limite coerente con il backend e con la selezione mostrata all'utente.
+if(docs.length > ASSIST_MAX_FILES){ docs = docs.slice(0, ASSIST_MAX_FILES); }
 const totKb = Math.round(docs.reduce((s,d)=>s+(d.blob?d.blob.size:0),0)/1024);
 const vuote = docs.filter(d=>d.ext==="jpg" && (!d.blob || d.blob.size < 500 || d.vuoto)).length;
 if(vuote){
