@@ -29,6 +29,7 @@ const httpServer = createServer(app);
 const CSP_REPORT_ONLY =
   "default-src 'self'; " +
   "script-src 'self' https://cdn.jsdelivr.net https://www.googletagmanager.com; " +
+  "script-src-attr 'none'; " +
   "style-src 'self' https://fonts.googleapis.com 'unsafe-inline'; " +
   "font-src 'self' https://fonts.gstatic.com; " +
   "connect-src 'self' https://www.google-analytics.com https://region1.google-analytics.com; " +
@@ -43,6 +44,7 @@ const CSP_REPORT_ONLY =
 // senza interferire con gli script JSON-LD dinamici usati per la SEO.
 const CSP_ENFORCED =
   "object-src 'none'; " +
+  "script-src-attr 'none'; " +
   "base-uri 'self'; " +
   "frame-ancestors 'self'; " +
   "form-action 'self'; " +

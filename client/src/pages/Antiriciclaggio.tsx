@@ -25,11 +25,10 @@ import { SeoHead } from "@/components/SeoHead";
 //    ".ac-embed" (vedi commento in quel file).
 // 2) Script isolato — lo script originale dichiara ~100 variabili/funzioni
 //    top-level con nomi molto generici ($, v, val, role...). Viene eseguito
-//    dentro una IIFE per non inquinare lo scope globale della pagina, con le
-//    sole funzioni richiamate dagli attributi onclick/onchange del markup
-//    (26, invariate) esposte in modo esplicito e mirato sotto
-//    window.__acEmbed, e gli attributi onclick/onchange del markup riscritti
-//    di conseguenza (rewriteHandlers).
+//    dentro una IIFE per non inquinare lo scope globale della pagina. Tutte
+//    le azioni utente passano da data-ac-action e da listener registrati
+//    nello script, senza attributi onclick/onchange e senza funzioni esposte
+//    su window.
 // 3) Cleanup dei listener globali — lo script registra alcuni listener su
 //    document/window (event delegation su input/change, "afterprint" dopo la
 //    stampa). Con l'iframe questi sparivano automaticamente alla navigazione;
@@ -38,45 +37,8 @@ import { SeoHead } from "@/components/SeoHead";
 //    intercettano temporaneamente document/window.addEventListener per la
 //    durata del mount e si rimuovono all'unmount.
 //
-// Nessuna modifica al file sorgente antiriciclaggio.html: contenuto, campi,
-// logica di calcolo/generazione restano quelli già in produzione, verificati
-// e usati dagli organismi di mediazione — cambia solo il meccanismo con cui
-// vengono mostrati nella pagina.
-
-// NB: questo elenco deve restare sincronizzato con le funzioni richiamate da
-// onclick="…"/onchange="…" nel markup di client/public/antiriciclaggio.html.
-// Un nome qui che non esiste più nello script (o uno nuovo mancante) rompe
-// SILENZIOSAMENTE l'intero embedding: l'oggetto window.__acEmbed viene
-// costruito con la sintassi abbreviata "{ nome, nome2, ... }", quindi un solo
-// nome non più dichiarato nello script fa fallire con ReferenceError l'intera
-// assegnazione — nessuna delle funzioni definite PRIMA di quel punto viene
-// esposta, e ogni pulsante della pagina smette di rispondere (bug osservato
-// in produzione dopo la rimozione di printOne/copyOne/stampaTuttoAccumulo/
-// scaricaTutto/reset/assistToggleRaw/amlEsportaDati/amlImportaDatiFile senza
-// aggiornare questo elenco). Verificare con:
-//   grep -oE 'on(click|change)="[^"]*"' client/public/antiriciclaggio.html \
-//     | grep -oE '\b[a-zA-Z_][a-zA-Z0-9_]*\(' | sort -u
-// dopo ogni modifica ai pulsanti/onclick dello strumento.
-const HANDLER_FNS = [
-  "aggiungiAggiornamento", "amlCancellaDatiProcedura", "amlCancellaTuttiIDati",
-  "amlNuovaParte", "analizzaTrigger", "assistAggiungiFile", "assistEstrai",
-  "assistReset", "cancellaStoricoProcedura", "copyMot", "generaFormato",
-  "generaSingolo", "generaSOSRiservato", "generaSchedaVerificaRAR", "moduliBianco",
-  "mostraSelettoreDocumento", "resetTrigger", "rimuoviAggiornamento",
-  "scaricaSingolo", "scaricaSOSRiservato", "scaricaSchedaVerificaRAR", "scaricaWord",
-  "sceltaDocumento", "stampaVideoGenova", "toggleTrig",
-];
-const HANDLER_FN_PATTERN = new RegExp(`\\b(${HANDLER_FNS.join("|")})\\(`, "g");
-
-// Riscrive onclick="genera(...)" -> onclick="window.__acEmbed.genera(...)" (e
-// così via per le 25 funzioni sopra), unico punto di contatto tra il markup
-// iniettato e lo script eseguito nella sua IIFE isolata.
-function rewriteHandlers(markup: string): string {
-  return markup.replace(/on(click|change)="([^"]*)"/g, (_full, evt, body) => {
-    const rewritten = body.replace(HANDLER_FN_PATTERN, "window.__acEmbed.$1(");
-    return `on${evt}="${rewritten}"`;
-  });
-}
+// Il contenuto e la logica restano quelli del file sorgente già usato dagli
+// organismi di mediazione; cambia soltanto il collegamento sicuro degli eventi.
 
 export default function Antiriciclaggio() {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -144,15 +106,12 @@ export default function Antiriciclaggio() {
           throw new Error("Struttura HTML inattesa");
         }
 
-        const markup = rewriteHandlers(html.slice(bodyStart, scriptOpenIdx));
+        const markup = html.slice(bodyStart, scriptOpenIdx);
         const scriptCode = html.slice(scriptOpenTagEnd, scriptCloseIdx);
 
         containerRef.current.innerHTML = markup;
 
-        const exportList = HANDLER_FNS.join(", ");
-        const wrapped =
-          "(function(){\n" + scriptCode +
-          `\nwindow.__acEmbed = { ${exportList} };\n})();`;
+        const wrapped = "(function(){\n" + scriptCode + "\n})();";
 
         const scriptEl = document.createElement("script");
         scriptEl.textContent = wrapped;
@@ -170,7 +129,6 @@ export default function Antiriciclaggio() {
       }
       document.addEventListener = origDocAdd as typeof document.addEventListener;
       window.addEventListener = origWinAdd as typeof window.addEventListener;
-      delete (window as unknown as { __acEmbed?: unknown }).__acEmbed;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
