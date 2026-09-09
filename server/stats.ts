@@ -3,7 +3,7 @@
 
 interface StatEntry {
   timestamp: Date;
-  type: string; // 'page_view' | 'analisi_ai' | 'calcolo' | 'pdf_export' | 'procura_view' | 'chat_message' | 'upload_pdf'
+  type: string; // 'page_view' | 'analisi_ai' | 'pdf_export' | 'procura_view' | 'chat_message' | 'upload_pdf'
   path?: string;
 }
 
@@ -14,7 +14,6 @@ class StatsTracker {
     analisiAiCreate: 0,
     analisiAiComplete: 0,
     analisiAiError: 0,
-    calcoliEffettuati: 0,
     pdfExported: 0,
     chatMessages: 0,
     uploadPdf: 0,
@@ -54,9 +53,6 @@ class StatsTracker {
         break;
       case 'analisi_error':
         this.counters.analisiAiError++;
-        break;
-      case 'calcolo':
-        this.counters.calcoliEffettuati++;
         break;
       case 'pdf_export':
         this.counters.pdfExported++;

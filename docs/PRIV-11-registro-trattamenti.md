@@ -49,7 +49,7 @@ nella documentazione del sito.
 - **Categorie di dati:** titolo, descrizione libera del caso, nomi e ruolo delle parti, valore della lite, documenti opzionali; potenzialmente dati relativi a minori o alla situazione familiare/economica delle parti nei casi di mediazione familiare.
 - **Base giuridica:** da confermare — verosimilmente legittimo interesse o esecuzione di un servizio richiesto dall'utente; per i dati dei terzi (le parti) andrebbe valutato se serva una base autonoma o un'informativa aggiuntiva (v. PRIV-10).
 - **Destinatari:** Anthropic (Claude), Google (Gemini, in fallback) — `server/ai/llm.ts`.
-- **Trasferimento extra-UE:** sì, verso USA; base dichiarata: clausole contrattuali standard (privacy policy, Sezione 6).
+- **Trasferimento extra-UE:** possibile verso USA o altri Paesi; garanzia e meccanismo applicabili sono da verificare e documentare sul contratto/DPA del servizio effettivamente usato.
 - **Misure di minimizzazione:** redazione preventiva dei nomi delle parti e di alcuni identificatori diretti (email, CF, IBAN, telefono) prima dell'invio ai fornitori, con ripristino solo sui dati mostrati all'utente (`server/ai/redazione.ts`, PRIV-08/PRIV-09).
 - **Termine di conservazione:** fino a 30 giorni dalla creazione, cancellazione automatica indipendente dal traffico (`server/storage.ts`, funzione `eliminaAnalisiScadute`, schedulata in `server/index.ts`).
 - **Controllo di accesso:** token di accesso casuale (32 byte) per singola analisi; endpoint di amministrazione protetto da token HMAC con scadenza (`verifyAdminToken`).
@@ -62,7 +62,7 @@ nella documentazione del sito.
 - **Categorie di dati:** documenti d'identità, dati anagrafici, informazioni sul rischio, dichiarazioni della parte; potenzialmente dati di cui all'art. 9 (es. indicatori su carichi pendenti per reati).
 - **Base giuridica:** obbligo legale del mediatore/Organismo (D.Lgs. 231/2007); il sito agisce da fornitore dello strumento, non da titolare di questi dati (dichiarato in privacy policy: "il trattamento avviene sotto la responsabilità del professionista o dell'organismo... quale titolare").
 - **Destinatari:** Anthropic, solo se l'utente sceglie esplicitamente la modalità alta precisione.
-- **Trasferimento extra-UE:** sì, in tal caso; clausole contrattuali standard dichiarate.
+- **Trasferimento extra-UE:** possibile in tal caso; garanzia e meccanismo applicabili sono da verificare e documentare sul contratto/DPA Anthropic.
 - **Termine di conservazione:** il sito dichiara di non conservare né il file caricato né i dati estratti; i dati compilati restano nel browser dell'utente (localStorage), non trasmessi al server salvo la chiamata AI facoltativa.
 
 ### 5. Database giurisprudenza

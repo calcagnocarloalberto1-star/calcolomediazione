@@ -10,7 +10,7 @@ Questo runbook descrive la messa in esercizio delle protezioni applicative per l
 - `DATA_ENCRYPTION_KEY_PREVIOUS`: una o più chiavi precedenti separate da virgola, da mantenere durante una rotazione finché tutti i record non sono stati ricifrati.
 - `ADMIN_SECRET`: segreto stabile usato per firmare le sessioni amministrative.
 - `ADMIN_PASSWORD`: password amministrativa lunga, unica e conservata in un gestore di password.
-- `ADMIN_TOTP_SECRET`: segreto Base32 opzionale. Quando presente, il login richiede anche un codice TOTP a sei cifre.
+- `ADMIN_TOTP_SECRET`: segreto Base32 di almeno 160 bit. È obbligatorio in produzione; senza questa variabile il sito continua a funzionare, ma l'area amministrativa resta sospesa.
 
 Le chiavi non devono essere inserite nel repository, nei log, nei ticket o nei documenti condivisi.
 
@@ -19,7 +19,7 @@ Le chiavi non devono essere inserite nel repository, nei log, nei ticket o nei d
 1. Creare e verificare un backup del database PostgreSQL.
 2. Configurare `DATA_ENCRYPTION_KEY` e verificare che il servizio la conservi tra riavvii e deploy.
 3. Verificare che `ADMIN_SECRET` sia stabile e che `ADMIN_PASSWORD` sia robusta.
-4. Configurare `ADMIN_TOTP_SECRET` solo dopo aver registrato il segreto nell'app di autenticazione dell'amministratore.
+4. Registrare il segreto nell'app di autenticazione dell'amministratore, quindi configurare `ADMIN_TOTP_SECRET` prima del deploy.
 5. Eseguire `npm run check`, `npm test` e `npm run build`.
 
 ## Comportamento dopo il deploy

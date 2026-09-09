@@ -10,7 +10,7 @@ Le chiavi e le credenziali devono essere configurate direttamente come segreti r
 
 1. Crea un account su northflank.com (piano free "Sandbox": 2 servizi always-on + 1 database + 2 cron job, gratis).
 2. Collega il tuo account GitHub e autorizza l'accesso al repo `calcagnocarloalberto1-star/calcolomediazione`.
-3. Crea un nuovo progetto, regione **Europe - West (London)** (dati in UE, coerente con quanto scritto nel registro trattamenti).
+3. Crea un nuovo progetto nella regione scelta e annotala nel registro dei trattamenti. **Londra è nel Regno Unito, non nell'Unione europea**: se il workload o il database sono a Londra, documentare il trasferimento e il relativo meccanismo; se è disponibile una regione SEE idonea, preferirla.
 
 ## 2. Servizio web
 
@@ -35,9 +35,10 @@ Obbligatorie:
 
 - `DATABASE_URL` — connection string del Postgres Northflank
 - `ANTHROPIC_API_KEY`
-- `GEMINI_API_KEY`
+- `GEMINI_API_KEY` — opzionale; configurare solo per il fallback commerciale descritto sotto.
 - `ADMIN_PASSWORD` — senza questa il login admin resta disabilitato
 - `ADMIN_SECRET` — valore fisso lungo e casuale, conservato anche fuori da Northflank in un gestore di segreti.
+- `ADMIN_TOTP_SECRET` — Base32 di almeno 160 bit, registrato nell'app di autenticazione prima del deploy. In produzione l'area admin resta sospesa se manca.
 - `DATA_ENCRYPTION_KEY` — chiave casuale di esattamente 32 byte, codificata in Base64 canonico o come 64 caratteri esadecimali. Generarla fuori dal repository con `openssl rand -base64 32` e conservarne una copia protetta fuori da Northflank.
 - `NODE_ENV=production`
 
@@ -47,7 +48,7 @@ Opzionali (default già gestiti nel codice se assenti):
 - `AI_MAX_PER_DAY` (default 150)
 - `ERROR_LOG_WEBHOOK_URL` (se vuoi il forwarding errori client)
 - `DATA_ENCRYPTION_KEY_PREVIOUS` (solo durante una rotazione, con eventuali chiavi precedenti separate da virgola)
-- `ADMIN_TOTP_SECRET` (Base32, almeno 160 bit, solo dopo averlo registrato nell'app di autenticazione)
+- `GEMINI_PAID_SERVICE_ACKNOWLEDGED=true` (solo dopo aver verificato piano commerciale e DPA applicabili; in mancanza, omettere o lasciare `false`)
 
 ## 5. Backup e protezione dei dati esistenti
 

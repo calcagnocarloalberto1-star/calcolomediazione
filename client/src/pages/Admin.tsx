@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { apiRequest, queryClient } from "@/lib/queryClient";
-import { Server, Users, Eye, Brain, Calculator, FileText, MessageSquare, Upload, LogOut, RefreshCw, Lock, BarChart2, Activity } from "lucide-react";
+import { Server, Users, Eye, Brain, FileText, MessageSquare, Upload, LogOut, RefreshCw, Lock, BarChart2, Activity } from "lucide-react";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -13,7 +13,6 @@ interface AdminStats {
     analisiAiCreate: number;
     analisiAiComplete: number;
     analisiAiError: number;
-    calcoliEffettuati: number;
     pdfExported: number;
     chatMessages: number;
     uploadPdf: number;
@@ -35,7 +34,6 @@ const EVENT_LABELS: Record<string, string> = {
   analisi_ai: "Analisi AI avviata",
   analisi_complete: "Analisi AI completata",
   analisi_error: "Analisi AI errore",
-  calcolo: "Calcolo indennità",
   pdf_export: "Export PDF",
   chat_message: "Messaggio chat",
   upload_pdf: "Upload PDF",
@@ -196,6 +194,7 @@ export default function Admin() {
   const [authenticated, setAuthenticated] = useState(false);
   const [checkingSession, setCheckingSession] = useState(true);
   const [totpRequired, setTotpRequired] = useState(false);
+  const [adminAvailable, setAdminAvailable] = useState(false);
   const [password, setPassword] = useState("");
   const [totp, setTotp] = useState("");
   const [loginError, setLoginError] = useState("");
@@ -203,15 +202,23 @@ export default function Admin() {
 
   useEffect(() => {
     Promise.all([
-      fetch("/api/admin/session", { credentials: "same-origin" }).then((res) => res.json()),
-      fetch("/api/admin/security-config", { credentials: "same-origin" }).then((res) => res.json()),
+      fetch("/api/admin/session", { credentials: "same-origin" }).then((res) => {
+        if (!res.ok) throw new Error("Sessione non verificabile");
+        return res.json();
+      }),
+      fetch("/api/admin/security-config", { credentials: "same-origin" }).then((res) => {
+        if (!res.ok) throw new Error("Configurazione non verificabile");
+        return res.json();
+      }),
     ])
       .then(([session, config]) => {
         setAuthenticated(session.authenticated === true);
         setTotpRequired(config.totpRequired === true);
+        setAdminAvailable(config.adminAvailable === true);
       })
       .catch(() => {
         setAuthenticated(false);
+        setAdminAvailable(false);
         setLoginError("Impossibile verificare la sessione. Riprova.");
       })
       .finally(() => setCheckingSession(false));
@@ -329,6 +336,22 @@ export default function Admin() {
           </div>
 
           <form onSubmit={handleLogin} style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+            {!adminAvailable && (
+              <div
+                role="alert"
+                style={{
+                  border: "2px solid #9a3412",
+                  background: "#fff7ed",
+                  color: "#7c2d12",
+                  padding: "10px 12px",
+                  fontFamily: "Inter, sans-serif",
+                  fontSize: 13,
+                  lineHeight: 1.5,
+                }}
+              >
+                Accesso sospeso in sicurezza: completa su Northflank password, segreto di sessione e TOTP.
+              </div>
+            )}
             <div>
               <label
                 style={{ fontFamily: "Inter, sans-serif", fontSize: 13, fontWeight: 600, color: "#2d2926", display: "block", marginBottom: 6 }}
@@ -338,6 +361,7 @@ export default function Admin() {
               <input
                 type="password"
                 required
+                disabled={!adminAvailable}
                 autoComplete="current-password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
@@ -372,6 +396,7 @@ export default function Admin() {
                   pattern="[0-9]{6}"
                   maxLength={6}
                   required
+                  disabled={!adminAvailable}
                   value={totp}
                   onChange={(e) => setTotp(e.target.value.replace(/\D/g, "").slice(0, 6))}
                   data-testid="input-admin-totp"
@@ -409,7 +434,7 @@ export default function Admin() {
 
             <button
               type="submit"
-              disabled={loginMutation.isPending}
+              disabled={!adminAvailable || loginMutation.isPending}
               data-testid="button-admin-login"
               style={{
                 background: "#c55a2b",
@@ -420,9 +445,9 @@ export default function Admin() {
                 fontFamily: "Space Grotesk, sans-serif",
                 fontSize: 15,
                 fontWeight: 700,
-                cursor: loginMutation.isPending ? "not-allowed" : "pointer",
+                cursor: !adminAvailable || loginMutation.isPending ? "not-allowed" : "pointer",
                 borderRadius: 0,
-                opacity: loginMutation.isPending ? 0.7 : 1,
+                opacity: !adminAvailable || loginMutation.isPending ? 0.7 : 1,
               }}
             >
               {loginMutation.isPending ? "Accesso in corso..." : "Accedi"}
@@ -572,11 +597,6 @@ export default function Admin() {
               marginBottom: 24,
             }}
           >
-            <StatCard
-              icon={Calculator}
-              label="Calcoli Indennità"
-              value={statsData.counters.calcoliEffettuati}
-            />
             <StatCard
               icon={FileText}
               label="PDF Esportati"

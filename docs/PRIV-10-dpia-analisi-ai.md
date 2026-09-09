@@ -50,7 +50,7 @@ valutato con lo stesso metro.
 | Dati in ingresso | Titolo, descrizione libera del caso, parti (nome, ruolo), documenti opzionali, valore della lite | Immagine/pagine del documento caricato |
 | Interessati | Le parti della controversia (spesso non l'utente che compila il modulo) | Il cliente/parte i cui documenti sono caricati |
 | Destinatario esterno | Anthropic (Claude), Google (Gemini in fallback) | Anthropic |
-| Base del trasferimento extra-UE | Clausole contrattuali standard (dichiarate in privacy policy) | idem |
+| Base del trasferimento extra-UE | Da verificare e documentare sul DPA/contratto applicabile, incluse eventuali clausole contrattuali standard | idem |
 | Minimizzazione applicata | Redazione preventiva (PRIV-08/PRIV-09): nomi delle parti e alcuni identificatori diretti (email, CF, IBAN, telefono) sostituiti con token prima dell'invio; ripristino dei valori reali solo sui risultati mostrati all'utente | Nessuna redazione preventiva: l'intero documento (spesso un'immagine) viene trasmesso |
 | Conservazione lato server | Fino a 30 giorni, poi cancellazione automatica (PRIV-09: job periodico indipendente dal traffico) | Il sito dichiara di non conservare ne' il file ne' i dati estratti |
 | Controllo umano sull'output | Dichiarato in piu' punti del sito come necessario, non tecnicamente imposto | Dichiarato come necessario prima dell'uso del fascicolo |
@@ -69,13 +69,13 @@ Punti a favore della proporzionalita' gia' presenti:
 
 Punti che richiedono una decisione esplicita del titolare:
 
-- Se la redazione preventiva sia una misura sufficiente per il livello di
-  rischio del trattamento, oppure se occorra un consenso/informativa specifici
-  raccolti dall'utente prima di usare lo strumento (oggi l'informativa e' solo
-  nella privacy policy generale, non un passaggio attivo di consenso legato
-  allo strumento).
-- Se serva raccogliere una dichiarazione dall'utente che attesti di avere
-  titolo per inserire i dati delle parti (che sono terzi) nello strumento.
+- Se la redazione preventiva e l'informativa immediata siano misure sufficienti
+  per il livello di rischio del trattamento. Il flusso richiede oggi una
+  conferma esplicita prima dell'invio, ma tale conferma non sostituisce la base
+  giuridica del trattamento né l'informativa dovuta agli interessati.
+- Se la dichiarazione oggi raccolta dall'utente, con cui attesta di avere titolo
+  per inserire i dati delle parti e di averli minimizzati, debba essere
+  differenziata per categorie di dati o casi particolarmente sensibili.
 
 ## Rischi per gli interessati (art. 35, § 7, lett. c) e misure (lett. d)
 
@@ -85,7 +85,7 @@ Punti che richiedono una decisione esplicita del titolare:
 | Accesso non autorizzato ai dati salvati lato server | Alta | Bassa dopo PRIV-09 (fix del controllo di accesso su `/api/analisi`) | Token di accesso casuale a 32 byte per analisi; autenticazione admin ora uniformata su verifyAdminToken | Rotazione periodica di ADMIN_SECRET/ADMIN_PASSWORD; log degli accessi admin |
 | Output AI errato o allucinato usato senza verifica (es. una bozza di accordo con clausole scorrette) | Alta (effetti legali reali) | Media | Disclaimer diffusi sul sito che richiedono verifica professionale | Nessuna misura tecnica impedisce oggi l'uso diretto dell'output; valutare un passaggio di conferma esplicita prima dell'export/uso del documento |
 | Conservazione dei dati oltre il dichiarato | Media | Bassa dopo PRIV-09 (job di retention reso indipendente dal traffico) | Cancellazione automatica ogni ora oltre i 30 giorni | Monitoraggio/alert se il job fallisce ripetutamente |
-| Trasferimento extra-UE senza base giuridica adeguata | Alta | Da verificare | Privacy policy dichiara le clausole contrattuali standard | Verificare che le SCC risultino effettivamente sottoscritte con Anthropic e Google (non verificabile dal codice) |
+| Trasferimento extra-UE senza garanzia adeguata | Alta | Da verificare | La privacy policy rinvia agli accordi e ai meccanismi applicabili senza attestare la sottoscrizione di SCC | Verificare e conservare DPA e garanzia applicabile, incluse eventuali SCC, per Anthropic e per Google se il fallback viene attivato |
 
 ## Consultazione (art. 35, § 9)
 
@@ -98,6 +98,7 @@ specialmente per i casi di mediazione familiare con minori coinvolti.
 Questo documento non contiene una conclusione sul livello di rischio residuo:
 quella valutazione, e l'eventuale decisione di consultare il Garante ex art.
 36 GDPR se il rischio residuo risultasse elevato, spetta al titolare. I punti
-aperti evidenziati sopra (consenso/informativa specifica per l'AI, verifica
-delle SCC sottoscritte, eventuale secondo livello di revisione umana) sono il
-punto di partenza suggerito per completare la valutazione.
+aperti evidenziati sopra (adeguatezza della conferma e dell'informativa
+immediata, verifica delle SCC sottoscritte, eventuale secondo livello di
+revisione umana) sono il punto di partenza suggerito per completare la
+valutazione.

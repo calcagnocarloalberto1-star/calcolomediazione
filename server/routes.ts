@@ -611,8 +611,27 @@ next();
 
 // ─── AUTENTICAZIONE ADMIN: sessione firmata in cookie HttpOnly ────────────
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "";
+const ADMIN_SECRET_CONFIGURED = Boolean(process.env.ADMIN_SECRET);
 const ADMIN_SECRET = process.env.ADMIN_SECRET || crypto.randomBytes(32).toString("hex");
 const ADMIN_TOTP_SECRET = (process.env.ADMIN_TOTP_SECRET || "").replace(/\s+/g, "").toUpperCase();
+const ADMIN_TOTP_REQUIRED = process.env.NODE_ENV === "production";
+const ADMIN_TOTP_VALID = (() => {
+  if (!ADMIN_TOTP_SECRET) return false;
+  try {
+    return decodeBase32(ADMIN_TOTP_SECRET).length >= 20;
+  } catch {
+    return false;
+  }
+})();
+const ADMIN_SECURITY_CONFIGURED =
+  Boolean(ADMIN_PASSWORD) &&
+  (ADMIN_TOTP_REQUIRED ? (
+    ADMIN_PASSWORD.length >= 16 &&
+    ADMIN_SECRET_CONFIGURED &&
+    ADMIN_TOTP_VALID
+  ) : (
+    !ADMIN_TOTP_SECRET || ADMIN_TOTP_VALID
+  ));
 if (!process.env.ADMIN_SECRET) {
   console.warn(
     "[ADMIN_SECRET] Variabile non impostata: generato un valore casuale solo per questo processo. " +
@@ -715,7 +734,7 @@ function totpAt(secret: string, counter: number): string {
 }
 
 function verifyTotp(code: string): boolean {
-  if (!ADMIN_TOTP_SECRET) return true;
+  if (!ADMIN_TOTP_VALID) return !ADMIN_TOTP_REQUIRED && !ADMIN_TOTP_SECRET;
   if (!/^\d{6}$/.test(code)) return false;
   try {
     const current = Math.floor(Date.now() / 30_000);
@@ -737,11 +756,8 @@ function verifyTotp(code: string): boolean {
   }
 }
 
-if (ADMIN_TOTP_SECRET) {
-  const decodedTotpSecret = decodeBase32(ADMIN_TOTP_SECRET);
-  if (decodedTotpSecret.length < 20) {
-    throw new Error("ADMIN_TOTP_SECRET deve contenere almeno 160 bit");
-  }
+if (ADMIN_TOTP_SECRET && !ADMIN_TOTP_VALID) {
+  console.error("[ADMIN_TOTP_SECRET] Configurazione non valida: area admin sospesa");
 }
 
 setInterval(() => {
@@ -878,14 +894,21 @@ app.get("/api/contatore-visite", async (_req, res) => { const totale = await get
 // e le inoltra a un Google Apps Script Web App (ERROR_LOG_WEBHOOK_URL).
 registerClientErrorRoute(app);
 
-// ─── ADMIN (password da env, cookie HttpOnly breve, TOTP opzionale) ───────
+// ─── ADMIN (password da env, cookie HttpOnly breve, TOTP obbligatorio in produzione) ───────
 app.get("/api/admin/security-config", (_req, res) => {
-res.json({ totpRequired: Boolean(ADMIN_TOTP_SECRET) });
+res.json({
+  totpRequired: ADMIN_TOTP_REQUIRED || Boolean(ADMIN_TOTP_SECRET),
+  totpConfigured: ADMIN_TOTP_VALID,
+  adminAvailable: ADMIN_SECURITY_CONFIGURED,
+});
 });
 
 app.post("/api/admin/login", loginRateLimit, (req, res) => {
 if (!ADMIN_PASSWORD) {
 return res.status(503).json({ error: "Area amministrativa non configurata." });
+}
+if (!ADMIN_SECURITY_CONFIGURED) {
+return res.status(503).json({ error: "Area amministrativa sospesa: completare password, segreto di sessione e secondo fattore." });
 }
 const pw = typeof req.body?.password === "string" ? req.body.password : "";
 const totp = typeof req.body?.totp === "string" ? req.body.totp : "";
@@ -1320,23 +1343,6 @@ res.json({ response: aiResponse, chatHistory: updated?.chatHistory || chatHistor
 console.error("Errore chat:", error);
 res.status(500).json({ error: "Errore nella risposta AI" });
 }
-});
-
-// ─── CALCOLI ──────────────────────────────────────────────────────────────
-app.post("/api/calcolo", async (req, res) => {
-try {
-const calcolo = await storage.createCalcolo(req.body);
-stats.track('calcolo');
-res.json(calcolo);
-} catch (error) {
-console.error("Errore salvataggio calcolo:", error);
-res.status(500).json({ error: "Errore nel salvataggio" });
-}
-});
-
-app.get("/api/calcoli", async (_req, res) => {
-const calcoli = await storage.getAllCalcoli();
-res.json(calcoli);
 });
 
 // ─── SEO ENDPOINTS ────────────────────────────────────────────────────────

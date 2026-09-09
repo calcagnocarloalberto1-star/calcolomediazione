@@ -14,6 +14,7 @@
     "db:push": "drizzle-kit push",
     "security:encrypt-legacy": "tsx script/encrypt-legacy-analyses.ts",
     "security:rollback-encryption": "tsx script/rollback-encrypted-analyses.ts",
+    "security:audit": "npm audit --omit=dev --audit-level=high",
     "test": "tsx server/security/data-protection.test.ts && tsx server/security/csp.test.ts && tsx shared/calcolo-indennita.test.ts && tsx shared/notarile.test.ts && tsx shared/valore-catastale.test.ts && tsx shared/sentenza-slug.test.ts"
   },
   "dependencies": {
@@ -70,7 +71,7 @@
     "lucide-react": "^0.453.0",
     "marked": "^17.0.4",
     "memorystore": "^1.6.7",
-    "multer": "^2.1.1",
+    "multer": "^2.3.0",
     "next-themes": "^0.4.6",
     "openai": "^6.32.0",
     "passport": "^0.7.0",
