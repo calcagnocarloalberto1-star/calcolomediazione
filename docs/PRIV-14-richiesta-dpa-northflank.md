@@ -1,8 +1,14 @@
 # PRIV-14 — Bozza richiesta DPA e informazioni privacy a Northflank
 
-Stato: bozza da approvare prima dell'invio
+Stato: inviata il 9 settembre 2026 alle 21:15 CEST
 
 Destinatario: legal@northflank.com
+
+Mittente: Carlo Alberto Calcagno
+
+Esito: messaggio accettato dal connettore Gmail e presente nella posta inviata.
+La risposta e gli eventuali allegati contrattuali dovranno essere conservati
+nell'archivio privacy riservato con data e versione.
 
 Oggetto: Request for GDPR Data Processing Agreement — CalcoloMediazione.it
 
