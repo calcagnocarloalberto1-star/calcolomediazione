@@ -19,7 +19,7 @@ export default function PrivacyPolicy() {
         </div>
 
         <div className="bg-card border-2 border-foreground shadow-[4px_4px_0px_0px] shadow-foreground/20 p-6 sm:p-8 space-y-7">
-          <p className="text-sm opacity-70">Ultimo aggiornamento: 8 settembre 2026</p>
+          <p className="text-sm opacity-70">Ultimo aggiornamento: 9 settembre 2026</p>
 
           <Section title="1. Titolare del trattamento">
             <p>Il titolare del trattamento è Carlo Alberto Calcagno, responsabile di CalcoloMediazione.it. Le richieste privacy possono essere inviate mediante i recapiti indicati nella pagina <Link href="/contatti"><span className="underline cursor-pointer text-primary">Contatti</span></Link>.</p>
@@ -64,7 +64,7 @@ export default function PrivacyPolicy() {
 
           <Section title="6. Destinatari e misure di sicurezza">
             <p>I dati possono essere trattati dai fornitori necessari all'hosting, al database, alla diagnostica tecnica e alle API IA, nei limiti delle funzioni utilizzate. Non sono venduti né diffusi.</p>
-            <p>Il sito usa HTTPS, cifratura applicativa autenticata AES-256-GCM per i contenuti delle nuove analisi conservate, token casuali memorizzati nel database soltanto in forma di hash SHA-256, risposte API non memorizzabili, cancellazione automatica, controlli di origine, limiti di frequenza e dimensione, validazione dei file e minimizzazione dei log. La chiave di cifratura è gestita separatamente dal database nell'ambiente protetto del servizio.</p>
+            <p>Il sito usa HTTPS, cifratura applicativa autenticata AES-256-GCM per i contenuti delle nuove analisi conservate, risposte API non memorizzabili, cancellazione automatica, controlli di origine, limiti di frequenza e dimensione, validazione dei file e minimizzazione dei log. Per i token casuali di accesso, la colonna usata per la verifica contiene un hash SHA-256; una copia recuperabile del token è inclusa nel payload cifrato dell'analisi per consentire le procedure controllate di migrazione e ripristino. La chiave di cifratura è gestita separatamente dal database nell'ambiente protetto del servizio.</p>
             <p>Nessuna misura elimina ogni rischio: l'utente deve proteggere il proprio dispositivo e non condividere il token di accesso. La cifratura applicativa protegge il contenuto memorizzato, ma non impedisce il trattamento temporaneo necessario sul server e presso il fornitore IA durante l'elaborazione richiesta.</p>
           </Section>
 

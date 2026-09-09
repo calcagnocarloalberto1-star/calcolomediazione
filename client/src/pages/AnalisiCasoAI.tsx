@@ -1097,7 +1097,10 @@ export default function AnalisiCasoAI() {
                   Descrizione, nominativi e testo estratto dai PDF sono inviati al fornitore IA configurato
                   per generare l'analisi. L'analisi completa resta sul server per un massimo di 30 giorni,
                   salvo cancellazione anticipata, con contenuto protetto mediante cifratura applicativa autenticata;
-                  il token necessario per riaprirla è conservato su questo dispositivo e nel database resta solo il relativo hash.
+                  il token necessario per riaprirla è conservato su questo
+                  dispositivo; nel database la colonna di verifica contiene
+                  il relativo hash e una copia recuperabile è protetta
+                  all'interno del payload cifrato dell'analisi.
                   Inserisci solo dati necessari e, quando possibile, usa sigle o pseudonimi.
                 </p>
                 <p>

@@ -8,7 +8,10 @@ Questo documento è una checklist operativa e una bozza organizzativa. Non costi
 ## Stato tecnico verificato
 
 - HTTPS, redirect HTTP, header di sicurezza e CSP con nonce sono attivi.
-- Le nuove analisi sono protette con AES-256-GCM; i token di accesso sono memorizzati come hash.
+- Le nuove analisi sono protette con AES-256-GCM. La colonna di verifica del
+  token contiene un hash; una copia recuperabile del token è conservata nel
+  payload cifrato, con chiave mantenuta separatamente dal database, per
+  consentire le procedure di migrazione e rollback.
 - `/api/health` verifica database e disponibilità di tutte le key ID necessarie a decifrare i payload.
 - Le analisi sono eliminate automaticamente dopo 30 giorni; gli upload AML sono elaborati in memoria e non sono archiviati come file.
 - Login, upload e funzioni IA hanno limiti di frequenza; i file sono limitati per numero e dimensione e verificati anche tramite firma binaria.
@@ -19,13 +22,18 @@ Questo documento è una checklist operativa e una bozza organizzativa. Non costi
 
 ## Attività obbligatorie prima del prossimo rilascio
 
-- [ ] Generare un segreto TOTP Base32 di almeno 160 bit.
-- [ ] Registrarlo in un'app di autenticazione su almeno un dispositivo controllato.
+- [x] Generare un segreto TOTP Base32 di almeno 160 bit.
+- [x] Registrarlo in un'app di autenticazione su almeno un dispositivo controllato.
 - [ ] Conservare il codice/QR di recupero in un gestore di password cifrato.
-- [ ] Aggiungere `ADMIN_TOTP_SECRET` ai secret runtime di Northflank.
+- [x] Aggiungere `ADMIN_TOTP_SECRET` ai secret runtime di Northflank.
 - [ ] Verificare che `ADMIN_PASSWORD`, `ADMIN_SECRET` e `DATA_ENCRYPTION_KEY` siano differenti, casuali e conservati anche fuori da Northflank.
-- [ ] Verificare che `GEMINI_PAID_SERVICE_ACKNOWLEDGED` resti `false` finché non è confermato un servizio commerciale coperto da DPA.
-- [ ] Creare un backup PostgreSQL e annotare data, regione, cifratura, retention e responsabile.
+- [ ] Verificare nel pannello Northflank che
+  `GEMINI_PAID_SERVICE_ACKNOWLEDGED` sia assente o diverso da `true` finché
+  non è confermato un servizio commerciale coperto da DPA. Il codice resta
+  fail-closed e non usa Gemini senza tale attestazione.
+- [ ] Completare il verbale del backup PostgreSQL con conferma Northflank
+  della cifratura, retention specifica del disk backup manuale e riferimenti
+  contrattuali. La creazione materiale del backup è riuscita.
 - [ ] Eseguire il restore in un database temporaneo isolato, senza collegarlo al dominio pubblico.
 - [ ] Eliminare il database temporaneo dopo aver verificato integrità e leggibilità.
 
@@ -36,18 +44,28 @@ Per ogni fornitore conservare PDF o copia datata di contratto, DPA, elenco subpr
 ### Northflank
 
 - Ottenere un DPA che disciplini espressamente Northflank come responsabile per workload, database, log e backup.
-- Chiedere regione effettiva di applicazione, database, control plane, log e backup; non presumere che “Europe” significhi SEE.
+- La regione applicativa e database verificata è Europe - West (London). Il
+  Regno Unito è coperto da decisione di adeguatezza UE rinnovata il 19
+  dicembre 2025; restano da verificare control plane, log, backup e
+  subprocessori.
 - Documentare subprocessori, notifiche di variazione, cancellazione alla cessazione, retention dei backup, RPO, RTO e procedura di restore.
 - Verificare accesso al Trust Center e documentazione SOC 2 Type 2.
-- Riferimenti: https://northflank.com/security e https://northflank.com/legal/privacy
+- Riferimenti: https://northflank.com/security,
+  https://northflank.com/legal/privacy e
+  https://commission.europa.eu/law/law-topic/data-protection/international-dimension-data-protection/adequacy-decisions_en
+- Evidenza e richiesta predisposta: `PRIV-12-verifica-fornitori-e-trasferimenti.md`
+  e `PRIV-14-richiesta-dpa-northflank.md`.
 
 ### Anthropic
 
-- Conservare Commercial Terms e DPA applicabili all'account API.
+- Il DPA con SCC è incorporato nei Commercial Terms applicabili all'API
+  commerciale; conservarne una copia datata.
 - Verificare SCC, subprocessori, misure tecniche e possibilità di zero data retention.
 - La documentazione pubblica indica per l'API commerciale cancellazione automatica di input e output entro 30 giorni, salvo eccezioni contrattuali, legali, di sicurezza o servizi con retention diversa.
 - I Commercial Terms dichiarano che Anthropic non addestra i modelli sui Customer Content dei servizi commerciali.
-- Riferimenti: https://www.anthropic.com/legal/commercial-terms e https://privacy.anthropic.com/en/articles/7996866-how-long-do-you-store-my-organization-s-data
+- Riferimenti: https://www.anthropic.com/legal/commercial-terms,
+  https://www.anthropic.com/legal/data-processing-addendum e
+  https://privacy.anthropic.com/en/articles/7996866-how-long-do-you-store-my-organization-s-data
 
 ### Google Gemini
 
@@ -60,21 +78,23 @@ Per ogni fornitore conservare PDF o copia datata di contratto, DPA, elenco subpr
 ## Registro dei trattamenti e DPIA
 
 - [ ] Approvare formalmente `PRIV-11-registro-trattamenti.md`, indicando finalità, base giuridica, categorie di interessati e dati, destinatari, trasferimenti, retention e misure.
-- [ ] Completare `PRIV-10-dpia-analisi-ai.md` includendo AML, dati giudiziari, eventuali dati ex art. 9, minori e interessati terzi.
+- [ ] Completare `PRIV-10-dpia-analisi-ai.md` includendo AML, dati giudiziari
+  ex art. 10, eventuali dati ex art. 9, minori e interessati terzi.
 - [ ] Documentare per ogni flusso chi può caricare dati, con quale titolo e con quale informativa agli interessati.
 - [ ] Vietare nelle istruzioni operative l'invio di dati non necessari; privilegiare anonimizzazione e pseudonimizzazione.
 - [ ] Definire un processo per accesso, rettifica, cancellazione, limitazione e opposizione con verifica dell'identità del richiedente.
 - [ ] Riesaminare DPIA e registro almeno annualmente e a ogni variazione di provider, modello, finalità o retention.
 
-## Retention approvata
+## Retention applicativa e condizioni ancora da approvare
 
 | Dato | Conservazione | Controllo |
 |---|---:|---|
 | Analisi AI salvate | massimo 30 giorni | cancellazione automatica oraria e prova trimestrale |
-| File PDF dell'Analisi AI | non archiviati come file; testo nel payload dell'analisi | test applicativo |
+| File PDF dell'Analisi AI | file e testo estratto non archiviati direttamente; descrizione e output derivati possono conservarne contenuti fino a 30 giorni | test applicativo |
 | File e risultati AML | elaborazione transitoria; nessun archivio server dell'app | test applicativo e verifica log |
-| Token analisi | hash nel database; token originale nel browser dell'utente | ispezione database |
+| Token analisi | hash nella colonna di verifica; copia recuperabile nel payload cifrato e copia nel browser dell'utente | ispezione database e key management |
 | Statistiche interne | totale aggregato nel DB; dettaglio pagina in memoria | revisione codice |
+| Diagnostica errori client | dati tecnici minimizzati nei log Northflank e, se configurato, webhook Google Apps Script | retention e DPA da verificare |
 | Log infrastrutturali e backup | da definire contrattualmente | pannello Northflank e DPA |
 | Dati presso provider IA | secondo contratto e configurazione commerciale | verifica DPA e account |
 
@@ -87,6 +107,10 @@ Per ogni fornitore conservare PDF o copia datata di contratto, DPA, elenco subpr
 5. Avviare una copia temporanea dell'app con dominio non pubblico e keyring corretto.
 6. Verificare conteggi, lettura di un record sintetico, cancellazione e `/api/health`.
 7. Registrare esito, durata, RPO/RTO osservati e anomalie; eliminare poi ambiente e copie temporanee.
+
+Il backup manuale precedente al rilascio, la pianificazione giornaliera e il
+rinvio motivato della prova di restore sono verbalizzati in
+`PRIV-13-verbale-backup-2026-09-09.md`.
 
 ## Procedura di risposta agli incidenti
 

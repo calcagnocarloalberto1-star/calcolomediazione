@@ -23,7 +23,11 @@ La sicurezza assoluta non può essere garantita da una revisione puntuale. La co
 - **Intervento:** lo storico conserva soltanto ID, stato, data e token necessario a riaprire o cancellare la pratica. Titoli, importi e nomi non sono più duplicati nel browser.
 - **Nota:** il token resta nel dispositivo fino alla cancellazione della pratica o dei dati del sito. Su postazioni condivise occorre eliminare lo storico al termine del lavoro.
 - **Cifratura applicativa:** le nuove analisi sono salvate in un payload autenticato AES-256-GCM; le colonne storiche sensibili restano vuote o contengono un marcatore non informativo.
-- **Token nel database:** i nuovi token di accesso sono memorizzati soltanto come hash SHA-256. I token preesistenti restano compatibili e vengono convertiti in hash al primo accesso o tramite la migrazione controllata.
+- **Token nel database:** la colonna usata per la verifica dei nuovi token di
+  accesso contiene soltanto un hash SHA-256. Una copia recuperabile del token
+  è inclusa nel payload cifrato AES-256-GCM per consentire migrazioni e
+  rollback controllati. I token preesistenti restano compatibili e vengono
+  convertiti tramite accesso o migrazione controllata.
 - **Area amministrativa:** il token Bearer leggibile da JavaScript è stato sostituito da un cookie HttpOnly, Secure in produzione e SameSite=Strict, con scadenza di 30 minuti e logout server-side. Il TOTP è obbligatorio in produzione; se `ADMIN_TOTP_SECRET` manca, l'area admin resta sospesa senza interrompere il sito pubblico.
 
 ### Flusso IA e documenti
