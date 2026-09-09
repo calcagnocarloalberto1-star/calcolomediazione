@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { Link } from "wouter";
 import { ArrowLeft, Brain, Target, Crosshair, ShieldAlert, Scale, Eye, Frame, Lightbulb, TrendingUp, BookOpen } from "lucide-react";
 import { SeoHead } from "@/components/SeoHead";
+import { applyCspNonce } from "@/lib/csp";
 import {
   Accordion,
   AccordionContent,
@@ -220,6 +221,7 @@ export default function StrategieNegoziazione() {
     };
     const script = document.createElement("script");
     script.type = "application/ld+json";
+    applyCspNonce(script);
     script.textContent = JSON.stringify(jsonLd);
     document.head.appendChild(script);
 

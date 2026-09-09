@@ -7,6 +7,7 @@
  */
 
 import { useEffect } from "react";
+import { applyCspNonce } from "@/lib/csp";
 
 interface SeoHeadProps {
   title: string;
@@ -129,6 +130,7 @@ export function SeoHead({
         scriptEl = document.createElement("script");
         scriptEl.type = "application/ld+json";
         scriptEl.id = JSONLD_ID;
+        applyCspNonce(scriptEl);
         document.head.appendChild(scriptEl);
       }
       scriptEl.textContent = JSON.stringify(jsonLd);

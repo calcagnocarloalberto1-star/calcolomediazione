@@ -21,6 +21,7 @@ import { registerClientErrorRoute } from "./client-errors.js";
 import { sentenze, ORGANI_GIUDIZIARI } from "../client/src/data/giurisprudenza-db.js";
 import { generaSlugSentenza, trovaSentenzaPerSlug, urlSentenza } from "../shared/sentenza-slug.js";
 import { buildSentenzaHtml, buildGiurisprudenzaSitemap } from "./sentenza-bot-html.js";
+import { injectCspNonce } from "./security/csp.js";
 import lastmodMap from "./lastmod-generated.json" with { type: "json" };
 
 const PDF_MIME = "application/pdf";
@@ -837,7 +838,7 @@ const html = buildSentenzaHtml(slug, siteUrl);
 if (html) {
 res.setHeader("Content-Type", "text/html; charset=utf-8");
 res.setHeader("X-Robots-Tag", "index, follow");
-return res.send(html);
+return res.send(injectCspNonce(html, res.locals.cspNonce));
 }
 // Slug ignoto: 404 esplicito con noindex
 res.setHeader("Content-Type", "text/html; charset=utf-8");
@@ -857,7 +858,7 @@ changefreq: "monthly",
 
 res.setHeader("Content-Type", "text/html; charset=utf-8");
 res.setHeader("X-Robots-Tag", "index, follow");
-res.send(buildBotHtml(page, siteUrl));
+res.send(injectCspNonce(buildBotHtml(page, siteUrl), res.locals.cspNonce));
 });
 
 // ─── TRACKING ─────────────────────────────────────────────────────────────

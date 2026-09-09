@@ -2,6 +2,7 @@ import express, { type Express } from "express";
 import fs from "fs";
 import path from "path";
 import { SEO_CONTENT } from "./seo-content.js";
+import { injectCspNonce } from "./security/csp.js";
 
 // SEO pages metadata
 const SEO_PAGES: Record<string, { title: string; description: string }> = {
@@ -108,8 +109,33 @@ export function serveStatic(app: Express) {
       html = html.replace('<div id="root"></div>', `<div id="root">${seoHtml}</div>`);
     }
     res.setHeader("Content-Type", "text/html");
-    res.send(html);
+    res.send(injectCspNonce(html, res.locals.cspNonce));
   });
+
+  // Evita che il file index.html venga servito direttamente senza
+  // l'iniezione del nonce effettuata dalle route HTML sottostanti.
+  app.get("/index.html", (_req, res) => {
+    res.redirect(308, "/");
+  });
+
+  // Anche i documenti HTML pubblici autonomi devono passare dal server:
+  // express.static li servirebbe direttamente, senza meta e attributi nonce.
+  const staticHtmlRoutes: Record<string, string> = {
+    "/antiriciclaggio.html": "antiriciclaggio.html",
+    "/antiriciclaggio-guida.html": "antiriciclaggio-guida.html",
+    "/calcolo-assegni/": "calcolo-assegni/index.html",
+    "/calcolo-assegni/index.html": "calcolo-assegni/index.html",
+  };
+  app.get(/^\/calcolo-assegni$/, (_req, res) => {
+    res.redirect(308, "/calcolo-assegni/");
+  });
+  for (const [route, relativeFile] of Object.entries(staticHtmlRoutes)) {
+    app.get(route, (_req, res) => {
+      const html = fs.readFileSync(path.resolve(distPath, relativeFile), "utf-8");
+      res.setHeader("Content-Type", "text/html; charset=utf-8");
+      res.send(injectCspNonce(html, res.locals.cspNonce));
+    });
+  }
 
   app.use(express.static(distPath));
 
@@ -174,6 +200,6 @@ export function serveStatic(app: Express) {
     }
 
     res.setHeader("Content-Type", "text/html");
-    res.send(html);
+    res.send(injectCspNonce(html, res.locals.cspNonce));
   });
 }

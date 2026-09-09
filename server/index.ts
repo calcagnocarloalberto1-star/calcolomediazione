@@ -3,6 +3,7 @@ import { registerRoutes } from "./routes";
 import { eliminaAnalisiScadute, storageReady, verifyStorageHealth } from "./storage";
 import { serveStatic } from "./static";
 import { createServer } from "http";
+import { buildContentSecurityPolicy, createCspNonce } from "./security/csp";
 
 const app = express();
 // Render inoltra il traffico attraverso un solo proxy. Limitare il trust al
@@ -13,45 +14,10 @@ app.set("trust proxy", 1);
 app.disable("x-powered-by");
 const httpServer = createServer(app);
 
-// PROPOSTA CSP/code-splitting (approvata): Content-Security-Policy in modalità
-// Report-Only, prima fase del rollout descritto in
-// docs/PROPOSTA-CSP-code-splitting.md. In questa modalità il browser NON blocca
-// nulla: registra solo in console eventuali violazioni, permettendo di
-// verificare per un periodo di osservazione che l'elenco di domini sia
-// completo prima di passare a un CSP effettivo (Content-Security-Policy). Domini
-// verificati nel codice sorgente: Google Fonts (style-src/font-src), Google
-// Analytics (script-src/connect-src, caricato solo dopo consenso cookie),
-// cdn.jsdelivr.net (script-src, libreria jsPDF nella pagina calcolo-assegni).
-// Le chiamate all'AI (Anthropic/Gemini) avvengono lato server, non dal
-// browser, quindi non richiedono voci qui. Lo script di bootstrap di Google
-// Analytics è stato spostato in un file esterno (/ga-bootstrap.js) così
-// script-src non necessita di 'unsafe-inline'.
-const CSP_REPORT_ONLY =
-  "default-src 'self'; " +
-  "script-src 'self' https://cdn.jsdelivr.net https://www.googletagmanager.com; " +
-  "script-src-attr 'none'; " +
-  "style-src 'self' https://fonts.googleapis.com 'unsafe-inline'; " +
-  "font-src 'self' https://fonts.gstatic.com; " +
-  "connect-src 'self' https://www.google-analytics.com https://region1.google-analytics.com; " +
-  "img-src 'self' data:; " +
-  "frame-src 'self'; " +
-  "object-src 'none'; " +
-  "base-uri 'self'; " +
-  "form-action 'self'";
-
-// Baseline applicata subito anche mentre la policy più restrittiva resta in
-// osservazione: blocca plugin, framing esterno, base URL e invii cross-origin
-// senza interferire con gli script JSON-LD dinamici usati per la SEO.
-const CSP_ENFORCED =
-  "object-src 'none'; " +
-  "script-src-attr 'none'; " +
-  "base-uri 'self'; " +
-  "frame-ancestors 'self'; " +
-  "form-action 'self'; " +
-  "upgrade-insecure-requests";
-
 // Header di sicurezza di base.
 app.use((_req, res, next) => {
+  const cspNonce = createCspNonce();
+  res.locals.cspNonce = cspNonce;
   res.setHeader("X-Content-Type-Options", "nosniff");
   res.setHeader("X-Frame-Options", "SAMEORIGIN");
   res.setHeader("Referrer-Policy", "strict-origin-when-cross-origin");
@@ -61,8 +27,7 @@ app.use((_req, res, next) => {
   res.setHeader("Cross-Origin-Resource-Policy", "same-site");
   res.setHeader("X-Permitted-Cross-Domain-Policies", "none");
   res.setHeader("Origin-Agent-Cluster", "?1");
-  res.setHeader("Content-Security-Policy", CSP_ENFORCED);
-  res.setHeader("Content-Security-Policy-Report-Only", CSP_REPORT_ONLY);
+  res.setHeader("Content-Security-Policy", buildContentSecurityPolicy(cspNonce));
   next();
 });
 

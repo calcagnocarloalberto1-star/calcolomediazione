@@ -18,6 +18,7 @@ import { ExportButtons } from "@/components/ExportButtons";
 import { SeoHead } from "@/components/SeoHead";
 import { DisclaimerLegale } from "@/components/DisclaimerLegale";
 import type { ReportData } from "@/lib/export-risultati";
+import { getCspNonce } from "@/lib/csp";
 
 function fmtEuro(n: number): string {
   return new Intl.NumberFormat("it-IT", {
@@ -148,6 +149,7 @@ export default function CostiNotarili() {
       {/* FAQPage schema.org - boost SERP visibility con FAQ rich result */}
       <script
         type="application/ld+json"
+        nonce={getCspNonce()}
         dangerouslySetInnerHTML={{
           __html: JSON.stringify({
             "@context": "https://schema.org",

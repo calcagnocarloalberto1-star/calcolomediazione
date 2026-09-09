@@ -81,6 +81,13 @@ export default function Antiriciclaggio() {
     const recorded: { target: Document | Window; type: string; listener: EventListenerOrEventListenerObject; options?: boolean | AddEventListenerOptions }[] = [];
     const origDocAdd = Document.prototype.addEventListener;
     const origWinAdd = Window.prototype.addEventListener;
+    let interceptionActive = true;
+    const restoreEventRegistration = () => {
+      if (!interceptionActive) return;
+      document.addEventListener = origDocAdd as typeof document.addEventListener;
+      window.addEventListener = origWinAdd as typeof window.addEventListener;
+      interceptionActive = false;
+    };
     document.addEventListener = function (type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions) {
       recorded.push({ target: document, type, listener, options });
       return origDocAdd.call(document, type, listener, options as AddEventListenerOptions);
@@ -100,24 +107,26 @@ export default function Antiriciclaggio() {
 
         const bodyStart = html.indexOf("<body>") + "<body>".length;
         const scriptOpenIdx = html.indexOf("<script", bodyStart);
-        const scriptOpenTagEnd = html.indexOf(">", scriptOpenIdx) + 1;
-        const scriptCloseIdx = html.lastIndexOf("</script>");
-        if (bodyStart <= 0 || scriptOpenIdx < 0 || scriptCloseIdx < 0) {
+        if (bodyStart <= 0 || scriptOpenIdx < 0) {
           throw new Error("Struttura HTML inattesa");
         }
 
         const markup = html.slice(bodyStart, scriptOpenIdx);
-        const scriptCode = html.slice(scriptOpenTagEnd, scriptCloseIdx);
-
         containerRef.current.innerHTML = markup;
 
-        const wrapped = "(function(){\n" + scriptCode + "\n})();";
-
         const scriptEl = document.createElement("script");
-        scriptEl.textContent = wrapped;
+        scriptEl.src = `/antiriciclaggio.js?v=${cacheBust}`;
+        scriptEl.async = false;
+        scriptEl.onload = restoreEventRegistration;
+        scriptEl.onerror = () => {
+          restoreEventRegistration();
+          console.error("Errore caricamento motore antiriciclaggio");
+          if (!cancelled) setError(true);
+        };
         containerRef.current.appendChild(scriptEl);
       })
       .catch((err) => {
+        restoreEventRegistration();
         console.error("Errore caricamento strumento antiriciclaggio:", err);
         if (!cancelled) setError(true);
       });
@@ -127,8 +136,7 @@ export default function Antiriciclaggio() {
       for (const { target, type, listener, options } of recorded) {
         target.removeEventListener(type, listener, options as EventListenerOptions);
       }
-      document.addEventListener = origDocAdd as typeof document.addEventListener;
-      window.addEventListener = origWinAdd as typeof window.addEventListener;
+      restoreEventRegistration();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

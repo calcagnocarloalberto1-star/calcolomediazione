@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { Link } from "wouter";
 import { HelpCircle, Euro, Brain, ArrowLeft, TrendingUp, Shield, FileText, Scale, AlertTriangle, CheckCircle, ExternalLink, Users } from "lucide-react";
 import { SeoHead } from "@/components/SeoHead";
+import { applyCspNonce } from "@/lib/csp";
 import {
   Accordion,
   AccordionContent,
@@ -294,6 +295,7 @@ export default function FAQ() {
     };
     const script = document.createElement("script");
     script.type = "application/ld+json";
+    applyCspNonce(script);
     script.textContent = JSON.stringify(jsonLd);
     script.id = "faq-jsonld";
     const existing = document.getElementById("faq-jsonld");
