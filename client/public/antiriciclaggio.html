@@ -1581,8 +1581,8 @@ const label = DOC_LABELS[documentoTarget] || "documento";
 const btnLabel = "Genera: " + label;
 azione.innerHTML =
 '<div class="row-btns" style="margin-top:0">'
-+ '<button class="btn-primary" type="button" onclick="generaSingolo(\''+documentoTarget+'\')">'+esc(btnLabel)+'</button>'
-+ '<button class="btn-ghost" type="button" onclick="scaricaSingolo(\''+documentoTarget+'\')">📄 Scarica (apri in Word)</button>'
++ '<button class="btn-primary" type="button" onclick="(window.__acEmbed||window).generaSingolo(\''+documentoTarget+'\')">'+esc(btnLabel)+'</button>'
++ '<button class="btn-ghost" type="button" onclick="(window.__acEmbed||window).scaricaSingolo(\''+documentoTarget+'\')">📄 Scarica (apri in Word)</button>'
 + '</div>';
 }
 
@@ -2039,7 +2039,7 @@ box.innerHTML = mediatoreLog.map((e,i)=>
 '<div style="border:1px solid #ddd6d1;border-radius:8px;padding:8px 10px;margin-bottom:6px;font-size:13px;background:#fff">'
 + '<div style="display:flex;justify-content:space-between;gap:8px;align-items:baseline">'
 + '<b>'+esc(e.data ? new Date(e.data).toLocaleDateString("it-IT") : "(senza data)")+'</b>'
-+ '<a href="#" onclick="rimuoviAggiornamento('+i+');return false;" style="color:#a03317;font-size:12px;text-decoration:none">Rimuovi</a>'
++ '<a href="#" onclick="(window.__acEmbed||window).rimuoviAggiornamento('+i+');return false;" style="color:#a03317;font-size:12px;text-decoration:none">Rimuovi</a>'
 + '</div><div style="margin-top:3px;white-space:pre-wrap">'+esc(e.testo)+'</div></div>'
 ).join("");
 }
@@ -2870,7 +2870,7 @@ const box = $("trigBox"); if(!box) return;
 box.innerHTML = TRIGGERS.map(tr =>
 '<div style="border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin:8px 0;background:#fff">'+
 '<div style="display:flex;align-items:flex-start;gap:10px">'+
-'<button type="button" id="tg_'+tr.id+'" onclick="toggleTrig(\''+tr.id+'\')" aria-label="'+tr.id+' — '+tr.t+': segnale presente?" style="flex:0 0 auto;border:1px solid var(--line);background:#fff;color:var(--muted);border-radius:8px;padding:6px 12px;font-weight:700;min-width:52px;cursor:pointer">No</button>'+
+'<button type="button" id="tg_'+tr.id+'" onclick="(window.__acEmbed||window).toggleTrig(\''+tr.id+'\')" aria-label="'+tr.id+' — '+tr.t+': segnale presente?" style="flex:0 0 auto;border:1px solid var(--line);background:#fff;color:var(--muted);border-radius:8px;padding:6px 12px;font-weight:700;min-width:52px;cursor:pointer">No</button>'+
 '<div style="flex:1"><b style="color:var(--navy)">'+tr.id+' · '+tr.t+'</b>'+
 '<div style="font-size:12.5px;color:var(--muted);margin-top:2px">'+tr.ex+'</div>'+
 '<input id="tn_'+tr.id+'" placeholder="dettaglio (facoltativo): cosa è emerso al tavolo" aria-label="'+tr.id+' — '+tr.t+': dettaglio facoltativo" style="margin-top:8px;display:none">'+
@@ -2908,7 +2908,7 @@ if(fired.length){
 html += '<div class="doc"><div class="dh">Trigger rilevati e mappatura UIF</div><div class="dc"><table>'+
 fired.map(t=>'<tr><td class="k">'+t.id+' · '+esc(t.t)+'</td><td>'+esc(t.ind)+'<br><span style="color:#9aa6b6">'+esc(t.forza)+'</span></td></tr>').join('')+'</table></div></div>';
 let mot = fired.map(t=>{ const note=esc(v("tn_"+t.id)); return '• '+(note? '['+note+'] ' : '')+t.mot; }).join('\n');
-html += '<div class="doc"><div class="dh">Bozza di motivazione tecnica per il RAR (da personalizzare)<div class="acts"><button class="btn-ghost" onclick="copyMot()">Copia</button></div></div><div class="dc"><p id="motText" style="white-space:pre-wrap;font-size:13px">'+mot+'</p>'+
+html += '<div class="doc"><div class="dh">Bozza di motivazione tecnica per il RAR (da personalizzare)<div class="acts"><button class="btn-ghost" onclick="(window.__acEmbed||window).copyMot()">Copia</button></div></div><div class="dc"><p id="motText" style="white-space:pre-wrap;font-size:13px">'+mot+'</p>'+
 '<p class="legalref">Testo orientativo basato sulle “motivazioni tipo” dell’Appendice UIF. La valutazione e l’eventuale SOS alla UIF spettano al RAR. Non comunicare alle parti (divieto di tipping-off, art. 39 D.Lgs. 231/2007).</p></div></div>';
 html += '<div class="note no-print"><b>Prossimo passo.</b> Sospendi la stesura dell’accordo se l’operazione sospetta sta per perfezionarsi (formula neutra: “necessità di approfondimento”), compila il Modulo SI-AML/01 subito dopo la sessione e trasmettilo al RAR sul canale riservato.</div>';
 }
