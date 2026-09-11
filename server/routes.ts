@@ -22,6 +22,12 @@ import { sentenze, ORGANI_GIUDIZIARI } from "../client/src/data/giurisprudenza-d
 import { generaSlugSentenza, trovaSentenzaPerSlug, urlSentenza } from "../shared/sentenza-slug.js";
 import { buildSentenzaHtml, buildGiurisprudenzaSitemap } from "./sentenza-bot-html.js";
 import { injectCspNonce } from "./security/csp.js";
+import {
+  isAmlAiEnabled,
+  isCaseAiEnabled,
+  requireAmlAiEnabled,
+  requireCaseAiEnabled,
+} from "./privacy-controls.js";
 import lastmodMap from "./lastmod-generated.json" with { type: "json" };
 
 const PDF_MIME = "application/pdf";
@@ -57,9 +63,9 @@ return false;
 const PRIMARY_URL = "https://calcolomediazione.it";
 
 const PAGES = [
-{ path: "/", title: "CalcoloMediazione — Calcolatore Indennità Mediazione Civile, Analisi AI e Confronto Costi", desc: "Piattaforma gratuita per avvocati e mediatori: calcolatore indennità D.M. 150/2023, analisi AI del caso, confronto costi mediazione vs processo su tre gradi di giudizio, stima costi notarili, credito d'imposta, generatore procura.", priority: "1.0", changefreq: "weekly" },
+{ path: "/", title: "CalcoloMediazione — Calcolatore Indennità Mediazione Civile e Strumenti ADR", desc: "Piattaforma gratuita per avvocati e mediatori: calcolatore indennità D.M. 150/2023, confronto costi, costi notarili, credito d'imposta e generatori di documenti. Le nuove analisi AI sono temporaneamente sospese.", priority: "1.0", changefreq: "weekly" },
 { path: "/calcolatore", title: "Calcolatore Indennità Mediazione D.M. 150/2023 — Tariffe Nazionali e COA Genova", desc: "Calcola le indennità di mediazione civile secondo il D.M. 150/2023: tariffe nazionali Tabella A e regolamento COA Genova. Spese di avvio, riduzioni art. 28, maggiorazioni art. 31, agevolazioni fiscali art. 17 D.Lgs. 28/2010.", priority: "0.9", changefreq: "monthly" },
-{ path: "/analisi-caso-ai", title: "Analisi AI del Caso di Mediazione con Confronto Economico", desc: "Analisi completa del caso di mediazione con intelligenza artificiale: analisi giuridica, MAAN/BATNA, bias cognitivi, bozza accordo, confronto economico primo grado, appello e cassazione con stima CTU, verifica congruità valore catastale.", priority: "0.9", changefreq: "monthly" },
+{ path: "/analisi-caso-ai", title: "Analisi AI del Caso di Mediazione — Funzione temporaneamente sospesa", desc: "Le nuove analisi, il caricamento dei PDF e la chat AI sono temporaneamente sospesi per il completamento delle verifiche privacy e contrattuali. Le analisi già create restano consultabili, esportabili e cancellabili con il relativo token.", priority: "0.9", changefreq: "monthly" },
 { path: "/confronto-costi", title: "Confronto Costi Mediazione vs Processo: Primo Grado, Appello, Cassazione", desc: "Confronta i costi della mediazione con quelli del processo su tre gradi di giudizio. Contributo unificato, compensi avvocato, CTU in appello, parametri forensi D.M. 55/2014 Tabelle 2, 12 e 13.", priority: "0.9", changefreq: "monthly" },
 { path: "/costi-notarili", title: "Calcola Costi Notarili Mediazione · CalcoloMediazione", desc: "Calcola i costi notarili per accordo di mediazione o sentenza: onorari, imposta di registro, ipotecaria, catastale e IVA. Esenzione art. 17 D.Lgs. 28/2010.", priority: "0.8", changefreq: "monthly" },
 { path: "/faq", title: "FAQ Mediazione Civile — Domande Frequenti D.M. 150/2023 e D.Lgs. 28/2010", desc: "Le risposte alle domande più frequenti sulla mediazione civile: indennità, primo incontro, materie obbligatorie, agevolazioni fiscali art. 17, credito d'imposta, art. 5-quater (mediazione demandata).", priority: "0.7", changefreq: "monthly" },
@@ -79,7 +85,7 @@ const PAGES = [
 { path: "/glossario", title: "Glossario della Mediazione Civile", desc: "Glossario completo dei termini utilizzati nella mediazione civile e commerciale. Definizioni chiare e riferimenti normativi.", priority: "0.5", changefreq: "monthly" },
 { path: "/chi-siamo", title: "Chi Siamo - CalcoloMediazione", desc: "Scopri il team dietro CalcoloMediazione, la piattaforma professionale per mediatori civili e commerciali.", priority: "0.4", changefreq: "yearly" },
 { path: "/contatti", title: "Contatti - CalcoloMediazione", desc: "Contatta il team di CalcoloMediazione per informazioni, supporto tecnico e collaborazioni.", priority: "0.4", changefreq: "yearly" },
-{ path: "/antiriciclaggio", title: "Antiriciclaggio in Mediazione — Obblighi e Modelli per Avvocati e Organismi", desc: "Guida agli obblighi antiriciclaggio in mediazione (D.Lgs. 231/2007) e compilazione automatica dei modelli del fascicolo: adeguata verifica, titolare effettivo, scheda di rischio, segnalazione operazioni sospette.", priority: "0.7", changefreq: "monthly" },
+{ path: "/antiriciclaggio", title: "Antiriciclaggio in Mediazione — Obblighi e Modelli per Avvocati e Organismi", desc: "Guida agli obblighi antiriciclaggio in mediazione (D.Lgs. 231/2007) e compilazione locale dei modelli del fascicolo: adeguata verifica, titolare effettivo, scheda di rischio e operazioni sospette. L'assistente AI sui documenti è sospeso.", priority: "0.7", changefreq: "monthly" },
 { path: "/antiriciclaggio-guida", title: "Antiriciclaggio in Mediazione — Guida agli obblighi e alla compilazione", desc: "Due guide in una: gli obblighi antiriciclaggio in mediazione in linguaggio semplice (chi è obbligato, adeguata verifica, fascicolo, operazioni sospette) e la guida pratica alla compilazione dello strumento, passo per passo.", priority: "0.6", changefreq: "monthly" },
 { path: "/trasferimento-immobiliare-mediazione", title: "Trasferimento Immobiliare in Mediazione: Quanto si Risparmia (Guida)", desc: "Trasferimento immobiliare in mediazione: imposta di registro esente fino a €100.000, quando serve il notaio, quanto si risparmia sulla prima casa rispetto alla compravendita ordinaria. Guida con esempi di calcolo.", priority: "0.6", changefreq: "monthly" },
 { path: "/privacy-policy", title: "Privacy Policy — CalcoloMediazione", desc: "Informativa sul trattamento dei dati personali di CalcoloMediazione.it: titolare del trattamento, dati raccolti, finalità e modalità di utilizzo, diritti dell'utente ai sensi del GDPR (Regolamento UE 2016/679).", priority: "0.3", changefreq: "yearly" },
@@ -104,18 +110,18 @@ return BOT_UA_REGEX.test(userAgent);
 const PAGE_CONTENT: Record<string, string> = {
 "/": `
 <h1>CalcoloMediazione - Calcolatore Indennità Mediazione Civile</h1>
-<p>Piattaforma professionale gratuita per la mediazione civile ai sensi del D.M. 150/2023. Analisi AI del caso, confronto economico su tre gradi di giudizio, calcolatore indennità e generatore documenti.</p>
+<p>Piattaforma professionale gratuita per la mediazione civile ai sensi del D.M. 150/2023: confronto economico su tre gradi di giudizio, calcolatore indennità e generatori di documenti. Le nuove Analisi AI sono temporaneamente sospese.</p>
 <h2>Strumenti disponibili</h2>
 <ul>
 <li><a href="/calcolatore">Calcolatore Indennità Mediazione D.M. 150/2023</a> - Calcola spese di avvio, indennità, compensi avvocato, costi notarili con esenzione prima casa</li>
-<li><a href="/analisi-caso-ai">Analisi AI del Caso di Mediazione</a> - Analisi giuridica completa, MAAN/BATNA, bias cognitivi, bozza accordo, confronto economico</li>
+<li><a href="/analisi-caso-ai">Analisi AI del Caso di Mediazione</a> - Nuove analisi, upload e chat temporaneamente sospesi; le analisi già create restano consultabili, esportabili e cancellabili</li>
 <li><a href="/confronto-costi">Confronto Costi Mediazione vs Processo</a> - Primo grado, appello e cassazione con stima CTU e parametri forensi D.M. 55/2014</li>
 <li><a href="/costi-notarili">Costi Notarili</a> - Stima dei puri costi notarili: onorario, IVA, cassa, visure, imposte di registro/ipotecaria/catastale</li>
 <li><a href="/generatore-procura">Generatore Procura Speciale per Mediazione</a> - Conforme al D.Lgs. 28/2010</li>
 <li><a href="/giurisprudenza">Database Giurisprudenza Mediazione</a> - Sentenze di Cassazione, Tribunali e Corti d'Appello</li>
 <li><a href="/credito-imposta">Credito d'Imposta e Gratuito Patrocinio</a> - Art. 20 D.Lgs. 28/2010</li>
 <li><a href="/strategie-negoziazione">Strategie di Negoziazione</a> - MAAN/BATNA, negoziazione integrativa, ZOPA</li>
-<li><a href="/antiriciclaggio">Antiriciclaggio in Mediazione</a> - Obblighi antiriciclaggio (D.Lgs. 231/2007) e compilazione automatica dei modelli del fascicolo: adeguata verifica, titolare effettivo, scheda rischio, dichiarazione cliente e SOS</li>
+<li><a href="/antiriciclaggio">Antiriciclaggio in Mediazione</a> - Obblighi antiriciclaggio (D.Lgs. 231/2007) e compilazione manuale locale dei modelli del fascicolo; l'assistente AI sui documenti è sospeso</li>
 <li><a href="/antiriciclaggio-guida">Antiriciclaggio - Guida agli obblighi e alla compilazione</a> - Chi è obbligato, adeguata verifica, fascicolo, operazioni sospette, e come si compila lo strumento</li>
 <li><a href="/calcolo-assegni">Calcolo Assegni</a> - Stima orientativa dell'assegno di mantenimento del coniuge, dell'assegno divorzile e del contributo per i figli</li>
 </ul>
@@ -182,20 +188,15 @@ const PAGE_CONTENT: Record<string, string> = {
 
 "/analisi-caso-ai": `
 <h1>Analisi AI del Caso di Mediazione</h1>
-<p>Analisi completa del caso di mediazione con intelligenza artificiale: dalla estrazione delle entità all'analisi giuridica, dal MAAN/BATNA alla bozza di accordo.</p>
-<h2>Fasi dell'analisi</h2>
+<p>La creazione di nuove analisi, il caricamento dei PDF e la chat AI sono temporaneamente sospesi per completare le verifiche privacy e contrattuali. Non inserire dati o documenti di pratiche reali.</p>
+<h2>Analisi già create</h2>
 <ul>
-<li>Estrazione entità (NER): parti, fatti, valore della lite, materia</li>
-<li>Analisi giuridica: inquadramento normativo, giurisprudenza rilevante</li>
-<li>Guida strategica: tecniche di mediazione, gestione del caucus</li>
-<li>Analisi MAAN/BATNA: alternative disponibili, zona di possibile accordo (ZOPA)</li>
-<li>Compatibilità degli interessi: interessi sottostanti alle posizioni</li>
-<li>Controllo bias cognitivi: ancoraggio, avversione alla perdita, overconfidence</li>
-<li>Bozza di accordo: schema di accordo in mediazione</li>
-<li>Analisi economica comparativa: mediazione vs causa su tre gradi di giudizio</li>
+<li>Restano consultabili mediante il relativo token di accesso.</li>
+<li>Possono essere esportate o cancellate prima della scadenza.</li>
+<li>La conservazione massima dichiarata resta di 30 giorni.</li>
 </ul>
-<h2>Esportazione PDF</h2>
-<p>L'analisi completa può essere esportata in formato PDF professionale, con possibilità di anonimizzazione delle parti.</p>`,
+<h2>Condizioni per la riattivazione</h2>
+<p>La funzione potrà essere riattivata soltanto dopo la definizione e approvazione delle basi giuridiche, degli obblighi informativi, della valutazione d'impatto e della copertura contrattuale dell'account del fornitore effettivamente utilizzato.</p>`,
 
 "/confronto-costi": `
 <h1>Confronto Costi Mediazione vs Processo Civile</h1>
@@ -419,9 +420,9 @@ const PAGE_CONTENT: Record<string, string> = {
 
 "/antiriciclaggio": `
 <h1>Antiriciclaggio in Mediazione — Obblighi e Modelli per Avvocati e Organismi</h1>
-<p>Guida agli obblighi antiriciclaggio nella mediazione civile (D.Lgs. 231/2007) e compilazione automatica dei modelli del fascicolo riservato, per avvocati, mediatori e Organismi di mediazione.</p>
+<p>Guida agli obblighi antiriciclaggio nella mediazione civile (D.Lgs. 231/2007) e compilazione manuale locale dei modelli del fascicolo riservato, per avvocati, mediatori e Organismi di mediazione.</p>
 <h2>Chi è obbligato</h2>
-<p>Ricadono negli obblighi antiriciclaggio in mediazione: l'Organismo di mediazione (soggetto obbligato principale ex art. 3, c. 5, lett. g, D.Lgs. 231/2007), il mediatore designato, l'avvocato che assiste una parte (di regola esente, salvo operazioni economiche autonome ex art. 3, c. 4, lett. c), la negoziazione assistita, gli OCC e il gestore della crisi da sovraindebitamento.</p>
+<p>L'applicazione degli obblighi antiriciclaggio in mediazione dipende dalla qualifica del soggetto, dall'incarico, dall'operazione concreta e dalle procedure adottate. Organismo, mediatore e avvocato devono verificare separatamente il proprio inquadramento ai sensi del D.Lgs. 231/2007; questa guida non attribuisce automaticamente obblighi o responsabilita.</p>
 <h2>I sei obblighi principali</h2>
 <ul>
 <li>Adeguata verifica della clientela (artt. 17-19 D.Lgs. 231/2007)</li>
@@ -431,28 +432,28 @@ const PAGE_CONTENT: Record<string, string> = {
 <li>Autovalutazione e scheda di rischio per ogni pratica (art. 15)</li>
 <li>Formazione e presidi interni</li>
 </ul>
-<h2>Compilazione automatica dei modelli</h2>
-<p>Lo strumento genera automaticamente i modelli del fascicolo riservato (informativa, modulo di adeguata verifica, scheda di valutazione del rischio, dichiarazione del cliente, foglio di annotazione, checklist) a partire dai dati inseriti, con una modalità di lettura assistita dei documenti (documento d'identità, visura camerale, istanza di mediazione) e un motore trigger per i sette segnali di anomalia UIF.</p>`,
+<h2>Compilazione locale dei modelli</h2>
+<p>Lo strumento genera i modelli del fascicolo riservato a partire dai dati inseriti manualmente nel browser e offre un motore locale per i sette segnali di anomalia UIF. L'assistente AI per la lettura dei documenti è sospeso e i relativi endpoint non accettano caricamenti.</p>`,
 
 "/antiriciclaggio-guida": `
 <h1>Antiriciclaggio in mediazione — guida agli obblighi e alla compilazione</h1>
-<p>Due guide in una: la Parte 1 spiega in linguaggio semplice gli obblighi antiriciclaggio per mediatori, Organismi di mediazione e avvocati (D.Lgs. 231/2007); la Parte 2 spiega passo per passo come si compila lo strumento che genera i modelli del fascicolo. Devi solo generare un documento? Vai direttamente al <a href="/antiriciclaggio.html">generatore dei documenti antiriciclaggio</a>.</p>
+<p>Due guide in una: la Parte 1 illustra in linguaggio semplice i possibili obblighi antiriciclaggio nel contesto della mediazione, da verificare secondo qualifica, incarico e operazione concreta; la Parte 2 spiega come compilare manualmente i modelli. Devi solo generare un documento? Vai direttamente al <a href="/antiriciclaggio.html">generatore dei documenti antiriciclaggio</a>.</p>
 <h2>Parte 1 — Guida agli obblighi di legge</h2>
 <h3>Chi è obbligato, e chi no</h3>
-<p>L'Organismo di mediazione e il mediatore designato sono soggetti obbligati ai sensi dell'art. 3, c. 5, lett. g), D.Lgs. 231/2007. L'avvocato che assiste o difende una parte in mediazione è invece escluso dagli obblighi, poiché l'attività difensiva non rientra nel perimetro della norma (Regola Tecnica n. 2 CNF; art. 35, c. 5, D.Lgs. 231/2007), salvo che l'incarico sfoci in un'operazione economica autonoma tipica dell'art. 3, c. 4, lett. c).</p>
+<p>I compiti effettivi dipendono dall'inquadramento normativo, dall'organizzazione e dalle deleghe interne. Organismo, mediatore e avvocato devono verificare il proprio caso concreto; la mera partecipazione alla mediazione non consente a questa guida di concludere automaticamente per inclusione, esclusione o riparto delle responsabilita.</p>
 <h3>L'adeguata verifica della clientela</h3>
 <p>Identificazione della parte, individuazione del titolare effettivo, verifica dell'eventuale qualifica di persona politicamente esposta (PEP), valutazione del rischio della pratica e applicazione delle misure semplificata, ordinaria o rafforzata in base al rischio rilevato.</p>
 <h3>Il fascicolo: i documenti da produrre e conservare</h3>
 <p>Il fascicolo riservato va conservato per 10 anni ai sensi degli artt. 31-32 D.Lgs. 231/2007.</p>
 <h3>Riconoscere un'operazione sospetta</h3>
-<p>Se emergono indicatori di anomalia (tra cui i sette segnali individuati dalla UIF), il mediatore valuta la trasmissione al Responsabile Antiriciclaggio dell'Organismo. Il livello di rischio e l'eventuale segnalazione non vanno mai riportati nel verbale di mediazione, che resta un atto conoscibile dalle parti: restano solo nel fascicolo riservato.</p>
+<p>Se emergono indicatori di anomalia, valutazione, documentazione ed eventuale trasmissione interna seguono l'inquadramento applicabile, le deleghe e le procedure del soggetto obbligato. Questa guida non assegna tali compiti al mediatore. Le informazioni riservate non devono essere inserite nel verbale conoscibile dalle parti.</p>
 <h3>Come si traduce in pratica</h3>
-<p>La Parte 2 di questa guida spiega come compilare lo strumento che genera automaticamente i documenti del fascicolo a partire da questi obblighi.</p>
+<p>La Parte 2 di questa guida spiega come inserire manualmente i dati e generare localmente i documenti del fascicolo a partire da questi obblighi.</p>
 <h2>Parte 2 — Guida alla compilazione dello strumento</h2>
 <p>calcolomediazione.it mette a disposizione uno strumento gratuito che genera i documenti del fascicolo riservato (informativa, modulo di adeguata verifica, scheda di valutazione del rischio, dichiarazione del cliente, foglio di annotazione, checklist), con un selettore iniziale per scegliere subito il singolo documento da predisporre e con guida passo per passo alla compilazione per Organismo, mediatore e avvocato di parte.</p>
 <h3>Domande frequenti</h3>
 <p><strong>Posso generare solo un documento, senza tutto il fascicolo?</strong> Sì: scegliendo il documento nel selettore in cima alla pagina dello strumento, si ottiene un solo pulsante di generazione per quel documento; il fascicolo completo resta un'opzione avanzata.</p>
-<p><strong>I dati inseriti vengono inviati a calcolomediazione.it?</strong> Mai: tutto resta nel browser (localStorage), salvo la modalità facoltativa con assistente AI.</p>
+<p><strong>I dati inseriti vengono inviati a calcolomediazione.it?</strong> Nella compilazione manuale attualmente disponibile, no: i dati restano nel browser (localStorage). L'assistente AI sui documenti è sospeso e i relativi endpoint rifiutano i caricamenti.</p>
 <h3>Altre risorse del sito</h3>
 <ul>
 <li><a href="/generatore-procura">Generatore di procure per la mediazione</a></li>
@@ -469,7 +470,7 @@ const PAGE_CONTENT: Record<string, string> = {
 <h2>Dati trattati e statistiche</h2>
 <p>Il server riceve i dati tecnici necessari alla connessione e alla sicurezza. Le statistiche interne non conservano IP o user-agent: il totale complessivo delle visualizzazioni è memorizzato nel database come solo numero aggregato, mentre il dettaglio per pagina resta volatile in memoria.</p>
 <h2>Servizi di intelligenza artificiale</h2>
-<p>Le funzioni IA possono trattare titolo, descrizione, parti, parametri economici, testo estratto dai PDF, risultati e messaggi della chat. I contenuti sono trasmessi ad Anthropic Claude e, solo se configurato in un ambiente commerciale idoneo, a Google Gemini. Il professionista deve verificare base giuridica, informativa, minimizzazione e condizioni contrattuali applicabili.</p>
+<p>La creazione di nuove Analisi AI, il caricamento dei documenti e la chat sono temporaneamente sospesi; il server rifiuta le relative richieste prima di leggerne o decodificarne il corpo. In caso di futura riattivazione, da subordinare alle verifiche giuridiche e contrattuali, le funzioni IA potrebbero trattare titolo, descrizione, parti, parametri economici, testo estratto dai PDF, risultati e messaggi della chat tramite Anthropic Claude e, soltanto se abilitato in un ambiente commerciale idoneo, Google Gemini.</p>
 <h2>Conservazione e sicurezza</h2>
 <p>Le analisi del caso sono conservate per un massimo di 30 giorni e possono essere eliminate prima mediante il token segreto. Il sito usa HTTPS, risposte API non memorizzabili, controlli di origine, limiti di frequenza e dimensione e validazione dei file.</p>
 <h2>Diritti</h2>
@@ -489,7 +490,7 @@ const PAGE_CONTENT: Record<string, string> = {
 <h1>Termini e Condizioni — CalcoloMediazione</h1>
 <p>Termini e condizioni d'uso di CalcoloMediazione.it: descrizione dei servizi gratuiti offerti, natura indicativa dei risultati dei calcolatori e limitazioni di responsabilità.</p>
 <h2>Descrizione del servizio</h2>
-<p>CalcoloMediazione.it offre gratuitamente: calcolatore delle indennità di mediazione ai sensi del D.M. 150/2023, confronto costi tra mediazione e processo civile, analisi AI dei casi di mediazione, esportazione PDF dei risultati e risorse informative sulla mediazione civile e commerciale.</p>
+<p>CalcoloMediazione.it offre gratuitamente calcolatori, confronto costi, esportazione dei risultati e risorse informative sulla mediazione civile e commerciale. La creazione di nuove Analisi AI è temporaneamente sospesa; restano disponibili consultazione, esportazione e cancellazione delle analisi già create.</p>
 <h2>Natura indicativa dei risultati</h2>
 <p>I calcoli, le analisi e le informazioni fornite hanno carattere indicativo e informativo e non costituiscono consulenza legale, fiscale o professionale. Per calcoli personalizzati è necessario rivolgersi a un professionista qualificato.</p>
 <h2>Proprietà intellettuale e riserva di estrazione di testo e dati</h2>
@@ -942,7 +943,14 @@ res.json(stats.getStats());
 
 // ─── ANALISI AI ───────────────────────────────────────────────────────────
 
-app.post("/api/upload-pdf", uploadRateLimit, uploadPdf.array("files", 10), async (req, res) => {
+app.get("/api/privacy-controls", (_req, res) => {
+res.json({
+caseAiEnabled: isCaseAiEnabled(),
+amlAiEnabled: isAmlAiEnabled(),
+});
+});
+
+app.post("/api/upload-pdf", uploadRateLimit, requireCaseAiEnabled, uploadPdf.array("files", 10), async (req, res) => {
 try {
 const files = req.files as Express.Multer.File[];
 if (!files || files.length === 0) {
@@ -998,7 +1006,7 @@ return { documenti, scartati };
 }
 
 // ─── ESTRAZIONE AI DA DOCUMENTO (tool antiriciclaggio, modalita' alta precisione) ─
-app.post("/api/aml-extract", aiRateLimit, uploadAml.array("files", 10), async (req, res) => {
+app.post("/api/aml-extract", aiRateLimit, requireAmlAiEnabled, uploadAml.array("files", 10), async (req, res) => {
 try {
 const files = ((req as any).files as Array<{ buffer: Buffer; mimetype: string; originalname?: string }>) || [];
 const doctype = (req.body?.doctype || "id").toString();
@@ -1021,7 +1029,7 @@ res.status(500).json({ error: "Errore durante l'estrazione AI." });
 });
 
 // ─── ASSISTENTE AI DI COMPILAZIONE (tool antiriciclaggio, piu' documenti + richiesta libera) ─
-app.post("/api/aml-assist", aiRateLimit, uploadAml.array("files", 10), async (req, res) => {
+app.post("/api/aml-assist", aiRateLimit, requireAmlAiEnabled, uploadAml.array("files", 10), async (req, res) => {
 try {
 const files = ((req as any).files as Array<{ buffer: Buffer; mimetype: string; originalname?: string }>) || [];
 const richiesta = (req.body?.richiesta || "").toString().slice(0, 4000);
@@ -1098,7 +1106,7 @@ res.status(500).json({ error: (e && e.message) ? e.message : "Errore dell'assist
 }
 });
 
-app.post("/api/analisi", aiRateLimit, async (req, res) => {
+app.post("/api/analisi", aiRateLimit, requireCaseAiEnabled, async (req, res) => {
 try {
 const {
 titolo, descrizione, tipoAnalisi, modalitaTariffaria, valoreLite, tipoValore, parti,
@@ -1196,7 +1204,7 @@ res.json(analisi);
 
 // GET /api/analisi/:id — richiede X-Access-Token
 app.get("/api/analisi/:id", async (req, res) => {
-const id = parseInt(req.params.id);
+    const id = parseInt(String(req.params.id), 10);
 const accessToken = req.headers["x-access-token"] as string | undefined;
 if (!accessToken) {
 return res.status(401).json({ error: "Token di accesso mancante" });
@@ -1211,7 +1219,7 @@ res.json(analisi);
 // GET /api/analisi/:id/pdf — richiede X-Access-Token
 app.get("/api/analisi/:id/pdf", async (req, res) => {
 try {
-const id = parseInt(req.params.id);
+const id = parseInt(String(req.params.id), 10);
 const accessToken = req.headers["x-access-token"] as string | undefined;
 if (!accessToken) {
 return res.status(401).json({ error: "Token di accesso mancante" });
@@ -1278,7 +1286,7 @@ res.status(500).json({ error: "Errore nella generazione del PDF" });
 });
 
 app.delete("/api/analisi/:id", async (req, res) => {
-const id = parseInt(req.params.id);
+const id = parseInt(String(req.params.id), 10);
 const accessToken = req.headers["x-access-token"] as string | undefined;
 if (!Number.isSafeInteger(id) || !accessToken || !/^[a-f0-9]{32}$|^[a-f0-9]{64}$/i.test(accessToken)) {
 return res.status(401).json({ error: "Token di accesso mancante o non valido" });
@@ -1288,9 +1296,9 @@ if (!deleted) return res.status(404).json({ error: "Analisi non trovata o access
 res.json({ success: true });
 });
 
-app.post("/api/analisi/:id/chat", aiRateLimit, async (req, res) => {
+app.post("/api/analisi/:id/chat", aiRateLimit, requireCaseAiEnabled, async (req, res) => {
 try {
-const id = parseInt(req.params.id);
+const id = parseInt(String(req.params.id), 10);
 const { message } = req.body;
 const accessToken = req.headers["x-access-token"] as string | undefined;
 if (!accessToken) {
@@ -1405,10 +1413,10 @@ const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" v
 <rect width="1200" height="8" fill="#c55a2b"/>
 <rect x="60" y="50" width="1080" height="530" fill="none" stroke="#2d2926" stroke-width="4"/>
 <text x="100" y="150" font-family="sans-serif" font-weight="bold" font-size="60" fill="#2d2926">CalcoloMediazione</text>
-<text x="100" y="215" font-family="sans-serif" font-weight="bold" font-size="34" fill="#c55a2b">Mediazione e Negoziazione con AI</text>
+<text x="100" y="215" font-family="sans-serif" font-weight="bold" font-size="34" fill="#c55a2b">Strumenti per Mediazione e Negoziazione</text>
 <rect x="100" y="240" width="200" height="4" fill="#2d2926"/>
 <text font-family="sans-serif" font-size="24" fill="#2d2926">
-<tspan x="100" y="300">&#x2666; Analisi AI del caso</tspan>
+<tspan x="100" y="300">&#x2666; Analisi AI temporaneamente sospesa</tspan>
 <tspan x="100" y="340">&#x2666; Confronto costi su 3 gradi</tspan>
 <tspan x="100" y="380">&#x2666; Calcolatore indennita</tspan>
 <tspan x="620" y="300">&#x2666; Generatore procura</tspan>

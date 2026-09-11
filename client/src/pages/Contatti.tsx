@@ -93,7 +93,7 @@ export default function Contatti() {
               <ul className="space-y-3">
                 <SuggestionItem title="Errori di calcolo" description="Se riscontri imprecisioni nei calcoli delle indennità o nei confronti economici" />
                 <SuggestionItem title="Aggiornamenti normativi" description="Se sei a conoscenza di modifiche legislative non ancora recepite" />
-                <SuggestionItem title="Nuove funzionalità" description="Se hai idee per migliorare il calcolatore o l'analisi AI" />
+                <SuggestionItem title="Nuove funzionalità" description="Se hai idee per migliorare i calcolatori o le funzioni disponibili e sospese" />
                 <SuggestionItem title="Problemi tecnici" description="Se riscontri bug, errori di visualizzazione o problemi di navigazione" />
               </ul>
             </div>

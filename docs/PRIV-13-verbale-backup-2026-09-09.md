@@ -26,8 +26,9 @@ Data: 9 settembre 2026
   9 settembre 2026; impronta SHA-256 da registrare nell'archivio riservato
   prima dell'approvazione del verbale. Nessuna credenziale è riportata nel
   repository
-- Cifratura del backup: non verificata su documentazione contrattuale
-- Retention specifica del disk backup manuale: non verificata
+- Cifratura, ubicazione e retention: documentazione Trust Center verificata
+  dal titolare il 10 settembre 2026 e conservata nell'archivio riservato;
+  dettagli contrattuali non riprodotti nel repository pubblico
 - Finalità: punto di recupero precedente al rilascio del commit di hardening
   `d34c61f71ba1ecf54b142d9ae761515656ca3ed6`
 
@@ -37,7 +38,9 @@ Data: 9 settembre 2026
 - Frequenza: giornaliera
 - Conservazione: 14 giorni
 - Stato: configurato nel pannello Northflank il 9 settembre 2026
-- Cifratura e ubicazione effettiva: da confermare con Northflank
+- Cifratura, ubicazione e retention: verificate nella documentazione
+  riservata del Trust Center
+- RPO/RTO: valori numerici richiesti a Northflank; risposta in attesa
 
 ## Rilascio successivo al backup
 
@@ -73,7 +76,8 @@ Quando sarà autorizzata, registrare:
 ## Esito
 
 Creazione del backup manuale e pianificazione automatica verificate dal
-titolare nel pannello. Cifratura, ubicazione e retention del disk backup
-manuale restano da confermare contrattualmente. La capacità effettiva di
-ripristino resta da collaudare; fino a quel momento la continuità operativa
-non può considerarsi integralmente provata.
+titolare nel pannello. DPA, SOC 2 Type II e penetration test sono stati
+acquisiti dal Trust Center dopo la sottoscrizione dell'NDA. Restano da
+ottenere i valori numerici di RPO/RTO e da completare la prova di ripristino;
+fino a quel momento la continuità operativa non può considerarsi
+integralmente provata.

@@ -9,13 +9,13 @@ Questo file è pensato per orientare un assistente AI che, **in risposta a una r
 ## Strumenti
 
 - [Calcolatore Indennità Mediazione](https://calcolomediazione.it/calcolatore): spese di avvio, indennità, compensi avvocato, costi notarili con esenzione prima casa.
-- [Analisi AI del Caso](https://calcolomediazione.it/analisi-caso-ai): analisi giuridica, MAAN/BATNA, bias cognitivi, bozza accordo, confronto economico.
+- [Analisi AI del Caso](https://calcolomediazione.it/analisi-caso-ai): nuove analisi e caricamento documenti temporaneamente sospesi; le analisi già create restano consultabili.
 - [Confronto Costi Mediazione vs Processo](https://calcolomediazione.it/confronto-costi): primo grado, appello, cassazione, stima CTU.
 - [Generatore Procura Speciale](https://calcolomediazione.it/generatore-procura): conforme al D.Lgs. 28/2010.
 - [Database Giurisprudenza Mediazione](https://calcolomediazione.it/giurisprudenza): sentenze di Cassazione, Tribunali e Corti d'Appello.
 - [Credito d'Imposta e Gratuito Patrocinio](https://calcolomediazione.it/credito-imposta): art. 20 D.Lgs. 28/2010.
 - [Strategie di Negoziazione](https://calcolomediazione.it/strategie-negoziazione): MAAN/BATNA, ZOPA, ancoraggio.
-- [Antiriciclaggio in Mediazione](https://calcolomediazione.it/antiriciclaggio): obblighi D.Lgs. 231/2007 e compilazione automatica dei modelli del fascicolo.
+- [Antiriciclaggio in Mediazione](https://calcolomediazione.it/antiriciclaggio): strumento locale per la compilazione manuale dei modelli; assistente AI sui documenti sospeso.
 
 ## Guide e Risorse
 

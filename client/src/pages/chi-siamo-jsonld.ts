@@ -154,7 +154,7 @@ export const chiSiamoJsonLd = {
       numberOfItems: 11,
       itemListElement: [
         { "@type": "ListItem", position: 1, name: "Calcolatore Indennità di Mediazione", url: `${SITE_URL}/calcolatore` },
-        { "@type": "ListItem", position: 2, name: "Analisi AI del Caso", url: `${SITE_URL}/analisi-caso-ai` },
+        { "@type": "ListItem", position: 2, name: "Stato e storico Analisi AI (nuove analisi sospese)", url: `${SITE_URL}/analisi-caso-ai` },
         { "@type": "ListItem", position: 3, name: "Confronto Costi Mediazione vs Processo", url: `${SITE_URL}/confronto-costi` },
         { "@type": "ListItem", position: 4, name: "Calcolo Costi Notarili Accordo", url: `${SITE_URL}/costi-notarili` },
         { "@type": "ListItem", position: 5, name: "Credito d'Imposta Mediazione", url: `${SITE_URL}/credito-imposta` },

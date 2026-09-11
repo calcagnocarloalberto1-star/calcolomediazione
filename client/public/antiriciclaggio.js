@@ -2135,7 +2135,7 @@ assistRecognized = [];
 // di compilazione. Stile inline (non classi) per essere reso correttamente anche da
 // Word, che ignora gran parte del CSS basato su classi (v. commento su wordizzaHtml).
 const FASCICOLO_AVVERTENZA_HTML = '<p style="font-size:11px;color:#5b6066;border:1px solid #ddd6d1;border-radius:8px;padding:8px 10px;margin:0 0 14px 0;background:#faf9f7">'
-+ '<b style="color:#13161b">Avvertenza.</b> Questo fascicolo è stato generato da uno strumento di supporto alla compilazione, anche con l\'ausilio di un\'estrazione automatica dei dati mediante intelligenza artificiale dai documenti caricati. Tutti i dati, comprese le proposte di classificazione del rischio e i campi individuati dall\'IA, sono stati o vanno comunque verificati da chi ha compilato il modulo prima dell\'uso: la correttezza, la completezza e ogni valutazione professionale ai fini degli obblighi antiriciclaggio (D.Lgs. 231/2007) restano in capo al mediatore, all\'Organismo di mediazione e ai rispettivi professionisti, e non allo strumento.'
++ '<b style="color:#13161b">Avvertenza.</b> Questo fascicolo è stato generato mediante compilazione manuale nel browser. Lo strumento non determina chi sia soggetto obbligato, non assegna compiti o responsabilità e non certifica correttezza, completezza o conformità del fascicolo. Prima dell\'uso, chi compila deve verificare tutti i dati e determinare inquadramento, adempimenti, valutazioni ed eventuali comunicazioni secondo la normativa applicabile, l\'incarico concreto e le procedure formalmente adottate.'
 + '</p>';
 
 // Costruisce l'HTML combinato di TUTTE le parti generate finora per la procedura

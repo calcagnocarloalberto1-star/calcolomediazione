@@ -74,8 +74,8 @@ export default function Header() {
                     <div role="menuitem" className="flex items-center gap-3 px-4 py-3 hover:bg-muted transition-colors duration-150 cursor-pointer border-b border-muted" data-testid="nav-analisi-ai">
                       <Brain className="w-4 h-4 text-primary" aria-hidden="true" />
                       <div>
-                        <div className="text-sm font-semibold">Analisi AI</div>
-                        <div className="text-xs text-muted-foreground">Analisi caso con intelligenza artificiale</div>
+                        <div className="text-sm font-semibold">Stato e storico Analisi AI</div>
+                        <div className="text-xs text-muted-foreground">Nuove analisi temporaneamente sospese</div>
                       </div>
                     </div>
                   </Link>
@@ -212,7 +212,7 @@ export default function Header() {
                       <Link href="/analisi-caso-ai" onClick={() => setMobileOpen(false)}>
                         <div className="flex items-center gap-3 px-4 py-3 hover:bg-muted transition-colors duration-150 cursor-pointer" data-testid="mobile-nav-analisi">
                           <Brain className="w-5 h-5 text-primary" aria-hidden="true" />
-                          <span className="font-medium">Analisi AI</span>
+                          <span className="font-medium">Storico Analisi AI — nuove analisi sospese</span>
                         </div>
                       </Link>
                       <Link href="/calcolatore" onClick={() => setMobileOpen(false)}>

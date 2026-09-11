@@ -201,6 +201,27 @@ export default function AnalisiCasoAI() {
   const [dragActive, setDragActive] = useState(false);
   const [files, setFiles] = useState<File[]>([]);
   const [privacyAcknowledged, setPrivacyAcknowledged] = useState(false);
+  const [caseAiEnabled, setCaseAiEnabled] = useState(false);
+  const [privacyControlsLoaded, setPrivacyControlsLoaded] = useState(false);
+
+  useEffect(() => {
+    let active = true;
+    fetch("/api/privacy-controls")
+      .then(res => {
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        return res.json();
+      })
+      .then(config => {
+        if (active) setCaseAiEnabled(config?.caseAiEnabled === true);
+      })
+      .catch(() => {
+        if (active) setCaseAiEnabled(false);
+      })
+      .finally(() => {
+        if (active) setPrivacyControlsLoaded(true);
+      });
+    return () => { active = false; };
+  }, []);
 
   // Documenti richiesti — elenco personalizzato che l'utente definisce (es. "carta d'identità",
   // "visura camerale", un modulo specifico nel proprio formato) per ricordarsi cosa allegare per
@@ -370,11 +391,13 @@ export default function AnalisiCasoAI() {
 
   const handleDrag = (e: React.DragEvent) => {
     e.preventDefault(); e.stopPropagation();
+    if (!caseAiEnabled) return;
     if (e.type === "dragenter" || e.type === "dragover") setDragActive(true);
     else if (e.type === "dragleave") setDragActive(false);
   };
   const handleDrop = async (e: React.DragEvent) => {
     e.preventDefault(); e.stopPropagation(); setDragActive(false);
+    if (!caseAiEnabled) return;
     if (!privacyAcknowledged) {
       toast({ title: "Conferma privacy necessaria", description: "Prima di caricare documenti, conferma l'informativa posta sotto l'area di upload.", variant: "destructive" });
       return;
@@ -395,6 +418,10 @@ export default function AnalisiCasoAI() {
     segnalaScartati(tutti.length, dropped.length);
   };
   const handleFileInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!caseAiEnabled) {
+      e.target.value = "";
+      return;
+    }
     if (!privacyAcknowledged) {
       e.target.value = "";
       toast({ title: "Conferma privacy necessaria", description: "Conferma l'informativa prima di selezionare documenti.", variant: "destructive" });
@@ -410,6 +437,10 @@ export default function AnalisiCasoAI() {
   // Selezione esplicita di un'intera cartella (bottone "Carica una cartella"): il browser
   // restituisce TUTTI i file al suo interno (anche nelle sottocartelle), li filtriamo qui.
   const handleFolderInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!caseAiEnabled) {
+      e.target.value = "";
+      return;
+    }
     if (!privacyAcknowledged) {
       e.target.value = "";
       toast({ title: "Conferma privacy necessaria", description: "Conferma l'informativa prima di selezionare documenti.", variant: "destructive" });
@@ -424,6 +455,7 @@ export default function AnalisiCasoAI() {
     }
   };
   const uploadPdfFiles = async (newFiles: File[]) => {
+    if (!caseAiEnabled) return;
     setUploadingFiles(true);
     try {
       const formData = new FormData();
@@ -439,7 +471,7 @@ export default function AnalisiCasoAI() {
 
   // ─── SUBMIT ───────────────────────────────────────────────────────────────
   const handleSubmit = async () => {
-    if (!titolo || descrizione.length < 50 || !privacyAcknowledged) return;
+    if (!caseAiEnabled || !titolo || descrizione.length < 50 || !privacyAcknowledged) return;
     setIsRunning(true); setCurrentStep(0);
     try {
       const documentiCombinati = uploadedTexts
@@ -621,8 +653,8 @@ export default function AnalisiCasoAI() {
     return (
       <div className="min-h-screen py-8 px-4">
       <SeoHead
-        title="Analisi AI del Caso di Mediazione — Estrazione Entità, Strategia e Costi"
-        description="Analisi automatica del caso di mediazione con intelligenza artificiale: estrazione entità, analisi giuridica, strategia di mediazione, stima dei costi e generazione documenti."
+        title="Analisi AI del Caso di Mediazione — Funzione temporaneamente sospesa"
+        description="Le nuove analisi, il caricamento dei documenti e la chat AI sono temporaneamente sospesi per il completamento delle verifiche privacy e contrattuali. Le analisi già create restano consultabili."
         canonical="https://calcolomediazione.it/analisi-caso-ai"
       />
         <div className="max-w-5xl mx-auto">
@@ -763,6 +795,7 @@ export default function AnalisiCasoAI() {
                 <div className="flex flex-wrap gap-2 mb-4">
                   {QUICK_ACTIONS.map(action => (
                     <Button key={action} variant="outline" size="sm" onClick={() => handleSendChat(action)}
+                      disabled={!caseAiEnabled}
                       className="text-xs border-2 border-foreground shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[1px] hover:translate-y-[1px] transition-all duration-150">
                       {action}
                     </Button>
@@ -794,8 +827,10 @@ export default function AnalisiCasoAI() {
                 <div className="flex gap-2">
                   <Input value={chatInput} onChange={e => setChatInput(e.target.value)}
                     onKeyDown={e => e.key === "Enter" && handleSendChat()}
-                    placeholder="Scrivi una domanda..." className="border-2 border-foreground" data-testid="input-chat" />
-                  <Button onClick={() => handleSendChat()} disabled={!chatInput.trim() || isSending}
+                    placeholder={caseAiEnabled ? "Scrivi una domanda..." : "Chat temporaneamente sospesa"}
+                    disabled={!caseAiEnabled}
+                    className="border-2 border-foreground" data-testid="input-chat" />
+                  <Button onClick={() => handleSendChat()} disabled={!caseAiEnabled || !chatInput.trim() || isSending}
                     className="border-2 border-foreground shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] transition-all duration-150"
                     data-testid="button-send-chat">
                     <Send className="w-4 h-4" />
@@ -824,8 +859,22 @@ export default function AnalisiCasoAI() {
               Analisi Caso AI
             </h1>
           </div>
-          <p className="text-muted-foreground">Analisi completa del caso con intelligenza artificiale: estrazione entità, analisi giuridica, guida strategica e bozza accordo.</p>
+          <p className="text-muted-foreground">Le nuove analisi con intelligenza artificiale sono temporaneamente sospese; lo storico delle analisi già create resta disponibile.</p>
         </div>
+
+        {!caseAiEnabled && (
+          <Card className="border-2 border-amber-700 bg-amber-50 dark:bg-amber-950/20 mb-6" role="status" aria-live="polite">
+            <CardContent className="pt-6 space-y-2">
+              <h2 className="font-bold text-lg">Nuove Analisi AI temporaneamente sospese</h2>
+              <p className="text-sm">
+                Non inserire dati o documenti di pratiche reali. Stiamo completando la verifica
+                delle basi giuridiche, della DPIA e degli accordi applicabili ai fornitori.
+                Le analisi già create restano consultabili, esportabili e cancellabili dallo storico.
+              </p>
+              {!privacyControlsLoaded && <p className="text-xs text-muted-foreground">Verifica dello stato del servizio in corso…</p>}
+            </CardContent>
+          </Card>
+        )}
 
         {/* Storico */}
         <StoricoAnalisi onLoadAnalisi={(a) => {
@@ -1020,7 +1069,7 @@ export default function AnalisiCasoAI() {
                 <div key={i} className="flex gap-2 items-start">
                   <div className="flex-1">
                     <Input value={p.nome} onChange={e => updateParty(i, "nome", e.target.value)}
-                      placeholder={`Nome parte ${i + 1}`} className="border-2 border-foreground" data-testid={`input-party-nome-${i}`} />
+                      placeholder={`Sigla o pseudonimo parte ${i + 1}`} className="border-2 border-foreground" data-testid={`input-party-nome-${i}`} />
                   </div>
                   <div className="w-40">
                     <Select value={p.ruolo} onValueChange={v => updateParty(i, "ruolo", v)}>
@@ -1092,20 +1141,21 @@ export default function AnalisiCasoAI() {
             <div className="space-y-2">
               <Label className="text-sm font-semibold">Documenti (PDF)</Label>
               <div className="border-2 border-amber-600/50 bg-amber-50 dark:bg-amber-950/20 p-4 text-sm space-y-2">
-                <p className="font-semibold">Prima di inserire dati personali o documenti</p>
+                <p className="font-semibold">Funzione sospesa: non inserire dati personali o documenti</p>
                 <p className="text-muted-foreground">
-                  Descrizione, nominativi e testo estratto dai PDF sono inviati al fornitore IA configurato
-                  per generare l'analisi. L'analisi completa resta sul server per un massimo di 30 giorni,
-                  salvo cancellazione anticipata, con contenuto protetto mediante cifratura applicativa autenticata;
-                  il token necessario per riaprirla è conservato su questo
-                  dispositivo; nel database la colonna di verifica contiene
-                  il relativo hash e una copia recuperabile è protetta
-                  all'interno del payload cifrato dell'analisi.
-                  Inserisci solo dati necessari e, quando possibile, usa sigle o pseudonimi.
+                  Le nuove analisi e il caricamento dei PDF sono bloccati sul server prima
+                  dell'elaborazione. La funzione potrà essere riattivata soltanto dopo la
+                  definizione e approvazione delle basi giuridiche, degli obblighi informativi,
+                  della DPIA e della copertura contrattuale dell'account Anthropic effettivamente usato.
+                </p>
+                <p className="text-muted-foreground">
+                  Le analisi già create restano disponibili per un massimo di 30 giorni,
+                  salvo cancellazione anticipata, e possono essere recuperate dallo storico
+                  con il token già presente sul dispositivo.
                 </p>
                 <p>
                   Consulta la{" "}
-                  <Link href="/privacy-policy">
+                  <Link href="/privacy-policy#servizi-ia">
                     <span className="underline font-semibold cursor-pointer">Privacy Policy, sezione servizi IA</span>
                   </Link>.
                 </p>
@@ -1115,28 +1165,37 @@ export default function AnalisiCasoAI() {
                   id="privacy-ai-ack"
                   checked={privacyAcknowledged}
                   onCheckedChange={value => setPrivacyAcknowledged(value === true)}
+                  disabled={!caseAiEnabled}
                   className="mt-0.5 border-2 border-foreground"
                   data-testid="checkbox-privacy-ai"
                 />
                 <label htmlFor="privacy-ai-ack" className="text-sm leading-relaxed cursor-pointer">
-                  Confermo di aver letto l'informativa, di essere autorizzato a trattare e trasmettere i dati
-                  inseriti e di aver escluso i dati non necessari, in particolare categorie particolari di dati.
+                  Confermo di aver letto l'informativa e i presidi applicabili. Questa conferma
+                  resterà disabilitata finché il servizio non sarà formalmente riaperto.
                 </label>
               </div>
               <div className={`border-2 border-dashed p-8 text-center cursor-pointer transition-all duration-150 ${dragActive ? "border-primary bg-primary/5" : "border-foreground/40 hover:border-foreground"}`}
                 onDragEnter={handleDrag} onDragLeave={handleDrag} onDragOver={handleDrag} onDrop={handleDrop}
-                onClick={() => document.getElementById("file-input")?.click()} data-testid="dropzone-files">
+                onClick={() => caseAiEnabled && document.getElementById("file-input")?.click()}
+                aria-disabled={!caseAiEnabled}
+                data-testid="dropzone-files">
                 <Upload className="w-8 h-8 mx-auto mb-2 text-muted-foreground" />
-                <p className="text-sm text-muted-foreground">Trascina i file PDF (o un'intera cartella) qui, oppure <span className="text-primary font-semibold">sfoglia</span></p>
-                <input id="file-input" type="file" accept=".pdf" multiple onChange={handleFileInput} className="hidden" />
+                <p className="text-sm text-muted-foreground">
+                  {caseAiEnabled
+                    ? <>Trascina i file PDF (o un'intera cartella) qui, oppure <span className="text-primary font-semibold">sfoglia</span></>
+                    : "Caricamento sospeso: nessun file viene accettato"}
+                </p>
+                <input id="file-input" type="file" accept=".pdf" multiple onChange={handleFileInput} className="hidden" disabled={!caseAiEnabled} />
               </div>
               <div className="text-center">
                 <Button type="button" variant="ghost" size="sm"
                   onClick={(e) => { e.stopPropagation(); document.getElementById("folder-input")?.click(); }}
+                  disabled={!caseAiEnabled}
                   data-testid="button-upload-folder">
                   📁 Oppure carica una cartella intera
                 </Button>
                 <input id="folder-input" type="file" multiple onChange={handleFolderInput} className="hidden"
+                  disabled={!caseAiEnabled}
                   {...({ webkitdirectory: "", directory: "" } as any)} />
               </div>
               {files.length > 0 && (
@@ -1174,10 +1233,11 @@ export default function AnalisiCasoAI() {
             </div>
 
             {/* Submit */}
-            <Button onClick={handleSubmit} disabled={!titolo || descrizione.length < 50 || !privacyAcknowledged || isRunning}
+            <Button onClick={handleSubmit} disabled={!caseAiEnabled || !titolo || descrizione.length < 50 || !privacyAcknowledged || isRunning}
               className="w-full py-6 text-base font-bold border-2 border-foreground shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] transition-all duration-150"
               data-testid="button-avvia-analisi">
               {isRunning ? <><Loader2 className="w-5 h-5 mr-2 animate-spin" />Analisi in corso...</>
+                : !caseAiEnabled ? "Nuove analisi sospese"
                 : <><Brain className="w-5 h-5 mr-2" />Avvia Analisi AI</>}
             </Button>
 
@@ -1189,7 +1249,7 @@ export default function AnalisiCasoAI() {
             <DisclaimerLegale
               variant="full"
               riferimenti={["D.M. 150/2023", "D.Lgs. 28/2010", "D.M. 55/2014 (D.M. 147/2022)", "art. 17 D.Lgs. 28/2010"]}
-              noteSpecifiche="L'analisi del caso, comprese le stime dei compensi legali e delle indennità di mediazione, è generata dall'intelligenza artificiale sulla base dei dati inseriti dall'utente: resta soggetta agli stessi criteri e agli stessi limiti indicati di seguito."
+              noteSpecifiche="Per le analisi già create, i contenuti generati dall'intelligenza artificiale e le relative stime restano bozze soggette agli stessi criteri e limiti indicati di seguito. La creazione di nuove analisi è temporaneamente sospesa."
               className="mt-6"
             />
           </CardContent>

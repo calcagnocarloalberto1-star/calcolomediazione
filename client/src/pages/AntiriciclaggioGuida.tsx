@@ -51,11 +51,11 @@ const GUIDA_FAQ = [
   },
   {
     q: "Il motore ha letto male un dato, o sbagliato il ruolo di una parte: cosa faccio?",
-    a: "Nell'elenco delle parti individuate, prima di applicare, correggi il ruolo con il menù a tendina se necessario; una volta applicata una parte, i suoi campi restano comunque normali campi del modulo, modificabili a mano come tutti gli altri prima di generare il fascicolo definitivo.",
+    a: "L'assistente AI sui documenti è temporaneamente sospeso. Inserisci e verifica manualmente ogni dato nel modulo prima di generare il documento o il fascicolo definitivo.",
   },
   {
     q: "Il motore individua tutte le parti, anche se sono più di due?",
-    a: "Sì: legge sistematicamente tutti i documenti caricati e cerca sia gli istanti sia gli aderenti, quanti che siano — non si ferma alla prima parte istante. Applica ciascuna parte trovata una alla volta con \"Applica questa parte ai campi\", scaricando o stampando il fascicolo generato prima di passare alla successiva.",
+    a: "Il motore AI sui documenti è temporaneamente sospeso. Usa \"+ Nuova parte per questa procedura\" e compila manualmente una scheda distinta per ogni parte, verificando i dati prima della generazione.",
   },
   {
     q: "Posso generare solo un documento, senza tutto il fascicolo?",
