@@ -222,7 +222,7 @@ export default function CostiNotarili() {
           <p className="text-muted-foreground max-w-2xl">
             Stima dei puri costi notarili e fiscali per il trasferimento immobiliare,
             con confronto tra accordo di mediazione e sentenza del giudice.
-            Motore unificato (shared/notarile.ts) — stessi numeri usati dall&apos;Analisi AI e dal Calcolatore.
+            Motore unificato (shared/notarile.ts) — stessi numeri usati dal Calcolatore e nelle Analisi AI già create.
           </p>
 
           {/* Blocco SEO con H2 strutturati per Google */}

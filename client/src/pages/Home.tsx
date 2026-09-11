@@ -28,8 +28,8 @@ import { SeoHead } from "@/components/SeoHead";
 const features = [
   {
     icon: Brain,
-    title: "Analisi AI Documenti",
-    description: "Analisi automatica del caso con intelligenza artificiale. Estrazione entità, analisi giuridica e guida strategica.",
+    title: "Analisi AI — temporaneamente sospesa",
+    description: "Le nuove analisi e il caricamento dei documenti sono sospesi durante il completamento delle verifiche privacy e contrattuali. Le analisi già create restano consultabili.",
     href: "/analisi-caso-ai",
     active: true,
   },
@@ -85,7 +85,7 @@ const features = [
   {
     icon: Shield,
     title: "Antiriciclaggio",
-    description: "Obblighi antiriciclaggio (D.Lgs. 231/2007) in mediazione e compilazione automatica dei modelli del fascicolo: adeguata verifica, titolare effettivo, scheda rischio, dichiarazione cliente e SOS.",
+    description: "Strumento locale per compilare manualmente i modelli del fascicolo. Ruoli e obblighi vanno verificati nel caso concreto; l'assistente AI sui documenti è temporaneamente sospeso.",
     href: "/antiriciclaggio",
     active: true,
     isNew: true,
@@ -159,8 +159,8 @@ export default function Home() {
   return (
     <div className="min-h-screen">
       <SeoHead
-        title="CalcoloMediazione — Calcolatore Indennità Mediazione Civile, Analisi AI e Confronto Costi"
-        description="Piattaforma gratuita per avvocati e mediatori: calcolatore indennità D.M. 150/2023, analisi AI del caso, confronto costi mediazione vs processo su tre gradi di giudizio, stima costi notarili, credito d'imposta, generatore procura."
+        title="CalcoloMediazione — Calcolatore Indennità Mediazione Civile e Strumenti ADR"
+        description="Piattaforma gratuita per avvocati e mediatori: calcolatore indennità D.M. 150/2023, confronto costi mediazione vs processo, costi notarili, credito d'imposta e generatori di documenti. Le nuove analisi AI sono temporaneamente sospese."
         canonical="https://calcolomediazione.it/"
         jsonLd={[
           {
@@ -200,12 +200,12 @@ export default function Home() {
             style={{ fontFamily: "'Space Grotesk', sans-serif" }}
             data-testid="text-hero-title"
           >
-            Mediazione e negoziazione{" "}
-            <span className="text-primary">con AI</span>
+            Strumenti per la{" "}
+            <span className="text-primary">mediazione</span>
           </h1>
           <p className="text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto mb-10 leading-relaxed">
             Piattaforma completa per la mediazione civile ai sensi del{" "}
-            <strong className="text-foreground">D.M. 150/2023</strong>. Analisi AI del caso, confronto economico su tre gradi di giudizio, calcolatore indennità e generatore documenti.
+            <strong className="text-foreground">D.M. 150/2023</strong>. Confronto economico, calcolatore indennità e generatori di documenti. Le nuove analisi AI sono temporaneamente sospese.
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12">
             <Link href="/analisi-caso-ai">
@@ -213,7 +213,7 @@ export default function Home() {
                 className="w-full sm:w-auto px-8 py-6 text-base font-bold border-2 border-foreground shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] transition-all duration-150"
                 data-testid="button-inizia-analisi"
               >
-                Inizia Analisi AI <ArrowRight className="w-5 h-5 ml-2" />
+                Stato Analisi AI <ArrowRight className="w-5 h-5 ml-2" />
               </Button>
             </Link>
             <Link href="/calcolatore">
@@ -369,7 +369,7 @@ export default function Home() {
               visivo voluto (bianco all'80%) ottenuto qui con due utility
               indipendenti, entrambe supportate: 5.07:1. */}
           <p className="text-primary-foreground opacity-80 text-lg mb-8 max-w-xl mx-auto">
-            Calcola le indennità di mediazione in pochi secondi o avvia un'analisi completa del tuo caso con l'AI.
+            Calcola le indennità di mediazione in pochi secondi. Le nuove Analisi AI sono temporaneamente sospese; la pagina dedicata resta disponibile per consultare lo storico.
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <Link href="/calcolatore">
@@ -387,7 +387,7 @@ export default function Home() {
                 data-testid="button-cta-analisi"
               >
                 <Brain className="w-5 h-5 mr-2" />
-                Analisi AI Gratuita
+                Stato e storico Analisi AI
               </Button>
             </Link>
           </div>

@@ -19,7 +19,7 @@ export default function TerminiCondizioni() {
         </div>
 
         <div className="bg-card border-[2px] border-foreground shadow-[4px_4px_0px_0px] shadow-foreground/20 p-6 sm:p-8 space-y-6">
-          <p className="text-sm opacity-60">Ultimo aggiornamento: Marzo 2026</p>
+          <p className="text-sm opacity-60">Ultimo aggiornamento: settembre 2026</p>
 
           <Section title="1. Premessa">
             <p>I presenti Termini e Condizioni regolano l'accesso e l'utilizzo del sito web CalcoloMediazione.it (di seguito "il Sito"), di proprietà di Carlo Alberto Calcagno. L'utilizzo del Sito implica l'accettazione integrale dei presenti Termini.</p>
@@ -31,8 +31,8 @@ export default function TerminiCondizioni() {
               <li>Calcolatore delle indennità di mediazione ai sensi del D.M. 150/2023</li>
               <li>Calcolatore con tariffe dell'Ordine degli Avvocati di Genova</li>
               <li>Confronto costi tra mediazione e processo civile</li>
-              <li>Analisi AI dei casi di mediazione (analisi giuridica, strategica, economica)</li>
-              <li>Esportazione PDF dei risultati</li>
+              <li>Consultazione, esportazione e cancellazione delle Analisi AI già create; la creazione di nuove analisi e la chat AI sono temporaneamente sospese</li>
+              <li>Esportazione PDF dei risultati disponibili</li>
               <li>Risorse informative sulla mediazione civile e commerciale</li>
             </ul>
           </Section>
@@ -49,7 +49,7 @@ export default function TerminiCondizioni() {
             <ul className="list-disc list-inside space-y-1 ml-4">
               <li>Le indennità calcolate sono valide esclusivamente per gli organismi di mediazione che applicano le tariffe del D.M. 150/2023</li>
               <li>I compensi degli avvocati sono calcolati sui valori medi previsti dal D.M. 55/2014 (Parametri Forensi) e possono variare significativamente</li>
-              <li>Le analisi AI sono generate da modelli di intelligenza artificiale e possono contenere imprecisioni</li>
+              <li>Le Analisi AI già create sono state generate da modelli di intelligenza artificiale e possono contenere imprecisioni</li>
               <li>Per calcoli personalizzati e consulenza specifica, è necessario rivolgersi a un professionista qualificato</li>
             </ul>
           </Section>
@@ -78,7 +78,7 @@ export default function TerminiCondizioni() {
               <li>Non utilizzare il Sito per finalità illecite o non autorizzate</li>
               <li>Non tentare di accedere in modo non autorizzato ai sistemi informatici del Sito</li>
               <li>Non sovraccaricare i server con richieste eccessive o automatizzate</li>
-              <li>Non inserire nelle analisi AI dati personali sensibili di terzi senza il loro consenso</li>
+              <li>Non tentare di aggirare la sospensione delle nuove Analisi AI o di trasmettere dati personali mediante endpoint non disponibili</li>
             </ul>
           </Section>
 
@@ -106,7 +106,7 @@ export default function TerminiCondizioni() {
           </Section>
 
           <Section title="Disclaimer sull'Intelligenza Artificiale">
-            <p>Le analisi generate tramite intelligenza artificiale presenti sul Sito sono prodotte da modelli linguistici di terze parti. Tali analisi:</p>
+            <p>La creazione di nuove Analisi AI e la relativa chat sono temporaneamente sospese. Le analisi già create, ancora consultabili dall'utente che possiede il relativo token, sono state prodotte da modelli linguistici di terze parti. Tali analisi:</p>
             <ul className="list-disc list-inside space-y-1 ml-4">
               <li>Non costituiscono parere legale</li>
               <li>Possono contenere errori o imprecisioni</li>

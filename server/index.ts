@@ -4,6 +4,7 @@ import { eliminaAnalisiScadute, storageReady, verifyStorageHealth } from "./stor
 import { serveStatic } from "./static";
 import { createServer } from "http";
 import { buildContentSecurityPolicy, createCspNonce } from "./security/csp";
+import { registerPrivacyPreParserGates } from "./privacy-controls";
 
 const app = express();
 // Render inoltra il traffico attraverso un solo proxy. Limitare il trust al
@@ -44,6 +45,11 @@ declare module "http" {
     rawBody: unknown;
   }
 }
+
+// Privacy fail-closed: le richieste AI disabilitate vengono respinte prima che
+// Express legga JSON, form URL-encoded o upload. I gate nelle route costituiscono
+// una seconda barriera e non sostituiscono questo livello applicativo.
+registerPrivacyPreParserGates(app);
 
 app.use(
   express.json({

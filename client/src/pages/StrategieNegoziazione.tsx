@@ -61,7 +61,7 @@ const strategySections: StrategySection[] = [
       },
       {
         q: "L'Analisi AI di CalcoloMediazione aiuta a individuare la ZOPA?",
-        a: "Sì. L'Analisi AI genera un quadro economico completo del caso: costi della mediazione in ogni scenario (accordo, mancato accordo, con e senza mediatore esperto, con e senza gratuito patrocinio), costi del contenzioso ordinario, vantaggi fiscali ed esenzioni fino a 100.000 euro. Questo quadro permette al mediatore e all'avvocato di stimare concretamente i limiti economici delle parti — cioè la ZOPA — trasformando un concetto teorico in un dato operativo. L'analisi è esportabile in PDF professionale e può essere anonimizzata per finalità di studio.",
+        a: "La funzione, quando era attiva, generava un quadro economico del caso utile a ragionare sulla ZOPA. La creazione di nuove Analisi AI e la chat sono temporaneamente sospese per il completamento delle verifiche privacy e contrattuali; le analisi già create restano consultabili ed esportabili dall'utente che possiede il relativo token.",
       },
     ],
   },
@@ -80,7 +80,7 @@ const strategySections: StrategySection[] = [
       },
       {
         q: "Come può il mediatore gestire l'ancoraggio?",
-        a: "Il mediatore consapevole dell'ancoraggio può intervenire in diversi modi. Primo: aiutare la parte che formula la prima proposta a costruire un'àncora \"credibile\" — ambiziosa ma supportata da dati verificabili (costi del giudizio, parametri forensi, precedenti giurisprudenziali) — evitando che cada nella \"zona dell'insulto\" che provoca chiusura e irrigidimento. Secondo: quando riceve un'àncora estrema, aiutare l'altra parte a non reagire emotivamente ma a riformulare la discussione su basi oggettive. Un prospetto economico dettagliato — come quello generato dall'Analisi AI — può servire da \"contro-àncora\" fondata sui dati anziché sulle impressioni.",
+        a: "Il mediatore consapevole dell'ancoraggio può intervenire in diversi modi. Primo: aiutare la parte che formula la prima proposta a costruire un'àncora \"credibile\" — ambiziosa ma supportata da dati verificabili (costi del giudizio, parametri forensi, precedenti giurisprudenziali) — evitando che cada nella \"zona dell'insulto\" che provoca chiusura e irrigidimento. Secondo: quando riceve un'àncora estrema, aiutare l'altra parte a non reagire emotivamente ma a riformulare la discussione su basi oggettive. Un prospetto economico dettagliato può servire da \"contro-àncora\" fondata sui dati anziché sulle impressioni; per questo scopo restano disponibili i calcolatori, mentre le nuove Analisi AI sono temporaneamente sospese.",
       },
       {
         q: "Perché i dati economici sono un antidoto all'ancoraggio?",
@@ -164,7 +164,7 @@ const strategySections: StrategySection[] = [
       },
       {
         q: "Come può il mediatore neutralizzare la svalutazione reattiva?",
-        a: "La strategia più efficace è far emergere le proposte come opzioni generate dal processo di mediazione stesso, anziché come concessioni di una parte all'altra. Il mediatore che presenta uno scenario economico oggettivo — prodotto da un sistema terzo e verificabile — toglie alla proposta il \"marchio\" dell'avversario. Un prospetto dettagliato dei costi e dei benefici, generato dall'Analisi AI e presentato come dato tecnico, ha una forza persuasiva diversa rispetto alla stessa cifra proposta dall'altra parte. È la differenza tra \"ti offro 40.000\" e \"i numeri mostrano che 40.000 è il punto di equilibrio economico per entrambi\".",
+        a: "La strategia più efficace è far emergere le proposte come opzioni generate dal processo di mediazione stesso, anziché come concessioni di una parte all'altra. Il mediatore che presenta uno scenario economico oggettivo — costruito su dati verificabili — toglie alla proposta il \"marchio\" dell'avversario. I calcolatori disponibili possono contribuire a questo prospetto; la creazione di nuove Analisi AI è temporaneamente sospesa.",
       },
     ],
   },
@@ -187,7 +187,7 @@ const strategySections: StrategySection[] = [
       },
       {
         q: "CalcoloMediazione.it integra la Prospect Theory?",
-        a: "CalcoloMediazione.it è stato progettato come lo strumento operativo che traduce la Prospect Theory in pratica quotidiana. Il Confronto Costi rende visibile la MAAN (giudizio ordinario), permettendo il reframing dalla \"perdita\" della concessione al \"risparmio\" rispetto al giudizio. L'Analisi AI genera scenari economici completi che aiutano a identificare la ZOPA e a costruire àncora credibili. Il tutto in un quadro che permette al mediatore e all'avvocato di disporre dei numeri necessari per superare i bias cognitivi e guidare le parti verso un accordo informato e consapevole.",
+        a: "CalcoloMediazione.it offre strumenti operativi per applicare la Prospect Theory alla pratica quotidiana. Il Confronto Costi rende visibile la MAAN (giudizio ordinario), permettendo il reframing dalla \"perdita\" della concessione al \"risparmio\" rispetto al giudizio. Le nuove Analisi AI, che ampliavano questo quadro con scenari del caso, sono temporaneamente sospese; restano disponibili i calcolatori e la consultazione dello storico già creato.",
       },
     ],
   },
@@ -387,7 +387,7 @@ export default function StrategieNegoziazione() {
             <Link href="/analisi-caso-ai">
               <span className="inline-flex items-center gap-2 px-6 py-3 text-sm font-bold bg-card text-foreground border-2 border-foreground shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] transition-all duration-150 cursor-pointer">
                 <Brain className="w-4 h-4" />
-                Analisi AI (ZOPA)
+                Stato e storico Analisi AI
               </span>
             </Link>
             <Link href="/calcolatore">

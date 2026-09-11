@@ -1,7 +1,7 @@
 # PRIV-11 — Registro delle attività di trattamento (art. 30 GDPR) — bozza di lavoro
 
-**Stato: bozza non approvabile finché non sono definiti ruoli, basi giuridiche
-e accordi indicati nelle note finali.** Il registro ex art. 30 GDPR è un
+**Stato: bozza da approvare dal titolare; sia le nuove Analisi AI sia il flusso
+AI AML restano sospesi.** Il registro ex art. 30 GDPR è un
 documento organizzativo che il titolare tiene e aggiorna; questa bozza ne
 ricalca la struttura minima e va integrata con gli elementi che il codice da
 solo non può attestare (contratti firmati, ruoli organizzativi, eventuale
@@ -57,20 +57,33 @@ nella documentazione del sito.
 
 ### 3. Analisi AI del Caso
 
-- **Finalità:** analisi giuridica, MAAN/BATNA, controllo bias cognitivi, bozza di accordo, confronto economico assistiti da AI.
+- **Stato del flusso:** nuove analisi, upload e chat sospesi lato interfaccia e
+  server. Le analisi storiche restano consultabili, esportabili e cancellabili
+  fino alla cancellazione o alla scadenza massima di 30 giorni.
+- **Finalità futura proposta:** analisi giuridica, MAAN/BATNA, controllo bias cognitivi, bozza di accordo e confronto economico assistiti da AI.
 - **Categorie di interessati:** le parti della controversia descritta (spesso diverse dall'utente che compila il modulo).
 - **Categorie di dati:** titolo, descrizione libera del caso, nomi e ruolo delle parti, valore della lite, documenti opzionali; potenzialmente dati relativi a minori o alla situazione familiare/economica delle parti nei casi di mediazione familiare.
-- **Base giuridica:** da confermare — verosimilmente legittimo interesse o esecuzione di un servizio richiesto dall'utente; per i dati dei terzi (le parti) andrebbe valutato se serva una base autonoma o un'informativa aggiuntiva (v. PRIV-10).
-- **Destinatari:** Anthropic (Claude); Google (Gemini) soltanto se il fallback
+- **Base giuridica e trasparenza:** da definire e approvare prima della
+  riattivazione. La dichiarazione dell'utente non costituisce il consenso dei
+  terzi né la base propria di CalcoloMediazione. Devono essere motivati il
+  ruolo, la base ex art. 6, gli eventuali presupposti ex artt. 9 e 10 e il
+  processo per l'informativa ex art. 14 o una specifica eccezione documentata.
+- **Destinatari in caso di futura riattivazione:** Anthropic (Claude); Google (Gemini) soltanto se il fallback
   viene espressamente abilitato dopo la verifica del Paid Service —
   `server/ai/llm.ts`.
 - **Trasferimento extra-UE:** possibile verso USA o altri Paesi; garanzia e meccanismo applicabili sono da verificare e documentare sul contratto/DPA del servizio effettivamente usato.
-- **Misure di minimizzazione:** redazione preventiva dei nomi delle parti e di alcuni identificatori diretti (email, CF, IBAN, telefono) prima dell'invio ai fornitori, con ripristino solo sui dati mostrati all'utente (`server/ai/redazione.ts`, PRIV-08/PRIV-09).
+- **Misure di minimizzazione:** redazione preventiva dei nomi delle parti e di alcuni identificatori diretti (email, CF, IBAN, telefono) prima dell'invio ai fornitori, con ripristino solo sui dati mostrati all'utente (`server/ai/redazione.ts`, PRIV-08/PRIV-09). L'avviso immediato chiarisce che la misura è best-effort, richiede la rimozione manuale dei dati non necessari e limita l'invio di dati sanitari, biometrici, giudiziari e identificativi di minori.
 - **Termine di conservazione:** fino a 30 giorni dalla creazione, cancellazione automatica indipendente dal traffico (`server/storage.ts`, funzione `eliminaAnalisiScadute`, schedulata in `server/index.ts`).
 - **Controllo di accesso:** token casuale; hash nella colonna di verifica;
   copia recuperabile nel payload cifrato AES-256-GCM, oltre alla copia nel
   browser dell'utente; endpoint amministrativo protetto da sessione HMAC.
-- **Misure di sicurezza:** vedi sopra; da verificare la presenza di un DPA con Anthropic e Google.
+- **Ruolo di CalcoloMediazione:** da definire e approvare prima della
+  riattivazione con riferimento ai dati di terzi e al rapporto con il
+  professionista che utilizza il servizio.
+- **Misure di sicurezza:** vedi sopra; DPA Anthropic incorporato nei
+  Commercial Terms da archiviare per l'account effettivo. Gemini resta
+  disabilitato fino alla verifica e archiviazione di Cloud DPA, SCC o altro
+  valido meccanismo, configurazione e account.
 
 ### 4. Antiriciclaggio — compilazione assistita e modalità alta precisione (AI)
 
@@ -79,13 +92,22 @@ nella documentazione del sito.
 - **Categorie di dati:** documenti d'identità, dati anagrafici, informazioni
   sul rischio e dichiarazioni; possibili categorie particolari ex art. 9 e
   dati su condanne o reati, disciplinati separatamente dall'art. 10 GDPR.
-- **Base giuridica e ruoli:** da definire. Il professionista/Organismo può
-  operare quale titolare per il proprio obbligo legale; deve essere individuato
-  il presupposto nazionale per l'art. 10 e chiarito se CalcoloMediazione operi
-  come responsabile, con accordo e istruzioni ex art. 28.
-- **Destinatari:** Anthropic, solo se l'utente sceglie esplicitamente la modalità alta precisione.
+- **Stato del flusso:** sospeso lato interfaccia e lato server; nessun
+  documento deve essere trasmesso.
+- **Base giuridica e ruoli per un'eventuale riattivazione:** qualificazione da
+  determinare e approvare prima della riattivazione. Se CalcoloMediazione sarà
+  qualificata come responsabile, serviranno accordo e istruzioni ex art. 28,
+  autorizzazione dei subresponsabili e individuazione del presupposto nazionale
+  per l'art. 10; se sarà titolare autonomo o contitolare, dovranno essere
+  documentati i conseguenti obblighi.
+- **Destinatari in caso di futura riattivazione:** Anthropic, soltanto dopo
+  la chiusura dei prerequisiti indicati; allo stato nessun documento è
+  accettato dagli endpoint AML.
 - **Trasferimento extra-UE:** possibile in tal caso; garanzia e meccanismo applicabili sono da verificare e documentare sul contratto/DPA Anthropic.
-- **Termine di conservazione:** il sito dichiara di non conservare né il file caricato né i dati estratti; i dati compilati restano nel browser dell'utente (localStorage), non trasmessi al server salvo la chiamata AI facoltativa.
+- **Termine di conservazione:** finché il flusso resta sospeso nessun file è
+  accettato. I dati inseriti manualmente restano nel browser dell'utente
+  (localStorage). Un'eventuale futura retention del flusso AI dovrà essere
+  definita nell'accordo e nell'informativa prima della riattivazione.
 
 ### 5. Database giurisprudenza
 
@@ -137,8 +159,8 @@ nella documentazione del sito.
 | Flusso | Ruolo di CalcoloMediazione da definire | Responsabili tecnici candidati | Altri destinatari/fornitori da censire | Stato |
 |---|---|---|---|---|
 | Navigazione e gestione del sito | Titolare | Northflank, se confermato dal DPA | Google Analytics, titolarità/ruolo da verificare | aperto |
-| Analisi AI offerta direttamente dal sito | Titolare, contitolare o responsabile da determinare in base a finalità e rapporto con l'utente | Northflank e Anthropic, se confermati dai DPA | Gemini solo se abilitato; ruoli da verificare | aperto |
-| AML per professionista/Organismo | Responsabile, se tratta soltanto su istruzioni del professionista/Organismo titolare | Northflank e Anthropic, se nominabili come subresponsabili nel rapporto ex art. 28 | ulteriori soggetti da censire | aperto; richiede accordo art. 28 e autorizzazione ai subresponsabili |
+| Analisi AI offerta direttamente dal sito | Da definire e approvare per i dati di terzi | Northflank e Anthropic | Gemini solo se successivamente abilitato e documentato | sospeso; base propria, artt. 9/10 e informativa art. 14 da definire |
+| AML per professionista/Organismo | Da definire; ipotesi di responsabile soltanto dopo qualificazione e accordo ex art. 28 | Northflank e Anthropic, soltanto se nominabili come subresponsabili nel rapporto approvato | ulteriori soggetti da censire | sospeso; richiede decisione sul ruolo, accordo e istruzioni se applicabili, autorizzazione ai subresponsabili e presupposto art. 10 |
 | Diagnostica del sito | Titolare | Northflank, se confermato dal DPA | Google Apps Script/Sheets soltanto se configurato; ruolo da verificare | aperto |
 
 Se CalcoloMediazione opera come responsabile per l'AML, predisporre anche il
@@ -152,14 +174,15 @@ registro delle categorie di attività svolte per conto dei titolari ex art.
 | Anthropic | Elaborazione AI (Analisi del Caso, antiriciclaggio alta precisione) | Testo del caso, documenti | Sì (USA) | Ruolo da confermare per ciascun flusso; DPA con SCC incorporato nei Commercial Terms dell'API, copia datata da archiviare |
 | Google (Gemini API) | Elaborazione AI in fallback, disabilitato salvo attestazione Paid Service | Testo del caso | Sì, possibile trattamento globale | Ruolo da confermare; Cloud DPA applicabile ai Paid Services, account e fatturazione da verificare prima dell'attivazione |
 | Google Analytics | Statistiche di navigazione | Dati di navigazione, solo dopo consenso | Sì (USA) | Ruolo e DPA da verificare |
-| Hosting (Northflank) | Hosting applicativo e database | Tutti i dati del sito | Europe - West (London), Regno Unito; decisione di adeguatezza UE vigente | Responsabile candidato; DPA non individuato nelle pagine pubbliche, richiesta da inviare |
+| Hosting (Northflank) | Hosting applicativo e database | Tutti i dati del sito | Europe - West (London), Regno Unito; decisione di adeguatezza UE vigente | Responsabile; DPA acquisito e verificato su sette dei nove punti della checklist interna; verifiche puntuali ancora aperte in PRIV-12/13 |
 
 ## Note per il completamento
 
 Questa versione copre il codice e le evidenze fornitore raccolte in
-`PRIV-12-verifica-fornitori-e-trasferimenti.md`. Restano da aggiungere, a cura
-del titolare: il DPA Northflank, la conferma delle localizzazioni di log e
-backup, la verifica dell'organizzazione commerciale Anthropic e gli eventuali ulteriori
+  `PRIV-12-verifica-fornitori-e-trasferimenti.md`. Le evidenze Northflank
+  riservate sono state esaminate nei limiti documentati; restano aperti i
+  valori RPO/RTO e la prova interna di restore. Restano inoltre da aggiungere,
+  a cura del titolare, la verifica dell'organizzazione commerciale Anthropic e gli eventuali ulteriori
 trattamenti che avvengono fuori dal codice del sito (es. corrispondenza email
 diretta con gli utenti).
 

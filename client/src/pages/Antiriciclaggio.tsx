@@ -144,8 +144,8 @@ export default function Antiriciclaggio() {
   return (
     <div className="w-full">
       <SeoHead
-        title="Antiriciclaggio in Mediazione — Obblighi e Modelli per Avvocati e Organismi"
-        description="Obblighi antiriciclaggio (D.Lgs. 231/2007) nella mediazione civile e compilazione automatica dei modelli del fascicolo: adeguata verifica, titolare effettivo, scheda rischio, dichiarazione cliente, segnalazione operazioni sospette. Per avvocati e organismi di mediazione."
+        title="Antiriciclaggio in Mediazione — Strumento manuale locale e modelli"
+        description="Strumento locale per la compilazione manuale dei modelli antiriciclaggio. L'assistente AI e il caricamento dei documenti sono temporaneamente sospesi; ruoli e obblighi vanno verificati nel caso concreto."
         canonical="https://calcolomediazione.it/antiriciclaggio"
       />
       {error && (

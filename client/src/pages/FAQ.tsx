@@ -257,19 +257,19 @@ const faqSections: FAQSection[] = [
     questions: [
       {
         q: "Come funziona l\u2019analisi AI del caso?",
-        a: "L\u2019analisi AI utilizza modelli di intelligenza artificiale avanzati per analizzare i documenti e le informazioni relative al caso di mediazione. Il processo prevede sette fasi: 1) Caricamento dei documenti; 2) Estrazione delle entit\u00e0 rilevanti (parti, importi, date); 3) Classificazione della materia; 4) Analisi giuridica preliminare; 5) Valutazione della complessit\u00e0; 6) Suggerimenti strategici; 7) Generazione del report.",
+        a: "La funzione per creare nuove analisi AI è temporaneamente sospesa durante il completamento delle verifiche privacy e contrattuali. Non è possibile caricare nuovi documenti né avviare nuove elaborazioni o chat. Le analisi già create restano consultabili, esportabili e cancellabili con il relativo token.",
       },
       {
         q: "I dati inseriti sono sicuri e riservati?",
-        a: "La sicurezza e la riservatezza richiedono misure tecniche e organizzative coordinate. I dati vengono trasmessi tramite HTTPS/TLS. I file caricati sono elaborati in memoria dal sito; nell’Analisi del caso il testo estratto confluisce nell’analisi conservata fino a 30 giorni. Prima dell’invio al modello, i nomi delle parti e alcuni identificatori diretti (email, codice fiscale, IBAN, telefono) vengono sostituiti automaticamente con token: è una pseudonimizzazione best-effort, non un’anonimizzazione, perché dettagli indiretti possono rendere le persone identificabili. Le funzioni IA trasmettono i dati necessari ad Anthropic Claude e, soltanto se configurato in un ambiente commerciale idoneo, a Google Gemini. Uso dei dati, conservazione tecnica e trasferimenti dipendono dal servizio, dal piano e dagli accordi applicabili, che il titolare deve verificare prima dell’uso. Il professionista o organismo che inserisce dati di terzi resta responsabile della base giuridica, dell’informativa e della minimizzazione.",
+        a: "Le nuove analisi e il caricamento dei documenti sono attualmente sospesi, quindi il sito non accetta nuovi dati per questa funzione. Le analisi già create sono conservate fino a 30 giorni e protette secondo le misure descritte nella Privacy Policy; possono essere consultate, esportate e cancellate con il relativo token. La funzione sarà riattivata solo dopo il completamento e la documentazione delle verifiche privacy e contrattuali.",
       },
       {
         q: "L\u2019analisi AI sostituisce il parere di un avvocato?",
-        a: "No, assolutamente no. L\u2019analisi AI fornisce un supporto informativo e orientativo, ma non costituisce in alcun modo un parere legale. L\u2019intelligenza artificiale pu\u00f2 aiutare a identificare le questioni giuridiche rilevanti, classificare la materia e fornire un\u2019analisi preliminare, ma non pu\u00f2 sostituire la consulenza di un professionista abilitato. Si raccomanda sempre di consultare un avvocato per valutazioni specifiche sul proprio caso.",
+        a: "No. Le Analisi AI già create hanno valore esclusivamente informativo e orientativo e non costituiscono un parere legale. Possono contenere errori e non sostituiscono la consulenza di un professionista abilitato. La creazione di nuove analisi e la chat sono temporaneamente sospese.",
       },
       {
         q: "Quali tipi di analisi produce il sistema?",
-        a: "Il sistema produce diversi tipi di analisi: 1) Analisi delle entit\u00e0: identificazione delle parti, importi, date e riferimenti normativi presenti nei documenti; 2) Classificazione della materia: determinazione automatica della materia di mediazione e verifica dell\u2019obbligatoriet\u00e0; 3) Analisi giuridica: inquadramento normativo e individuazione delle questioni giuridiche rilevanti; 4) Valutazione strategica: punti di forza e debolezza della posizione, possibili scenari; 5) Calcolo costi: stima automatica delle indennit\u00e0 di mediazione; 6) Report completo: documento riepilogativo con tutte le analisi effettuate e le raccomandazioni.",
+        a: "La creazione di nuove analisi è temporaneamente sospesa. Le analisi già create possono comprendere estrazione delle entità, classificazione della materia, inquadramento giuridico preliminare, valutazione strategica, calcolo dei costi e un report riepilogativo; restano contenuti orientativi che non sostituiscono il parere professionale.",
       },
     ],
   },
@@ -283,7 +283,7 @@ export default function FAQ() {
       "@context": "https://schema.org",
       "@type": "FAQPage",
       "name": "Domande Frequenti sulla Mediazione Civile",
-      "description": "FAQ sulla mediazione civile e commerciale: costi, indennit\u00e0, credito d\u2019imposta, gratuito patrocinio e analisi AI.",
+      "description": "FAQ sulla mediazione civile e commerciale: costi, indennit\u00e0, credito d\u2019imposta, gratuito patrocinio e stato della funzione Analisi AI, temporaneamente sospesa.",
       "mainEntity": allQuestions.map((item) => ({
         "@type": "Question",
         "name": item.q,
@@ -331,7 +331,7 @@ export default function FAQ() {
           <p className="text-lg text-muted-foreground max-w-2xl">
             Tutto quello che c'è da sapere sulla mediazione civile, i costi previsti dal D.M. 150/2023,
             il credito d&apos;imposta (art. 20 D.Lgs. 28/2010), il gratuito patrocinio (artt. 15-bis/15-undecies)
-            e il funzionamento della nostra piattaforma con analisi AI.
+            e gli strumenti della piattaforma. Le nuove Analisi AI sono temporaneamente sospese.
           </p>
           {/* DATA-04 / PRIV-07: data dell'ultima verifica normativa, aggiornata
               manualmente ad ogni revisione periodica (v. processo PRIV-07). */}
@@ -391,8 +391,8 @@ export default function FAQ() {
             Non hai trovato la risposta?
           </h3>
           <p className="text-muted-foreground mb-6 max-w-lg mx-auto">
-            Prova i nostri calcolatori per ottenere calcoli precisi delle indennità e del credito d'imposta,
-            oppure avvia un'analisi AI del tuo caso.
+            Prova i nostri calcolatori per ottenere calcoli precisi delle indennità e del credito d'imposta.
+            Le nuove Analisi AI sono temporaneamente sospese.
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <Link href="/calcolatore">
@@ -409,7 +409,7 @@ export default function FAQ() {
             <Link href="/analisi-caso-ai">
               <span className="inline-flex items-center gap-2 px-6 py-3 text-sm font-bold bg-card text-foreground border-2 border-foreground shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] transition-all duration-150 cursor-pointer">
                 <Brain className="w-4 h-4" />
-                Analisi AI Caso
+                Stato e storico Analisi AI
               </span>
             </Link>
           </div>
