@@ -3,6 +3,10 @@
 Data di predisposizione: 11 settembre 2026
 Stato: modello operativo non approvato
 
+Le decisioni di indirizzo del 12 settembre 2026 sono registrate in
+`PRIV-18-verbale-decisioni-titolare-2026-09-12.md`. Non equivalgono
+all'approvazione della DPIA, del registro o del trattamento.
+
 Questa scheda evita che una semplice variabile d'ambiente riattivi un
 trattamento non ancora autorizzato. Deve essere completata, datata e conservata
 nell'archivio riservato prima di modificare i flag di produzione. Non
@@ -11,9 +15,15 @@ conformità.
 
 ## Analisi AI del Caso
 
-- [ ] Ruoli di CalcoloMediazione, professionista e altri soggetti coinvolti
-  determinati, motivati e formalmente approvati per questo specifico flusso.
-- [ ] Base propria ex art. 6 per i dati di terzi motivata e documentata.
+- [x] Modello di ruolo scelto in via di indirizzo e registrato in PRIV-18:
+  professionista/Organismo titolare e CalcoloMediazione responsabile ex art. 28.
+- [ ] Accordo ex art. 28 basato su
+  `PRIV-16-modello-accordo-art-28-professionisti.md` completato, approvato e
+  sottoscritto per il titolare che usa il servizio.
+- [ ] Ruoli di eventuali altri soggetti coinvolti determinati, motivati e
+  formalmente approvati per questo specifico flusso.
+- [ ] Base ex art. 6 del professionista/Organismo titolare per i dati di terzi
+  motivata e documentata.
 - [ ] Eventuali presupposti ex artt. 9 e 10 definiti.
 - [ ] Processo ex art. 14 definito, oppure specifica eccezione motivata e
   documentata.
@@ -24,8 +34,13 @@ conformità.
   subprocessori e retention verificati e archiviati.
 - [ ] Eventuale Gemini verificato come Paid Service con DPA, meccanismo di
   trasferimento e retention archiviati.
-- [ ] Informativa, avviso immediato, istruzioni di minimizzazione e test
-  accessibilità approvati.
+- [x] Testo pubblico dell'avviso immediato, dei limiti della
+  pseudonimizzazione e delle istruzioni di minimizzazione approvato dal titolare
+  il 12 settembre 2026, come registrato in PRIV-18 e nell'issue #81.
+- [ ] Test accessibilità dell'avviso e del futuro flusso di attestazioni
+  superati.
+- [ ] Presidi rafforzati per dati di minori descritti in
+  `PRIV-17-presidi-rafforzati-minori-ai.md` implementati, testati e approvati.
 - [ ] Test sintetici di upload, analisi, chat, cancellazione e retention
   superati senza dati personali reali.
 
@@ -36,11 +51,12 @@ Solo dopo il completamento di tutte le voci:
 
 ## Assistente AI Antiriciclaggio
 
-- [ ] Ruoli di professionista/Organismo e CalcoloMediazione determinati,
-  motivati e formalmente approvati.
-- [ ] Se CalcoloMediazione è responsabile, accordo e istruzioni documentate ex
-  art. 28 sottoscritti; se titolare autonomo o contitolare, relativi obblighi
-  documentati e attuati.
+- [x] Modello di ruolo scelto in via di indirizzo e registrato in PRIV-18:
+  professionista/Organismo titolare e CalcoloMediazione responsabile ex art. 28.
+- [ ] Modello verificato nel concreto scenario AML, motivato e reso operativo
+  mediante accordo e istruzioni documentate.
+- [ ] Accordo e istruzioni documentate ex art. 28 sottoscritti per lo specifico
+  professionista o Organismo titolare.
 - [ ] Subresponsabili autorizzati e catena contrattuale verificata.
 - [ ] Presupposto applicabile ai dati ex art. 10 e diritto nazionale
   documentato.

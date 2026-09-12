@@ -102,15 +102,13 @@ sostituire, quello degli interessati o dei loro rappresentanti.
 
 ## Presidio provvisorio per dati relativi a minori
 
-In attesa della decisione finale del titolare, le nuove Analisi AI sono sospese
-per ogni materia. L'interfaccia vieta senza eccezioni l'invio di identificativi
-di minori e di dati sanitari, biometrici o giudiziari; tale divieto resta una
-misura di minimizzazione e non sostituisce le basi e garanzie richieste dagli
-artt. 6, 9 e 10 GDPR. Prima di qualsiasi riattivazione occorre decidere se
-escludere stabilmente questi dati o introdurre un percorso separato, motivato e
-tecnicamente verificabile. Non viene introdotta una categorizzazione automatica
-della pratica, che creerebbe un ulteriore dato classificatorio senza eliminare
-il rischio di casi sensibili presenti in altre materie.
+Le nuove Analisi AI sono sospese per ogni materia. Il 12 settembre 2026 il
+titolare ha scelto in via di indirizzo un futuro percorso a presidi rafforzati,
+registrato in PRIV-18 e specificato in PRIV-17. La scelta non approva ancora il
+trattamento: il percorso deve essere implementato, testato e valutato nella
+presente DPIA. Fino ad allora i dati di minori restano esclusi dai flussi AI.
+Il divieto provvisorio resta una misura di minimizzazione e non sostituisce le
+basi e garanzie richieste dagli artt. 6, 9 e 10 GDPR.
 
 ## Esito e prossimi passi
 
@@ -148,14 +146,18 @@ Non viene quindi formulata alcuna conclusione sull'art. 36 GDPR.
    output prima dell'uso professionale.
 5. La DPIA deve essere riesaminata almeno annualmente e prima di modifiche a
    provider, modelli, finalità, categorie di dati o retention.
-6. Prima di riattivare l'Analisi AI devono essere definiti e approvati il ruolo
-   di CalcoloMediazione rispetto ai dati di terzi, la propria base ex art. 6,
+6. Prima di riattivare l'Analisi AI deve essere verificata in concreto e resa
+   operativa mediante accordo e istruzioni la scelta di indirizzo, registrata
+   in PRIV-18, del professionista/Organismo titolare e CalcoloMediazione
+   responsabile ex art. 28. Devono inoltre essere definiti la base ex art. 6
+   del professionista/Organismo titolare,
    gli eventuali presupposti ex artt. 9 e 10 e il processo per l'informativa ex
    art. 14 o per la documentazione di una specifica eccezione applicabile.
-7. L'assistente AI AML resta sospeso fino alla definizione del ruolo di
-   responsabile, dell'accordo ex art. 28, delle istruzioni documentate e del
-   presupposto ex art. 10 e diritto nazionale per eventuali dati su condanne
-   e reati.
+7. L'assistente AI AML resta sospeso fino alla verifica concreta e
+   operativizzazione dell'indirizzo di CalcoloMediazione responsabile, alla
+   sottoscrizione dell'accordo ex art. 28 e delle istruzioni documentate e alla
+   definizione del presupposto ex art. 10 e del diritto nazionale per eventuali
+   dati su condanne e reati.
 8. Devono essere censiti diagnostica, Google Apps Script e log Northflank,
    con retention, trasferimenti e DPA.
 9. `CASE_AI_ENABLED` e `CASE_AI_GDPR_APPROVED` devono restare assenti o diversi

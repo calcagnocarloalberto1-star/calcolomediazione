@@ -65,9 +65,10 @@ nella documentazione del sito.
 - **Categorie di dati:** titolo, descrizione libera del caso, nomi e ruolo delle parti, valore della lite, documenti opzionali; potenzialmente dati relativi a minori o alla situazione familiare/economica delle parti nei casi di mediazione familiare.
 - **Base giuridica e trasparenza:** da definire e approvare prima della
   riattivazione. La dichiarazione dell'utente non costituisce il consenso dei
-  terzi né la base propria di CalcoloMediazione. Devono essere motivati il
-  ruolo, la base ex art. 6, gli eventuali presupposti ex artt. 9 e 10 e il
-  processo per l'informativa ex art. 14 o una specifica eccezione documentata.
+  terzi né la base giuridica del professionista/Organismo titolare. Devono
+  essere motivati il ruolo, la base ex art. 6 del titolare, gli eventuali
+  presupposti ex artt. 9 e 10 e il processo per l'informativa ex art. 14 o una
+  specifica eccezione documentata.
 - **Destinatari in caso di futura riattivazione:** Anthropic (Claude); Google (Gemini) soltanto se il fallback
   viene espressamente abilitato dopo la verifica del Paid Service —
   `server/ai/llm.ts`.
@@ -77,9 +78,11 @@ nella documentazione del sito.
 - **Controllo di accesso:** token casuale; hash nella colonna di verifica;
   copia recuperabile nel payload cifrato AES-256-GCM, oltre alla copia nel
   browser dell'utente; endpoint amministrativo protetto da sessione HMAC.
-- **Ruolo di CalcoloMediazione:** da definire e approvare prima della
-  riattivazione con riferimento ai dati di terzi e al rapporto con il
-  professionista che utilizza il servizio.
+- **Ruolo di CalcoloMediazione:** il 12 settembre 2026 è stato scelto in via di
+  indirizzo il modello professionista/Organismo titolare e CalcoloMediazione
+  responsabile ex art. 28. La scelta, registrata in PRIV-18, deve essere
+  verificata in concreto e resa operativa mediante accordo e istruzioni prima
+  della riattivazione.
 - **Misure di sicurezza:** vedi sopra; DPA Anthropic incorporato nei
   Commercial Terms da archiviare per l'account effettivo. Gemini resta
   disabilitato fino alla verifica e archiviazione di Cloud DPA, SCC o altro
@@ -94,12 +97,12 @@ nella documentazione del sito.
   dati su condanne o reati, disciplinati separatamente dall'art. 10 GDPR.
 - **Stato del flusso:** sospeso lato interfaccia e lato server; nessun
   documento deve essere trasmesso.
-- **Base giuridica e ruoli per un'eventuale riattivazione:** qualificazione da
-  determinare e approvare prima della riattivazione. Se CalcoloMediazione sarà
-  qualificata come responsabile, serviranno accordo e istruzioni ex art. 28,
+- **Base giuridica e ruoli per un'eventuale riattivazione:** anche per l'AML
+  PRIV-18 sceglie in via di indirizzo il professionista/Organismo titolare e
+  CalcoloMediazione responsabile. Il modello deve essere verificato nel caso
+  concreto e reso operativo mediante accordo e istruzioni ex art. 28,
   autorizzazione dei subresponsabili e individuazione del presupposto nazionale
-  per l'art. 10; se sarà titolare autonomo o contitolare, dovranno essere
-  documentati i conseguenti obblighi.
+  per l'art. 10 prima della riattivazione.
 - **Destinatari in caso di futura riattivazione:** Anthropic, soltanto dopo
   la chiusura dei prerequisiti indicati; allo stato nessun documento è
   accettato dagli endpoint AML.
@@ -156,11 +159,11 @@ nella documentazione del sito.
 
 ## Matrice preliminare dei ruoli
 
-| Flusso | Ruolo di CalcoloMediazione da definire | Responsabili tecnici candidati | Altri destinatari/fornitori da censire | Stato |
+| Flusso | Ruolo di CalcoloMediazione | Responsabili tecnici candidati | Altri destinatari/fornitori da censire | Stato |
 |---|---|---|---|---|
 | Navigazione e gestione del sito | Titolare | Northflank, se confermato dal DPA | Google Analytics, titolarità/ruolo da verificare | aperto |
-| Analisi AI offerta direttamente dal sito | Da definire e approvare per i dati di terzi | Northflank e Anthropic | Gemini solo se successivamente abilitato e documentato | sospeso; base propria, artt. 9/10 e informativa art. 14 da definire |
-| AML per professionista/Organismo | Da definire; ipotesi di responsabile soltanto dopo qualificazione e accordo ex art. 28 | Northflank e Anthropic, soltanto se nominabili come subresponsabili nel rapporto approvato | ulteriori soggetti da censire | sospeso; richiede decisione sul ruolo, accordo e istruzioni se applicabili, autorizzazione ai subresponsabili e presupposto art. 10 |
+| Analisi AI per professionista/Organismo | Indirizzo scelto: responsabile ex art. 28, da verificare nel singolo scenario e rendere operativo con accordo | Northflank e Anthropic | Gemini solo se successivamente abilitato e documentato | sospeso; accordo, base del titolare, artt. 9/10 e informativa art. 14 da completare |
+| AML per professionista/Organismo | Indirizzo scelto: responsabile ex art. 28, da verificare nel singolo scenario e rendere operativo con accordo | Northflank e Anthropic, soltanto se nominabili come subresponsabili nel rapporto approvato | ulteriori soggetti da censire | sospeso; richiede accordo e istruzioni, autorizzazione ai subresponsabili e presupposto art. 10 |
 | Diagnostica del sito | Titolare | Northflank, se confermato dal DPA | Google Apps Script/Sheets soltanto se configurato; ruolo da verificare | aperto |
 
 Se CalcoloMediazione opera come responsabile per l'AML, predisporre anche il
