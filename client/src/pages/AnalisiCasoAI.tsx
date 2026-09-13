@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -26,6 +27,10 @@ import MarkdownRenderer from "@/components/MarkdownRenderer";
 import { apiRequest } from "@/lib/queryClient";
 import type { AnalisiCaso } from "@shared/schema";
 import { COEFFICIENTI_CATASTALI, type CategoriaCatastale } from "@shared/valore-catastale";
+import {
+    MINORS_NOTICE_VERSION, MINORS_NOTICE_TEXT, MINORS_CONFIRMATION_LABELS,
+    MINORS_CATEGORIZATION_QUESTION, type MinorsStatus,
+} from "@shared/minori-preflight";
 
 // ─── COSTANTI ────────────────────────────────────────────────────────────────
 const PIPELINE_STEPS = [
@@ -135,7 +140,7 @@ async function apiGetAnalisi(id: number): Promise<AnalisiCaso | null> {
   }
 }
 
-async function apiPostChat(id: number, message: string): Promise<{ response: string; chatHistory: any[] } | null> {
+async function apiPostChat(id: number, message: string, minorsHeaders: Record<string, string>): Promise<{ response: string; chatHistory: any[] } | null> {
   const token = getToken(id);
   if (!token) return null;
   try {
@@ -144,6 +149,7 @@ async function apiPostChat(id: number, message: string): Promise<{ response: str
       headers: {
         "Content-Type": "application/json",
         "X-Access-Token": token,
+        ...minorsHeaders,
       },
       body: JSON.stringify({ message }),
     });
@@ -203,6 +209,48 @@ export default function AnalisiCasoAI() {
   const [privacyAcknowledged, setPrivacyAcknowledged] = useState(false);
   const [caseAiEnabled, setCaseAiEnabled] = useState(false);
   const [privacyControlsLoaded, setPrivacyControlsLoaded] = useState(false);
+const [minorsPathEnabled, setMinorsPathEnabled] = useState(false);
+
+  // PRIV-17 — categorizzazione obbligatoria minori, protocollo di preflight.
+  // Nessun valore preselezionato (vedi specifica: docs/PRIV-17-presidi-rafforzati-minori-ai.md).
+  const [minorsStatus, setMinorsStatus] = useState<MinorsStatus | null>(null);
+  const [minorsConfirmations, setMinorsConfirmations] = useState<boolean[]>(
+    () => MINORS_CONFIRMATION_LABELS.map(() => false),
+    );
+  // Identificativo opaco, generato una sola volta per sessione di questo caso: lega
+  // il token di preflight (fase 1) alla richiesta di contenuto (fase 2) senza che il
+  // sito abbia un sistema di account per gli utenti pubblici.
+  const [flowId] = useState<string>(() => {
+    try {
+      return crypto.randomUUID().replace(/-/g, "");
+    } catch {
+      return `${Date.now().toString(36)}${Math.random().toString(36).slice(2)}`.padEnd(24, "0");
+    }
+  });
+
+  async function getMinorsPreflightToken(): Promise<string> {
+    if (!minorsStatus) {
+      throw new Error("Indica prima se la pratica riguarda dati di persone minorenni.");
+    }
+    const headers: Record<string, string> = {
+      "X-Minors-Status": minorsStatus,
+      "X-Notice-Version": MINORS_NOTICE_VERSION,
+      "X-Case-Flow-Id": flowId,
+    };
+    if (minorsStatus !== "no") {
+      headers["X-Minors-Confirmations"] = minorsConfirmations.map(v => (v ? "1" : "0")).join(",");
+    }
+    const res = await fetch("/api/analisi/minori-preflight", { method: "POST", headers });
+    const data = await res.json().catch(() => ({} as any));
+    if (!res.ok) {
+      throw new Error(data?.error || "Verifica preliminare sui dati di minori non riuscita.");
+    }
+    return data.token as string;
+  }
+
+  const minorsReinforcedConfirmed = minorsStatus === "no"
+  ? true
+    : (minorsPathEnabled && minorsConfirmations.every(Boolean));
 
   useEffect(() => {
     let active = true;
@@ -212,7 +260,10 @@ export default function AnalisiCasoAI() {
         return res.json();
       })
       .then(config => {
-        if (active) setCaseAiEnabled(config?.caseAiEnabled === true);
+        if (active) {
+          setCaseAiEnabled(config?.caseAiEnabled === true);
+          setMinorsPathEnabled(config?.minorsPathEnabled === true);
+        }
       })
       .catch(() => {
         if (active) setCaseAiEnabled(false);
@@ -402,6 +453,10 @@ export default function AnalisiCasoAI() {
       toast({ title: "Conferma privacy necessaria", description: "Prima di caricare documenti, conferma l'informativa posta sotto l'area di upload.", variant: "destructive" });
       return;
     }
+    if (!minorsStatus || !minorsReinforcedConfirmed) {
+      toast({ title: "Verifica minori necessaria", description: "Rispondi prima alla domanda sui dati di minori e, se richiesto, spunta tutte le conferme.", variant: "destructive" });
+      return;
+    }
     const items = e.dataTransfer.items;
     let tutti: File[] = [];
     const entrySupportato = items && items.length > 0 && typeof (items[0] as any).webkitGetAsEntry === "function";
@@ -427,6 +482,11 @@ export default function AnalisiCasoAI() {
       toast({ title: "Conferma privacy necessaria", description: "Conferma l'informativa prima di selezionare documenti.", variant: "destructive" });
       return;
     }
+    if (!minorsStatus || !minorsReinforcedConfirmed) {
+      e.target.value = "";
+      toast({ title: "Verifica minori necessaria", description: "Rispondi prima alla domanda sui dati di minori e, se richiesto, spunta tutte le conferme.", variant: "destructive" });
+      return;
+    }
     if (e.target.files) {
       const tutti = Array.from(e.target.files);
       const selected = tutti.filter(isPdfFile);
@@ -446,6 +506,11 @@ export default function AnalisiCasoAI() {
       toast({ title: "Conferma privacy necessaria", description: "Conferma l'informativa prima di selezionare documenti.", variant: "destructive" });
       return;
     }
+    if (!minorsStatus || !minorsReinforcedConfirmed) {
+      e.target.value = "";
+      toast({ title: "Verifica minori necessaria", description: "Rispondi prima alla domanda sui dati di minori e, se richiesto, spunta tutte le conferme.", variant: "destructive" });
+      return;
+    }
     if (e.target.files) {
       const tutti = Array.from(e.target.files);
       const selected = tutti.filter(isPdfFile);
@@ -457,23 +522,39 @@ export default function AnalisiCasoAI() {
   const uploadPdfFiles = async (newFiles: File[]) => {
     if (!caseAiEnabled) return;
     setUploadingFiles(true);
-    try {
-      const formData = new FormData();
-      newFiles.forEach(f => formData.append("files", f));
-      const res = await fetch("/api/upload-pdf", { method: "POST", body: formData });
-      if (res.ok) {
-        const data = await res.json();
-        if (data.files) setUploadedTexts(prev => [...prev, ...data.files]);
-      }
-    } catch (error) { console.error("Errore upload PDF:", error); }
+try {
+  const minorsToken = await getMinorsPreflightToken();
+  const formData = new FormData();
+  newFiles.forEach(f => formData.append("files", f));
+  const res = await fetch("/api/upload-pdf", {
+    method: "POST",
+    headers: { "X-Minors-Preflight-Token": minorsToken, "X-Case-Flow-Id": flowId },
+    body: formData,
+  });
+  if (res.ok) {
+    const data = await res.json();
+    if (data.files) setUploadedTexts(prev => [...prev, ...data.files]);
+  } else {
+    const errData = await res.json().catch(() => ({} as any));
+    toast({ title: "Caricamento non riuscito", description: errData?.error || "Errore durante il caricamento dei documenti.", variant: "destructive" });
+  }
+} catch (error: any) {
+  console.error("Errore upload PDF:", error);
+  toast({ title: "Verifica minori richiesta", description: error?.message || "Impossibile completare la verifica preliminare sui dati di minori.", variant: "destructive" });
+}
     setUploadingFiles(false);
   };
 
   // ─── SUBMIT ───────────────────────────────────────────────────────────────
   const handleSubmit = async () => {
     if (!caseAiEnabled || !titolo || descrizione.length < 50 || !privacyAcknowledged) return;
+    if (!minorsStatus || !minorsReinforcedConfirmed) {
+      toast({ title: "Verifica minori necessaria", description: "Rispondi alla domanda sui dati di minori e, se richiesto, spunta tutte le conferme prima di avviare l'analisi.", variant: "destructive" });
+      return;
+    }
     setIsRunning(true); setCurrentStep(0);
     try {
+      const minorsToken = await getMinorsPreflightToken();
       const documentiCombinati = uploadedTexts
         .map(d => `--- Documento: ${d.filename} (${d.pages} pagine) ---\n${d.text}`)
         .join("\n\n");
@@ -499,7 +580,10 @@ export default function AnalisiCasoAI() {
         privacyAcknowledged: true,
       };
 
-      const res = await apiRequest("POST", "/api/analisi", body);
+      const res = await apiRequest("POST", "/api/analisi", body, {
+        "X-Minors-Preflight-Token": minorsToken,
+        "X-Case-Flow-Id": flowId,
+      });
       const data: AnalisiCaso & { accessToken?: string } = await res.json();
 
       // Salva il token — fondamentale per accedere all'analisi
@@ -529,7 +613,8 @@ export default function AnalisiCasoAI() {
     setChatMessages(prev => [...prev, { role: "user", content: msg, timestamp: new Date().toISOString() }]);
     setIsSending(true);
     try {
-      const data = await apiPostChat(analisi.id, msg);
+      const minorsToken = await getMinorsPreflightToken();
+      const data = await apiPostChat(analisi.id, msg, { "X-Minors-Preflight-Token": minorsToken, "X-Case-Flow-Id": flowId });
       if (data) {
         setChatMessages(prev => [...prev, { role: "assistant", content: data.response, timestamp: new Date().toISOString() }]);
       } else {
@@ -897,7 +982,70 @@ export default function AnalisiCasoAI() {
 
         <Card className="border-2 border-foreground shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]" data-testid="card-analisi-form">
           <CardContent className="pt-6 space-y-6">
-            {/* Titolo */}
+            {/* PRIV-17 — categorizzazione obbligatoria sui dati di minori, prima di
+    accettare testo o documenti. Nessuna opzione preselezionata. */}
+<div className="space-y-3 border-2 border-foreground p-4" data-testid="section-minori">
+  <Label className="text-sm font-semibold">{MINORS_CATEGORIZATION_QUESTION}</Label>
+  <RadioGroup
+    value={minorsStatus ?? undefined}
+    onValueChange={(value) => setMinorsStatus(value as MinorsStatus)}
+    disabled={!caseAiEnabled}
+    className="flex flex-col sm:flex-row gap-3"
+  >
+    <div className="flex items-center gap-2">
+      <RadioGroupItem value="no" id="minori-no" data-testid="radio-minori-no" />
+      <label htmlFor="minori-no" className="text-sm cursor-pointer">No</label>
+    </div>
+    <div className="flex items-center gap-2">
+      <RadioGroupItem value="yes" id="minori-si" data-testid="radio-minori-si" />
+      <label htmlFor="minori-si" className="text-sm cursor-pointer">Sì</label>
+    </div>
+    <div className="flex items-center gap-2">
+      <RadioGroupItem value="unknown" id="minori-nonso" data-testid="radio-minori-nonso" />
+      <label htmlFor="minori-nonso" className="text-sm cursor-pointer">Non so</label>
+    </div>
+  </RadioGroup>
+
+  {(minorsStatus === "yes" || minorsStatus === "unknown") && (
+    !minorsPathEnabled ? (
+      <div className="border-2 border-red-600/50 bg-red-50 dark:bg-red-950/20 p-3 text-sm">
+        Il percorso rafforzato per pratiche con possibili dati di minori non è ancora attivo:
+        questa pratica non può essere trattata con l'AI in questo momento. Consulta la{" "}
+        <Link href="/privacy-policy#servizi-ia">
+          <span className="underline font-semibold cursor-pointer">Privacy Policy, sezione servizi IA</span>
+        </Link>.
+      </div>
+    ) : (
+      <div className="space-y-3">
+        <div className="border-2 border-amber-600/50 bg-amber-50 dark:bg-amber-950/20 p-3 text-sm">
+          {MINORS_NOTICE_TEXT}
+        </div>
+        <div className="space-y-2">
+          {MINORS_CONFIRMATION_LABELS.map((testo, i) => (
+            <div key={i} className="flex items-start gap-3">
+              <Checkbox
+                id={`minori-conferma-${i}`}
+                checked={minorsConfirmations[i]}
+                onCheckedChange={(value) => setMinorsConfirmations(prev => {
+                  const next = [...prev];
+                  next[i] = value === true;
+                  return next;
+                })}
+                className="mt-0.5 border-2 border-foreground"
+                data-testid={`checkbox-minori-conferma-${i}`}
+              />
+              <label htmlFor={`minori-conferma-${i}`} className="text-sm leading-relaxed cursor-pointer">
+                {testo}
+              </label>
+            </div>
+          ))}
+        </div>
+      </div>
+    )
+  )}
+</div>
+
+{/* Titolo */}
             <div className="space-y-2">
               <Label className="text-sm font-semibold">Titolo del Caso</Label>
               <Input value={titolo} onChange={e => setTitolo(e.target.value)}
@@ -1233,7 +1381,7 @@ export default function AnalisiCasoAI() {
             </div>
 
             {/* Submit */}
-            <Button onClick={handleSubmit} disabled={!caseAiEnabled || !titolo || descrizione.length < 50 || !privacyAcknowledged || isRunning}
+            <Button onClick={handleSubmit} disabled={!caseAiEnabled || !titolo || descrizione.length < 50 || !privacyAcknowledged || !minorsStatus || !minorsReinforcedConfirmed || isRunning}
               className="w-full py-6 text-base font-bold border-2 border-foreground shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] transition-all duration-150"
               data-testid="button-avvia-analisi">
               {isRunning ? <><Loader2 className="w-5 h-5 mr-2 animate-spin" />Analisi in corso...</>
