@@ -5,6 +5,7 @@ import { serveStatic } from "./static";
 import { createServer } from "http";
 import { buildContentSecurityPolicy, createCspNonce } from "./security/csp";
 import { registerPrivacyPreParserGates } from "./privacy-controls";
+import { registerMinorsPreflightRoute, registerMinorsPreflightGates } from "./security/minors-preflight";
 
 const app = express();
 // Render inoltra il traffico attraverso un solo proxy. Limitare il trust al
@@ -50,6 +51,14 @@ declare module "http" {
 // Express legga JSON, form URL-encoded o upload. I gate nelle route costituiscono
 // una seconda barriera e non sostituiscono questo livello applicativo.
 registerPrivacyPreParserGates(app);
+
+// PRIV-17 — endpoint di preflight (fase 1, nessun body letto) e verifica del
+// token di preflight (fase 2) per i flussi AI che trattano il contenuto della
+// pratica. Montati qui, prima dei parser, per rispettare il principio della
+// specifica secondo cui il blocco deve avvenire "prima del parser o di
+// Multer" (vedi server/security/minors-preflight.ts).
+registerMinorsPreflightRoute(app);
+registerMinorsPreflightGates(app);
 
 app.use(
   express.json({
