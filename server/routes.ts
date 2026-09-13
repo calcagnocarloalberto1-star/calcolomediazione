@@ -29,6 +29,8 @@ import {
   requireCaseAiEnabled,
 } from "./privacy-controls.js";
 import lastmodMap from "./lastmod-generated.json" with { type: "json" };
+import { rilevaPossibiliRiferimentiMinori } from "./security/minors-detection.js";
+import { getMinorsAuditTrail, deleteMinorsAuditEntry, isMinorsPathEnabled } from "./security/minors-preflight.js";
 
 const PDF_MIME = "application/pdf";
 const AML_ALLOWED_TYPES = ["image/jpeg", "image/png", "image/webp", "image/gif", PDF_MIME];
@@ -941,12 +943,37 @@ return res.status(401).json({ error: "Non autorizzato" });
 res.json(stats.getStats());
 });
 
+  // PRIV-17 - audit trail minimizzato delle attestazioni preflight (nessun
+  // contenuto di pratica: solo identificativo pseudonimo, data, versione del
+  // testo e valori delle conferme). Sola lettura per il titolare, con
+  // possibilita' di cancellazione anticipata di una singola attestazione su
+  // richiesta dell'interessato tramite il titolare.
+  app.get("/api/admin/minori-audit", (req, res) => {
+    if (!adminAuthenticated(req)) {
+      return res.status(401).json({ error: "Non autorizzato" });
+    }
+    res.json({ voci: getMinorsAuditTrail() });
+  });
+
+  app.delete("/api/admin/minori-audit/:id", (req, res) => {
+    if (!adminAuthenticated(req)) {
+      return res.status(401).json({ error: "Non autorizzato" });
+    }
+    const deleted = deleteMinorsAuditEntry(String(req.params.id));
+    if (!deleted) return res.status(404).json({ error: "Voce non trovata" });
+    res.json({ success: true });
+  });
+
 // ─── ANALISI AI ───────────────────────────────────────────────────────────
 
 app.get("/api/privacy-controls", (_req, res) => {
 res.json({
 caseAiEnabled: isCaseAiEnabled(),
 amlAiEnabled: isAmlAiEnabled(),
+  // PRIV-17 - indica se il percorso rafforzato (pratiche con possibili dati
+  // di minori) e' attivo. Resta disabilitato di default: vedi
+  // server/security/minors-preflight.ts.
+  minorsPathEnabled: isMinorsPathEnabled(),
 });
 });
 
@@ -1138,6 +1165,25 @@ return res.status(413).json({ error: "Il testo complessivo dei documenti supera 
 if (Array.isArray(parti) && parti.length > 20) {
 return res.status(400).json({ error: "Troppe parti indicate (max 20)." });
 }
+  // PRIV-17 - la verifica preliminare (fase 1) e' gia' avvenuta prima del
+  // parser (vedi server/security/minors-preflight.ts, montata in
+  // server/index.ts): a questo punto minorsStatus e' sempre valorizzato,
+  // altrimenti la richiesta non avrebbe superato il gate. Il controllo qui
+  // sotto e' una difesa in profondita', non la prima barriera.
+  const minorsStatus = (req as any).minorsStatus;
+  if (minorsStatus !== "yes" && minorsStatus !== "no" && minorsStatus !== "unknown") {
+    return res.status(422).json({ error: "Verifica preliminare sui dati di minori mancante o non valida.", code: "MINORS_PREFLIGHT_REQUIRED" });
+  }
+  if (minorsStatus === "no") {
+    const nomiParti = Array.isArray(parti) ? parti.map((p: any) => String(p?.nome || "")) : [];
+    const { rischio } = rilevaPossibiliRiferimentiMinori(String(titolo), String(descrizione), typeof documentiText === "string" ? documentiText : "", ...nomiParti);
+    if (rischio) {
+      return res.status(422).json({
+        error: "Il testo inserito sembra contenere possibili riferimenti a persone minorenni, ma la verifica preliminare indicava che la pratica non ne contiene. Ripeti la verifica selezionando la risposta corretta.",
+        code: "MINORS_HEURISTIC_MISMATCH",
+      });
+    }
+  }
 if (!serviziAIDisponibili()) {
 return res.status(503).json({ error: "Il servizio di intelligenza artificiale non e' al momento disponibile. Riprova piu' tardi." });
 }
@@ -1307,7 +1353,20 @@ return res.status(401).json({ error: "Token di accesso mancante" });
 const analisi = await storage.getAnalisi(id, accessToken);
 if (!analisi) return res.status(404).json({ error: "Analisi non trovata o accesso non autorizzato" });
 
-const chatHistory = analisi.chatHistory || [];
+// PRIV-17 - stessa difesa in profondita' applicata in /api/analisi: la
+  // verifica preliminare (fase 1) e' gia' avvenuta prima del parser.
+  const minorsStatusChat = (req as any).minorsStatus;
+  if (minorsStatusChat !== "yes" && minorsStatusChat !== "no" && minorsStatusChat !== "unknown") {
+    return res.status(422).json({ error: "Verifica preliminare sui dati di minori mancante o non valida.", code: "MINORS_PREFLIGHT_REQUIRED" });
+  }
+  if (minorsStatusChat === "no" && rilevaPossibiliRiferimentiMinori(String(message || "")).rischio) {
+    return res.status(422).json({
+      error: "Il messaggio sembra contenere possibili riferimenti a persone minorenni, ma la verifica preliminare indicava che la pratica non ne contiene. Ripeti la verifica selezionando la risposta corretta.",
+      code: "MINORS_HEURISTIC_MISMATCH",
+    });
+  }
+  
+  const chatHistory = analisi.chatHistory || [];
 const context = [
 analisi.prospettoEconomico ? `Estrazione Entità (NER):\n${analisi.prospettoEconomico}` : "",
 analisi.analisiGiuridica ? `Analisi Giuridica:\n${analisi.analisiGiuridica}` : "",
