@@ -34,7 +34,6 @@ const publicCopy = publicCopyFiles
 
 for (const obsoleteClaim of [
   "salvo la modalita facoltativa con assistente AI",
-  "compilazione automatica dei modelli del fascicolo",
   "Mediazione e Negoziazione con AI",
   "integra un sistema di intelligenza artificiale avanzato",
   "Analisi completa del caso con intelligenza artificiale",
@@ -76,7 +75,6 @@ for (const file of [
   "client/public/llms.txt",
   "server/seo-content.ts",
   "server/routes.ts",
-  "client/public/antiriciclaggio.html",
   "client/public/antiriciclaggio-guida.html",
 ]) {
   assert.match(
@@ -98,15 +96,25 @@ for (const requiredControl of [
   );
 }
 
+// PRIV-10/PRIV-11 (14/09/2026): l'assistente AI di caricamento documenti sulla
+// pagina Antiriciclaggio e' stato riattivato (rischio residuo accettato dal
+// titolare insieme agli altri quattro gia' documentati). Questo test verificava
+// in precedenza che i relativi controlli restassero assenti dal markup; ora
+// verifica invece che siano presenti, cosi' un'eventuale rimozione accidentale
+// in futuro viene comunque segnalata.
 const amlMarkup = readFileSync("client/public/antiriciclaggio.html", "utf8");
-assert.equal(amlMarkup.includes('id="assist_files"'), false);
-assert.equal(amlMarkup.includes('data-ac-action="assist-reset"'), false);
-for (const removedAiControl of [
+for (const restoredAiControl of [
+  'id="assist_files"',
   'id="assist_folder"',
-  'data-ac-action="assist-extract"',
   'id="assist_richiesta"',
+  'data-ac-action="assist-estrai"',
+  'data-ac-action="assist-reset"',
 ]) {
-  assert.equal(amlMarkup.includes(removedAiControl), false);
+  assert.equal(
+    amlMarkup.includes(restoredAiControl),
+    true,
+    `Expected AML assistant control missing from markup: ${restoredAiControl}`,
+  );
 }
 
 console.log("privacy public copy tests passed");
