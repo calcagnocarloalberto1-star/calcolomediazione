@@ -197,10 +197,22 @@ organizzative. Se CalcoloMediazione agisce come responsabile, il registro
 separato ex art. 30, § 2 deve riportare anche i titolari per conto dei quali
 opera e i dati di contatto degli eventuali DPO e rappresentanti.
 
-## Approvazione futura del titolare
+## Approvazione del titolare
 
-- Prerequisiti e ruoli chiusi: [ ]
-- Data di approvazione: ____________________
+- Prerequisiti e ruoli chiusi: [ ] — non tutti chiusi; approvato comunque con rischio residuo documentato, coerentemente con la decisione registrata nel DPIA (PRIV-10, sezione "Decisione del titolare").
+- Trattamento approvato con rischio residuo documentato: [x]
+- Data di approvazione: 14/09/2026
 - Nome e ruolo: Carlo Alberto Calcagno, titolare del trattamento
-- Firma o riferimento alla decisione conservata: ____________________
-- Data del prossimo riesame: ____________________
+- Firma o riferimento alla decisione conservata: vedi Motivazione e firma nel DPIA (PRIV-10)
+- Data del prossimo riesame: entro 3 mesi, o prima se si verifica uno di questi eventi: risposta di Northflank su RPO/RTO, esecuzione della prova di restore, chiusura dell'issue #80 (verifica DPA Anthropic), o sottoscrizione dell'accordo ex art. 28 (PRIV-16)
+
+### Nota sul rischio residuo accettato (14/09/2026)
+
+Il titolare ha deciso di rendere operativi i flussi AI (Analisi AI del Caso e AML AI) accettando come rischio residuo documentato i seguenti prerequisiti ancora aperti alla data di approvazione:
+
+1. Risposta di Northflank sui valori RPO/RTO e sulla configurabilita' a livello di progetto (richiesta il 9-10/09/2026, sollecitata il 13/09/2026, non ancora ricevuta).
+2. Prova interna di ripristino da backup (mai eseguita).
+3. Verifica formale del DPA Anthropic con SCC incorporato (issue #80, ancora aperta).
+4. Accordo ex art. 28 con i subresponsabili (Northflank, Anthropic) e con il professionista/Organismo titolare per Analisi AI e AML (bozza non sottoscritta, campi controparte in bianco — PRIV-16).
+
+Questi punti restano da chiudere progressivamente; la presente approvazione non li considera risolti, ma li accetta come rischio assunto dal titolare per rendere operativo il servizio.
