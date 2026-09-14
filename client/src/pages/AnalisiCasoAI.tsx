@@ -738,8 +738,10 @@ try {
     return (
       <div className="min-h-screen py-8 px-4">
       <SeoHead
-        title="Analisi AI del Caso di Mediazione — Funzione temporaneamente sospesa"
-        description="Le nuove analisi, il caricamento dei documenti e la chat AI sono temporaneamente sospesi per il completamento delle verifiche privacy e contrattuali. Le analisi già create restano consultabili."
+        title={caseAiEnabled ? "Analisi AI del Caso di Mediazione — Storico e nuova analisi" : "Analisi AI del Caso di Mediazione — Funzione temporaneamente sospesa"}
+        description={caseAiEnabled
+          ? "Genera un'analisi AI del caso di mediazione a partire dai documenti del fascicolo; consulta lo storico delle analisi già create."
+          : "Le nuove analisi, il caricamento dei documenti e la chat AI sono temporaneamente sospesi per il completamento delle verifiche privacy e contrattuali. Le analisi già create restano consultabili."}
         canonical="https://calcolomediazione.it/analisi-caso-ai"
       />
         <div className="max-w-5xl mx-auto">
@@ -944,7 +946,11 @@ try {
               Analisi Caso AI
             </h1>
           </div>
-          <p className="text-muted-foreground">Le nuove analisi con intelligenza artificiale sono temporaneamente sospese; lo storico delle analisi già create resta disponibile.</p>
+          <p className="text-muted-foreground">
+            {caseAiEnabled
+              ? "Carica i documenti del fascicolo per generare un'analisi AI del caso; verifica sempre professionalmente i risultati prima dell'uso."
+              : "Le nuove analisi con intelligenza artificiale sono temporaneamente sospese; lo storico delle analisi già create resta disponibile."}
+          </p>
         </div>
 
         {!caseAiEnabled && (
@@ -1288,26 +1294,44 @@ try {
             {/* File Upload */}
             <div className="space-y-2">
               <Label className="text-sm font-semibold">Documenti (PDF)</Label>
-              <div className="border-2 border-amber-600/50 bg-amber-50 dark:bg-amber-950/20 p-4 text-sm space-y-2">
-                <p className="font-semibold">Funzione sospesa: non inserire dati personali o documenti</p>
-                <p className="text-muted-foreground">
-                  Le nuove analisi e il caricamento dei PDF sono bloccati sul server prima
-                  dell'elaborazione. La funzione potrà essere riattivata soltanto dopo la
-                  definizione e approvazione delle basi giuridiche, degli obblighi informativi,
-                  della DPIA e della copertura contrattuale dell'account Anthropic effettivamente usato.
-                </p>
-                <p className="text-muted-foreground">
-                  Le analisi già create restano disponibili per un massimo di 30 giorni,
-                  salvo cancellazione anticipata, e possono essere recuperate dallo storico
-                  con il token già presente sul dispositivo.
-                </p>
-                <p>
-                  Consulta la{" "}
-                  <Link href="/privacy-policy#servizi-ia">
-                    <span className="underline font-semibold cursor-pointer">Privacy Policy, sezione servizi IA</span>
-                  </Link>.
-                </p>
-              </div>
+              {!caseAiEnabled ? (
+                <div className="border-2 border-amber-600/50 bg-amber-50 dark:bg-amber-950/20 p-4 text-sm space-y-2">
+                  <p className="font-semibold">Funzione sospesa: non inserire dati personali o documenti</p>
+                  <p className="text-muted-foreground">
+                    Le nuove analisi e il caricamento dei PDF sono bloccati sul server prima
+                    dell'elaborazione. La funzione potrà essere riattivata soltanto dopo la
+                    definizione e approvazione delle basi giuridiche, degli obblighi informativi,
+                    della DPIA e della copertura contrattuale dell'account Anthropic effettivamente usato.
+                  </p>
+                  <p className="text-muted-foreground">
+                    Le analisi già create restano disponibili per un massimo di 30 giorni,
+                    salvo cancellazione anticipata, e possono essere recuperate dallo storico
+                    con il token già presente sul dispositivo.
+                  </p>
+                  <p>
+                    Consulta la{" "}
+                    <Link href="/privacy-policy#servizi-ia">
+                      <span className="underline font-semibold cursor-pointer">Privacy Policy, sezione servizi IA</span>
+                    </Link>.
+                  </p>
+                </div>
+              ) : (
+                <div className="border-2 border-amber-600/50 bg-amber-50 dark:bg-amber-950/20 p-4 text-sm space-y-2">
+                  <p className="font-semibold">Prima di caricare documenti, verifica quanto segue</p>
+                  <p className="text-muted-foreground">
+                    Carica solo documenti per i quali hai una base giuridica adeguata e hai informato
+                    l'interessato, ed elimina prima del caricamento i dati non necessari. Il sistema
+                    applica una pseudonimizzazione automatica best-effort, che non equivale ad
+                    anonimizzazione. Verifica sempre professionalmente i risultati prima dell'uso.
+                  </p>
+                  <p>
+                    Consulta la{" "}
+                    <Link href="/privacy-policy#servizi-ia">
+                      <span className="underline font-semibold cursor-pointer">Privacy Policy, sezione servizi IA</span>
+                    </Link>.
+                  </p>
+                </div>
+              )}
               <div className="flex items-start gap-3 border-2 border-foreground/20 p-3">
                 <Checkbox
                   id="privacy-ai-ack"
@@ -1318,8 +1342,8 @@ try {
                   data-testid="checkbox-privacy-ai"
                 />
                 <label htmlFor="privacy-ai-ack" className="text-sm leading-relaxed cursor-pointer">
-                  Confermo di aver letto l'informativa e i presidi applicabili. Questa conferma
-                  resterà disabilitata finché il servizio non sarà formalmente riaperto.
+                  Confermo di aver letto l'informativa e i presidi applicabili.
+                  {!caseAiEnabled && " Questa conferma resterà disabilitata finché il servizio non sarà formalmente riaperto."}
                 </label>
               </div>
               <div className={`border-2 border-dashed p-8 text-center cursor-pointer transition-all duration-150 ${dragActive ? "border-primary bg-primary/5" : "border-foreground/40 hover:border-foreground"}`}
@@ -1397,7 +1421,7 @@ try {
             <DisclaimerLegale
               variant="full"
               riferimenti={["D.M. 150/2023", "D.Lgs. 28/2010", "D.M. 55/2014 (D.M. 147/2022)", "art. 17 D.Lgs. 28/2010"]}
-              noteSpecifiche="Per le analisi già create, i contenuti generati dall'intelligenza artificiale e le relative stime restano bozze soggette agli stessi criteri e limiti indicati di seguito. La creazione di nuove analisi è temporaneamente sospesa."
+              noteSpecifiche={`Per le analisi già create, i contenuti generati dall'intelligenza artificiale e le relative stime restano bozze soggette agli stessi criteri e limiti indicati di seguito.${!caseAiEnabled ? " La creazione di nuove analisi è temporaneamente sospesa." : ""}`}
               className="mt-6"
             />
           </CardContent>
