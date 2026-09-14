@@ -1835,7 +1835,7 @@ function assistSetStatus(msg){ const el = $("assist_status"); if(el) el.textCont
 // Accumula in un array unico i file scelti dall'input normale e da quello cartella,
 // cosi' l'utente puo' combinare piu' selezioni senza perdere quelle precedenti.
 let assistSelectedFiles = [];
-const ASSIST_MAX_FILES = 10;
+const ASSIST_MAX_FILES = 20;
 // Oltre al MIME type, controlliamo anche l'estensione: alcuni browser/sistemi operativi (in
 // particolare quando si seleziona un'intera cartella) non riescono a determinare il MIME type di
 // ogni file e restituiscono f.type vuoto — senza questo controllo di riserva, tutte le immagini di
@@ -1880,7 +1880,8 @@ const parti = [];
 if(accettati.length) parti.push(accettati.length + " documento/i aggiunto/i");
 if(eccedenti.length) parti.push(
 eccedenti.length + " documento/i non aggiunto/i: il limite di sicurezza e' " + ASSIST_MAX_FILES
-+ " file per ogni analisi. Premi Pulisci e analizza i documenti rimanenti in un secondo gruppo"
++ " file per ogni invio. Premi \"Chiedi all'assistente e compila\" con questi " + ASSIST_MAX_FILES
++ ", poi seleziona i documenti restanti e invia di nuovo: i risultati si sommeranno (non premere Pulisci, azzererebbe anche quelli gia' trovati)"
 );
 if(p7m.length) parti.push(
 p7m.length + " file firmato/i digitalmente (" + p7m.map(f=>f.name).join(", ") + ") NON caricato/i: " +
@@ -1900,11 +1901,19 @@ assistSetStatus(parti.join(". ") + ".");
 let assistParti = [];
 let assistProcedura = {};
 let assistPartiApplicate = new Set();
+// Testo di risposta di ciascun invio (round), tenuto separato cosi' un invio
+// successivo si aggiunge al precedente invece di farlo sparire.
+let assistRispostaTesti = [];
 
+// Aggiunge le parti individuate in QUESTO invio a quelle di eventuali invii
+// precedenti (caricamento in piu' gruppi per superare il limite di documenti
+// per richiesta), invece di sostituirle: cosi' nessun risultato gia' trovato
+// va perso, e le parti gia' applicate al modulo restano applicate.
 function assistRenderPartiMultiple(procedura, parti){
-assistParti = parti || [];
-assistProcedura = procedura || {};
-assistPartiApplicate = new Set();
+// I valori di procedura gia' confermati da un invio precedente hanno la
+// precedenza su quelli, eventualmente diversi, letti in un nuovo invio.
+assistProcedura = Object.assign({}, procedura || {}, assistProcedura);
+assistParti = assistParti.concat(parti || []);
 const container = $("assist_fields");
 container.innerHTML = "";
 if(!assistParti.length){
@@ -2026,7 +2035,10 @@ const ok = confirm(
 if(!ok) return;
 const btn = $("assist_btn"); if(btn) btn.disabled = true;
 $("assist_review").style.display = "none";
-const ansEl = $("assist_answer"); if(ansEl){ ansEl.style.display = "none"; ansEl.textContent = ""; }
+// Non azzeriamo qui la risposta di eventuali invii precedenti: se questo
+// invio fa parte di un caricamento in piu' gruppi, il testo gia' mostrato
+// va conservato (e in caso di errore va lasciato intatto, non perso).
+const ansEl = $("assist_answer");
 assistSetStatus(files.length > 1 ? "Invio dei documenti e lettura AI in corso…" : "Invio del documento e lettura AI in corso…");
 try{
 // I PDF vengono inviati COSI' COME SONO (documento nativo, letto dal modello
@@ -2060,25 +2072,43 @@ const resp = await fetch("/api/aml-assist", { method:"POST", body: fd });
 const data = await resp.json().catch(()=>({}));
 if(!resp.ok){ throw new Error((data && data.error) ? data.error : "Errore del servizio AI"); }
 const rawEl = $("assist_raw"); if(rawEl) rawEl.textContent = JSON.stringify(data, null, 2);
-if(ansEl){ ansEl.style.display = "block"; ansEl.textContent = data.risposta || ""; }
+// La risposta discorsiva di ogni invio si aggiunge a quelle precedenti,
+// invece di sostituirle: con un caricamento in piu' gruppi restano tutte
+// leggibili, una sotto l'altra.
+if(data.risposta) assistRispostaTesti.push(data.risposta);
+if(ansEl){
+ansEl.style.display = assistRispostaTesti.length ? "block" : "none";
+ansEl.textContent = assistRispostaTesti.length > 1
+? assistRispostaTesti.map((t,i)=>"— Invio "+(i+1)+" —\n"+t).join("\n\n")
+: (assistRispostaTesti[0] || "");
+}
 const notaScartati = (Array.isArray(data.scartati) && data.scartati.length)
 ? " ATTENZIONE: " + data.scartati.length + " file scartato/i perche' di formato non supportato (" + data.scartati.join(", ") + ") — formati accettati: JPG, PNG, WEBP, GIF, PDF."
 : "";
+const invioN = assistRispostaTesti.length > 1 ? ("Invio " + assistRispostaTesti.length + ": ") : "";
 if(Array.isArray(data.parti)){
-// Nuovo formato: procedura + elenco di TUTTE le parti individuate (istanti e aderenti).
+// Nuovo formato: procedura + elenco di TUTTE le parti individuate (istanti e aderenti)
+// in QUESTO invio. assistRenderPartiMultiple le aggiunge a quelle di eventuali invii
+// precedenti invece di sostituirle.
+const nuove = data.parti.length;
 assistRenderPartiMultiple(data.campi || {}, data.parti);
-assistSetStatus((data.parti.length
-? "Lettura AI completata: individuate " + data.parti.length + " parte/i. Applica ciascuna parte una alla volta."
-: "Lettura AI completata, ma nessuna parte individuata: leggi la risposta sopra e compila a mano.") + notaScartati);
+const totale = assistParti.length;
+assistSetStatus((nuove
+? invioN + "individuate " + nuove + " nuova/e parte/i" + (totale > nuove ? " (totale " + totale + ")" : "") + ". Applica ciascuna parte una alla volta."
+: invioN + "nessuna nuova parte individuata in questo invio" + (totale ? " (restano applicabili le " + totale + " gia' trovate)" : "") + ": leggi la risposta sopra e compila a mano.") + notaScartati);
 } else {
 // Formato precedente (compatibilita'): un unico set di campi piatto.
 const campi = data.campi || {};
 assistRenderReview(campi);
 const n = Object.keys(campi).length;
 assistSetStatus((n
-? "Lettura AI completata: controlla i dati sotto prima di applicarli."
-: "Lettura AI completata, ma nessun campo individuato: leggi la risposta sopra e compila a mano.") + notaScartati);
+? invioN + "controlla i dati sotto prima di applicarli."
+: invioN + "nessun campo individuato: leggi la risposta sopra e compila a mano.") + notaScartati);
 }
+// Il round e' andato a buon fine: libera la selezione file per un eventuale
+// invio successivo (documenti restanti), senza toccare i risultati gia'
+// ottenuti sopra.
+assistClearSelezioneFile();
 }catch(err){
 console.error(err);
 assistSetStatus("Errore nell'assistente AI: " + (err && err.message ? err.message : err) + ". Puoi comunque compilare a mano.");
@@ -2109,6 +2139,16 @@ try { calcRisk(); } catch(e){ console.error("calcRisk in errore:", e); }
 toast(applied>0 ? "Assistente: dati applicati a "+applied+" camp"+(applied===1?"o":"i")+"." : "Nessun campo selezionato da applicare.");
 }
 
+// Libera solo la selezione dei file (dopo un invio riuscito, per poter
+// caricare un secondo gruppo), mantenendo intatte le parti e la risposta
+// gia' ottenute — a differenza di assistReset() qui sotto, che azzera tutto.
+function assistClearSelezioneFile(){
+const f = $("assist_files"); if(f) f.value = "";
+const fold = $("assist_folder"); if(fold) fold.value = "";
+assistSelectedFiles = [];
+assistRenderFileList();
+}
+
 function assistReset(){
 const f = $("assist_files"); if(f) f.value = "";
 const fold = $("assist_folder"); if(fold) fold.value = "";
@@ -2121,6 +2161,7 @@ const raw = $("assist_raw"); if(raw){ raw.textContent = ""; raw.style.display = 
 assistParti = [];
 assistProcedura = {};
 assistPartiApplicate = new Set();
+assistRispostaTesti = [];
 const ans = $("assist_answer"); if(ans){ ans.style.display = "none"; ans.textContent = ""; }
 assistSetStatus("");
 assistRecognized = [];
