@@ -165,14 +165,14 @@ Non viene quindi formulata alcuna conclusione sull'art. 36 GDPR.
    `AML_AI_ENABLED` e `AML_AI_GDPR_APPROVED`. Ogni riattivazione richiede
    entrambi i flag del relativo flusso e un rilascio controllato.
 
-## Decisione futura del titolare
+## Decisione del titolare
 
 - [ ] Prerequisiti chiusi e DPIA riesaminata.
-- [ ] Trattamento approvato con motivazione e rischio residuo documentato.
+- [x] Trattamento approvato con motivazione e rischio residuo documentato.
 - [ ] Trattamento sospeso o limitato.
 - [ ] Richiesto un parere privacy/DPO o una consultazione preventiva.
 
-- Motivazione: ________________________________________________
-- Data: ____________________
+- Motivazione: il titolare decide di rendere operativi i flussi AI (Analisi AI del Caso e AML AI) pur in presenza di quattro prerequisiti indicati in questo documento non ancora chiusi, accettati qui come rischio residuo documentato e da richiudere progressivamente: (1) risposta di Northflank sui valori RPO/RTO e sulla configurabilita' a livello di progetto, richiesta il 9-10/09/2026 e sollecitata il 13/09/2026, non ancora ricevuta; (2) prova interna di ripristino da backup, mai eseguita; (3) verifica formale del DPA Anthropic con SCC incorporato (issue #80, ancora aperta); (4) accordo ex art. 28 con i subresponsabili (Northflank, Anthropic) e con il professionista/Organismo titolare per Analisi AI e AML, bozza non sottoscritta con campi controparte in bianco (PRIV-16). Restano fermi in ogni caso il divieto di trattare dati di minori nei flussi AI generali fino all'operativita' del percorso a presidi rafforzati (PRIV-17/PRIV-18) e l'obbligo di verifica umana di ogni output prima dell'uso professionale.
+- Data: 14/09/2026
 - Titolare: Carlo Alberto Calcagno
-- Firma o riferimento alla decisione conservata: ____________________
+- Firma o riferimento alla decisione conservata: commit su GitHub di questo documento, autenticato con l'account del titolare (14/09/2026); da integrare con firma formale se richiesto da consulente privacy/DPO
