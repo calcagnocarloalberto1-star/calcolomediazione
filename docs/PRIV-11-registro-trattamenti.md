@@ -1,7 +1,9 @@
 # PRIV-11 — Registro delle attività di trattamento (art. 30 GDPR) — bozza di lavoro
 
-**Stato: bozza da approvare dal titolare; sia le nuove Analisi AI sia il flusso
-AI AML restano sospesi.** Il registro ex art. 30 GDPR è un
+**Stato: bozza approvata dal titolare il 14/09/2026 con rischio residuo
+documentato (v. "Approvazione del titolare" più avanti in questo documento);
+sia le nuove Analisi AI sia il flusso AI AML sono oggi attivi, con alcuni
+prerequisiti ancora da chiudere.** Il registro ex art. 30 GDPR è un
 documento organizzativo che il titolare tiene e aggiorna; questa bozza ne
 ricalca la struttura minima e va integrata con gli elementi che il codice da
 solo non può attestare (contratti firmati, ruoli organizzativi, eventuale
@@ -57,19 +59,22 @@ nella documentazione del sito.
 
 ### 3. Analisi AI del Caso
 
-- **Stato del flusso:** nuove analisi, upload e chat sospesi lato interfaccia e
-  server. Le analisi storiche restano consultabili, esportabili e cancellabili
+- **Stato del flusso:** attivo dal 14/09/2026 (rischio residuo accettato dal
+  titolare, v. "Approvazione del titolare" più avanti in questo documento e
+  PRIV-10, "Decisione del titolare"). Le analisi, storiche e nuove, restano
+  consultabili, esportabili e cancellabili
   fino alla cancellazione o alla scadenza massima di 30 giorni.
-- **Finalità futura proposta:** analisi giuridica, MAAN/BATNA, controllo bias cognitivi, bozza di accordo e confronto economico assistiti da AI.
+- **Finalità:** analisi giuridica, MAAN/BATNA, controllo bias cognitivi, bozza di accordo e confronto economico assistiti da AI.
 - **Categorie di interessati:** le parti della controversia descritta (spesso diverse dall'utente che compila il modulo).
 - **Categorie di dati:** titolo, descrizione libera del caso, nomi e ruolo delle parti, valore della lite, documenti opzionali; potenzialmente dati relativi a minori o alla situazione familiare/economica delle parti nei casi di mediazione familiare.
-- **Base giuridica e trasparenza:** da definire e approvare prima della
-  riattivazione. La dichiarazione dell'utente non costituisce il consenso dei
+- **Base giuridica e trasparenza:** da definire e approvare — resta un
+  prerequisito ancora aperto nonostante l'attivazione del 14/09/2026 (rischio
+  residuo accettato dal titolare). La dichiarazione dell'utente non costituisce il consenso dei
   terzi né la base giuridica del professionista/Organismo titolare. Devono
   essere motivati il ruolo, la base ex art. 6 del titolare, gli eventuali
   presupposti ex artt. 9 e 10 e il processo per l'informativa ex art. 14 o una
   specifica eccezione documentata.
-- **Destinatari in caso di futura riattivazione:** Anthropic (Claude); Google (Gemini) soltanto se il fallback
+- **Destinatari:** Anthropic (Claude); Google (Gemini) soltanto se il fallback
   viene espressamente abilitato dopo la verifica del Paid Service —
   `server/ai/llm.ts`.
 - **Trasferimento extra-UE:** possibile verso USA o altri Paesi; garanzia e meccanismo applicabili sono da verificare e documentare sul contratto/DPA del servizio effettivamente usato.
@@ -80,9 +85,11 @@ nella documentazione del sito.
   browser dell'utente; endpoint amministrativo protetto da sessione HMAC.
 - **Ruolo di CalcoloMediazione:** il 12 settembre 2026 è stato scelto in via di
   indirizzo il modello professionista/Organismo titolare e CalcoloMediazione
-  responsabile ex art. 28. La scelta, registrata in PRIV-18, deve essere
-  verificata in concreto e resa operativa mediante accordo e istruzioni prima
-  della riattivazione.
+  responsabile ex art. 28. La scelta, registrata in PRIV-18, resta da
+  verificare in concreto e rendere operativa mediante accordo e istruzioni: il
+  flusso è stato comunque riattivato il 14/09/2026 accettando questo punto
+  come rischio residuo (v. "Approvazione del titolare" più avanti in questo
+  documento).
 - **Misure di sicurezza:** vedi sopra; DPA Anthropic incorporato nei
   Commercial Terms da archiviare per l'account effettivo. Gemini resta
   disabilitato fino alla verifica e archiviazione di Cloud DPA, SCC o altro
@@ -109,10 +116,12 @@ nella documentazione del sito.
 - **Destinatari:** Anthropic, per i soli documenti che l'utente sceglie
   volontariamente di caricare tramite questa funzione.
 - **Trasferimento extra-UE:** possibile in tal caso; garanzia e meccanismo applicabili sono da verificare e documentare sul contratto/DPA Anthropic.
-- **Termine di conservazione:** finché il flusso resta sospeso nessun file è
-  accettato. I dati inseriti manualmente restano nel browser dell'utente
-  (localStorage). Un'eventuale futura retention del flusso AI dovrà essere
-  definita nell'accordo e nell'informativa prima della riattivazione.
+- **Termine di conservazione:** i documenti caricati non vengono conservati
+  lato server (elaborazione stateless per singola richiesta); nessuna copia
+  resta oltre la durata della richiesta. I dati inseriti manualmente restano nel browser dell'utente
+  (localStorage). Un'eventuale retention lato server, se introdotta in
+  futuro, dovrà essere
+  definita nell'accordo e nell'informativa.
 
 ### 5. Database giurisprudenza
 
@@ -164,8 +173,8 @@ nella documentazione del sito.
 | Flusso | Ruolo di CalcoloMediazione | Responsabili tecnici candidati | Altri destinatari/fornitori da censire | Stato |
 |---|---|---|---|---|
 | Navigazione e gestione del sito | Titolare | Northflank, se confermato dal DPA | Google Analytics, titolarità/ruolo da verificare | aperto |
-| Analisi AI per professionista/Organismo | Indirizzo scelto: responsabile ex art. 28, da verificare nel singolo scenario e rendere operativo con accordo | Northflank e Anthropic | Gemini solo se successivamente abilitato e documentato | sospeso; accordo, base del titolare, artt. 9/10 e informativa art. 14 da completare |
-| AML per professionista/Organismo | Indirizzo scelto: responsabile ex art. 28, da verificare nel singolo scenario e rendere operativo con accordo | Northflank e Anthropic, soltanto se nominabili come subresponsabili nel rapporto approvato | ulteriori soggetti da censire | sospeso; richiede accordo e istruzioni, autorizzazione ai subresponsabili e presupposto art. 10 |
+| Analisi AI per professionista/Organismo | Indirizzo scelto: responsabile ex art. 28, da verificare nel singolo scenario e rendere operativo con accordo | Northflank e Anthropic | Gemini solo se successivamente abilitato e documentato | attivo dal 14/09/2026, rischio residuo accettato dal titolare; accordo, base del titolare, artt. 9/10 e informativa art. 14 ancora da completare |
+| AML per professionista/Organismo | Indirizzo scelto: responsabile ex art. 28, da verificare nel singolo scenario e rendere operativo con accordo | Northflank e Anthropic, soltanto se nominabili come subresponsabili nel rapporto approvato | ulteriori soggetti da censire | attivo dal 14/09/2026, rischio residuo accettato dal titolare; richiede comunque accordo e istruzioni, autorizzazione ai subresponsabili e presupposto art. 10 |
 | Diagnostica del sito | Titolare | Northflank, se confermato dal DPA | Google Apps Script/Sheets soltanto se configurato; ruolo da verificare | aperto |
 
 Se CalcoloMediazione opera come responsabile per l'AML, predisporre anche il
