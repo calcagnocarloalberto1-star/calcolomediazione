@@ -147,7 +147,7 @@ margin-bottom:2cm;
 <div class="head">
 <div class="brand">calcolomediazione.it · strumenti per la mediazione</div>
 <h1>Antiriciclaggio in mediazione</h1>
-<p>Guida agli obblighi e compilazione locale dei modelli del fascicolo (D.Lgs. 231/2007)</p>
+<p>Guida agli obblighi e compilazione automatica dei modelli del fascicolo (D.Lgs. 231/2007)</p>
 </div>
 
 <div class="body">
@@ -157,7 +157,7 @@ margin-bottom:2cm;
 </div>
 
 <!-- ===================== PARTE INFORMATIVA: spostata su /antiriciclaggio-guida.html ===================== -->
-<div class="note">Questa pagina è lo <b>strumento operativo</b>: un unico motore locale che compila i campi, individua i trigger UIF e valuta il rischio in un solo percorso. Per tutte le spiegazioni — normativa, uso dello strumento, domande frequenti — vai alla <a href="/antiriciclaggio-guida.html">guida antiriciclaggio</a>. I dati inseriti restano nel tuo browser e non sono trasmessi al server. L'assistente AI sui documenti del fascicolo è temporaneamente sospeso.</div>
+<div class="note">Questa pagina è lo <b>strumento operativo</b>: un unico motore che compila i campi, individua i trigger UIF e valuta il rischio in un solo percorso — con la possibilità di ottenere una prima bozza automaticamente dai documenti del fascicolo. Per tutte le spiegazioni — normativa, uso dello strumento, domande frequenti — vai alla <a href="/antiriciclaggio-guida.html">guida antiriciclaggio</a>. I dati inseriti restano nel tuo browser e non sono trasmessi ad alcun server, salvo quando usi tu, di tua scelta, l'assistente AI per ottenere una prima bozza dai documenti caricati: in quel caso vengono inviate al server solo le immagini/i testi caricati per quell'operazione.</div>
 
 <!-- ===================== SELETTORE DOCUMENTO INIZIALE ===================== -->
 <div class="ocrbox no-print" id="docSelectBox" style="background:#fff;border-color:var(--blue)">
@@ -184,10 +184,35 @@ margin-bottom:2cm;
 </div>
 
 <!-- ===================== ASSISTENTE AI DI COMPILAZIONE ===================== -->
-<div class="ocrbox no-print" id="assistbox" style="background:#fff8e6;border-color:#c88a00">
-<h3 class="grouph">Assistente AI sui documenti temporaneamente sospeso</h3>
-<p class="sub">La compilazione manuale locale qui sotto resta pienamente disponibile. La funzione di caricamento e analisi automatica dei documenti sarà riattivata soltanto dopo la definizione e documentazione dei ruoli privacy, dell'accordo ex art. 28 GDPR e dei presupposti applicabili ai dati dell'antiriciclaggio, compresi gli eventuali dati relativi a condanne e reati.</p>
-<div class="ocr-warn" style="margin-top:8px"><b>Nessun documento viene trasmesso.</b></div>
+<div class="ocrbox no-print" id="assistbox" style="background:#eefaf3;border-color:#bfe4cf">
+<h3 class="grouph">Vuoi partire da una bozza automatica? Carica i documenti del fascicolo</h3>
+<p class="sub">Facoltativo: descrivi che cosa ti serve e carica tutti i documenti del fascicolo che hai a disposizione (istanza, documento d'identità, visura camerale, procura, comunicazione di avvio, ricevute di pagamento, ecc.). L'assistente li legge insieme, ti risponde in linguaggio naturale e propone la compilazione di gran parte dei campi qui sotto: nulla viene scritto nei campi finché non lo confermi tu. Puoi caricare i documenti uno alla volta o tutti insieme, anche un'intera cartella: v. come funziona più sotto.</p>
+<div class="field">
+<label for="assist_richiesta">La tua richiesta</label>
+<div class="hint">Scrivi in linguaggio naturale che cosa vuoi che venga compilato o valutato.</div>
+<textarea id="assist_richiesta" rows="2" placeholder="Es. Mi compili il modulo AV e la scheda di valutazione del rischio alla luce di questi documenti?">Mi compili il modulo AV e la scheda di valutazione del rischio alla luce di questi documenti?</textarea>
+</div>
+<div class="field">
+<label for="assist_files">Documenti del fascicolo (massimo 10 per ogni analisi, anche da una cartella)</label>
+<div class="hint">Immagini (JPG/PNG) o PDF, anche di tipo diverso tra loro. Puoi selezionare i singoli file oppure caricare direttamente una cartella: tutti i documenti al suo interno (anche nelle sottocartelle) vengono aggiunti automaticamente, i file di altro formato vengono ignorati e segnalati. Se i documenti riguardano più parti, l'assistente compila la prima parte istante e ti segnala nella risposta come gestire le altre (pulsante «+ Nuova parte per questa procedura» più sotto nel modulo).</div>
+<input type="file" id="assist_files" accept="image/*,.pdf" multiple data-ac-action="assist-files">
+<input type="file" id="assist_folder" webkitdirectory directory multiple style="display:none" data-ac-action="assist-files">
+<div class="row-btns" style="margin-top:8px">
+<button class="btn-ghost" type="button" data-ac-action="apri-cartella">📁 Carica una cartella</button>
+</div>
+<div id="assist_filelist" class="hint" style="margin-top:6px"></div>
+</div>
+<div class="row-btns">
+<button class="btn-primary" type="button" id="assist_btn" data-ac-action="assist-estrai">Chiedi all'assistente e compila</button>
+<button class="btn-ghost" type="button" data-ac-action="assist-reset">Pulisci</button>
+</div>
+<div class="ocr-warn" style="margin-top:8px"><b>Come funziona.</b> Questa funzione <b>trasmette i documenti caricati all'API commerciale di Anthropic</b>, che li legge e ne estrae i dati. Il sito elabora i file in memoria e non li archivia dopo la risposta; l'eventuale conservazione tecnica del fornitore segue il piano e i termini applicabili. I campi vengono scritti nel modulo solo dopo la tua conferma. Usa questa funzione come titolare del trattamento, con idonea base giuridica, informativa all'interessato e minimizzazione dei dati.</div>
+<div id="assist_status" role="status" aria-live="polite"></div>
+<div id="assist_answer" class="box" style="display:none;margin-top:10px" role="status" aria-live="polite"></div>
+<div id="assist_review" style="display:none">
+<div class="ocr-warn"><b>Verifica prima di applicare.</b> Per ciascuna parte individuata sotto, correggi il ruolo se necessario e premi il suo pulsante «Applica questa parte ai campi». Le valutazioni di rischio proposte sono suggerimenti: restano una valutazione professionale da confermare.</div>
+<div id="assist_fields"></div>
+</div>
 <!-- ===================== COMPILATORE (motore unico: dati + trigger UIF + rischio) ===================== -->
 <h2 class="no-print">Compila e genera i modelli</h2>
 <p class="sub no-print">Un solo percorso, dall'inizio alla fine: inserisci i dati una sola volta — comprese le risposte sui segnali di anomalia — e lo strumento compila da solo i modelli del fascicolo, pronti da raggruppare per Organismo, Mediatore e Avvocato più sotto.</p>
