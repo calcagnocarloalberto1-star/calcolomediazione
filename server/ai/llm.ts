@@ -5,6 +5,14 @@ import Anthropic from "@anthropic-ai/sdk";
 // Modello Anthropic centralizzato — modificare qui per cambiarlo.
 const ANTHROPIC_MODEL = "claude-haiku-4-5-20251001";
 const GEMINI_MODEL = "gemini-2.5-flash";
+// Modello dedicato al SOLO assistente AI di compilazione antiriciclaggio
+// (assistenteCompilazioneAI, piu' in basso in questo file): deve incrociare
+// piu' documenti diversi e compilare oltre 110 campi per ciascuna parte, un
+// compito che richiede piu' attenzione di quanta Haiku ne dedichi in pratica.
+// Decisione del titolare del 14-15/09/2026, dopo segnalazione di letture
+// incomplete: solo questa funzione usa un modello piu' capace, non il resto
+// del sito.
+const ANTHROPIC_MODEL_AML_ASSIST = "claude-sonnet-5";
 
 // Output massimo per modello (in token).
 // Gemini 2.5 Flash supporta fino a 65536; Claude Haiku 4.5 fino a 16384.
@@ -887,10 +895,21 @@ const content: any[] = buildContentBlocks(documenti);
 content.push({ type: "text", text: istruzioni });
 
 const message = await anthropic.messages.create({
-model: ANTHROPIC_MODEL,
-max_tokens: 8192,
+model: ANTHROPIC_MODEL_AML_ASSIST,
+max_tokens: 32768,
 messages: [{ role: "user", content }],
 });
+
+if (message.stop_reason === "max_tokens") {
+// A differenza di callLLM (che continua automaticamente), qui una risposta
+// troncata produce quasi sempre un JSON non bilanciato: meglio un errore
+// esplicito e azionabile che un parsing fallito senza spiegazione.
+throw new Error(
+"La risposta dell'assistente AI e' stata troncata perche' troppo lunga per una sola richiesta " +
+"(molti documenti e/o molte parti individuate). Riprova inviando meno documenti, oppure dividi " +
+"l'invio in due gruppi separati: i risultati di ciascun invio si sommano nella pagina."
+);
+}
 
 const textBlock = message.content.find(b => b.type === "text") as
 | { type: "text"; text: string }
