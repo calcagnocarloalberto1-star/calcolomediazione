@@ -95,17 +95,19 @@ nella documentazione del sito.
 - **Categorie di dati:** documenti d'identità, dati anagrafici, informazioni
   sul rischio e dichiarazioni; possibili categorie particolari ex art. 9 e
   dati su condanne o reati, disciplinati separatamente dall'art. 10 GDPR.
-- **Stato del flusso:** sospeso lato interfaccia e lato server; nessun
-  documento deve essere trasmesso.
-- **Base giuridica e ruoli per un'eventuale riattivazione:** anche per l'AML
-  PRIV-18 sceglie in via di indirizzo il professionista/Organismo titolare e
-  CalcoloMediazione responsabile. Il modello deve essere verificato nel caso
-  concreto e reso operativo mediante accordo e istruzioni ex art. 28,
-  autorizzazione dei subresponsabili e individuazione del presupposto nazionale
-  per l'art. 10 prima della riattivazione.
-- **Destinatari in caso di futura riattivazione:** Anthropic, soltanto dopo
-  la chiusura dei prerequisiti indicati; allo stato nessun documento è
-  accettato dagli endpoint AML.
+- **Stato del flusso:** la funzione facoltativa di caricamento documenti con
+  bozza automatica è attiva dal 14/09/2026 (rischio residuo accettato dal
+  titolare, v. PRIV-10 addendum 14/09/2026); la compilazione manuale locale
+  resta sempre disponibile senza invio di documenti.
+- **Base giuridica e ruoli:** anche per l'AML PRIV-18 sceglie in via di
+  indirizzo il professionista/Organismo titolare e CalcoloMediazione
+  responsabile. Il modello deve essere verificato nel caso concreto e reso
+  operativo mediante accordo e istruzioni ex art. 28, autorizzazione dei
+  subresponsabili e individuazione del presupposto nazionale per l'art. 10;
+  fino a quel momento la funzione resta attiva come rischio residuo assunto
+  dal titolare, non come trattamento con base giuridica già definita.
+- **Destinatari:** Anthropic, per i soli documenti che l'utente sceglie
+  volontariamente di caricare tramite questa funzione.
 - **Trasferimento extra-UE:** possibile in tal caso; garanzia e meccanismo applicabili sono da verificare e documentare sul contratto/DPA Anthropic.
 - **Termine di conservazione:** finché il flusso resta sospeso nessun file è
   accettato. I dati inseriti manualmente restano nel browser dell'utente
@@ -216,3 +218,12 @@ Il titolare ha deciso di rendere operativi i flussi AI (Analisi AI del Caso e AM
 4. Accordo ex art. 28 con i subresponsabili (Northflank, Anthropic) e con il professionista/Organismo titolare per Analisi AI e AML (bozza non sottoscritta, campi controparte in bianco — PRIV-16).
 
 Questi punti restano da chiudere progressivamente; la presente approvazione non li considera risolti, ma li accetta come rischio assunto dal titolare per rendere operativo il servizio.
+
+Il 14/09/2026, con lo stesso criterio, il titolare ha inoltre riattivato la
+funzione facoltativa di caricamento documenti con bozza automatica sulla
+pagina Antiriciclaggio, accettando un quinto punto di rischio residuo:
+
+5. Presupposto ex artt. 9 e 10 GDPR non ancora definito per l'eventuale
+   trattamento, tramite questa funzione, di categorie particolari di dati o di
+   dati relativi a condanne penali e reati riferiti alle parti (v. PRIV-10,
+   addendum 14/09/2026).
