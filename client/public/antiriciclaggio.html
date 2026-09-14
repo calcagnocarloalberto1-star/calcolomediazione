@@ -193,8 +193,8 @@ margin-bottom:2cm;
 <textarea id="assist_richiesta" rows="2" placeholder="Es. Mi compili il modulo AV e la scheda di valutazione del rischio alla luce di questi documenti?">Mi compili il modulo AV e la scheda di valutazione del rischio alla luce di questi documenti?</textarea>
 </div>
 <div class="field">
-<label for="assist_files">Documenti del fascicolo (massimo 10 per ogni analisi, anche da una cartella)</label>
-<div class="hint">Immagini (JPG/PNG) o PDF, anche di tipo diverso tra loro. Puoi selezionare i singoli file oppure caricare direttamente una cartella: tutti i documenti al suo interno (anche nelle sottocartelle) vengono aggiunti automaticamente, i file di altro formato vengono ignorati e segnalati. Se i documenti riguardano più parti, l'assistente compila la prima parte istante e ti segnala nella risposta come gestire le altre (pulsante «+ Nuova parte per questa procedura» più sotto nel modulo).</div>
+<label for="assist_files">Documenti del fascicolo (massimo 20 per ogni invio, anche da una cartella)</label>
+<div class="hint">Immagini (JPG/PNG) o PDF, anche di tipo diverso tra loro. Puoi selezionare i singoli file oppure caricare direttamente una cartella: tutti i documenti al suo interno (anche nelle sottocartelle) vengono aggiunti automaticamente, i file di altro formato vengono ignorati e segnalati. Se hai più di 20 documenti, invia un primo gruppo, poi seleziona i restanti e premi di nuovo «Chiedi all'assistente e compila»: i risultati dei diversi invii si sommano in questa pagina, senza perdere quelli già trovati. Se i documenti riguardano più parti, l'assistente individua ed elenca tutte le parti trovate (istanti e aderenti): applica ciascuna al modulo una alla volta con il pulsante dedicato qui sotto.</div>
 <input type="file" id="assist_files" accept="image/*,.pdf" multiple data-ac-action="assist-files">
 <input type="file" id="assist_folder" webkitdirectory directory multiple style="display:none" data-ac-action="assist-files">
 <div class="row-btns" style="margin-top:8px">
