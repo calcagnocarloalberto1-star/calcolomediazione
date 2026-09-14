@@ -41,11 +41,16 @@ fileFilter: (_req, file, cb) => cb(null, file.mimetype === PDF_MIME),
 });
 const uploadAml = multer({
 storage: multer.memoryStorage(),
-limits: { fileSize: 8 * 1024 * 1024, files: 10 },
+limits: { fileSize: 8 * 1024 * 1024, files: 20 },
 fileFilter: (_req, file, cb) => cb(null, AML_ALLOWED_TYPES.includes(file.mimetype.toLowerCase())),
 });
 
-const MAX_UPLOAD_TOTAL = 32 * 1024 * 1024;
+// I file vengono inviati al modello come base64, che gonfia le dimensioni di
+// circa 1/3: un limite "grezzo" di 32 MB diventerebbe ~42 MB codificati,
+// superando il tetto per singola richiesta dell'API Anthropic (~32 MB). Il
+// tetto qui e' quindi calcolato sui byte ORIGINALI in modo da restare
+// comodamente sotto quella soglia anche dopo la codifica base64.
+const MAX_UPLOAD_TOTAL = 18 * 1024 * 1024;
 function totalUploadOk(files: Express.Multer.File[]): boolean {
 return files.reduce((sum, file) => sum + file.size, 0) <= MAX_UPLOAD_TOTAL;
 }
@@ -1033,7 +1038,7 @@ return { documenti, scartati };
 }
 
 // ─── ESTRAZIONE AI DA DOCUMENTO (tool antiriciclaggio, modalita' alta precisione) ─
-app.post("/api/aml-extract", aiRateLimit, requireAmlAiEnabled, uploadAml.array("files", 10), async (req, res) => {
+app.post("/api/aml-extract", aiRateLimit, requireAmlAiEnabled, uploadAml.array("files", 20), async (req, res) => {
 try {
 const files = ((req as any).files as Array<{ buffer: Buffer; mimetype: string; originalname?: string }>) || [];
 const doctype = (req.body?.doctype || "id").toString();
@@ -1041,7 +1046,7 @@ if (!files.length) {
 return res.status(400).json({ error: "Nessun file ricevuto." });
 }
 if (!totalUploadOk(files as Express.Multer.File[])) {
-return res.status(413).json({ error: "Il caricamento complessivo supera 32 MB." });
+return res.status(413).json({ error: "Il caricamento complessivo supera 18 MB: invia i documenti in due gruppi separati (i risultati dell'assistente AI si sommano nella pagina)." });
 }
 const { documenti, scartati } = smistaFileAml(files);
 if (!documenti.length) {
@@ -1051,12 +1056,12 @@ const fields = await estraiDocumentoAI(documenti, doctype);
 res.json({ fields, scartati: scartati.length ? scartati : undefined });
 } catch (e: any) {
 console.error("Errore /api/aml-extract:", e);
-res.status(500).json({ error: "Errore durante l'estrazione AI." });
+res.status(500).json({ error: (e && e.message) ? e.message : "Errore durante l'estrazione AI." });
 }
 });
 
 // ─── ASSISTENTE AI DI COMPILAZIONE (tool antiriciclaggio, piu' documenti + richiesta libera) ─
-app.post("/api/aml-assist", aiRateLimit, requireAmlAiEnabled, uploadAml.array("files", 10), async (req, res) => {
+app.post("/api/aml-assist", aiRateLimit, requireAmlAiEnabled, uploadAml.array("files", 20), async (req, res) => {
 try {
 const files = ((req as any).files as Array<{ buffer: Buffer; mimetype: string; originalname?: string }>) || [];
 const richiesta = (req.body?.richiesta || "").toString().slice(0, 4000);
@@ -1064,7 +1069,7 @@ if (!files.length) {
 return res.status(400).json({ error: "Nessun file ricevuto." });
 }
 if (!totalUploadOk(files as Express.Multer.File[])) {
-return res.status(413).json({ error: "Il caricamento complessivo supera 32 MB." });
+return res.status(413).json({ error: "Il caricamento complessivo supera 18 MB: invia i documenti in due gruppi separati (i risultati si sommano nella pagina)." });
 }
 const { documenti, scartati } = smistaFileAml(files);
 if (!documenti.length) {
@@ -1074,7 +1079,7 @@ const result = await assistenteCompilazioneAI(documenti, richiesta);
 res.json({ ...result, scartati: scartati.length ? scartati : undefined });
 } catch (e: any) {
 console.error("Errore /api/aml-assist:", e);
-res.status(500).json({ error: "Errore durante l'elaborazione dell'assistente AI." });
+res.status(500).json({ error: (e && e.message) ? e.message : "Errore durante l'elaborazione dell'assistente AI." });
 }
 });
 
