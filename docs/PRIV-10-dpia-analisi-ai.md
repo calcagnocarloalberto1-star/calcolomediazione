@@ -1,7 +1,9 @@
 # PRIV-10 — Valutazione d'impatto sulla protezione dei dati (DPIA)
 
-**Stato: bozza non approvabile finché non sono chiusi i prerequisiti indicati
-nella sezione finale.** Il presente documento organizza gli elementi tecnici necessari a
+**Stato: trattamento approvato dal titolare il 14/09/2026 con motivazione e
+rischio residuo documentato (v. "Decisione del titolare" in fondo a questo
+documento); i prerequisiti indicati nella sezione finale non sono ancora
+tutti chiusi e vanno richiusi progressivamente.** Il presente documento organizza gli elementi tecnici necessari a
 una valutazione d'impatto ex art. 35 GDPR sui trattamenti che coinvolgono
 intelligenza artificiale generativa sul sito. Le valutazioni di merito
 (necessita' effettiva della DPIA, giudizio di accettabilita' del rischio
@@ -32,7 +34,7 @@ Gli elementi rilevanti sono:
   sua natura dati che possono riguardare minori e, indirettamente, la salute
   o le condizioni economiche delle parti — categorie che richiedono un livello
   di attenzione piu' alto anche quando non rientrano formalmente nell'art. 9.
-- Se il servizio sarà riattivato, i dati del caso potranno essere trasmessi ad **Anthropic** e, soltanto se il fallback
+- I dati del caso vengono trasmessi ad **Anthropic** e, soltanto se il fallback
   viene espressamente abilitato dopo la verifica del Paid Service, a
   **Google Gemini**. Il possibile trasferimento internazionale richiede
   particolare attenzione quando i dati sono sensibili o riguardano soggetti
@@ -41,7 +43,8 @@ Gli elementi rilevanti sono:
   interessati non sono ancora misurati in modo sufficiente per qualificare il
   trattamento come "larga scala".
 
-Entrambi i flussi AI sono attualmente sospesi. Questi elementi rendono comunque ragionevole completare una DPIA prudenziale per
+Entrambi i flussi AI sono oggi attivi, con rischio residuo accettato dal
+titolare (v. "Decisione del titolare" in fondo a questo documento). Questi elementi rendono comunque necessario completare una DPIA prudenziale per
 «Analisi AI del Caso» e per l'antiriciclaggio in modalità alta precisione,
 senza anticipare la decisione formale sulla sua obbligatorietà.
 
@@ -51,20 +54,21 @@ senza anticipare la decisione formale sulla sua obbligatorietà.
 |---|---|---|
 | Dati in ingresso | Titolo, descrizione libera del caso, parti (nome, ruolo), documenti opzionali, valore della lite | Immagine/pagine del documento caricato |
 | Interessati | Le parti della controversia (spesso non l'utente che compila il modulo) | Il cliente/parte i cui documenti sono caricati |
-| Destinatario esterno | Nessuno finché le nuove Analisi AI restano sospese; in caso di futura riattivazione, Anthropic (Claude) e Google (Gemini) soltanto se il fallback viene espressamente abilitato dopo la verifica del Paid Service | Nessuno finché l'assistente AML resta sospeso |
+| Destinatario esterno | Anthropic (Claude); Google (Gemini) soltanto se il fallback viene espressamente abilitato dopo la verifica del Paid Service | Anthropic (Claude), per i documenti che l'utente sceglie di caricare |
 | Base del trasferimento extra-UE | Da verificare e documentare sul DPA/contratto applicabile, incluse eventuali clausole contrattuali standard | idem |
-| Minimizzazione applicata | Funzione sospesa; in caso di futura riattivazione, redazione preventiva best-effort (PRIV-08/PRIV-09) e minimizzazione manuale obbligatoria | Funzione sospesa; nessun documento trasmesso |
-| Conservazione lato server | Nessun nuovo dato accettato; le analisi storiche già create, incluse descrizione e output derivati, restano fino alla cancellazione o per un massimo di 30 giorni | Non applicabile finché la funzione resta sospesa |
+| Minimizzazione applicata | Redazione preventiva best-effort (PRIV-08/PRIV-09) e minimizzazione manuale obbligatoria | Nessuna redazione automatica lato server; minimizzazione manuale a cura dell'utente richiesta dall'avviso privacy prima del caricamento |
+| Conservazione lato server | Le nuove analisi, come quelle storiche, restano — descrizione e output derivati inclusi — fino alla cancellazione o per un massimo di 30 giorni | Non applicabile: i documenti caricati non vengono conservati lato server (elaborazione stateless per singola richiesta) |
 | Controllo umano sull'output | Dichiarato in piu' punti del sito come necessario, non tecnicamente imposto | Dichiarato come necessario prima dell'uso del fascicolo |
 
 ## Necessita' e proporzionalita' (art. 35, § 7, lett. b)
 
 Punti a favore della proporzionalita' gia' presenti:
 
-- Entrambi i flussi AI sono sospesi; i calcolatori deterministici e la
-  compilazione manuale locale AML restano utilizzabili senza fornitori AI.
-- In caso di futura riattivazione, la redazione preventiva ridurrà, senza
-  eliminare, l'esposizione dei dati identificativi diretti verso i fornitori.
+- Entrambi i flussi AI sono oggi attivi con rischio residuo accettato dal
+  titolare; restano comunque utilizzabili, come alternativa che non coinvolge
+  fornitori AI, i calcolatori deterministici e la compilazione manuale locale AML.
+- La redazione preventiva riduce, senza eliminare, l'esposizione dei dati
+  identificativi diretti verso i fornitori.
 - I fornitori dichiarano (nei rispettivi termini commerciali, non verificabili
   dal codice) di non riutilizzare i dati per addestramento.
 - Retention limitata a 30 giorni per i dati salvati lato server.
@@ -85,7 +89,7 @@ Punti che richiedono una decisione esplicita del titolare:
 
 | Rischio | Gravita' stimata | Probabilita' stimata | Misure gia' in atto | Misure da valutare |
 |---|---|---|---|---|
-| Ri-identificazione delle parti da parte del fornitore AI nonostante la redazione (dettagli indiretti nel testo libero: indirizzi, importi, circostanze uniche) | Media-alta (dati potenzialmente su minori/famiglia) | Sospeso | Nuovi upload, analisi e chat bloccati fail-closed; in caso di futura riattivazione, redazione preventiva e minimizzazione manuale | Estendere il riconoscimento a piu' pattern; valutare un secondo passaggio di revisione umana del testo prima dell'invio per i casi piu' sensibili |
+| Ri-identificazione delle parti da parte del fornitore AI nonostante la redazione (dettagli indiretti nel testo libero: indirizzi, importi, circostanze uniche) | Media-alta (dati potenzialmente su minori/famiglia) | Attivo dal 14/09/2026 (rischio residuo accettato dal titolare, v. Decisione del titolare sotto) | Redazione preventiva e minimizzazione manuale richieste all'utente prima dell'invio | Estendere il riconoscimento a piu' pattern; valutare un secondo passaggio di revisione umana del testo prima dell'invio per i casi piu' sensibili |
 | Accesso non autorizzato ai dati salvati lato server | Alta | Da misurare | Token casuale; hash nella colonna di verifica; copia recuperabile nel payload cifrato AES-256-GCM con chiave separata dal DB; admin con TOTP | Verificare efficacia e accessi; valutare la co-localizzazione logica del token recuperabile e del payload |
 | Trattamento di dati relativi a condanne o reati nell'AML | Alta | Attivo dal 14/09/2026 (rischio residuo accettato dal titolare, v. Addendum sotto) | Doppia attestazione `AML_AI_ENABLED=true` e `AML_AI_GDPR_APPROVED=true`; verifica umana dei campi estratti dichiarata obbligatoria prima dell'uso | Definire il presupposto ex art. 10 GDPR e diritto nazionale, il ruolo del professionista e l'accordo ex art. 28 con istruzioni documentate; fino ad allora resta rischio residuo assunto dal titolare |
 | Diagnostica contenente dati personali nei messaggi o stack | Media-alta | Da misurare | Redazione di email, codici fiscali e token; route senza query; user-agent ridotto a mobile/desktop; rate limiting | Verificare webhook, DPA, Paesi e retention; disattivare il webhook se non documentabile |
@@ -102,7 +106,9 @@ sostituire, quello degli interessati o dei loro rappresentanti.
 
 ## Presidio provvisorio per dati relativi a minori
 
-Le nuove Analisi AI sono sospese per ogni materia. Il 12 settembre 2026 il
+Le nuove Analisi AI sono oggi attive per le materie generali, ma restano
+escluse dai flussi AI generali le pratiche che coinvolgono dati di minori (v.
+sotto). Il 12 settembre 2026 il
 titolare ha scelto in via di indirizzo un futuro percorso a presidi rafforzati,
 registrato in PRIV-18 e specificato in PRIV-17. La scelta non approva ancora il
 trattamento: il percorso deve essere implementato, testato e valutato nella
@@ -130,6 +136,12 @@ Non viene quindi formulata alcuna conclusione sull'art. 36 GDPR.
 
 ### Prerequisiti prima dell'approvazione
 
+**Nota 14/09/2026:** il titolare ha approvato il trattamento con motivazione e
+rischio residuo documentato prima della chiusura di tutti i prerequisiti
+elencati qui sotto (v. "Decisione del titolare" più avanti in questo
+documento). I punti restano comunque validi come elenco di ciò che va chiuso
+progressivamente, a trattamento già attivo.
+
 1. Anthropic deve essere usato tramite account API soggetto ai Commercial
    Terms e al DPA con SCC incorporato:
    https://www.anthropic.com/legal/data-processing-addendum
@@ -146,18 +158,23 @@ Non viene quindi formulata alcuna conclusione sull'art. 36 GDPR.
    output prima dell'uso professionale.
 5. La DPIA deve essere riesaminata almeno annualmente e prima di modifiche a
    provider, modelli, finalità, categorie di dati o retention.
-6. Prima di riattivare l'Analisi AI deve essere verificata in concreto e resa
+6. L'Analisi AI è stata riattivata il 14/09/2026 come rischio residuo
+   accettato dal titolare (v. "Decisione del titolare" sotto); resta comunque
+   da verificare in concreto e rendere
    operativa mediante accordo e istruzioni la scelta di indirizzo, registrata
    in PRIV-18, del professionista/Organismo titolare e CalcoloMediazione
    responsabile ex art. 28. Devono inoltre essere definiti la base ex art. 6
    del professionista/Organismo titolare,
    gli eventuali presupposti ex artt. 9 e 10 e il processo per l'informativa ex
    art. 14 o per la documentazione di una specifica eccezione applicabile.
-7. L'assistente AI AML resta sospeso fino alla verifica concreta e
-   operativizzazione dell'indirizzo di CalcoloMediazione responsabile, alla
-   sottoscrizione dell'accordo ex art. 28 e delle istruzioni documentate e alla
+7. L'assistente AI AML è stato riattivato il 14/09/2026 come rischio residuo
+   accettato dal titolare (v. Addendum in fondo a questo documento), pur
+   restando aperti la verifica concreta e l'operativizzazione dell'indirizzo di
+   CalcoloMediazione responsabile, la
+   sottoscrizione dell'accordo ex art. 28 e delle istruzioni documentate e la
    definizione del presupposto ex art. 10 e del diritto nazionale per eventuali
-   dati su condanne e reati.
+   dati su condanne e reati: questi punti restano prerequisiti da chiudere, non
+   più condizioni sospensive dell'attivazione.
 8. Devono essere censiti diagnostica, Google Apps Script e log Northflank,
    con retention, trasferimenti e DPA.
 9. `CASE_AI_ENABLED` e `CASE_AI_GDPR_APPROVED` devono restare assenti o diversi
