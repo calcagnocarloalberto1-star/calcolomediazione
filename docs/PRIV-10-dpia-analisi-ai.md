@@ -87,7 +87,7 @@ Punti che richiedono una decisione esplicita del titolare:
 |---|---|---|---|---|
 | Ri-identificazione delle parti da parte del fornitore AI nonostante la redazione (dettagli indiretti nel testo libero: indirizzi, importi, circostanze uniche) | Media-alta (dati potenzialmente su minori/famiglia) | Sospeso | Nuovi upload, analisi e chat bloccati fail-closed; in caso di futura riattivazione, redazione preventiva e minimizzazione manuale | Estendere il riconoscimento a piu' pattern; valutare un secondo passaggio di revisione umana del testo prima dell'invio per i casi piu' sensibili |
 | Accesso non autorizzato ai dati salvati lato server | Alta | Da misurare | Token casuale; hash nella colonna di verifica; copia recuperabile nel payload cifrato AES-256-GCM con chiave separata dal DB; admin con TOTP | Verificare efficacia e accessi; valutare la co-localizzazione logica del token recuperabile e del payload |
-| Trattamento di dati relativi a condanne o reati nell'AML | Alta | Sospeso | UI disabilitata; endpoint fail-closed salvo la doppia attestazione `AML_AI_ENABLED=true` e `AML_AI_GDPR_APPROVED=true` | Mantenere entrambi i flag assenti o diversi da `true`; definire presupposto ex art. 10 GDPR e diritto nazionale, ruolo del professionista, accordo ex art. 28 e istruzioni documentate prima di autorizzare il flusso |
+| Trattamento di dati relativi a condanne o reati nell'AML | Alta | Attivo dal 14/09/2026 (rischio residuo accettato dal titolare, v. Addendum sotto) | Doppia attestazione `AML_AI_ENABLED=true` e `AML_AI_GDPR_APPROVED=true`; verifica umana dei campi estratti dichiarata obbligatoria prima dell'uso | Definire il presupposto ex art. 10 GDPR e diritto nazionale, il ruolo del professionista e l'accordo ex art. 28 con istruzioni documentate; fino ad allora resta rischio residuo assunto dal titolare |
 | Diagnostica contenente dati personali nei messaggi o stack | Media-alta | Da misurare | Redazione di email, codici fiscali e token; route senza query; user-agent ridotto a mobile/desktop; rate limiting | Verificare webhook, DPA, Paesi e retention; disattivare il webhook se non documentabile |
 | Output AI errato o allucinato usato senza verifica (es. una bozza di accordo con clausole scorrette) | Alta (effetti legali reali) | Media | Disclaimer diffusi sul sito che richiedono verifica professionale | Nessuna misura tecnica impedisce oggi l'uso diretto dell'output; valutare un passaggio di conferma esplicita prima dell'export/uso del documento |
 | Conservazione dei dati oltre il dichiarato | Media | Bassa dopo PRIV-09 (job di retention reso indipendente dal traffico) | Cancellazione automatica ogni ora oltre i 30 giorni | Monitoraggio/alert se il job fallisce ripetutamente |
@@ -176,3 +176,28 @@ Non viene quindi formulata alcuna conclusione sull'art. 36 GDPR.
 - Data: 14/09/2026
 - Titolare: Carlo Alberto Calcagno
 - Firma o riferimento alla decisione conservata: commit su GitHub di questo documento, autenticato con l'account del titolare (14/09/2026); da integrare con firma formale se richiesto da consulente privacy/DPO
+
+### Addendum 14/09/2026 — riattivazione dell'assistente AI di caricamento documenti in Antiriciclaggio (quinto rischio residuo)
+
+Lo stesso giorno il titolare ha inoltre deciso di riattivare, sulla pagina
+Antiriciclaggio, la funzione facoltativa che permette di caricare i documenti
+del fascicolo e ottenere una prima bozza di compilazione tramite Anthropic
+(pulsante "Chiedi all'assistente e compila"), disattivata l'11/09/2026 insieme
+al resto dell'hardening. La decisione è stata presa a fronte dell'esigenza
+operativa del titolare di poter usare e mostrare lo strumento (compresa una
+lezione il 15/09/2026) e comporta un quinto punto di rischio residuo, distinto
+dai quattro già accettati sopra:
+
+5. **Presupposto ex artt. 9 e 10 GDPR non definito** per l'eventuale
+   trattamento, tramite questa funzione, di categorie particolari di dati
+   (art. 9) o di dati relativi a condanne penali e reati (art. 10) riferiti
+   alle parti della procedura, quando presenti nei documenti caricati
+   (ad es. dichiarazioni su carichi pendenti, PEP, provenienza dei fondi). La
+   funzione resta accessibile a titolo di scelta dell'utente professionale, con
+   verifica umana dichiarata obbligatoria prima di scrivere i dati estratti nei
+   campi del modulo; il presupposto giuridico e il ruolo di CalcoloMediazione
+   restano da definire secondo lo stesso modello (responsabile ex art. 28) già
+   indicato per Analisi AI e AML nella Decisione del titolare sopra.
+
+Questo quinto punto si aggiunge, senza sostituirli, ai quattro prerequisiti
+elencati nella Motivazione della Decisione del titolare.
