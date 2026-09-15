@@ -40,7 +40,10 @@ Data: 9 settembre 2026
 - Stato: configurato nel pannello Northflank il 9 settembre 2026
 - Cifratura, ubicazione e retention: verificate nella documentazione
   riservata del Trust Center
-- RPO/RTO: valori numerici richiesti a Northflank; risposta in attesa
+- RPO/RTO dichiarati da Northflank: valori numerici non ancora ottenuti dal
+  fornitore; richiesta in attesa. Per i valori osservati empiricamente in una
+  prova di ripristino reale, v. "Prova di ripristino" più avanti in questo
+  documento.
 
 ## Rilascio successivo al backup
 
@@ -59,25 +62,70 @@ Data: 9 settembre 2026
 
 ## Prova di ripristino
 
-**Non eseguita.** La prova deve avvenire su un add-on temporaneo isolato, mai
-sul database di produzione. È rinviata fino all'autorizzazione di eventuali
-costi aggiuntivi e alla disponibilità di un metodo di pagamento valido.
+**Eseguita il 15 settembre 2026**, su un add-on temporaneo isolato, mai sul
+database di produzione, come richiesto sopra.
 
-Quando sarà autorizzata, registrare:
+1. **Identificativo del backup usato:** `15092026-02-15-utc-disk` (backup
+   automatico giornaliero di `calcolomediazione-db`, creato alle 04:15 UTC del
+   15/09/2026).
+2. **Ora di inizio e fine del ripristino:** avviato alle 08:26:05 UTC
+   (creazione dell'add-on temporaneo `cm-db-restore-test-20260915` a partire
+   dal backup indicato); add-on confermato in stato "Running" (1/1) alle
+   08:28:00 UTC.
+3. **RPO e RTO osservati:** RTO ≈ 2 minuti (differenza tra le due ore sopra).
+   RPO non misurabile direttamente in questa prova, poiché non sono stati
+   generati nuovi dati di produzione durante la finestra di backup a fini di
+   test; il punto di recupero coincide con l'orario di creazione del backup
+   automatico usato (04:15 UTC del 15/09/2026). I valori di RPO/RTO
+   *dichiarati* da Northflank restano da ottenere separatamente (v. "Backup
+   automatico" sopra).
+4. **Conteggi delle tabelle** (verificati tramite un Job Northflank temporaneo
+   con accesso alla rete privata dell'add-on, eseguendo query dirette con
+   `psql`): `analisi_casi` = 10 righe; `calcoli` = 0 righe; `contatore_visite`
+   = 1 riga (id=1, totale=240).
+5. **Esito di `/api/health`:** non applicabile in senso letterale, perché per
+   costruzione l'applicazione non è stata ripuntata sull'add-on temporaneo
+   (che resta isolato dal traffico di produzione, come richiesto). In sua
+   sostituzione è stata verificata la connettività e la capacità di eseguire
+   query sul database ripristinato (v. punto 4), equivalente applicativo del
+   controllo di salute a livello di dati.
+6. **Leggibilità di un record sintetico con il keyring corretto:** verificata
+   solo parzialmente. È stata controllata l'integrità strutturale del payload
+   cifrato di un record reale (`analisi_casi.id = 103`, campo
+   `secure_payload` di 86.170 byte), confermando un formato `enc:v1:` ben
+   formato con identificativo di chiave, IV, tag di autenticazione e
+   ciphertext coerenti — prova che il backup ha preservato i dati cifrati
+   byte per byte. **Non è stata invece eseguita la decifratura completa con la
+   chiave `DATA_ENCRYPTION_KEY` di produzione**: la sua ubicazione non è stata
+   individuata nei punti verificati del pannello Northflank (gruppo di
+   secret di progetto, variabili dirette del servizio, sezione Environments)
+   e si è scelto di non proseguire la ricerca né di copiarla in un nuovo Job
+   temporaneo, per evitare un'esposizione aggiuntiva non necessaria di una
+   chiave che protegge dati reali e potenzialmente sensibili (anche di
+   minori). L'individuazione della corretta ubicazione di
+   `DATA_ENCRYPTION_KEY` è demandata al punto d'audit già aperto sulla
+   differenziazione dei segreti Northflank (`ADMIN_PASSWORD`, `ADMIN_SECRET`,
+   `DATA_ENCRYPTION_KEY`).
+7. **Eliminazione dell'ambiente temporaneo:** completata. Il Job di verifica
+   `restore-test-verify` è stato eliminato, quindi l'eliminazione dell'add-on
+   `cm-db-restore-test-20260915` è stata avviata alle 08:51:05 UTC.
 
-1. identificativo del backup usato;
-2. ora di inizio e fine del ripristino;
-3. RPO e RTO osservati;
-4. conteggi delle tabelle;
-5. esito di `/api/health`;
-6. leggibilità di un record sintetico con il keyring corretto;
-7. eliminazione dell'ambiente temporaneo.
+Costo indicativo della prova: pochi centesimi di euro (add-on con piano di
+calcolo minimo, attivo per circa 25 minuti complessivi), autorizzato dal
+titolare prima della creazione della risorsa.
 
 ## Esito
 
 Creazione del backup manuale e pianificazione automatica verificate dal
 titolare nel pannello. DPA, SOC 2 Type II e penetration test sono stati
-acquisiti dal Trust Center dopo la sottoscrizione dell'NDA. Restano da
-ottenere i valori numerici di RPO/RTO e da completare la prova di ripristino;
-fino a quel momento la continuità operativa non può considerarsi
-integralmente provata.
+acquisiti dal Trust Center dopo la sottoscrizione dell'NDA. La prova di
+ripristino è stata eseguita il 15 settembre 2026 su un add-on temporaneo
+isolato, con esito positivo: il ripristino da backup funziona, RTO ≈ 2
+minuti, e l'integrità dei dati (inclusa la struttura del payload cifrato) è
+stata verificata. Restano aperti due punti: i valori di RPO/RTO
+*dichiarati* da Northflank (v. "Backup automatico") non sono ancora stati
+ottenuti dal fornitore, e la decifratura completa di un record con la chiave
+di produzione non è stata eseguita in questa prova (v. "Prova di ripristino",
+punto 6) — la continuità operativa è quindi provata a livello di
+funzionamento del ripristino e di integrità dei dati, ma non ancora
+nell'accezione più stretta che includerebbe anche questi due elementi.
