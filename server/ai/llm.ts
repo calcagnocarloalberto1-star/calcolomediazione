@@ -1,5 +1,6 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import Anthropic from "@anthropic-ai/sdk";
+import { fetch as undiciFetch, Agent as UndiciAgent } from "undici";
 
 // ─── COSTANTI MODELLI ─────────────────────────────────────────────────────
 // Modello Anthropic centralizzato — modificare qui per cambiarlo.
@@ -47,6 +48,42 @@ if (anthropicClient) return anthropicClient;
 if (process.env.ANTHROPIC_API_KEY) {
 anthropicClient = new Anthropic({ timeout: 90_000, maxRetries: 1 });
 return anthropicClient;
+}
+return null;
+}
+
+// Client e Agent HTTP dedicati alla SOLA chiamata assistenteCompilazioneAI() (piu'
+// in basso in questo file, assistente AML). Motivo: il timeout di 480s impostato
+// su quella chiamata (v. commento li' sotto) non basta da solo, perche' il fetch
+// nativo di Node - usato di default dal client Anthropic condiviso sopra - e'
+// basato su una copia interna di undici con i suoi PROPRI timeout di default
+// (headersTimeout/bodyTimeout a 300s), che tagliano la connessione prima che il
+// timeout di 480s abbia mai la possibilita' di scattare. Scoperto il 16/09/2026:
+// una richiesta e' fallita a 311926ms (non 480000ms) con lo stesso identico
+// messaggio "Request timed out", perche' il vero limite che scattava era quello
+// interno a 300s, non il nostro. Qui si usa il fetch del pacchetto npm "undici"
+// (non quello globale di Node) abbinato a un Agent della STESSA versione, con
+// timeout alzati: un Agent esterno passato al fetch nativo di Node fallisce
+// invece con un errore interno di incompatibilita' fra le due copie di undici
+// (verificato), quindi fetch e Agent devono venire dallo stesso modulo.
+const AML_ASSIST_HTTP_TIMEOUT_MS = 500_000; // margine sopra il timeout di 480s del client sotto
+let amlAssistHttpAgent: UndiciAgent | null = null;
+function getAmlAssistHttpAgent(): UndiciAgent {
+if (!amlAssistHttpAgent) {
+amlAssistHttpAgent = new UndiciAgent({
+headersTimeout: AML_ASSIST_HTTP_TIMEOUT_MS,
+bodyTimeout: AML_ASSIST_HTTP_TIMEOUT_MS,
+});
+}
+return amlAssistHttpAgent;
+}
+
+let amlAssistAnthropicClient: Anthropic | null = null;
+function getAmlAssistAnthropicClient(): Anthropic | null {
+if (amlAssistAnthropicClient) return amlAssistAnthropicClient;
+if (process.env.ANTHROPIC_API_KEY) {
+amlAssistAnthropicClient = new Anthropic({ fetch: undiciFetch as unknown as typeof fetch });
+return amlAssistAnthropicClient;
 }
 return null;
 }
@@ -833,7 +870,7 @@ export async function assistenteCompilazioneAI(
 documenti: Array<{ base64: string; mediaType: string }>,
 richiesta: string
 ): Promise<{ risposta: string; campi: Record<string, string | boolean>; parti: Array<Record<string, string | boolean>> }> {
-const anthropic = getAnthropicClient();
+const anthropic = getAmlAssistAnthropicClient();
 if (!anthropic) throw new Error("Servizio AI non configurato (ANTHROPIC_API_KEY mancante).");
 
 const partyKeys = Object.keys(AML_ASSIST_SCHEMA).filter(k => !AML_ASSIST_PROCEDURA_KEYS.has(k));
@@ -907,21 +944,28 @@ messages: [{ role: "user", content }],
 // reale prima di mostrare un errore, invece di fallire in tempo prevedibile
 // con un messaggio azionabile per l'utente).
 //
-// Storia: 240s (introdotto in una sessione precedente) si e' rivelato
-// insufficiente dopo che l'istruzione e' stata resa piu' esigente (derivazione
-// incrociata attiva su ogni campo invece di trascrizione diretta, vedi commento
-// piu' sopra sul punto 1 della "risposta"): i log di produzione mostrano una
-// richiesta fallita a 240336ms, cioe' il timeout scattato appena oltre la
-// soglia precedente, subito dopo il rilascio di quella modifica. Non e' un
-// limite lato Northflank (nessun timeout di gateway/proxy risulta configurato
-// o configurabile nella console Northflank; l'errore arriva dal client
-// Anthropic stesso, APIConnectionTimeoutError, non da una connessione
-// interrotta dall'infrastruttura). Portato a 480s per dare margine reale
-// rispetto al caso peggiore (fino a 32768 token di output, piu' parti e
-// documenti da incrociare), mantenendo comunque un limite finito con un
-// messaggio d'errore azionabile invece di un'attesa indefinita.
+// Storia, due episodi. (1) 240s (introdotto in una sessione precedente) si e'
+// rivelato insufficiente dopo che l'istruzione e' stata resa piu' esigente
+// (derivazione incrociata attiva su ogni campo, vedi commento piu' sopra sul
+// punto 1 della "risposta"): richiesta fallita a 240336ms. Portato a 480s.
+// (2) Il giorno stesso, nuovo fallimento a 311926ms — MOLTO prima degli
+// 480000ms appena impostati, con lo stesso messaggio "Request timed out". Causa
+// reale: il fetch nativo di Node (quindi anche il client Anthropic condiviso,
+// che lo usa implicitamente) e' basato su una copia interna di undici con i
+// suoi PROPRI timeout di default (headersTimeout/bodyTimeout a 300s, appena
+// sotto ai 311926ms osservati) — quel limite tagliava la connessione ben prima
+// che i nostri 480s avessero mai la possibilita' di scattare. Non e' quindi
+// (ne' era, per il primo episodio) un limite lato Northflank: nessun timeout di
+// gateway/proxy risulta configurato o configurabile nella console Northflank.
+// Per questo questa chiamata usa un client Anthropic DEDICATO (vedi
+// getAmlAssistAnthropicClient/getAmlAssistHttpAgent piu' sopra) con un Agent
+// undici i cui timeout sono alzati sopra i 480s di qui sotto, cosi' che sia
+// SEMPRE il nostro timeout esplicito, prevedibile e con messaggio azionabile, a
+// decidere quando arrendersi — mai un default nascosto di un livello piu' in
+// basso nello stack HTTP.
 timeout: 480_000,
 maxRetries: 0,
+fetchOptions: { dispatcher: getAmlAssistHttpAgent() },
 });
 
 if (message.stop_reason === "max_tokens") {
