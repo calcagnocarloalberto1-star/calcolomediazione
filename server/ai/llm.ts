@@ -898,6 +898,16 @@ const message = await anthropic.messages.create({
 model: ANTHROPIC_MODEL_AML_ASSIST,
 max_tokens: 32768,
 messages: [{ role: "user", content }],
+}, {
+// Il client Anthropic condiviso (getAnthropicClient) ha un timeout di 90s,
+// adeguato per le altre funzioni di questo file (Haiku, output piu' corto).
+// Questa chiamata usa Sonnet 5 con fino a 32768 token di output su piu'
+// documenti/pagine: puo' legittimamente superare 90s. Timeout dedicato piu'
+// ampio, e nessun retry automatico del client (che raddoppierebbe l'attesa
+// reale prima di mostrare un errore, invece di fallire in tempo prevedibile
+// con un messaggio azionabile per l'utente).
+timeout: 240_000,
+maxRetries: 0,
 });
 
 if (message.stop_reason === "max_tokens") {
