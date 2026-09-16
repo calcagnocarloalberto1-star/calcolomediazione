@@ -15,7 +15,7 @@
     "security:encrypt-legacy": "tsx script/encrypt-legacy-analyses.ts",
     "security:rollback-encryption": "tsx script/rollback-encrypted-analyses.ts",
     "security:audit": "npm audit --omit=dev --audit-level=high",
-        "test": "tsx server/security/data-protection.test.ts && tsx server/security/csp.test.ts && tsx server/security/minors-preflight.test.ts && tsx server/privacy-controls.test.ts && tsx server/privacy-public-copy.test.ts && tsx shared/calcolo-indennita.test.ts && tsx shared/notarile.test.ts && tsx shared/valore-catastale.test.ts && tsx shared/sentenza-slug.test.ts"
+    "test": "tsx server/security/data-protection.test.ts && tsx server/security/csp.test.ts && tsx server/security/minors-preflight.test.ts && tsx server/privacy-controls.test.ts && tsx server/privacy-public-copy.test.ts && tsx shared/calcolo-indennita.test.ts && tsx shared/notarile.test.ts && tsx shared/valore-catastale.test.ts && tsx shared/sentenza-slug.test.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.124.0",
@@ -91,6 +91,7 @@
     "tailwind-merge": "^3.6.0",
     "tailwindcss-animate": "^1.0.7",
     "tw-animate-css": "^1.2.5",
+    "undici": "^8.10.2",
     "vaul": "^1.1.2",
     "wouter": "^3.11.0",
     "ws": "^8.21.3",
