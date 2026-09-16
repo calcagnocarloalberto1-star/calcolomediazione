@@ -14,6 +14,16 @@ const GEMINI_MODEL = "gemini-2.5-flash";
 // incomplete: solo questa funzione usa un modello piu' capace, non il resto
 // del sito.
 const ANTHROPIC_MODEL_AML_ASSIST = "claude-sonnet-5";
+// Numero massimo di continuazioni automatiche se la risposta JSON di
+// assistenteCompilazioneAI (piu' in basso) supera i 32768 token di un
+// singolo giro. V. sez. 27 dell'audit per i dati che hanno motivato questo
+// valore: su fascicoli corposi la risposta raggiungeva regolarmente il
+// tetto SENZA mai avvicinarsi al timeout (378784ms/358667ms osservati,
+// contro un timeout di 480000ms) — un limite di lunghezza, non di tempo.
+// Ogni giro resta comunque soggetto al proprio timeout di 480s/500s
+// (invariato): con 2 continuazioni il caso peggiore e' quindi ~3 chiamate
+// in sequenza, non un'unica attesa piu' lunga senza limite.
+const AML_ASSIST_MAX_CONTINUATIONS = 2;
 
 // Output massimo per modello (in token).
 // Gemini 2.5 Flash supporta fino a 65536; Claude Haiku 4.5 fino a 16384.
@@ -931,10 +941,26 @@ Regola ferrea: non aggiungere chiavi diverse da quelle elencate sopra, ne' in "p
 const content: any[] = buildContentBlocks(documenti);
 content.push({ type: "text", text: istruzioni });
 
+// Continuazione automatica se la risposta supera i 32768 token di un
+// singolo giro (v. sez. 27 dell'audit): stessa tecnica gia' usata da
+// callAnthropic piu' in alto in questo file (assistant prefill + "continua
+// esattamente da dove ti sei fermato"), adattata al caso JSON. A
+// differenza del testo libero, un JSON spezzato a meta' non e' utilizzabile
+// finche' non viene ricomposto: per questo il risultato concatenato viene
+// comunque validato con JSON.parse prima di essere restituito, e se anche
+// dopo tutti i giri disponibili il JSON risultasse non valido, l'errore
+// esplicito e azionabile di prima resta l'ultima rete di sicurezza — mai un
+// parsing silenzioso su dati incompleti o corrotti.
+const messages: any[] = [{ role: "user", content }];
+let fullText = "";
+let stopReason: string | null | undefined;
+let giro = 0;
+
+while (giro <= AML_ASSIST_MAX_CONTINUATIONS) {
 const message = await anthropic.messages.create({
 model: ANTHROPIC_MODEL_AML_ASSIST,
 max_tokens: 32768,
-messages: [{ role: "user", content }],
+messages,
 }, {
 // Il client Anthropic condiviso (getAnthropicClient) ha un timeout di 90s,
 // adeguato per le altre funzioni di questo file (Haiku, output piu' corto).
@@ -944,7 +970,7 @@ messages: [{ role: "user", content }],
 // reale prima di mostrare un errore, invece di fallire in tempo prevedibile
 // con un messaggio azionabile per l'utente).
 //
-// Storia, due episodi. (1) 240s (introdotto in una sessione precedente) si e'
+// Storia, tre episodi. (1) 240s (introdotto in una sessione precedente) si e'
 // rivelato insufficiente dopo che l'istruzione e' stata resa piu' esigente
 // (derivazione incrociata attiva su ogni campo, vedi commento piu' sopra sul
 // punto 1 della "risposta"): richiesta fallita a 240336ms. Portato a 480s.
@@ -954,35 +980,59 @@ messages: [{ role: "user", content }],
 // che lo usa implicitamente) e' basato su una copia interna di undici con i
 // suoi PROPRI timeout di default (headersTimeout/bodyTimeout a 300s, appena
 // sotto ai 311926ms osservati) — quel limite tagliava la connessione ben prima
-// che i nostri 480s avessero mai la possibilita' di scattare. Non e' quindi
-// (ne' era, per il primo episodio) un limite lato Northflank: nessun timeout di
-// gateway/proxy risulta configurato o configurabile nella console Northflank.
-// Per questo questa chiamata usa un client Anthropic DEDICATO (vedi
-// getAmlAssistAnthropicClient/getAmlAssistHttpAgent piu' sopra) con un Agent
-// undici i cui timeout sono alzati sopra i 480s di qui sotto, cosi' che sia
-// SEMPRE il nostro timeout esplicito, prevedibile e con messaggio azionabile, a
-// decidere quando arrendersi — mai un default nascosto di un livello piu' in
-// basso nello stack HTTP.
+// che i nostri 480s avessero mai la possibilita' di scattare. Per questo questa
+// chiamata usa un client Anthropic DEDICATO (vedi getAmlAssistAnthropicClient/
+// getAmlAssistHttpAgent piu' sopra) con un Agent undici i cui timeout sono
+// alzati sopra i 480s di qui sotto. (3) Anche dopo (1) e (2), su fascicoli con
+// piu' parti/documenti la risposta raggiungeva regolarmente il tetto di 32768
+// token SENZA mai avvicinarsi al timeout (osservato: 378784ms e 358667ms,
+// entrambi ben sotto i 480000ms) — un limite di LUNGHEZZA, non di TEMPO. Da qui
+// il ciclo di continuazione automatica sopra: ogni singolo giro resta soggetto
+// allo stesso timeout di 480s/500s qui sotto (invariato), ma piu' giri possono
+// susseguirsi per coprire risposte piu' lunghe di un singolo giro.
 timeout: 480_000,
 maxRetries: 0,
 fetchOptions: { dispatcher: getAmlAssistHttpAgent() },
 });
 
-if (message.stop_reason === "max_tokens") {
-// A differenza di callLLM (che continua automaticamente), qui una risposta
-// troncata produce quasi sempre un JSON non bilanciato: meglio un errore
-// esplicito e azionabile che un parsing fallito senza spiegazione.
+const textBlock = message.content.find((b: any) => b.type === "text") as
+| { type: "text"; text: string }
+| undefined;
+const chunk = textBlock?.text || "";
+fullText += chunk;
+stopReason = message.stop_reason;
+
+if (stopReason !== "max_tokens") break;
+
+giro++;
+if (giro > AML_ASSIST_MAX_CONTINUATIONS) break;
+
+messages.push({ role: "assistant", content: chunk });
+messages.push({
+role: "user",
+content:
+"Sei stato interrotto a meta' del JSON. Continua ESATTAMENTE dal carattere " +
+"in cui ti sei fermato (anche a meta' di una parola, un valore o una " +
+"virgola), senza ripetere nulla di gia' scritto, senza markdown, senza " +
+"preamboli e senza ricominciare l'oggetto JSON da capo. Concludi tutte le " +
+"parti e i campi mancanti fino alla parentesi graffa finale.",
+});
+}
+
+if (stopReason === "max_tokens") {
+// Anche dopo tutti i giri di continuazione disponibili la risposta resta
+// troncata: meglio un errore esplicito e azionabile che un parsing fallito
+// senza spiegazione (stesso principio di prima, ora come ultima rete di
+// sicurezza dopo aver gia' tentato la continuazione automatica).
 throw new Error(
-"La risposta dell'assistente AI e' stata troncata perche' troppo lunga per una sola richiesta " +
+"La risposta dell'assistente AI e' stata troncata perche' troppo lunga anche dopo " +
+(AML_ASSIST_MAX_CONTINUATIONS + 1) + " tentativi di continuazione automatica " +
 "(molti documenti e/o molte parti individuate). Riprova inviando meno documenti, oppure dividi " +
 "l'invio in due gruppi separati: i risultati di ciascun invio si sommano nella pagina."
 );
 }
 
-const textBlock = message.content.find(b => b.type === "text") as
-| { type: "text"; text: string }
-| undefined;
-let raw = (textBlock?.text || "").trim();
+let raw = fullText.trim();
 raw = raw.replace(/^```(?:json)?/i, "").replace(/```$/, "").trim();
 const start = raw.indexOf("{");
 const end = raw.lastIndexOf("}");
@@ -990,7 +1040,7 @@ if (start >= 0 && end > start) raw = raw.slice(start, end + 1);
 
 let parsed: any = {};
 try { parsed = JSON.parse(raw); }
-catch { throw new Error("Risposta AI non interpretabile."); }
+catch { throw new Error("Risposta AI non interpretabile (anche dopo l'eventuale continuazione automatica)."); }
 
 const risposta = typeof parsed.risposta === "string" ? parsed.risposta.trim() : "";
 
