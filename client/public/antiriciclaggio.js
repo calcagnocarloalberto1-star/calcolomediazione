@@ -95,8 +95,14 @@ else if(s<=2){lvl="medio";cls="b-medio";note="(intensificazione delle verifiche 
 else {lvl="alto";cls="b-alto";note="(misure rafforzate; valutare la segnalazione SOS alla UIF)";}
 const b=$("riskBadge"); b.textContent=(lvl==="nd"?"DA VALUTARE":lvl.toUpperCase()); b.className="badge "+cls; $("riskNote").textContent=note;
 
-if(!riskLivelloManual) $("risk_livello").value = (lvl==="nd" ? "basso" : lvl);
-if(!avTipoManual){
+// Prima di questa correzione, "nessun dato ancora inserito" (lvl==="nd") veniva comunque
+// scritto come "basso" nel <select> risk_livello: il badge a schermo mostrava correttamente
+// "DA VALUTARE", ma il valore REALE del campo (quello letto in fase di generazione del
+// fascicolo, sezione 11 "Misure di adeguata verifica") restava "basso" -> "semplificata",
+// indistinguibile da una valutazione genuina. Ora il campo resta vuoto (nessuna opzione
+// selezionata) finche' non c'e' un livello di rischio effettivamente calcolato.
+if(!riskLivelloManual) $("risk_livello").value = (lvl==="nd" ? "" : lvl);
+if(!avTipoManual && rischioValutato){
 const rl = v("risk_livello");
 $("av_tipo").value = rl==="basso" ? "semplificata" : (rl==="alto" ? "rafforzata" : "ordinaria");
 }
