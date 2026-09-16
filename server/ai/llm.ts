@@ -906,7 +906,21 @@ messages: [{ role: "user", content }],
 // ampio, e nessun retry automatico del client (che raddoppierebbe l'attesa
 // reale prima di mostrare un errore, invece di fallire in tempo prevedibile
 // con un messaggio azionabile per l'utente).
-timeout: 240_000,
+//
+// Storia: 240s (introdotto in una sessione precedente) si e' rivelato
+// insufficiente dopo che l'istruzione e' stata resa piu' esigente (derivazione
+// incrociata attiva su ogni campo invece di trascrizione diretta, vedi commento
+// piu' sopra sul punto 1 della "risposta"): i log di produzione mostrano una
+// richiesta fallita a 240336ms, cioe' il timeout scattato appena oltre la
+// soglia precedente, subito dopo il rilascio di quella modifica. Non e' un
+// limite lato Northflank (nessun timeout di gateway/proxy risulta configurato
+// o configurabile nella console Northflank; l'errore arriva dal client
+// Anthropic stesso, APIConnectionTimeoutError, non da una connessione
+// interrotta dall'infrastruttura). Portato a 480s per dare margine reale
+// rispetto al caso peggiore (fino a 32768 token di output, piu' parti e
+// documenti da incrociare), mantenendo comunque un limite finito con un
+// messaggio d'errore azionabile invece di un'attesa indefinita.
+timeout: 480_000,
 maxRetries: 0,
 });
 
