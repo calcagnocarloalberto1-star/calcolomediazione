@@ -1069,6 +1069,20 @@ if (val === true || val === "true") parte[k] = true;
 return parte;
 }).filter((p: any) => p.p_nome);
 
+// Diagnostica aggregata (v. sez. 28 dell'audit): SOLO conteggi e lunghezze,
+// MAI contenuto dei documenti o dei campi (nomi, dati anagrafici, ecc. sono
+// dati personali del fascicolo AML e non vanno mai loggati). Serve a capire,
+// sul prossimo caso reale, se la lunghezza della risposta e' guidata dal
+// numero di parti individuate (possibile duplicazione/allucinazione) oppure
+// dalla verbosita' della narrazione "risposta" (es. elenco dettagliato dei
+// campi vuoti per parte, richiesto da sez. 23) anche con poche parti reali.
+const totalPartyFields = parti.reduce((sum: number, p: any) => sum + Object.keys(p).length, 0);
+console.log(
+`[AML assist] diagnostica: giriContinuazione=${giro} lunghezzaRisposta=${risposta.length} ` +
+`lunghezzaTestoTotale=${fullText.length} numParti=${parti.length} campiProcedura=${Object.keys(campi).length} ` +
+`campiTotaliParti=${totalPartyFields}`
+);
+
 return {
 risposta: risposta || "Ho analizzato i documenti caricati e compilato i dati individuati qui sotto: controllali prima di applicarli.",
 campi,
