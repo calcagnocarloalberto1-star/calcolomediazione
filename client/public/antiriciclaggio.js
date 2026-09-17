@@ -1178,7 +1178,7 @@ try{ localStorage.setItem(USA_FORMATO_GENOVA_KEY, usaFormatoGenova ? "1" : "0");
 genera();
 }
 
-function genera(){
+function genera(scroll){
 const out = $("out");
 let html = "";
 if(role==="avvocato"){
@@ -1193,7 +1193,12 @@ html += modSOS() + modChecklist();
 html += '<div class="note no-print" data-print><b>Conservazione.</b> Stampa o salva questi modelli e inseriscili nel fascicolo riservato dell\'Organismo, separato dal fascicolo ordinario, per 10 anni (art. 31 D.Lgs. 231/2007).</div>';
 out.innerHTML = html;
 out.style.display = "block";
-out.scrollIntoView({behavior:"smooth"});
+// scroll!==false: di default sposta la vista sul modulo appena generato (comportamento
+// invariato per il pulsante "Genera i modelli" e gli altri usi diretti). L'assistente AI
+// passa esplicitamente scroll=false quando applica una parte (v. assistApplicaParte):
+// altrimenti ogni parte applicata spostava la pagina via dall'elenco delle parti,
+// segnalato da Carlo come molto scomodo il 17/09/2026.
+if(scroll !== false) out.scrollIntoView({behavior:"smooth"});
 amlStoricoRegistraGenerazione();
 const procKey = amlProcKey();
 const partyKey = amlPartyKey();
@@ -2007,7 +2012,7 @@ $("assist_review").style.display = "block";
 return;
 }
 const wrap = document.createElement("div");
-wrap.innerHTML = '<p class="hint" style="margin-bottom:8px"><b>'+assistParti.length+' parte/i individuate.</b> Applica una parte alla volta: ogni clic compila i campi (anagrafica, rappresentante, PEP, titolare effettivo, rischio) E genera subito il modulo per quella parte, sostituendo quello mostrato in precedenza — <b>scarica o stampa ciascun modulo prima di applicare la parte successiva</b>. I campi della parte precedente vengono azzerati automaticamente, mantenendo i dati di procedura.</p>';
+wrap.innerHTML = '<p class="hint" style="margin-bottom:8px"><b>'+assistParti.length+' parte/i individuate.</b> Applica una parte alla volta, oppure usa «Applica tutto» per compilarle tutte in sequenza. Ogni parte applicata genera il relativo modulo e lo salva automaticamente nel fascicolo di questa procedura: il riquadro qui sopra mostra sempre solo l\'ultimo modulo generato, ma il fascicolo completo con TUTTE le parti si scarica o stampa più sotto, in «Genera o stampa i modelli». I campi della parte precedente vengono azzerati automaticamente ad ogni applicazione, mantenendo i dati di procedura.</p>';
 assistParti.forEach((parte,i)=>{
 const row = document.createElement("div");
 row.id = "assist_parte_row_"+i;
@@ -2034,15 +2039,24 @@ row.innerHTML =
 + '<button type="button" class="btn-primary" id="assist_parte_btn_'+i+'" style="padding:8px 14px;font-size:13px"'+(gia?' disabled':'')+'>'+(gia?'✓ Applicata e generata':'Applica questa parte ai campi')+'</button>';
 wrap.appendChild(row);
 });
+if(assistParti.length > 1){
+const barraTutto = document.createElement("div");
+barraTutto.style.cssText = "margin-top:2px";
+barraTutto.innerHTML = '<button type="button" class="btn-ghost" id="assist_parte_btn_tutto" style="padding:8px 14px;font-size:13px">Applica tutto</button>';
+wrap.appendChild(barraTutto);
+}
 container.appendChild(wrap);
 assistParti.forEach((_,i)=>{
 const btn = $("assist_parte_btn_"+i);
 if(btn && !assistPartiApplicate.has(i)) btn.addEventListener("click", ()=>assistApplicaParte(i));
 });
+const btnTutto = $("assist_parte_btn_tutto");
+if(btnTutto) btnTutto.addEventListener("click", assistApplicaTutto);
 $("assist_review").style.display = "block";
 }
 
-function assistApplicaParte(idx){
+function assistApplicaParte(idx, opts){
+opts = opts || {};
 const parte = assistParti[idx];
 if(!parte) return;
 const ruoloSel = $("assist_parte_ruolo_"+idx);
@@ -2071,10 +2085,27 @@ const btn = $("assist_parte_btn_"+idx);
 if(btn){ btn.textContent = "✓ Applicata e generata"; btn.disabled = true; }
 try { syncToggles(); } catch(e){ console.error("syncToggles in errore:", e); }
 try { calcRisk(); } catch(e){ console.error("calcRisk in errore:", e); }
-try { if(typeof genera === "function") genera(); } catch(e){ console.error("genera() in errore:", e); }
+// genera(false): non sposta la pagina sul modulo generato (v. commento in genera()) —
+// applicando le parti una alla volta o con "Applica tutto" questo teneva altrimenti la
+// vista in continuo movimento, segnalato da Carlo come molto scomodo il 17/09/2026.
+try { if(typeof genera === "function") genera(false); } catch(e){ console.error("genera() in errore:", e); }
+if(!opts.silenzioso){
 const restanti = assistParti.length - assistPartiApplicate.size;
-toast("Modulo generato per «"+(parte.p_nome||"senza nome")+"». SCARICA O STAMPA QUESTO MODULO ORA: applicando la prossima parte, il modulo qui sopra verra' sostituito."
-+ (restanti>0 ? " Restano "+restanti+" parte/i da applicare." : " Tutte le parti individuate sono state applicate."));
+toast("Modulo generato per «"+(parte.p_nome||"senza nome")+"» e salvato nel fascicolo di questa procedura."
++ (restanti>0 ? " Restano "+restanti+" parte/i da applicare (oppure usa «Applica tutto»)." : " Tutte le parti individuate sono state applicate."));
+}
+}
+
+// Applica in sequenza tutte le parti non ancora applicate (stessa logica di
+// assistApplicaParte, ripetuta), cosi' non serve piu' cliccare una parte alla volta.
+// Ogni parte applicata genera e salva comunque il proprio modulo nel fascicolo
+// (fascicoloAccumulo, v. genera()): nessun dato si perde applicandole tutte insieme.
+// Richiesta di Carlo del 17/09/2026.
+function assistApplicaTutto(){
+const daApplicare = assistParti.map((_,i)=>i).filter(i=>!assistPartiApplicate.has(i));
+if(!daApplicare.length){ toast("Tutte le parti individuate sono gia' state applicate."); return; }
+daApplicare.forEach(idx=>assistApplicaParte(idx, {silenzioso:true}));
+toast("Applicate tutte le "+daApplicare.length+" parte/i restanti: ogni modulo e' stato generato e salvato nel fascicolo di questa procedura. Usa «Genera o stampa i modelli» più sotto per scaricare o stampare il fascicolo completo con tutte le parti.");
 }
 
 function assistRenderReview(campi){
