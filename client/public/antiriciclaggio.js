@@ -569,7 +569,13 @@ function goNote(text){
 return '<p style="font-size:12px;color:#555555;font-style:italic;font-family:'+GO_FONT+'">'+esc(text)+'</p>';
 }
 function goHeader(){
-return '<div style="text-align:center;margin-bottom:4px"><img src="'+LOGO_GENOVA_B64+'" alt="Organismo di Mediazione — Ordine degli Avvocati di Genova" style="height:38px"></div>'+
+// Larghezza esplicita accanto all'altezza (immagine sorgente 315x59px, stesso rapporto):
+// il browser, con la sola altezza in CSS, mantiene da solo le proporzioni corrette
+// dell'immagine, ma Word — aprendo l'HTML esportato — non lo fa in modo affidabile e
+// tende a usare la larghezza nativa del PNG, schiacciando il logo (largo e basso)
+// nell'altezza forzata di 38px. Specificare entrambe le dimensioni evita l'ambiguità
+// indipendentemente da come il singolo lettore HTML calcola la dimensione mancante.
+return '<div style="text-align:center;margin-bottom:4px"><img src="'+LOGO_GENOVA_B64+'" alt="Organismo di Mediazione — Ordine degli Avvocati di Genova" style="height:38px;width:203px"></div>'+
 '<p style="font-weight:bold;font-size:11px;text-align:center;margin:2px 0 14px;font-family:'+GO_FONT+'">Organismo di Mediazione aut. Ministero della Giustizia — P.D.G. 14.3.2011 reg. 172</p>';
 }
 function goTitle(title, subtitle){
