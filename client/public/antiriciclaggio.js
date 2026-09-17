@@ -1106,6 +1106,69 @@ return Object.values(fascicoloAccumulo)
 
 let fascicoloAccumuloContatore = Object.values(fascicoloAccumulo).reduce((max,e)=>Math.max(max,(e&&typeof e.ordine==="number"?e.ordine:-1)+1),0);
 
+// Persiste la sintesi testuale prodotta dall'assistente AI di compilazione (box
+// "assist_answer" sopra la scheda), per procedura: a differenza di assistRispostaTesti
+// (solo in memoria: azzerata da un ricaricamento della pagina o da "Pulisci"), questa
+// copia sopravvive alla chiusura della pagina e viene inclusa nel fascicolo scaricato/
+// stampato (fascicoloAccumuloBodyHtml) e in un download dedicato (scaricaVerificaIA), su
+// richiesta di Carlo del 17/09/2026: il mediatore deve poter restare edotto di quel che
+// l'IA ha "visto" nei documenti anche mesi dopo, non solo mentre la pagina e' aperta.
+const AML_VERIFICA_IA_KEY = "calcolomediazione_aml_verifica_ia";
+function verificaIaLoadAll(){
+try{ const raw = localStorage.getItem(AML_VERIFICA_IA_KEY); return raw ? JSON.parse(raw) : {}; } catch(e){ return {}; }
+}
+function verificaIaSaveAll(all){
+try{ localStorage.setItem(AML_VERIFICA_IA_KEY, JSON.stringify(all)); } catch(e){ /* storage non disponibile: si prosegue senza persistenza */ }
+}
+let verificaIaAccumulo = verificaIaLoadAll();
+// Chiamata sia subito dopo un invio riuscito all'assistente AI sia da genera() (che ha
+// sempre il numero di procedura ormai compilato, anche quando l'invio all'assistente e'
+// avvenuto prima che il numero di procedura fosse scritto): aggiorna la copia salvata
+// per la procedura corrente con l'elenco (eventualmente aggiornato) dei testi di risposta.
+function verificaIaRegistra(){
+const procKey = amlProcKey();
+if(!procKey || !assistRispostaTesti.length) return;
+verificaIaAccumulo[procKey] = { testi: assistRispostaTesti.slice(), aggiornato: new Date().toISOString() };
+verificaIaSaveAll(verificaIaAccumulo);
+}
+// Dati da mostrare/scaricare ORA: preferisce la copia salvata per la procedura corrente;
+// se non c'e' ancora (es. numero di procedura non ancora scritto quando e' arrivata la
+// risposta), usa quella ancora in memoria in questa stessa pagina.
+function verificaIaDatiCorrenti(){
+const procKey = amlProcKey();
+const salvata = procKey ? verificaIaAccumulo[procKey] : null;
+if(salvata && Array.isArray(salvata.testi) && salvata.testi.length) return salvata;
+return assistRispostaTesti.length ? { testi: assistRispostaTesti.slice(), aggiornato: null } : null;
+}
+// HTML della nota da includere nel fascicolo scaricato/stampato e nel download dedicato:
+// avvertenza specifica (distinta da FASCICOLO_AVVERTENZA_HTML, generica) perche' qui il
+// testo e' generato dall'IA, non scritto dal mediatore — va sempre riletto e verificato,
+// non e' un accertamento ne' una valutazione professionale.
+function verificaIaNotaHtml(){
+const dati = verificaIaDatiCorrenti();
+if(!dati) return "";
+const quando = dati.aggiornato ? (' · ' + esc(new Date(dati.aggiornato).toLocaleString("it-IT"))) : "";
+const testi = dati.testi.map((t,i)=>
+(dati.testi.length>1 ? '<p style="font-size:12.5px;margin:0 0 4px"><b>— Invio '+(i+1)+' —</b></p>' : '')
++ '<p style="white-space:pre-wrap;font-size:12.5px;margin:0 0 10px">'+esc(t)+'</p>'
+).join("");
+return '<div style="border:1px solid #bfe4cf;border-radius:8px;padding:10px 12px;margin:0 0 16px 0;background:#f3faf6">'
++ '<p style="font-size:11px;color:#5b6066;margin:0 0 8px 0"><b style="color:#13161b">Nota — sintesi della lettura automatica dei documenti (assistente AI di compilazione)'+quando+'.</b> Testo generato dall\'assistente AI in base ai documenti caricati per questa procedura: riporta cosa l\'IA ha individuato, dedotto o non trovato. Non e\' un accertamento ne\' una valutazione professionale: il mediatore deve sempre verificarne il contenuto prima di farne uso.</p>'
++ testi
++ '</div>';
+}
+// Download dedicato della sola sintesi IA, senza aspettare la generazione dell'intero
+// fascicolo (esportaDocSingoloWord e' definita piu' sotto in questo file, ma le
+// dichiarazioni di funzione sono visibili in tutto lo script). Richiesta di Carlo del
+// 17/09/2026: la sintesi deve essere scaricabile anche da sola, non solo leggibile a
+// schermo o dentro il fascicolo completo.
+function scaricaVerificaIA(){
+const dati = verificaIaDatiCorrenti();
+if(!dati){ toast("Nessuna sintesi dell'assistente AI da scaricare per questa procedura: usa prima l'assistente qui sopra."); return; }
+const proc = (v("proc_n")||"procedura").replace(/[^\w]/g,"_");
+esportaDocSingoloWord("Sintesi della lettura automatica dei documenti — Assistente AI", verificaIaNotaHtml(), "Verifica_IA_" + proc + ".doc");
+}
+
 // Imposta il formato (Genova o generico) prima di generare, usata dalle 4 sezioni
 // "Genera o stampa i modelli": ciascuna dichiara esplicitamente il proprio formato,
 // così non serve più un selettore separato e non c'è rischio di formato sbagliato.
@@ -1146,6 +1209,10 @@ html: html,
 ordine: esistente ? esistente.ordine : (fascicoloAccumuloContatore++)
 };
 fascicoloAccumuloSaveAll();
+// A questo punto il numero di procedura e' quasi certamente scritto (anche quando non
+// lo era ancora al momento della risposta dell'assistente AI): buon punto per salvare
+// in modo affidabile anche la sintesi IA associata a questa procedura (v. sez. 29).
+verificaIaRegistra();
 }
 // Avviso non bloccante: lo strumento consente volutamente di generare (e stampare)
 // modelli parzialmente compilati, da completare a mano — quindi qui non si blocca
@@ -1674,6 +1741,7 @@ localStorage.removeItem(AML_DATI_KEY);
 localStorage.removeItem(AML_STORICO_KEY);
 localStorage.removeItem(AML_MEDLOG_KEY);
 localStorage.removeItem(AML_FASCICOLO_KEY);
+localStorage.removeItem(AML_VERIFICA_IA_KEY);
 }catch(e){ /* storage non disponibile */ }
 renderDatiSuggerimento();
 renderProcedureSalvate();
@@ -2093,6 +2161,7 @@ const rawEl = $("assist_raw"); if(rawEl) rawEl.textContent = JSON.stringify(data
 // invece di sostituirle: con un caricamento in piu' gruppi restano tutte
 // leggibili, una sotto l'altra.
 if(data.risposta) assistRispostaTesti.push(data.risposta);
+verificaIaRegistra();
 if(ansEl){
 ansEl.style.display = assistRispostaTesti.length ? "block" : "none";
 ansEl.textContent = assistRispostaTesti.length > 1
@@ -2200,12 +2269,17 @@ const FASCICOLO_AVVERTENZA_HTML = '<p style="font-size:11px;color:#5b6066;border
 // corrente (non solo l'ultima): ciascuna parte inizia da una nuova pagina in stampa.
 function fascicoloAccumuloBodyHtml(){
 const parti = fascicoloAccumuloDellaProcedura();
+// Sintesi dell'assistente AI (se presente per questa procedura), su richiesta di
+// Carlo del 17/09/2026: deve comparire nel fascicolo scaricato/stampato, non solo
+// a schermo, cosi' il mediatore resta edotto di quel che l'IA ha "visto" anche
+// riaprendo il fascicolo mesi dopo.
+const notaIa = verificaIaNotaHtml();
 if(!parti.length){
 const cur = $("out").cloneNode(true);
 cur.querySelectorAll(".acts,.no-print").forEach(a=>a.remove());
-return FASCICOLO_AVVERTENZA_HTML + cur.innerHTML;
+return FASCICOLO_AVVERTENZA_HTML + notaIa + cur.innerHTML;
 }
-return FASCICOLO_AVVERTENZA_HTML + parti.map((p,i)=>{
+return FASCICOLO_AVVERTENZA_HTML + notaIa + parti.map((p,i)=>{
 const div = document.createElement("div");
 div.innerHTML = p.html;
 div.querySelectorAll(".acts,.no-print").forEach(a=>a.remove());
@@ -2634,6 +2708,7 @@ case "mostra-selettore-documento": mostraSelettoreDocumento(); break;
 case "apri-cartella": { const input=$("assist_folder"); if(input) input.click(); break; }
 case "assist-estrai": assistEstrai(); break;
 case "assist-reset": assistReset(); break;
+case "scarica-verifica-ia": scaricaVerificaIA(); break;
 case "aml-cancella-tutti": amlCancellaTuttiIDati(); break;
 case "aml-nuova-parte": amlNuovaParte(); break;
 case "aml-cancella-procedura": amlCancellaDatiProcedura(); break;
