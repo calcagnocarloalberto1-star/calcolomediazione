@@ -61,28 +61,20 @@ for (const obsoleteClaim of [
   );
 }
 
-for (const file of [
-  "client/index.html",
-  "client/src/pages/AnalisiCasoAI.tsx",
-  "client/src/pages/FAQ.tsx",
-  "client/src/pages/Home.tsx",
-  "client/src/pages/StrategieNegoziazione.tsx",
-  "client/src/pages/TerminiCondizioni.tsx",
-  "client/src/pages/ChiSiamo.tsx",
-  "client/src/pages/PrivacyPolicy.tsx",
-  "client/src/components/Header.tsx",
-  "client/src/components/Footer.tsx",
-  "client/public/llms.txt",
-  "server/seo-content.ts",
-  "server/routes.ts",
-  "client/public/antiriciclaggio-guida.html",
-]) {
-  assert.match(
-    readFileSync(file, "utf8"),
-    /temporaneamente sospes|resta sospes|sono sospes/i,
-    `The public suspension notice is missing from ${file}`,
-  );
-}
+// Dal 14/09/2026 i flussi CASE e AML generali risultano attivi per decisione
+// documentata del titolare. Il percorso con dati di minori resta invece
+// separatamente bloccato: i test devono distinguere i due stati, non imporre
+// una vecchia sospensione generale ormai incoerente con la policy pubblicata.
+const privacyPolicy = readFileSync("client/src/pages/PrivacyPolicy.tsx", "utf8");
+assert.match(privacyPolicy, /attiv[oi] dal 14 settembre 2026/i);
+assert.match(privacyPolicy, /in caso affermativo o di incertezza l'analisi resta bloccata/i);
+
+const analysisPage = readFileSync("client/src/pages/AnalisiCasoAI.tsx", "utf8");
+assert.match(analysisPage, /percorso rafforzato per pratiche con possibili dati di minori non è ancora attivo/i);
+
+const minorsGate = readFileSync("server/security/minors-preflight.ts", "utf8");
+assert.match(minorsGate, /MINORS_REINFORCED_PATH_IMPLEMENTED = false/);
+assert.match(minorsGate, /MINORS_AI_GDPR_APPROVED/);
 
 const privacyControls = readFileSync("server/privacy-controls.ts", "utf8");
 for (const requiredControl of [

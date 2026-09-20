@@ -25,6 +25,15 @@ const PAROLE_CHIAVE: RegExp[] = [
     /\btutore\s+del\s+minore\b/i,
     /\bcuratore\s+speciale\s+del\s+minore\b/i,
     /\baffidamento\s+(dei\s+)?figli/i,
+    /\bmediazione\s+familiare\b/i,
+    /\bfigli?[oa]\b.{0,24}\b(?:\d{1,2}|undici|dodici|tredici|quattordici|quindici|sedici|diciassette)\s+ann[oi]\b/i,
+    /\b(?:ha|aveva|compie|compiuto)\s+(?:\d{1,2}|undici|dodici|tredici|quattordici|quindici|sedici|diciassette)\s+ann[oi]\b/i,
+    /\b(?:undicenne|dodicenne|tredicenne|quattordicenne|quindicenne|sedicenne|diciassettenne)\b/i,
+    /\bpediatr\w*\b/i,
+    /\bscuola\s+(?:primaria|secondaria)\b/i,
+    /\bservizi?\s+sociali?\b/i,
+    /\bcollocamento\s+(?:del|della|dei|delle)?\s*minor/i,
+    /\bresidenza\s+abituale\s+(?:del|della|dei|delle)?\s*minor/i,
   ];
 
 // "nato/a il ..." con un anno che renderebbe la persona ancora minorenne

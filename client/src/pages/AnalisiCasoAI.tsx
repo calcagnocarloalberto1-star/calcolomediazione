@@ -228,7 +228,7 @@ const [minorsPathEnabled, setMinorsPathEnabled] = useState(false);
     }
   });
 
-  async function getMinorsPreflightToken(): Promise<string> {
+  async function getMinorsPreflightToken(target: "upload" | "create" | `chat:${number}`): Promise<string> {
     if (!minorsStatus) {
       throw new Error("Indica prima se la pratica riguarda dati di persone minorenni.");
     }
@@ -236,6 +236,7 @@ const [minorsPathEnabled, setMinorsPathEnabled] = useState(false);
       "X-Minors-Status": minorsStatus,
       "X-Notice-Version": MINORS_NOTICE_VERSION,
       "X-Case-Flow-Id": flowId,
+      "X-Minors-Target": target,
     };
     if (minorsStatus !== "no") {
       headers["X-Minors-Confirmations"] = minorsConfirmations.map(v => (v ? "1" : "0")).join(",");
@@ -251,6 +252,16 @@ const [minorsPathEnabled, setMinorsPathEnabled] = useState(false);
   const minorsReinforcedConfirmed = minorsStatus === "no"
   ? true
     : (minorsPathEnabled && minorsConfirmations.every(Boolean));
+
+  const changeMinorsStatus = (value: MinorsStatus) => {
+    // Una nuova classificazione invalida ogni attestazione e ogni documento
+    // già selezionato o estratto, evitando il riuso tra pratiche o percorsi.
+    setMinorsStatus(value);
+    setMinorsConfirmations(MINORS_CONFIRMATION_LABELS.map(() => false));
+    setFiles([]);
+    setUploadedTexts([]);
+    setUploadingFiles(false);
+  };
 
   useEffect(() => {
     let active = true;
@@ -523,7 +534,7 @@ const [minorsPathEnabled, setMinorsPathEnabled] = useState(false);
     if (!caseAiEnabled) return;
     setUploadingFiles(true);
 try {
-  const minorsToken = await getMinorsPreflightToken();
+  const minorsToken = await getMinorsPreflightToken("upload");
   const formData = new FormData();
   newFiles.forEach(f => formData.append("files", f));
   const res = await fetch("/api/upload-pdf", {
@@ -554,7 +565,7 @@ try {
     }
     setIsRunning(true); setCurrentStep(0);
     try {
-      const minorsToken = await getMinorsPreflightToken();
+      const minorsToken = await getMinorsPreflightToken("create");
       const documentiCombinati = uploadedTexts
         .map(d => `--- Documento: ${d.filename} (${d.pages} pagine) ---\n${d.text}`)
         .join("\n\n");
@@ -613,7 +624,7 @@ try {
     setChatMessages(prev => [...prev, { role: "user", content: msg, timestamp: new Date().toISOString() }]);
     setIsSending(true);
     try {
-      const minorsToken = await getMinorsPreflightToken();
+      const minorsToken = await getMinorsPreflightToken(`chat:${analisi.id}`);
       const data = await apiPostChat(analisi.id, msg, { "X-Minors-Preflight-Token": minorsToken, "X-Case-Flow-Id": flowId });
       if (data) {
         setChatMessages(prev => [...prev, { role: "assistant", content: data.response, timestamp: new Date().toISOString() }]);
@@ -704,6 +715,8 @@ try {
     setChatMessages([]); setChatInput(""); setTitolo(""); setDescrizione("");
     setFiles([]); setUploadedTexts([]); setUploadingFiles(false); setIsAnonymized(false);
     setPrivacyAcknowledged(false);
+    setMinorsStatus(null);
+    setMinorsConfirmations(MINORS_CONFIRMATION_LABELS.map(() => false));
   };
 
   // ─── ANONIMIZZAZIONE ──────────────────────────────────────────────────────
@@ -879,10 +892,17 @@ try {
                 </CardTitle>
               </CardHeader>
               <CardContent>
+                {analisi.minorsStatus !== "no" && (
+                  <div className="mb-4 border-2 border-amber-700 bg-amber-50 dark:bg-amber-950/20 p-3 text-sm" role="status">
+                    La chat AI resta bloccata per questa analisi: lo storico non contiene una
+                    classificazione verificata che escluda dati di persone minorenni. Consultazione,
+                    esportazione e cancellazione restano disponibili.
+                  </div>
+                )}
                 <div className="flex flex-wrap gap-2 mb-4">
                   {QUICK_ACTIONS.map(action => (
                     <Button key={action} variant="outline" size="sm" onClick={() => handleSendChat(action)}
-                      disabled={!caseAiEnabled}
+                      disabled={!caseAiEnabled || !minorsReinforcedConfirmed}
                       className="text-xs border-2 border-foreground shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[1px] hover:translate-y-[1px] transition-all duration-150">
                       {action}
                     </Button>
@@ -915,9 +935,9 @@ try {
                   <Input value={chatInput} onChange={e => setChatInput(e.target.value)}
                     onKeyDown={e => e.key === "Enter" && handleSendChat()}
                     placeholder={caseAiEnabled ? "Scrivi una domanda..." : "Chat temporaneamente sospesa"}
-                    disabled={!caseAiEnabled}
+                    disabled={!caseAiEnabled || !minorsReinforcedConfirmed}
                     className="border-2 border-foreground" data-testid="input-chat" />
-                  <Button onClick={() => handleSendChat()} disabled={!caseAiEnabled || !chatInput.trim() || isSending}
+                  <Button onClick={() => handleSendChat()} disabled={!caseAiEnabled || !minorsReinforcedConfirmed || !chatInput.trim() || isSending}
                     className="border-2 border-foreground shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] transition-all duration-150"
                     data-testid="button-send-chat">
                     <Send className="w-4 h-4" />
@@ -970,6 +990,8 @@ try {
         {/* Storico */}
         <StoricoAnalisi onLoadAnalisi={(a) => {
           setAnalisi(a);
+          setMinorsStatus(a.minorsStatus || "unknown");
+          setMinorsConfirmations(MINORS_CONFIRMATION_LABELS.map(() => false));
           let completed = 0;
           if (a.prospettoEconomico) completed++;
           if (a.analisiGiuridica) completed++;
@@ -994,7 +1016,7 @@ try {
   <Label className="text-sm font-semibold">{MINORS_CATEGORIZATION_QUESTION}</Label>
   <RadioGroup
     value={minorsStatus ?? undefined}
-    onValueChange={(value) => setMinorsStatus(value as MinorsStatus)}
+    onValueChange={(value) => changeMinorsStatus(value as MinorsStatus)}
     disabled={!caseAiEnabled}
     className="flex flex-col sm:flex-row gap-3"
   >

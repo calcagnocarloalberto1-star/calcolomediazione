@@ -1,5 +1,6 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import Anthropic from "@anthropic-ai/sdk";
+import { logSafeError } from "../security/safe-error.js";
 import { fetch as undiciFetch, Agent as UndiciAgent } from "undici";
 
 // ─── COSTANTI MODELLI ─────────────────────────────────────────────────────
@@ -255,7 +256,7 @@ content:
 "NON aggiungere MAI testo del tipo '...continua' o '[continuazione]'.",
 });
 } catch (error) {
-console.error("Errore chiamata Anthropic:", error);
+logSafeError("Errore chiamata Anthropic", error);
 return fullText || null;
 }
 }
@@ -294,7 +295,7 @@ signal: AbortSignal.timeout(90_000),
 const data = await resp.json() as any;
 
 if (data.error) {
-console.error("Errore Gemini API:", data.error.message);
+logSafeError("Errore Gemini API", data.error);
 return null;
 }
 if (!data.candidates || data.candidates.length === 0) return null;
@@ -312,7 +313,7 @@ text: textParts.join("\n\n"),
 finishReason: candidate.finishReason || null,
 };
 } catch (error) {
-console.error("Errore chiamata Gemini:", error);
+logSafeError("Errore chiamata Gemini", error);
 return null;
 }
 }
