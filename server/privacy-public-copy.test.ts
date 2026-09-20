@@ -110,6 +110,21 @@ for (const file of [
   );
 }
 
+// Dal 14/09/2026 i flussi CASE e AML generali risultano attivi per decisione
+// documentata del titolare. Il percorso con dati di minori resta invece
+// separatamente bloccato: i test devono distinguere i due stati, non imporre
+// una vecchia sospensione generale ormai incoerente con la policy pubblicata.
+const privacyPolicy = readFileSync("client/src/pages/PrivacyPolicy.tsx", "utf8");
+assert.match(privacyPolicy, /attiv[oi] dal 14 settembre 2026/i);
+assert.match(privacyPolicy, /in caso affermativo o di incertezza l'analisi resta bloccata/i);
+
+const analysisPage = readFileSync("client/src/pages/AnalisiCasoAI.tsx", "utf8");
+assert.match(analysisPage, /percorso rafforzato per pratiche con possibili dati di minori non è ancora attivo/i);
+
+const minorsGate = readFileSync("server/security/minors-preflight.ts", "utf8");
+assert.match(minorsGate, /MINORS_REINFORCED_PATH_IMPLEMENTED = false/);
+assert.match(minorsGate, /MINORS_AI_GDPR_APPROVED/);
+
 const privacyControls = readFileSync("server/privacy-controls.ts", "utf8");
 for (const requiredControl of [
   "CASE_AI_GDPR_APPROVED",

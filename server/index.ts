@@ -6,6 +6,7 @@ import { createServer } from "http";
 import { buildContentSecurityPolicy, createCspNonce } from "./security/csp";
 import { registerPrivacyPreParserGates } from "./privacy-controls";
 import { registerMinorsPreflightRoute, registerMinorsPreflightGates } from "./security/minors-preflight";
+import { logSafeError } from "./security/safe-error";
 
 const app = express();
 // Render inoltra il traffico attraverso un solo proxy. Limitare il trust al
@@ -113,7 +114,7 @@ app.use((req, res, next) => {
   app.use((err: any, _req: Request, res: Response, next: NextFunction) => {
     const status = err.status || err.statusCode || 500;
 
-    console.error("Internal Server Error:", err);
+    logSafeError("Internal Server Error", err);
 
     if (res.headersSent) {
       return next(err);
@@ -155,8 +156,8 @@ app.use((req, res, next) => {
   // creazione di una nuova analisi, vedi server/storage.ts). Un intervallo
   // ogni ora e' sufficiente per onorare la promessa fatta in privacy policy
   // senza bisogno di infrastruttura di scheduling esterna.
-  eliminaAnalisiScadute().catch((err) => console.error("Errore pulizia analisi scadute:", err));
+  eliminaAnalisiScadute().catch((err) => logSafeError("Errore pulizia analisi scadute", err));
   setInterval(() => {
-    eliminaAnalisiScadute().catch((err) => console.error("Errore pulizia analisi scadute:", err));
+    eliminaAnalisiScadute().catch((err) => logSafeError("Errore pulizia analisi scadute", err));
   }, 60 * 60 * 1000);
 })();

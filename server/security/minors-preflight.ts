@@ -6,7 +6,8 @@
 // la specifica e l'audit): questo modulo implementa il protocollo tecnico
 // (preflight a due fasi, gate fail-closed, rilevamento euristico, audit
 // trail minimizzato). Il "percorso rafforzato" (dichiarazione sì/non so)
-// resta bloccato di default — MINORS_AI_PATH_ENABLED non impostato — finché
+// resta bloccato nel codice e richiede inoltre due flag separati — entrambi
+// fail-closed — finché
 // non sono completati gli adempimenti elencati nella specifica sotto
 // "Documentazione necessaria" (DPIA, accordo ex art. 28, registro art. 30,
 // testo dell'avviso approvato dal titolare, ecc.) e non è stato eseguito il
@@ -40,9 +41,16 @@ export { MINORS_NOTICE_VERSION, MINORS_CONFIRMATION_COUNT };
 
 const PREFLIGHT_TTL_MS = 5 * 60 * 1000;
 const AUDIT_RETENTION_MS = 30 * 24 * 60 * 60 * 1000;
+// Il percorso rafforzato non è ancora tecnicamente approvato. Questa costante
+// impedisce che possa essere riattivato accidentalmente modificando soltanto
+// variabili d'ambiente. La sua futura modifica richiede riesame del codice,
+// test indipendente e aggiornamento della documentazione PRIV-17.
+const MINORS_REINFORCED_PATH_IMPLEMENTED = false;
 
 export function isMinorsPathEnabled(env: NodeJS.ProcessEnv = process.env): boolean {
-  return env.MINORS_AI_PATH_ENABLED === "true";
+  return MINORS_REINFORCED_PATH_IMPLEMENTED
+    && env.MINORS_AI_PATH_ENABLED === "true"
+    && env.MINORS_AI_GDPR_APPROVED === "true";
 }
 
 const PREFLIGHT_SECRET_CONFIGURED = Boolean(process.env.MINORS_PREFLIGHT_SECRET);
@@ -134,7 +142,7 @@ function timingSafeEqualHex(a: string, b: string): boolean {
 }
 
 const FLOW_ID_RE = /^[A-Za-z0-9_-]{16,128}$/;
-const TOKEN_RE = /^mp1:(yes|no|unknown):([a-z0-9_-]+):([A-Za-z0-9_-]{16,128}):(\d+):([a-f0-9]{32}):([a-f0-9]{64})$/;
+const TOKEN_RE = /^mp1:(yes|no|unknown):([a-z0-9_:-]+):([A-Za-z0-9_-]{16,128}):(\d+):([a-f0-9]{32}):([a-f0-9]{64})$/;
 
 function issueToken(status: MinorsStatus, flowId: string, scope: string): { token: string; expiresInSeconds: number } {
   const jti = crypto.randomBytes(16).toString("hex");
@@ -189,7 +197,14 @@ function parseConfirmations(header: string): boolean[] | null {
   return parts.map(p => p === "1");
 }
 
-const SCOPE = "case-ai";
+const TARGET_RE = /^(upload|create|chat:\d{1,10})$/;
+
+function targetForRequest(req: Request): string | null {
+  if (req.path === "/api/upload-pdf") return "upload";
+  if (req.path === "/api/analisi") return "create";
+  const chat = req.path.match(/^\/api\/analisi\/(\d{1,10})\/chat$/);
+  return chat ? `chat:${chat[1]}` : null;
+}
 
 /**
  * Fase 1 — endpoint di preflight, montato prima dei parser globali (vedi
@@ -209,9 +224,10 @@ export function registerMinorsPreflightRoute(app: Express): void {
     const status = String(req.headers["x-minors-status"] || "") as MinorsStatus | "";
     const noticeVersion = String(req.headers["x-notice-version"] || "");
     const flowId = String(req.headers["x-case-flow-id"] || "");
+    const target = String(req.headers["x-minors-target"] || "");
 
     if (!status || !VALID_STATUS.has(status)) {
-      recordAudit({ pseudoId: pseudoIdFromFlow(flowId || "sconosciuto"), noticeVersion, status: "invalid", scope: SCOPE, esito: "rifiutato" });
+      recordAudit({ pseudoId: pseudoIdFromFlow(flowId || "sconosciuto"), noticeVersion, status: "invalid", scope: target || "invalid", esito: "rifiutato" });
       return res.status(422).json({
         error: "Occorre indicare se la pratica contiene o può contenere dati di minori prima di procedere.",
         code: "MINORS_STATUS_INVALID",
@@ -229,11 +245,17 @@ export function registerMinorsPreflightRoute(app: Express): void {
         code: "MINORS_FLOW_ID_INVALID",
       });
     }
+    if (!TARGET_RE.test(target)) {
+      return res.status(422).json({
+        error: "Operazione richiesta mancante o non valida.",
+        code: "MINORS_TARGET_INVALID",
+      });
+    }
 
     let confirmations: boolean[] | undefined;
     if (status === "yes" || status === "unknown") {
       if (!isMinorsPathEnabled()) {
-        recordAudit({ pseudoId: pseudoIdFromFlow(flowId), noticeVersion, status, scope: SCOPE, esito: "rifiutato" });
+        recordAudit({ pseudoId: pseudoIdFromFlow(flowId), noticeVersion, status, scope: target, esito: "rifiutato" });
         return res.status(503).json({
           error: "Il percorso rafforzato per pratiche con possibili dati di minori non è ancora attivo: la pratica non può essere trattata con l'AI in questo momento.",
           code: "MINORS_PATH_DISABLED",
@@ -241,7 +263,7 @@ export function registerMinorsPreflightRoute(app: Express): void {
       }
       const parsed = parseConfirmations(String(req.headers["x-minors-confirmations"] || ""));
       if (!parsed || parsed.some(v => v !== true)) {
-        recordAudit({ pseudoId: pseudoIdFromFlow(flowId), noticeVersion, status, scope: SCOPE, confirmations: parsed || undefined, esito: "rifiutato" });
+        recordAudit({ pseudoId: pseudoIdFromFlow(flowId), noticeVersion, status, scope: target, confirmations: parsed || undefined, esito: "rifiutato" });
         return res.status(422).json({
           error: "Tutte le conferme richieste per il percorso rafforzato devono essere spuntate separatamente.",
           code: "MINORS_CONFIRMATIONS_MISSING",
@@ -250,8 +272,8 @@ export function registerMinorsPreflightRoute(app: Express): void {
       confirmations = parsed;
     }
 
-    const issued = issueToken(status, flowId, SCOPE);
-    recordAudit({ pseudoId: pseudoIdFromFlow(flowId), noticeVersion, status, scope: SCOPE, confirmations, esito: "emesso" });
+    const issued = issueToken(status, flowId, target);
+    recordAudit({ pseudoId: pseudoIdFromFlow(flowId), noticeVersion, status, scope: target, confirmations, esito: "emesso" });
     res.json(issued);
   });
 }
@@ -263,7 +285,8 @@ export function registerMinorsPreflightRoute(app: Express): void {
 export function requireMinorsPreflightToken(req: Request, res: Response, next: NextFunction): void {
   const token = String(req.headers["x-minors-preflight-token"] || "");
   const flowId = String(req.headers["x-case-flow-id"] || "");
-  const result = consumeToken(token, flowId, SCOPE);
+  const target = targetForRequest(req);
+  const result = target ? consumeToken(token, flowId, target) : { ok: false, reason: "target" };
   if (!result.ok) {
     res.status(422).json({
       error: "Verifica preliminare sui dati di minori mancante, scaduta o non valida per questa richiesta. Ripetere la procedura.",
