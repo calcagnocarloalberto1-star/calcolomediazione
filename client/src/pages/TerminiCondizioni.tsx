@@ -31,7 +31,7 @@ export default function TerminiCondizioni() {
               <li>Calcolatore delle indennità di mediazione ai sensi del D.M. 150/2023</li>
               <li>Calcolatore con tariffe dell'Ordine degli Avvocati di Genova</li>
               <li>Confronto costi tra mediazione e processo civile</li>
-              <li>Consultazione, esportazione e cancellazione delle Analisi AI già create; la creazione di nuove analisi e la chat AI sono temporaneamente sospese</li>
+              <li>Creazione, consultazione, esportazione e cancellazione delle Analisi AI a partire dai documenti del fascicolo</li>
               <li>Esportazione PDF dei risultati disponibili</li>
               <li>Risorse informative sulla mediazione civile e commerciale</li>
             </ul>
@@ -106,7 +106,7 @@ export default function TerminiCondizioni() {
           </Section>
 
           <Section title="Disclaimer sull'Intelligenza Artificiale">
-            <p>La creazione di nuove Analisi AI e la relativa chat sono temporaneamente sospese. Le analisi già create, ancora consultabili dall'utente che possiede il relativo token, sono state prodotte da modelli linguistici di terze parti. Tali analisi:</p>
+            <p>Le Analisi AI, consultabili dall'utente che possiede il relativo token, sono prodotte da modelli linguistici di terze parti. Tali analisi:</p>
             <ul className="list-disc list-inside space-y-1 ml-4">
               <li>Non costituiscono parere legale</li>
               <li>Possono contenere errori o imprecisioni</li>
