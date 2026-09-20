@@ -145,7 +145,7 @@ export default function Antiriciclaggio() {
     <div className="w-full">
       <SeoHead
         title="Antiriciclaggio in Mediazione — Strumento manuale locale e modelli"
-        description="Strumento locale per la compilazione manuale dei modelli antiriciclaggio. L'assistente AI e il caricamento dei documenti sono temporaneamente sospesi; ruoli e obblighi vanno verificati nel caso concreto."
+        description="Strumento locale per la compilazione manuale dei modelli antiriciclaggio, con un assistente AI opzionale per la lettura dei documenti. Ruoli e obblighi vanno verificati nel caso concreto."
         canonical="https://calcolomediazione.it/antiriciclaggio"
       />
       {error && (
