@@ -61,7 +61,7 @@ const strategySections: StrategySection[] = [
       },
       {
         q: "L'Analisi AI di CalcoloMediazione aiuta a individuare la ZOPA?",
-        a: "La funzione, quando era attiva, generava un quadro economico del caso utile a ragionare sulla ZOPA. La creazione di nuove Analisi AI e la chat sono temporaneamente sospese per il completamento delle verifiche privacy e contrattuali; le analisi già create restano consultabili ed esportabili dall'utente che possiede il relativo token.",
+        a: "La funzione genera un quadro economico del caso utile a ragionare sulla ZOPA a partire dai documenti del fascicolo; le analisi restano consultabili ed esportabili dall'utente che possiede il relativo token.",
       },
     ],
   },
@@ -80,7 +80,7 @@ const strategySections: StrategySection[] = [
       },
       {
         q: "Come può il mediatore gestire l'ancoraggio?",
-        a: "Il mediatore consapevole dell'ancoraggio può intervenire in diversi modi. Primo: aiutare la parte che formula la prima proposta a costruire un'àncora \"credibile\" — ambiziosa ma supportata da dati verificabili (costi del giudizio, parametri forensi, precedenti giurisprudenziali) — evitando che cada nella \"zona dell'insulto\" che provoca chiusura e irrigidimento. Secondo: quando riceve un'àncora estrema, aiutare l'altra parte a non reagire emotivamente ma a riformulare la discussione su basi oggettive. Un prospetto economico dettagliato può servire da \"contro-àncora\" fondata sui dati anziché sulle impressioni; per questo scopo restano disponibili i calcolatori, mentre le nuove Analisi AI sono temporaneamente sospese.",
+        a: "Il mediatore consapevole dell'ancoraggio può intervenire in diversi modi. Primo: aiutare la parte che formula la prima proposta a costruire un'àncora \"credibile\" — ambiziosa ma supportata da dati verificabili (costi del giudizio, parametri forensi, precedenti giurisprudenziali) — evitando che cada nella \"zona dell'insulto\" che provoca chiusura e irrigidimento. Secondo: quando riceve un'àncora estrema, aiutare l'altra parte a non reagire emotivamente ma a riformulare la discussione su basi oggettive. Un prospetto economico dettagliato può servire da \"contro-àncora\" fondata sui dati anziché sulle impressioni; per questo scopo sono disponibili sia i calcolatori sia le Analisi AI del caso.",
       },
       {
         q: "Perché i dati economici sono un antidoto all'ancoraggio?",
@@ -164,7 +164,7 @@ const strategySections: StrategySection[] = [
       },
       {
         q: "Come può il mediatore neutralizzare la svalutazione reattiva?",
-        a: "La strategia più efficace è far emergere le proposte come opzioni generate dal processo di mediazione stesso, anziché come concessioni di una parte all'altra. Il mediatore che presenta uno scenario economico oggettivo — costruito su dati verificabili — toglie alla proposta il \"marchio\" dell'avversario. I calcolatori disponibili possono contribuire a questo prospetto; la creazione di nuove Analisi AI è temporaneamente sospesa.",
+        a: "La strategia più efficace è far emergere le proposte come opzioni generate dal processo di mediazione stesso, anziché come concessioni di una parte all'altra. Il mediatore che presenta uno scenario economico oggettivo — costruito su dati verificabili — toglie alla proposta il \"marchio\" dell'avversario. I calcolatori disponibili, così come le Analisi AI del caso, possono contribuire a questo prospetto.",
       },
     ],
   },
@@ -187,7 +187,7 @@ const strategySections: StrategySection[] = [
       },
       {
         q: "CalcoloMediazione.it integra la Prospect Theory?",
-        a: "CalcoloMediazione.it offre strumenti operativi per applicare la Prospect Theory alla pratica quotidiana. Il Confronto Costi rende visibile la MAAN (giudizio ordinario), permettendo il reframing dalla \"perdita\" della concessione al \"risparmio\" rispetto al giudizio. Le nuove Analisi AI, che ampliavano questo quadro con scenari del caso, sono temporaneamente sospese; restano disponibili i calcolatori e la consultazione dello storico già creato.",
+        a: "CalcoloMediazione.it offre strumenti operativi per applicare la Prospect Theory alla pratica quotidiana. Il Confronto Costi rende visibile la MAAN (giudizio ordinario), permettendo il reframing dalla \"perdita\" della concessione al \"risparmio\" rispetto al giudizio. Le Analisi AI ampliano questo quadro con scenari del caso; restano disponibili anche i calcolatori e la consultazione dello storico già creato.",
       },
     ],
   },
