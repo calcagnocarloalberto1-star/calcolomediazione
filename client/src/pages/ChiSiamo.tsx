@@ -59,7 +59,7 @@ export default function ChiSiamo() {
             CalcoloMediazione.it è una piattaforma professionale gratuita dedicata alla mediazione civile e commerciale, conforme al D.M. 150/2023 e alla Riforma Cartabia (D.Lgs. 149/2022). Il progetto nasce dall’esperienza diretta nel campo della mediazione e della risoluzione alternativa delle controversie (ADR), con l’obiettivo di fornire a mediatori, avvocati e cittadini strumenti precisi, aggiornati e accessibili.
           </p>
           <p className="text-sm leading-relaxed opacity-90">
-            Il sito offre una banca dati giurisprudenziale curata, un generatore di procura speciale sostanziale conforme agli orientamenti di Cassazione 2025-2026, una guida ai costi notarili, un calcolo del credito d’imposta e una sezione di strategie di negoziazione. La funzione di analisi dei casi con intelligenza artificiale è temporaneamente sospesa durante il completamento delle verifiche privacy e contrattuali. Tutto gratuito, senza pubblicità e senza affiliazioni.
+            Il sito offre una banca dati giurisprudenziale curata, un generatore di procura speciale sostanziale conforme agli orientamenti di Cassazione 2025-2026, una guida ai costi notarili, un calcolo del credito d’imposta e una sezione di strategie di negoziazione. La funzione di analisi dei casi con intelligenza artificiale genera un inquadramento preliminare a partire dai documenti del fascicolo. Tutto gratuito, senza pubblicità e senza affiliazioni.
           </p>
         </section>
 
@@ -81,8 +81,8 @@ export default function ChiSiamo() {
             />
             <FeatureCard
               icon={Brain}
-              title="Analisi AI — temporaneamente sospesa"
-              description="Le nuove analisi, il caricamento dei documenti e la chat sono sospesi. Le analisi già create restano consultabili, esportabili e cancellabili con il relativo token."
+              title="Analisi AI"
+              description="Genera un'analisi AI del caso a partire dai documenti del fascicolo. Le analisi restano consultabili, esportabili e cancellabili con il relativo token."
               href="/analisi-caso-ai"
             />
             <FeatureCard
@@ -247,7 +247,7 @@ export default function ChiSiamo() {
             <ul className="list-disc list-inside space-y-1 ml-4">
               <li><strong>Trasparenza:</strong> rendere immediatamente comprensibili i costi della mediazione</li>
               <li><strong>Confronto:</strong> permettere una valutazione obiettiva tra mediazione e processo civile</li>
-              <li><strong>Innovazione responsabile:</strong> mantenere sospese le nuove Analisi AI finché non saranno completate e approvate le verifiche privacy e contrattuali</li>
+              <li><strong>Innovazione responsabile:</strong> attivare le funzionalità AI solo dopo una valutazione d'impatto privacy documentata (DPIA) e un rischio residuo esplicitamente accettato dal titolare</li>
               <li><strong>Accessibilità:</strong> offrire strumenti gratuiti e professionali a tutti gli operatori del diritto</li>
               <li><strong>Aggiornamento:</strong> mantenere il calcolatore e la banca dati conformi alle ultime modifiche normative e giurisprudenziali</li>
               <li><strong>Integrazione:</strong> coniugare rigore tecnico-giuridico, intelligenza artificiale e approcci olistici alla gestione del conflitto</li>
