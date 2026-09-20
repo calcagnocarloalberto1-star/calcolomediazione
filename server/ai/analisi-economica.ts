@@ -1,4 +1,5 @@
 import { callLLM } from "./llm.js";
+import { logSafeError } from "../security/safe-error.js";
 import { calcolaIndennita, formatEuro } from "../../shared/calcolo-indennita.js";
 import {
   confrontaNotarile,
@@ -274,7 +275,7 @@ export async function analisiEconomica(
         `[notarile] base=${confronto.base} mediazione=${confronto.con_mediazione.totale} sentenza=${confronto.con_sentenza.totale}`,
       );
     } catch (err) {
-      console.error("Errore confronto notarile:", err);
+      logSafeError("Errore confronto notarile", err);
     }
   }
 

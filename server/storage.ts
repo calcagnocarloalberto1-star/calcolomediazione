@@ -110,6 +110,7 @@ const sensitiveKeys = [
   "bozzaAccordo",
   "analisiEconomica",
   "chatHistory",
+  "minorsStatus",
 ] as const;
 
 type SensitivePayload = Omit<
@@ -140,6 +141,7 @@ const sensitivePayloadSchema = z.object({
       timestamp: z.string(),
     }).passthrough(),
   ),
+  minorsStatus: z.enum(["yes", "no", "unknown"]).default("unknown"),
   accessTokenRecovery: z.string().regex(/^[a-f0-9]{32}$|^[a-f0-9]{64}$/i).optional(),
 });
 
@@ -168,6 +170,8 @@ function legacyPayload(row: any): SensitivePayload {
     bozzaAccordo: row.bozza_accordo,
     analisiEconomica: row.analisi_economica,
     chatHistory: row.chat_history ?? [],
+    // Fail-closed per ogni record creato prima del protocollo PRIV-17.
+    minorsStatus: "unknown",
     ...(typeof row.access_token === "string" &&
     !isHashedAccessToken(row.access_token)
       ? { accessTokenRecovery: row.access_token }
@@ -204,6 +208,7 @@ function rowToAnalisi(row: any): AnalisiCaso {
     bozzaAccordo: sensitive.bozzaAccordo,
     analisiEconomica: sensitive.analisiEconomica,
     chatHistory: sensitive.chatHistory,
+    minorsStatus: sensitive.minorsStatus,
     createdAt: row.created_at,
   };
 }
@@ -506,6 +511,7 @@ export async function incrementaContatoreVisite(): Promise<number> { const res =
       bozzaAccordo: data.bozzaAccordo ?? null,
       analisiEconomica: data.analisiEconomica ?? null,
       chatHistory: data.chatHistory ?? [],
+      minorsStatus: data.minorsStatus,
       accessTokenRecovery: accessToken,
     };
     sensitivePayloadSchema.parse(sensitivePayload);
