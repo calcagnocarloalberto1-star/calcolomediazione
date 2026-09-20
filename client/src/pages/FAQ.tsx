@@ -257,19 +257,19 @@ const faqSections: FAQSection[] = [
     questions: [
       {
         q: "Come funziona l\u2019analisi AI del caso?",
-        a: "La funzione per creare nuove analisi AI è temporaneamente sospesa durante il completamento delle verifiche privacy e contrattuali. Non è possibile caricare nuovi documenti né avviare nuove elaborazioni o chat. Le analisi già create restano consultabili, esportabili e cancellabili con il relativo token.",
+        a: "La funzione di analisi AI del caso consente di caricare i documenti del fascicolo e generare una nuova elaborazione. Le analisi create restano consultabili, esportabili e cancellabili con il relativo token.",
       },
       {
         q: "I dati inseriti sono sicuri e riservati?",
-        a: "Le nuove analisi e il caricamento dei documenti sono attualmente sospesi, quindi il sito non accetta nuovi dati per questa funzione. Le analisi già create sono conservate fino a 30 giorni e protette secondo le misure descritte nella Privacy Policy; possono essere consultate, esportate e cancellate con il relativo token. La funzione sarà riattivata solo dopo il completamento e la documentazione delle verifiche privacy e contrattuali.",
+        a: "I documenti caricati per una nuova analisi sono trattati secondo le misure descritte nella Privacy Policy. Le analisi sono conservate fino a 30 giorni e possono essere consultate, esportate e cancellate in qualsiasi momento con il relativo token.",
       },
       {
         q: "L\u2019analisi AI sostituisce il parere di un avvocato?",
-        a: "No. Le Analisi AI già create hanno valore esclusivamente informativo e orientativo e non costituiscono un parere legale. Possono contenere errori e non sostituiscono la consulenza di un professionista abilitato. La creazione di nuove analisi e la chat sono temporaneamente sospese.",
+        a: "No. Le Analisi AI hanno valore esclusivamente informativo e orientativo e non costituiscono un parere legale. Possono contenere errori e non sostituiscono la consulenza di un professionista abilitato.",
       },
       {
         q: "Quali tipi di analisi produce il sistema?",
-        a: "La creazione di nuove analisi è temporaneamente sospesa. Le analisi già create possono comprendere estrazione delle entità, classificazione della materia, inquadramento giuridico preliminare, valutazione strategica, calcolo dei costi e un report riepilogativo; restano contenuti orientativi che non sostituiscono il parere professionale.",
+        a: "Il sistema produce estrazione delle entità, classificazione della materia, inquadramento giuridico preliminare, valutazione strategica, calcolo dei costi e un report riepilogativo; restano contenuti orientativi che non sostituiscono il parere professionale.",
       },
     ],
   },
@@ -283,7 +283,7 @@ export default function FAQ() {
       "@context": "https://schema.org",
       "@type": "FAQPage",
       "name": "Domande Frequenti sulla Mediazione Civile",
-      "description": "FAQ sulla mediazione civile e commerciale: costi, indennit\u00e0, credito d\u2019imposta, gratuito patrocinio e stato della funzione Analisi AI, temporaneamente sospesa.",
+      "description": "FAQ sulla mediazione civile e commerciale: costi, indennit\u00e0, credito d\u2019imposta, gratuito patrocinio e analisi AI del caso.",
       "mainEntity": allQuestions.map((item) => ({
         "@type": "Question",
         "name": item.q,
@@ -331,7 +331,7 @@ export default function FAQ() {
           <p className="text-lg text-muted-foreground max-w-2xl">
             Tutto quello che c'è da sapere sulla mediazione civile, i costi previsti dal D.M. 150/2023,
             il credito d&apos;imposta (art. 20 D.Lgs. 28/2010), il gratuito patrocinio (artt. 15-bis/15-undecies)
-            e gli strumenti della piattaforma. Le nuove Analisi AI sono temporaneamente sospese.
+            e gli strumenti della piattaforma, tra cui l'analisi AI del caso.
           </p>
           {/* DATA-04 / PRIV-07: data dell'ultima verifica normativa, aggiornata
               manualmente ad ogni revisione periodica (v. processo PRIV-07). */}
@@ -391,8 +391,8 @@ export default function FAQ() {
             Non hai trovato la risposta?
           </h3>
           <p className="text-muted-foreground mb-6 max-w-lg mx-auto">
-            Prova i nostri calcolatori per ottenere calcoli precisi delle indennità e del credito d'imposta.
-            Le nuove Analisi AI sono temporaneamente sospese.
+            Prova i nostri calcolatori per ottenere calcoli precisi delle indennità e del credito d'imposta,
+            oppure genera un'analisi AI del caso dai documenti del fascicolo.
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <Link href="/calcolatore">
