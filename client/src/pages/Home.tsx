@@ -28,8 +28,8 @@ import { SeoHead } from "@/components/SeoHead";
 const features = [
   {
     icon: Brain,
-    title: "Analisi AI — temporaneamente sospesa",
-    description: "Le nuove analisi e il caricamento dei documenti sono sospesi durante il completamento delle verifiche privacy e contrattuali. Le analisi già create restano consultabili.",
+    title: "Analisi AI",
+    description: "Genera un'analisi AI del caso a partire dai documenti del fascicolo: estrazione dei dati, inquadramento giuridico preliminare e valutazione strategica.",
     href: "/analisi-caso-ai",
     active: true,
   },
@@ -85,7 +85,7 @@ const features = [
   {
     icon: Shield,
     title: "Antiriciclaggio",
-    description: "Strumento locale per compilare manualmente i modelli del fascicolo. Ruoli e obblighi vanno verificati nel caso concreto; l'assistente AI sui documenti è temporaneamente sospeso.",
+    description: "Strumento locale per compilare manualmente i modelli del fascicolo, con un assistente AI opzionale per la lettura dei documenti. Ruoli e obblighi vanno verificati nel caso concreto.",
     href: "/antiriciclaggio",
     active: true,
     isNew: true,
@@ -160,7 +160,7 @@ export default function Home() {
     <div className="min-h-screen">
       <SeoHead
         title="CalcoloMediazione — Calcolatore Indennità Mediazione Civile e Strumenti ADR"
-        description="Piattaforma gratuita per avvocati e mediatori: calcolatore indennità D.M. 150/2023, confronto costi mediazione vs processo, costi notarili, credito d'imposta e generatori di documenti. Le nuove analisi AI sono temporaneamente sospese."
+        description="Piattaforma gratuita per avvocati e mediatori: calcolatore indennità D.M. 150/2023, confronto costi mediazione vs processo, costi notarili, credito d'imposta, generatori di documenti e analisi AI del caso."
         canonical="https://calcolomediazione.it/"
         jsonLd={[
           {
@@ -205,7 +205,7 @@ export default function Home() {
           </h1>
           <p className="text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto mb-10 leading-relaxed">
             Piattaforma completa per la mediazione civile ai sensi del{" "}
-            <strong className="text-foreground">D.M. 150/2023</strong>. Confronto economico, calcolatore indennità e generatori di documenti. Le nuove analisi AI sono temporaneamente sospese.
+            <strong className="text-foreground">D.M. 150/2023</strong>. Confronto economico, calcolatore indennità, generatori di documenti e analisi AI del caso.
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12">
             <Link href="/analisi-caso-ai">
@@ -369,7 +369,7 @@ export default function Home() {
               visivo voluto (bianco all'80%) ottenuto qui con due utility
               indipendenti, entrambe supportate: 5.07:1. */}
           <p className="text-primary-foreground opacity-80 text-lg mb-8 max-w-xl mx-auto">
-            Calcola le indennità di mediazione in pochi secondi. Le nuove Analisi AI sono temporaneamente sospese; la pagina dedicata resta disponibile per consultare lo storico.
+            Calcola le indennità di mediazione in pochi secondi, oppure genera un'analisi AI del caso dai documenti del fascicolo.
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <Link href="/calcolatore">
