@@ -236,3 +236,14 @@ pagina Antiriciclaggio, accettando un quinto punto di rischio residuo:
    trattamento, tramite questa funzione, di categorie particolari di dati o di
    dati relativi a condanne penali e reati riferiti alle parti (v. PRIV-10,
    addendum 14/09/2026).
+
+
+### Addendum 20/09/2026 - chiusura autonoma dei punti 1 e 2 della Nota sul rischio residuo (14/09/2026)
+
+Dei quattro prerequisiti elencati nella "Nota sul rischio residuo accettato" sopra, i primi due risultano oggi chiusi. Il dettaglio tecnico completo e' in `PRIV-10` (addendum 20/09/2026) e in `PRIV-13`; qui si riporta solo l'esito:
+
+1. **Northflank - valori RPO/RTO.** Dopo tre solleciti scritti (13/09, 14/09, 15/09/2026, quest'ultimo con scadenza esplicita al 18/09/2026) senza risposta del fornitore oltre la scadenza, il punto e' stato chiuso il 20/09/2026 su base di autoverifica diretta nel pannello Northflank: retention 14 giorni, due snapshot al giorno (00:15 e 02:15 UTC), configurabilita' per addon confermata, RTO circa 2 minuti gia' misurato empiricamente il 15/09/2026.
+2. 2. **Prova interna di ripristino da backup.** Eseguita il 15/09/2026 (non piu' "mai eseguita" come indicato sopra alla data del 14/09/2026), con esito positivo - v. `PRIV-13`.
+  
+   3. Restano aperti, invariati, i punti 3 (DPA Anthropic, issue #80) e 4 (accordo ex art. 28, `PRIV-16`).
+   4. 
