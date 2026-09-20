@@ -218,3 +218,14 @@ dai quattro già accettati sopra:
 
 Questo quinto punto si aggiunge, senza sostituirli, ai quattro prerequisiti
 elencati nella Motivazione della Decisione del titolare.
+
+
+### Addendum 20/09/2026 - chiusura autonoma dei punti 1 e 2 della Motivazione (14/09/2026)
+
+Dei quattro prerequisiti elencati nella Motivazione della Decisione del titolare (14/09/2026, sopra), i primi due risultano oggi chiusi:
+
+1. **Northflank - valori RPO/RTO e configurabilita' a livello di progetto.** Dopo tre solleciti scritti (13/09, 14/09 e 15/09/2026 - quest'ultimo con scadenza esplicita al 18/09/2026) rimasti senza risposta del fornitore anche oltre la scadenza fissata, i tre dati sono stati verificati autonomamente il 20/09/2026 direttamente nel pannello Northflank dell'addon `calcolomediazione-db`: retention dei backup **14 giorni**; frequenza **due snapshot al giorno (00:15 e 02:15 UTC)**, da cui un RPO stimato tra circa 2 e circa 22 ore a seconda del momento dell'eventuale incidente; entrambi i parametri **configurabili per singolo addon/progetto**. Il valore di RTO era gia' stato misurato empiricamente il 15/09/2026 con una prova di ripristino reale (v. punto 2 sotto e `PRIV-13`): circa 2 minuti. Il punto si considera chiuso su base di autoverifica tecnica diretta e di due diligence documentata verso il fornitore, non su una dichiarazione contrattuale di Northflank, mai pervenuta.
+2. 2. **Prova interna di ripristino da backup.** Al 14/09/2026 non era ancora stata eseguita; lo e' stata il giorno successivo, **15/09/2026**, su un add-on temporaneo isolato (mai sul database di produzione), con esito positivo: RTO circa 2 minuti, integrita' strutturale dei dati verificata (v. `PRIV-13`, sezione "Prova di ripristino"). Resta parziale, come gia' segnalato in `PRIV-13`, un solo aspetto: la decifratura completa di un record con la chiave `DATA_ENCRYPTION_KEY` di produzione non e' stata eseguita, per non esporre inutilmente quella chiave.
+  
+   3. Restano aperti, invariati rispetto al 14/09/2026, i punti 3 (verifica formale del DPA Anthropic, issue #80) e 4 (accordo ex art. 28, `PRIV-16`) della Motivazione.
+   4. 
