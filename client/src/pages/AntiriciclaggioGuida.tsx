@@ -51,11 +51,11 @@ const GUIDA_FAQ = [
   },
   {
     q: "Il motore ha letto male un dato, o sbagliato il ruolo di una parte: cosa faccio?",
-    a: "L'assistente AI sui documenti è temporaneamente sospeso. Inserisci e verifica manualmente ogni dato nel modulo prima di generare il documento o il fascicolo definitivo.",
+    a: "L'assistente AI sui documenti supporta la lettura, ma verifica sempre manualmente ogni dato nel modulo prima di generare il documento o il fascicolo definitivo.",
   },
   {
     q: "Il motore individua tutte le parti, anche se sono più di due?",
-    a: "Il motore AI sui documenti è temporaneamente sospeso. Usa \"+ Nuova parte per questa procedura\" e compila manualmente una scheda distinta per ogni parte, verificando i dati prima della generazione.",
+    a: "Il motore AI sui documenti individua automaticamente più parti quando presenti nel documento; usa comunque \"+ Nuova parte per questa procedura\" per aggiungerne una manualmente, verificando i dati prima della generazione.",
   },
   {
     q: "Posso generare solo un documento, senza tutto il fascicolo?",
