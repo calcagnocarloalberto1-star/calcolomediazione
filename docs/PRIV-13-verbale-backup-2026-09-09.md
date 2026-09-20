@@ -129,3 +129,18 @@ di produzione non è stata eseguita in questa prova (v. "Prova di ripristino",
 punto 6) — la continuità operativa è quindi provata a livello di
 funzionamento del ripristino e di integrità dei dati, ma non ancora
 nell'accezione più stretta che includerebbe anche questi due elementi.
+
+
+## Aggiornamento 20/09/2026 — chiusura del punto "RPO/RTO dichiarati da Northflank"
+
+Il valore RPO/RTO *dichiarato* dal fornitore, citato come punto aperto sopra ("Backup automatico" ed "Esito"), non è mai pervenuto: la richiesta iniziale (9-10/09/2026) è stata seguita da tre solleciti scritti (13/09, 14/09, 15/09/2026 — quest'ultimo con scadenza esplicita al 18/09/2026), rimasti senza riscontro anche dopo la scadenza fissata.
+
+Il 20/09/2026 si è scelto di chiudere il punto su base di autoverifica diretta nel pannello Northflank dell'addon `calcolomediazione-db`, anziché continuare ad attendere:
+
+- **Retention configurata:** 14 giorni (schedule "Daily", visibile in Backup schedules).
+- - **Frequenza configurata:** due snapshot al giorno, alle 00:15 e alle 02:15 UTC. Ne segue un RPO nel caso peggiore di circa 22 ore (tra lo snapshot delle 02:15 di un giorno e quello delle 00:15 del giorno successivo) e nel caso migliore di circa 2 ore.
+  - - **Configurabilità a livello di progetto/addon:** confermata — la schedule è impostata per singolo addon, non è un valore fisso di piattaforma.
+    - - **RTO:** già misurato empiricamente il 15/09/2026 nella prova di ripristino reale sopra descritta (≈ 2 minuti), valore ritenuto più affidabile — perché osservato sul proprio ambiente reale — di un eventuale numero dichiarato genericamente dal fornitore.
+     
+      - Questi valori sono verificati dal titolare sulla base della configurazione visibile nel proprio pannello e di una prova di ripristino reale, non da una dichiarazione contrattuale o SLA formale di Northflank, che il fornitore non ha mai fornito nonostante tre solleciti. Un'eventuale conferma contrattuale successiva resta utile ma non è più bloccante per la chiusura di questo punto.
+      - 
