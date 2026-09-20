@@ -70,9 +70,9 @@ return false;
 const PRIMARY_URL = "https://calcolomediazione.it";
 
 const PAGES = [
-{ path: "/", title: "CalcoloMediazione — Calcolatore Indennità Mediazione Civile e Strumenti ADR", desc: "Piattaforma gratuita per avvocati e mediatori: calcolatore indennità D.M. 150/2023, confronto costi, costi notarili, credito d'imposta e generatori di documenti. Le nuove analisi AI sono temporaneamente sospese.", priority: "1.0", changefreq: "weekly" },
+{ path: "/", title: "CalcoloMediazione — Calcolatore Indennità Mediazione Civile e Strumenti ADR", desc: "Piattaforma gratuita per avvocati e mediatori: calcolatore indennità D.M. 150/2023, confronto costi, costi notarili, credito d'imposta, generatori di documenti e Analisi AI del caso.", priority: "1.0", changefreq: "weekly" },
 { path: "/calcolatore", title: "Calcolatore Indennità Mediazione D.M. 150/2023 — Tariffe Nazionali e COA Genova", desc: "Calcola le indennità di mediazione civile secondo il D.M. 150/2023: tariffe nazionali Tabella A e regolamento COA Genova. Spese di avvio, riduzioni art. 28, maggiorazioni art. 31, agevolazioni fiscali art. 17 D.Lgs. 28/2010.", priority: "0.9", changefreq: "monthly" },
-{ path: "/analisi-caso-ai", title: "Analisi AI del Caso di Mediazione — Funzione temporaneamente sospesa", desc: "Le nuove analisi, il caricamento dei PDF e la chat AI sono temporaneamente sospesi per il completamento delle verifiche privacy e contrattuali. Le analisi già create restano consultabili, esportabili e cancellabili con il relativo token.", priority: "0.9", changefreq: "monthly" },
+{ path: "/analisi-caso-ai", title: "Analisi AI del Caso di Mediazione — Storico e Nuova Analisi", desc: "Genera un'analisi AI del caso di mediazione a partire dai documenti del fascicolo, con chat per approfondirla. Le analisi già create restano consultabili, esportabili e cancellabili con il relativo token.", priority: "0.9", changefreq: "monthly" },
 { path: "/confronto-costi", title: "Confronto Costi Mediazione vs Processo: Primo Grado, Appello, Cassazione", desc: "Confronta i costi della mediazione con quelli del processo su tre gradi di giudizio. Contributo unificato, compensi avvocato, CTU in appello, parametri forensi D.M. 55/2014 Tabelle 2, 12 e 13.", priority: "0.9", changefreq: "monthly" },
 { path: "/costi-notarili", title: "Calcola Costi Notarili Mediazione · CalcoloMediazione", desc: "Calcola i costi notarili per accordo di mediazione o sentenza: onorari, imposta di registro, ipotecaria, catastale e IVA. Esenzione art. 17 D.Lgs. 28/2010.", priority: "0.8", changefreq: "monthly" },
 { path: "/faq", title: "FAQ Mediazione Civile — Domande Frequenti D.M. 150/2023 e D.Lgs. 28/2010", desc: "Le risposte alle domande più frequenti sulla mediazione civile: indennità, primo incontro, materie obbligatorie, agevolazioni fiscali art. 17, credito d'imposta, art. 5-quater (mediazione demandata).", priority: "0.7", changefreq: "monthly" },
@@ -92,7 +92,7 @@ const PAGES = [
 { path: "/glossario", title: "Glossario della Mediazione Civile", desc: "Glossario completo dei termini utilizzati nella mediazione civile e commerciale. Definizioni chiare e riferimenti normativi.", priority: "0.5", changefreq: "monthly" },
 { path: "/chi-siamo", title: "Chi Siamo - CalcoloMediazione", desc: "Scopri il team dietro CalcoloMediazione, la piattaforma professionale per mediatori civili e commerciali.", priority: "0.4", changefreq: "yearly" },
 { path: "/contatti", title: "Contatti - CalcoloMediazione", desc: "Contatta il team di CalcoloMediazione per informazioni, supporto tecnico e collaborazioni.", priority: "0.4", changefreq: "yearly" },
-{ path: "/antiriciclaggio", title: "Antiriciclaggio in Mediazione — Obblighi e Modelli per Avvocati e Organismi", desc: "Guida agli obblighi antiriciclaggio in mediazione (D.Lgs. 231/2007) e compilazione locale dei modelli del fascicolo: adeguata verifica, titolare effettivo, scheda di rischio e operazioni sospette. L'assistente AI sui documenti è sospeso.", priority: "0.7", changefreq: "monthly" },
+{ path: "/antiriciclaggio", title: "Antiriciclaggio in Mediazione — Obblighi e Modelli per Avvocati e Organismi", desc: "Guida agli obblighi antiriciclaggio in mediazione (D.Lgs. 231/2007) e compilazione locale dei modelli del fascicolo: adeguata verifica, titolare effettivo, scheda di rischio, operazioni sospette e assistente AI opzionale sui documenti.", priority: "0.7", changefreq: "monthly" },
 { path: "/antiriciclaggio-guida", title: "Antiriciclaggio in Mediazione — Guida agli obblighi e alla compilazione", desc: "Due guide in una: gli obblighi antiriciclaggio in mediazione in linguaggio semplice (chi è obbligato, adeguata verifica, fascicolo, operazioni sospette) e la guida pratica alla compilazione dello strumento, passo per passo.", priority: "0.6", changefreq: "monthly" },
 { path: "/trasferimento-immobiliare-mediazione", title: "Trasferimento Immobiliare in Mediazione: Quanto si Risparmia (Guida)", desc: "Trasferimento immobiliare in mediazione: imposta di registro esente fino a €100.000, quando serve il notaio, quanto si risparmia sulla prima casa rispetto alla compravendita ordinaria. Guida con esempi di calcolo.", priority: "0.6", changefreq: "monthly" },
 { path: "/privacy-policy", title: "Privacy Policy — CalcoloMediazione", desc: "Informativa sul trattamento dei dati personali di CalcoloMediazione.it: titolare del trattamento, dati raccolti, finalità e modalità di utilizzo, diritti dell'utente ai sensi del GDPR (Regolamento UE 2016/679).", priority: "0.3", changefreq: "yearly" },
@@ -117,18 +117,18 @@ return BOT_UA_REGEX.test(userAgent);
 const PAGE_CONTENT: Record<string, string> = {
 "/": `
 <h1>CalcoloMediazione - Calcolatore Indennità Mediazione Civile</h1>
-<p>Piattaforma professionale gratuita per la mediazione civile ai sensi del D.M. 150/2023: confronto economico su tre gradi di giudizio, calcolatore indennità e generatori di documenti. Le nuove Analisi AI sono temporaneamente sospese.</p>
+<p>Piattaforma professionale gratuita per la mediazione civile ai sensi del D.M. 150/2023: confronto economico su tre gradi di giudizio, calcolatore indennità, generatori di documenti e Analisi AI del caso con intelligenza artificiale.</p>
 <h2>Strumenti disponibili</h2>
 <ul>
 <li><a href="/calcolatore">Calcolatore Indennità Mediazione D.M. 150/2023</a> - Calcola spese di avvio, indennità, compensi avvocato, costi notarili con esenzione prima casa</li>
-<li><a href="/analisi-caso-ai">Analisi AI del Caso di Mediazione</a> - Nuove analisi, upload e chat temporaneamente sospesi; le analisi già create restano consultabili, esportabili e cancellabili</li>
+<li><a href="/analisi-caso-ai">Analisi AI del Caso di Mediazione</a> - Genera nuove analisi, carica documenti e usa la chat; le analisi già create restano consultabili, esportabili e cancellabili</li>
 <li><a href="/confronto-costi">Confronto Costi Mediazione vs Processo</a> - Primo grado, appello e cassazione con stima CTU e parametri forensi D.M. 55/2014</li>
 <li><a href="/costi-notarili">Costi Notarili</a> - Stima dei puri costi notarili: onorario, IVA, cassa, visure, imposte di registro/ipotecaria/catastale</li>
 <li><a href="/generatore-procura">Generatore Procura Speciale per Mediazione</a> - Conforme al D.Lgs. 28/2010</li>
 <li><a href="/giurisprudenza">Database Giurisprudenza Mediazione</a> - Sentenze di Cassazione, Tribunali e Corti d'Appello</li>
 <li><a href="/credito-imposta">Credito d'Imposta e Gratuito Patrocinio</a> - Art. 20 D.Lgs. 28/2010</li>
 <li><a href="/strategie-negoziazione">Strategie di Negoziazione</a> - MAAN/BATNA, negoziazione integrativa, ZOPA</li>
-<li><a href="/antiriciclaggio">Antiriciclaggio in Mediazione</a> - Obblighi antiriciclaggio (D.Lgs. 231/2007) e compilazione manuale locale dei modelli del fascicolo; l'assistente AI sui documenti è sospeso</li>
+<li><a href="/antiriciclaggio">Antiriciclaggio in Mediazione</a> - Obblighi antiriciclaggio (D.Lgs. 231/2007) e compilazione manuale locale dei modelli del fascicolo, con assistente AI opzionale sui documenti</li>
 <li><a href="/antiriciclaggio-guida">Antiriciclaggio - Guida agli obblighi e alla compilazione</a> - Chi è obbligato, adeguata verifica, fascicolo, operazioni sospette, e come si compila lo strumento</li>
 <li><a href="/calcolo-assegni">Calcolo Assegni</a> - Stima orientativa dell'assegno di mantenimento del coniuge, dell'assegno divorzile e del contributo per i figli</li>
 </ul>
@@ -195,7 +195,7 @@ const PAGE_CONTENT: Record<string, string> = {
 
 "/analisi-caso-ai": `
 <h1>Analisi AI del Caso di Mediazione</h1>
-<p>La creazione di nuove analisi, il caricamento dei PDF e la chat AI sono temporaneamente sospesi per completare le verifiche privacy e contrattuali. Non inserire dati o documenti di pratiche reali.</p>
+<p>Genera un'analisi AI del caso a partire dai documenti PDF del fascicolo e usa la chat per approfondirla; verifica sempre professionalmente i risultati prima dell'uso.</p>
 <h2>Analisi già create</h2>
 <ul>
 <li>Restano consultabili mediante il relativo token di accesso.</li>
@@ -440,7 +440,7 @@ const PAGE_CONTENT: Record<string, string> = {
 <li>Formazione e presidi interni</li>
 </ul>
 <h2>Compilazione locale dei modelli</h2>
-<p>Lo strumento genera i modelli del fascicolo riservato a partire dai dati inseriti manualmente nel browser e offre un motore locale per i sette segnali di anomalia UIF. L'assistente AI per la lettura dei documenti è sospeso e i relativi endpoint non accettano caricamenti.</p>`,
+<p>Lo strumento genera i modelli del fascicolo riservato a partire dai dati inseriti manualmente nel browser e offre un motore locale per i sette segnali di anomalia UIF, oltre a un assistente AI opzionale per la lettura dei documenti e una prima bozza di compilazione.</p>`,
 
 "/antiriciclaggio-guida": `
 <h1>Antiriciclaggio in mediazione — guida agli obblighi e alla compilazione</h1>
@@ -460,7 +460,7 @@ const PAGE_CONTENT: Record<string, string> = {
 <p>calcolomediazione.it mette a disposizione uno strumento gratuito che genera i documenti del fascicolo riservato (informativa, modulo di adeguata verifica, scheda di valutazione del rischio, dichiarazione del cliente, foglio di annotazione, checklist), con un selettore iniziale per scegliere subito il singolo documento da predisporre e con guida passo per passo alla compilazione per Organismo, mediatore e avvocato di parte.</p>
 <h3>Domande frequenti</h3>
 <p><strong>Posso generare solo un documento, senza tutto il fascicolo?</strong> Sì: scegliendo il documento nel selettore in cima alla pagina dello strumento, si ottiene un solo pulsante di generazione per quel documento; il fascicolo completo resta un'opzione avanzata.</p>
-<p><strong>I dati inseriti vengono inviati a calcolomediazione.it?</strong> Nella compilazione manuale attualmente disponibile, no: i dati restano nel browser (localStorage). L'assistente AI sui documenti è sospeso e i relativi endpoint rifiutano i caricamenti.</p>
+<p><strong>I dati inseriti vengono inviati a calcolomediazione.it?</strong> Nella compilazione manuale, no: i dati restano nel browser (localStorage). Solo se scegli di usare l'assistente AI per una prima bozza, i documenti caricati vengono inviati al server per quell'operazione.</p>
 <h3>Altre risorse del sito</h3>
 <ul>
 <li><a href="/generatore-procura">Generatore di procure per la mediazione</a></li>
@@ -477,7 +477,7 @@ const PAGE_CONTENT: Record<string, string> = {
 <h2>Dati trattati e statistiche</h2>
 <p>Il server riceve i dati tecnici necessari alla connessione e alla sicurezza. Le statistiche interne non conservano IP o user-agent: il totale complessivo delle visualizzazioni è memorizzato nel database come solo numero aggregato, mentre il dettaglio per pagina resta volatile in memoria.</p>
 <h2>Servizi di intelligenza artificiale</h2>
-<p>La creazione di nuove Analisi AI, il caricamento dei documenti e la chat sono temporaneamente sospesi; il server rifiuta le relative richieste prima di leggerne o decodificarne il corpo. In caso di futura riattivazione, da subordinare alle verifiche giuridiche e contrattuali, le funzioni IA potrebbero trattare titolo, descrizione, parti, parametri economici, testo estratto dai PDF, risultati e messaggi della chat tramite Anthropic Claude e, soltanto se abilitato in un ambiente commerciale idoneo, Google Gemini.</p>
+<p>La creazione di nuove Analisi AI, il caricamento dei documenti e la chat sono attivi: il server elabora le relative richieste. Le funzioni IA trattano titolo, descrizione, parti, parametri economici, testo estratto dai PDF, risultati e messaggi della chat tramite Anthropic Claude; Google Gemini resta disabilitato come eventuale fallback finché non sarà verificato un piano a pagamento con DPA idoneo.</p>
 <h2>Conservazione e sicurezza</h2>
 <p>Le analisi del caso sono conservate per un massimo di 30 giorni e possono essere eliminate prima mediante il token segreto. Il sito usa HTTPS, risposte API non memorizzabili, controlli di origine, limiti di frequenza e dimensione e validazione dei file.</p>
 <h2>Diritti</h2>
@@ -497,7 +497,7 @@ const PAGE_CONTENT: Record<string, string> = {
 <h1>Termini e Condizioni — CalcoloMediazione</h1>
 <p>Termini e condizioni d'uso di CalcoloMediazione.it: descrizione dei servizi gratuiti offerti, natura indicativa dei risultati dei calcolatori e limitazioni di responsabilità.</p>
 <h2>Descrizione del servizio</h2>
-<p>CalcoloMediazione.it offre gratuitamente calcolatori, confronto costi, esportazione dei risultati e risorse informative sulla mediazione civile e commerciale. La creazione di nuove Analisi AI è temporaneamente sospesa; restano disponibili consultazione, esportazione e cancellazione delle analisi già create.</p>
+<p>CalcoloMediazione.it offre gratuitamente calcolatori, confronto costi, esportazione dei risultati, risorse informative sulla mediazione civile e commerciale e un'Analisi AI del caso, oltre a consultazione, esportazione e cancellazione delle analisi già create.</p>
 <h2>Natura indicativa dei risultati</h2>
 <p>I calcoli, le analisi e le informazioni fornite hanno carattere indicativo e informativo e non costituiscono consulenza legale, fiscale o professionale. Per calcoli personalizzati è necessario rivolgersi a un professionista qualificato.</p>
 <h2>Proprietà intellettuale e riserva di estrazione di testo e dati</h2>
@@ -1480,7 +1480,7 @@ const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" v
 <text x="100" y="215" font-family="sans-serif" font-weight="bold" font-size="34" fill="#c55a2b">Strumenti per Mediazione e Negoziazione</text>
 <rect x="100" y="240" width="200" height="4" fill="#2d2926"/>
 <text font-family="sans-serif" font-size="24" fill="#2d2926">
-<tspan x="100" y="300">&#x2666; Analisi AI temporaneamente sospesa</tspan>
+<tspan x="100" y="300">&#x2666; Analisi AI del Caso di Mediazione</tspan>
 <tspan x="100" y="340">&#x2666; Confronto costi su 3 gradi</tspan>
 <tspan x="100" y="380">&#x2666; Calcolatore indennita</tspan>
 <tspan x="620" y="300">&#x2666; Generatore procura</tspan>
