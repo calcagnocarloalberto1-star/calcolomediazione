@@ -14,9 +14,16 @@ Questo documento è una checklist operativa e una bozza organizzativa. Non costi
   consentire le procedure di migrazione e rollback.
 - `/api/health` verifica database e disponibilità di tutte le key ID necessarie a decifrare i payload.
 - Le nuove Analisi AI, i relativi upload/chat e l'assistente AI AML sono
-  sospesi fail-closed. Gli endpoint rifiutano le richieste prima dei parser di
-  upload. Le analisi storiche sono eliminate automaticamente dopo 30 giorni;
-  la compilazione manuale AML resta locale nel browser.
+  fail-closed quando i rispettivi flag/GDPR-approval non sono impostati: in
+  quel caso gli endpoint rifiutano le richieste prima dei parser di upload.
+  **Aggiornamento 14/09/2026:** entrambi i flussi sono stati riattivati in
+  produzione con rischio residuo accettato dal titolare (v.
+  `docs/PRIV-10-dpia-analisi-ai.md` e `docs/PRIV-11-registro-trattamenti.md`);
+  i contenuti caricati sono trasmessi all'API commerciale di Anthropic, mentre
+  Google Gemini resta disabilitato in attesa di verifica del Paid Service (v.
+  `docs/PRIV-12-verifica-fornitori-e-trasferimenti.md`). Le analisi storiche
+  sono eliminate automaticamente dopo 30 giorni; la compilazione manuale AML
+  resta comunque disponibile in locale nel browser.
 - Login, upload e funzioni IA hanno limiti di frequenza; i file sono limitati per numero e dimensione e verificati anche tramite firma binaria.
 - La sessione admin usa un cookie `HttpOnly`, `Secure` e `SameSite=Strict`, dura 30 minuti ed è revocata sul server al logout.
 - In produzione il login amministrativo richiede una password di almeno 16 caratteri, un `ADMIN_SECRET` persistente e TOTP. Se una di queste condizioni manca, l'area admin resta sospesa senza interrompere il sito pubblico.
