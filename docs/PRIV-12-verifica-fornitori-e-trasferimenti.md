@@ -96,3 +96,12 @@ l'attivazione. La sola presenza di `GEMINI_API_KEY` non abilita il fornitore.
    integrare i valori RPO/RTO quando Northflank risponderà.
 5. Riesaminare questo documento almeno annualmente e a ogni variazione di
    provider, modello, regione, piano o condizioni contrattuali.
+
+**Aggiornamento 14/09/2026 sul punto 1:** il titolare ha deciso l'attivazione
+con rischio residuo accettato (v. `docs/PRIV-10-dpia-analisi-ai.md` e
+`docs/PRIV-11-registro-trattamenti.md`). I due flussi AI — Analisi AI del caso
+e assistente AI antiriciclaggio sui documenti — sono attivi in produzione dal
+14/09/2026, con Anthropic come fornitore effettivo e non più solo previsto. I
+punti 2-5 restano invariati: Gemini resta disabilitato fino a verifica
+documentata del Paid Service, nessuna ZDR dichiarata per alcun fornitore, DPA
+Northflank ed evidenze Trust Center da conservare, revisione almeno annuale.
