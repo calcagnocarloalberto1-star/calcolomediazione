@@ -32,6 +32,20 @@ const publicCopy = publicCopyFiles
   .map(file => `${file}\n${readFileSync(file, "utf8")}`)
   .join("\n");
 
+// Nota (20-21/09/2026): l'Analisi AI del caso e l'assistente AI antiriciclaggio
+// sui documenti sono entrambi attivi in produzione dal 14/09/2026 (v. sez. 10-11
+// e 34-37 dell'audit di sicurezza). I claim "sospeso"/"sospesi"/"sospesa" qui sotto
+// erano il testo pubblico corretto quando le funzioni erano davvero sospese; ora
+// che sono attive, la loro ricomparsa nel testo pubblico sarebbe essa stessa un
+// claim obsoleto, quindi si aggiungono qui invece che in un controllo separato.
+// NB: non si può usare un controllo generico "il file non deve contenere la parola
+// sospeso", perché client/src/pages/AnalisiCasoAI.tsx la contiene legittimamente
+// (testo condizionale dietro il flag runtime caseAiEnabled, per lo stato in cui la
+// funzione fosse di nuovo disattivata) e server/routes.ts la contiene con un
+// significato del tutto distinto e ancora corretto (blocco dell'area
+// amministrativa per TOTP non configurato — "area admin sospesa"). Per questo le
+// frasi sotto sono claim testuali specifici, verificati assenti dall'intero
+// publicCopy comprese entrambe le eccezioni, non un pattern generico sulla parola.
 for (const obsoleteClaim of [
   "salvo la modalita facoltativa con assistente AI",
   "Mediazione e Negoziazione con AI",
@@ -53,6 +67,11 @@ for (const obsoleteClaim of [
   "rischio, adeguata verifica ed eventuale segnalazione restano una responsabilità del mediatore e dell'Organismo",
   "anche con l'ausilio di un'estrazione automatica dei dati mediante intelligenza artificiale dai documenti caricati",
   "restano in capo al mediatore, all'Organismo di mediazione e ai rispettivi professionisti",
+  "Le nuove analisi AI sono temporaneamente sospese",
+  "L'assistente AI sui documenti è sospeso",
+  "Analisi AI temporaneamente sospesa",
+  "il server rifiuta le relative richieste prima di leggerne o decodificarne il corpo",
+  "La riattivazione richiederà la definizione documentata dei ruoli privacy",
 ]) {
   assert.equal(
     publicCopy.includes(obsoleteClaim),
@@ -61,9 +80,13 @@ for (const obsoleteClaim of [
   );
 }
 
+// Nota (20-21/09/2026): controllo generico di non regressione per i soli file
+// il cui contenuto non ha mai un motivo legittimo di contenere "sospeso" in
+// relazione all'Analisi AI o all'assistente AML — esclusi quindi
+// AnalisiCasoAI.tsx e routes.ts (v. nota sopra), coperti invece dai claim
+// testuali specifici appena verificati.
 for (const file of [
   "client/index.html",
-  "client/src/pages/AnalisiCasoAI.tsx",
   "client/src/pages/FAQ.tsx",
   "client/src/pages/Home.tsx",
   "client/src/pages/StrategieNegoziazione.tsx",
@@ -74,13 +97,16 @@ for (const file of [
   "client/src/components/Footer.tsx",
   "client/public/llms.txt",
   "server/seo-content.ts",
-  "server/routes.ts",
   "client/public/antiriciclaggio-guida.html",
+  "server/ai/assistente-kb.ts",
+  "server/ai/llm.ts",
+  "server/static.ts",
+  "client/src/pages/Contatti.tsx",
 ]) {
-  assert.match(
+  assert.doesNotMatch(
     readFileSync(file, "utf8"),
     /temporaneamente sospes|resta sospes|sono sospes/i,
-    `The public suspension notice is missing from ${file}`,
+    `Obsolete AI-suspension notice still present in ${file}`,
   );
 }
 
