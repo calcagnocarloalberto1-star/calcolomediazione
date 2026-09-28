@@ -135,7 +135,10 @@ const r7obb = calcolaIndennita(t7obb);
 assert(r7obb.speseAvvio === 60, `Genova obbligatoria spese avvio = €60 (75*0.8) (got ${r7obb.speseAvvio})`);
 
 // ==========================================
-// TEST 8: Scaglioni Tabella A nazionale (12) e Tabella delle Indennità COA Genova (11)
+// TEST 8: Scaglioni Tabella A nazionale (12) e Tabella delle Indennità COA Genova (12)
+// Genova: 12 dal 28/09/2026 (era 11) — lo scaglione "Oltre €2.500.000" è stato diviso in
+// "€2.500.001-€5.000.000" (indennità nota, €7.722,60) e "Oltre €5.000.000" (ND nel
+// tariffario COA Genova, indennita: null) — v. sez. 41 audit.
 // ==========================================
 console.log("\n=== TEST 8: Scaglioni Tabella A / Tabella Indennità Genova ===");
 
@@ -143,7 +146,8 @@ const scaglioni = getScaglioni("nazionale");
 assert(scaglioni.length === 12, `12 scaglioni nazionali (got ${scaglioni.length})`);
 
 const scagGe = getScaglioni("coa_genova");
-assert(scagGe.length === 11, `11 scaglioni Genova (got ${scagGe.length})`);
+assert(scagGe.length === 12, `12 scaglioni Genova (got ${scagGe.length})`);
+assert(scagGe[scagGe.length - 1].indennita === null, `ultimo scaglione Genova (oltre €5.000.000) ha indennita null/ND (got ${scagGe[scagGe.length - 1].indennita})`);
 
 // ==========================================
 // TEST 9: Detrazione art. 34, co. 2
