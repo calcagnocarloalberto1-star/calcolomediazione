@@ -61,6 +61,16 @@ export interface CalcoloRisultato {
   scaglione: string;
   modalitaTariffaria: ModalitaTariffaria;
   esenzioneArt17: EsenzioneArt17;
+  /**
+   * true quando l'indennità di prosecuzione (incontri successivi/accordo) non è determinabile
+   * dal tariffario — attualmente solo COA Genova, controversie oltre €5.000.000, dove il
+   * Tariffario Mediazione 2026 riporta "ND" su tutte e tre le colonne della Tabella delle
+   * Indennità. Quando true, speseBase/ulterioriSpese/detrazioneSpese/maggiorazioni sono 0 e
+   * totalePerParte/totaleComplessivo/iva/totaleConIva riflettono SOLO le spese di primo
+   * incontro (le uniche note con certezza): l'indennità di prosecuzione va concordata con
+   * l'Organismo. Richiesto da Carlo il 28/09/2026 ("da determinare"), v. sez. 41 audit.
+   */
+  nonDeterminato: boolean;
 }
 
 export interface InputCalcolo {
@@ -144,8 +154,23 @@ const TABELLA_A_NAZIONALI = [
 // incontro, art. 31 co. 1) e +25% (accordo agli incontri successivi, art. 30 co. 2) vengono
 // applicate dinamicamente dalla logica generica di calcolaIndennita, già condivisa con la
 // modalità nazionale.
+//
+// Scaglione "Oltre €5.000.000": il Tariffario Mediazione 2026 COA Genova (Agg. 23/09/2026,
+// fornito da Carlo) riporta esplicitamente "ND" su tutte e tre le colonne della Tabella delle
+// Indennità per questo scaglione — a differenza della Tabella A nazionale, che per lo stesso
+// scaglione ha un importo reale (v. TABELLA_A_NAZIONALI sotto). indennitaBase è quindi `null`
+// per questo scaglione: calcolaIndennita() lo intercetta e restituisce nonDeterminato: true
+// invece di stimare un numero. Richiesto esplicitamente da Carlo il 28/09/2026 ("da
+// determinare"), v. sez. 41 audit.
 // ========================
-const TABELLA_INDENNITA_GENOVA = [
+interface ScaglioneIndennitaGenova {
+  min: number;
+  max: number;
+  /** null = "ND" nel tariffario: nessun importo determinato per questo scaglione */
+  indennitaBase: number | null;
+  label: string;
+}
+const TABELLA_INDENNITA_GENOVA: ScaglioneIndennitaGenova[] = [
   { min: 0, max: 1000, indennitaBase: 24.40, label: "Fino a €1.000" },
   { min: 1000.01, max: 5000, indennitaBase: 48.80, label: "€1.001 - €5.000" },
   { min: 5000.01, max: 10000, indennitaBase: 207.40, label: "€5.001 - €10.000" },
@@ -156,7 +181,8 @@ const TABELLA_INDENNITA_GENOVA = [
   { min: 250000.01, max: 500000, indennitaBase: 2842.60, label: "€250.001 - €500.000" },
   { min: 500000.01, max: 1500000, indennitaBase: 4550.60, label: "€500.001 - €1.500.000" },
   { min: 1500000.01, max: 2500000, indennitaBase: 5404.60, label: "€1.500.001 - €2.500.000" },
-  { min: 2500000.01, max: Infinity, indennitaBase: 7722.60, label: "Oltre €2.500.000" },
+  { min: 2500000.01, max: 5000000, indennitaBase: 7722.60, label: "€2.500.001 - €5.000.000" },
+  { min: 5000000.01, max: Infinity, indennitaBase: null, label: "Oltre €5.000.000 (ND — da determinare)" },
 ];
 
 // Indennità base (tariffe piene) per gli incontri successivi/accordo su controversie
@@ -204,12 +230,12 @@ function getValorePerTabellaA(valoreLite: number, tipoValore: TipoValore): numbe
  * Tariffe piene (Facoltative e Contrattuali); la riduzione 20% per le obbligatorie/demandate
  * viene applicata a valle da calcolaIndennita (riduzioneRate), come per la modalità nazionale.
  */
-function getUlterioriSpeseBaseGenova(valoreLite: number, tipoValore: TipoValore): number {
+function getUlterioriSpeseBaseGenova(valoreLite: number, tipoValore: TipoValore): number | null {
   if (tipoValore !== "determinato") {
     return INDENNITA_GENOVA_PROSECUZIONE_INDETERMINABILI[tipoValore] ?? 1256.60;
   }
   const scaglione = getScaglioneFromTable(TABELLA_INDENNITA_GENOVA, valoreLite);
-  return scaglione.indennitaBase;
+  return scaglione.indennitaBase; // null per "Oltre €5.000.000" (ND nel tariffario)
 }
 
 // ========================
@@ -323,6 +349,7 @@ export function calcolaIndennita(input: InputCalcolo): CalcoloRisultato {
       totaleConIva: totalePerParte + iva,
       scaglione: scaglioneLabel,
       modalitaTariffaria: modalita,
+      nonDeterminato: false,
       esenzioneArt17: calcolaEsenzioneArt17(esito, valoreLite),
     };
   }
@@ -332,7 +359,7 @@ export function calcolaIndennita(input: InputCalcolo): CalcoloRisultato {
   // con maggiorazione +10% per conciliazione al primo incontro.
   // Detrazione: spese di mediazione primo incontro già versate (art. 34, co. 2)
   if (esito === "accordo_primo") {
-    let ulterioriSpeseBase: number;
+    let ulterioriSpeseBase: number | null;
 
     if (modalita === "coa_genova") {
       ulterioriSpeseBase = getUlterioriSpeseBaseGenova(valoreLite, tipoValore);
@@ -341,6 +368,35 @@ export function calcolaIndennita(input: InputCalcolo): CalcoloRisultato {
       const valoreTabA = getValorePerTabellaA(valoreLite, tipoValore);
       const scagTabA = getScaglioneFromTable(TABELLA_A_NAZIONALI, valoreTabA);
       ulterioriSpeseBase = scagTabA.minimoTabA;
+    }
+
+    if (ulterioriSpeseBase === null) {
+      // COA Genova, controversia oltre €5.000.000: il tariffario riporta "ND" (v. nota su
+      // TABELLA_INDENNITA_GENOVA). Non si stima un numero: si restituisce nonDeterminato,
+      // con i totali limitati alla sola parte nota con certezza (il primo incontro).
+      const totalePerParte = totalePrimoIncontro;
+      const totaleComplessivo = totalePerParte * 2;
+      const iva = totalePerParte * 0.22;
+      return {
+        speseAvvio: speseAvvioRidotte,
+        spesePrimoIncontro: spesePrimoIncontroRidotte,
+        riduzioneObbligatoria,
+        totalePrimoIncontro,
+        speseBase: 0,
+        detrazioneSpese: 0,
+        maggiorazioneSuccesso: 0,
+        maggiorazioneArt31: 0,
+        riduzioneObbligatoriaUlteriori: 0,
+        ulterioriSpese: 0,
+        totalePerParte,
+        totaleComplessivo,
+        iva,
+        totaleConIva: totalePerParte + iva,
+        scaglione: scaglioneLabel,
+        modalitaTariffaria: modalita,
+        nonDeterminato: true,
+        esenzioneArt17: calcolaEsenzioneArt17(esito, valoreLite),
+      };
     }
 
     // Riduzione 1/5 (nazionale) / 20% (Genova) per obbligatoria/demandata (art. 30, co. 4)
@@ -384,12 +440,13 @@ export function calcolaIndennita(input: InputCalcolo): CalcoloRisultato {
       totaleConIva: totalePerParte + iva,
       scaglione: scaglioneLabel,
       modalitaTariffaria: modalita,
+      nonDeterminato: false,
       esenzioneArt17: calcolaEsenzioneArt17(esito, valoreLite),
     };
   }
 
   // Incontri successivi (art. 30, co. 2-3 + Tabella A / Tabella delle Indennità Genova)
-  let ulterioriSpeseBase: number;
+  let ulterioriSpeseBase: number | null;
 
   if (modalita === "coa_genova") {
     ulterioriSpeseBase = getUlterioriSpeseBaseGenova(valoreLite, tipoValore);
@@ -398,6 +455,36 @@ export function calcolaIndennita(input: InputCalcolo): CalcoloRisultato {
     const valoreTabA = getValorePerTabellaA(valoreLite, tipoValore);
     const scagTabA = getScaglioneFromTable(TABELLA_A_NAZIONALI, valoreTabA);
     ulterioriSpeseBase = scagTabA.minimoTabA;
+  }
+
+  if (ulterioriSpeseBase === null) {
+    // COA Genova, controversia oltre €5.000.000: il tariffario riporta "ND" — v. nota
+    // identica sopra nel ramo accordo_primo e su TABELLA_INDENNITA_GENOVA. Vale anche per
+    // l'esito "nessuno_successivi" (art. 34, co. 2: l'indennità di prosecuzione è dovuta
+    // anche senza accordo, ma qui non è determinabile).
+    const totalePerParte = totalePrimoIncontro;
+    const totaleComplessivo = totalePerParte * 2;
+    const iva = totalePerParte * 0.22;
+    return {
+      speseAvvio: speseAvvioRidotte,
+      spesePrimoIncontro: spesePrimoIncontroRidotte,
+      riduzioneObbligatoria,
+      totalePrimoIncontro,
+      speseBase: 0,
+      detrazioneSpese: 0,
+      maggiorazioneSuccesso: 0,
+      maggiorazioneArt31: 0,
+      riduzioneObbligatoriaUlteriori: 0,
+      ulterioriSpese: 0,
+      totalePerParte,
+      totaleComplessivo,
+      iva,
+      totaleConIva: totalePerParte + iva,
+      scaglione: scaglioneLabel,
+      modalitaTariffaria: modalita,
+      nonDeterminato: true,
+      esenzioneArt17: calcolaEsenzioneArt17(esito, valoreLite),
+    };
   }
 
   // Riduzione 1/5 (nazionale) / 20% (Genova) per obbligatoria/demandata (art. 30, co. 4)
@@ -451,6 +538,7 @@ export function calcolaIndennita(input: InputCalcolo): CalcoloRisultato {
     totaleConIva: totalePerParte + iva,
     scaglione: scaglioneLabel,
     modalitaTariffaria: modalita,
+    nonDeterminato: false,
     esenzioneArt17: calcolaEsenzioneArt17(esito, valoreLite),
   };
 }
@@ -488,7 +576,9 @@ export function getScaglioni(modalita: ModalitaTariffaria = "nazionale", tipoMed
       return {
         label: s.label,
         speseAvvio: speseAvvioPiena * fattore,
-        indennita: s.indennitaBase * fattore,
+        // null = "Oltre €5.000.000", ND nel tariffario (v. nota su TABELLA_INDENNITA_GENOVA):
+        // nessuna riduzione da applicare a un importo che non esiste.
+        indennita: s.indennitaBase === null ? null : s.indennitaBase * fattore,
       };
     });
   }
