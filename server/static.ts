@@ -99,7 +99,7 @@ export function serveStatic(app: Express) {
   // Intercept homepage before static middleware to inject SEO content
   app.get("/", (req, res) => {
     const indexPath = path.resolve(distPath, "index.html");
-    let html = fs.readFileSync(indexPath, "utf-8");
+    let html = fs.readFileSync(indexPath, "utf-8").replace(/(src|href)="\.\//g, '$1="/');
     const siteUrl = getSiteUrl(req);
     const homeTitle = SEO_PAGES["/"]?.title || "CalcoloMediazione";
     const homeDesc = SEO_PAGES["/"]?.description || "";
@@ -154,7 +154,7 @@ export function serveStatic(app: Express) {
       ? `/${Array.isArray(pathParam) ? pathParam.join("/") : pathParam}`
       : "/";
     const indexPath = path.resolve(distPath, "index.html");
-    let html = fs.readFileSync(indexPath, "utf-8");
+    let html = fs.readFileSync(indexPath, "utf-8").replace(/(src|href)="\.\//g, '$1="/');
 
     const siteUrl = getSiteUrl(req);
     const seoPage = SEO_PAGES[reqPath];
