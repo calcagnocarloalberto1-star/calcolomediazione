@@ -74,6 +74,12 @@ function buildReportCalcolatore(
   } as { label: string; value: string; bold?: boolean });
 
   const ulterioriRows: { label: string; value: string; bold?: boolean }[] = [];
+  if (r.nonDeterminato) {
+    ulterioriRows.push({
+      label: "Indennità di prosecuzione (oltre €5.000.000, COA Genova)",
+      value: "Da determinare (ND nel tariffario — a cura del Consiglio dell'Ordine)",
+    });
+  }
   if (r.ulterioriSpese > 0) {
     ulterioriRows.push({ label: "Ulteriori spese (incontri successivi)", value: formatEuro(r.ulterioriSpese) });
   }
@@ -113,6 +119,9 @@ function buildReportCalcolatore(
   const footerNotes: string[] = [];
   if (r.esenzioneArt17.esenteBollo) footerNotes.push("Esenzione imposta di bollo (art. 17 D.Lgs. 28/2010) su tutti gli atti del procedimento.");
   if (r.esenzioneArt17.esenteRegistro && r.esenzioneArt17.limiteEsenzione > 0) footerNotes.push(`Esenzione imposta di registro fino a ${formatEuro(r.esenzioneArt17.limiteEsenzione)} del valore dell'accordo.`);
+  if (r.nonDeterminato) {
+    footerNotes.push("Per controversie di valore superiore a €5.000.000 il tariffario COA Genova non pubblica un'indennità determinata per gli incontri successivi/l'accordo (\"ND\"): l'importo è stabilito dal Consiglio dell'Ordine caso per caso. I totali sopra includono solo le spese di primo incontro.");
+  }
   footerNotes.push("Importi calcolati secondo D.M. 150/2023; valori soggetti a variazioni in funzione della concreta gestione della procedura.");
 
   return {
@@ -644,6 +653,22 @@ export default function Calcolatore() {
                       </span>
                     </div>
 
+                    {risultato.nonDeterminato && (
+                      <>
+                        <Separator className="border-foreground/20" />
+                        <div className="flex items-start gap-2 py-2 px-3 border-2 border-amber-400 bg-amber-50 dark:bg-amber-950/20 text-amber-800 dark:text-amber-300 text-xs rounded" data-testid="alert-non-determinato">
+                          <AlertTriangle className="w-4 h-4 mt-0.5 flex-shrink-0" />
+                          <span>
+                            Per controversie di valore superiore a €5.000.000 il tariffario COA Genova non
+                            pubblica un'indennità determinata per gli incontri successivi/l'accordo ("ND" nel
+                            tariffario): l'importo è stabilito dal Consiglio dell'Ordine caso per caso. I totali
+                            sotto includono solo le spese di primo incontro, già note per certo; l'indennità di
+                            prosecuzione è da concordare con l'Organismo.
+                          </span>
+                        </div>
+                      </>
+                    )}
+
                     {risultato.ulterioriSpese > 0 && (
                       <>
                         <Separator className="border-foreground/20" />
@@ -699,9 +724,16 @@ export default function Calcolatore() {
                     {/* Totals */}
                     <div className="bg-muted/50 border-2 border-foreground p-4 space-y-3">
                       <div className="flex justify-between items-center">
-                        <span className="text-base font-bold" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
-                          Totale per Parte
-                        </span>
+                        <div>
+                          <span className="text-base font-bold" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
+                            Totale per Parte
+                          </span>
+                          {risultato.nonDeterminato && (
+                            <div className="text-[10px] font-normal text-amber-700 dark:text-amber-400 mt-0.5">
+                              solo primo incontro — indennità di prosecuzione da determinare, v. nota sopra
+                            </div>
+                          )}
+                        </div>
                         <span
                           className="text-xl font-bold text-primary font-mono"
                           style={{ fontFamily: "'JetBrains Mono', monospace" }}
@@ -871,13 +903,23 @@ export default function Calcolatore() {
                           {formatEuro(s.speseAvvio)}
                         </td>
                         <td className="py-3 px-4 text-right font-mono" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
-                          {formatEuro(s.indennita)}
+                          {s.indennita === null ? (
+                            <span className="italic text-muted-foreground">Da determinare</span>
+                          ) : (
+                            formatEuro(s.indennita)
+                          )}
                         </td>
                       </tr>
                     ))}
                   </tbody>
                 </table>
               </div>
+              {modalitaTariffaria === "coa_genova" && (
+                <p className="text-xs text-muted-foreground mt-2">
+                  Per controversie oltre €5.000.000 il tariffario COA Genova non pubblica un importo fisso
+                  ("ND"): l'indennità di prosecuzione è stabilita dal Consiglio dell'Ordine caso per caso.
+                </p>
+              )}
 
               {/* Genova indeterminabili extra table */}
               {modalitaTariffaria === "coa_genova" && (
