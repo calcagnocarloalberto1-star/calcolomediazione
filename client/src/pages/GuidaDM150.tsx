@@ -181,7 +181,11 @@ export default function GuidaDM150() {
                           className="px-4 py-3 text-sm text-right font-semibold"
                           style={{ fontFamily: "'JetBrains Mono', monospace" }}
                         >
-                          {formatEuro(s.indennita)}
+                          {/* getScaglioni() qui è sempre in modalità "nazionale" (nessun argomento
+                              passato): la Tabella A D.M. 150/2023 non ha scaglioni "ND", quindi
+                              s.indennita non è mai null in questa pagina — il fallback è solo per
+                              coerenza col tipo number | null condiviso con la modalità COA Genova. */}
+                          {formatEuro(s.indennita ?? 0)}
                         </td>
                       </tr>
                     ))}
