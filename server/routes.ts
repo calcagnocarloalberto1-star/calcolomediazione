@@ -1291,7 +1291,7 @@ partiList.forEach((p, i) => {
 if (p.nome && p.nome.trim()) {
 const nome = p.nome.trim();
 const label = labels[i] || `Parte ${String.fromCharCode(65 + i)}`;
-const regex = new RegExp(nome.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi');
+const regex = new RegExp(`\\b${nome.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`, 'gi');
 result = result.replace(regex, label);
 const parts = nome.split(/\s+/);
 if (parts.length > 1) {
