@@ -715,6 +715,15 @@ try {
     partiList.forEach((p, i) => {
       if (p.nome?.trim()) {
         const nome = p.nome.trim();
+        // Nomi di una sola lettera (es. "A", "B", "C") non si sostituiscono:
+        // sono gia' anonimi quanto possono esserlo, e con \b una singola
+        // lettera fa match anche su parole italiane comuni di una lettera
+        // (la preposizione "a", l'elisione "d'Ufficio") e su sigle con punti
+        // (S.p.A., D.M., c.p.c.), corrompendo il testo mostrato senza alcun
+        // beneficio di riservatezza. Scoperto il 28/09/2026 su segnalazione
+        // di Carlo, dopo la correzione dello stesso giorno che aveva aggiunto
+        // i \b qui sotto per il bug precedente (ben piu' grave).
+        if (nome.length < 2) return;
         const label = labels[i] || `Parte ${String.fromCharCode(65 + i)}`;
         result = result.replace(new RegExp(`\\b${nome.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}\\b`, "gi"), label);
         const parts = nome.split(/\s+/);
