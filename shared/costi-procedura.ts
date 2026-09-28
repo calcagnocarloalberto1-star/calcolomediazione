@@ -73,6 +73,17 @@ export interface CostiMediazione {
   creditoImposta: number;
   totaleNettoPerParte: number;
   modalitaTariffaria: ModalitaTariffaria;
+  /**
+   * true quando modalitaTariffaria === "coa_genova" e valoreEffettivo supera €5.000.000: il
+   * Tariffario Mediazione 2026 COA Genova riporta "ND" per questo scaglione della Tabella
+   * delle Indennità (v. la stessa nota in shared/calcolo-indennita.ts, TABELLA_INDENNITA_GENOVA).
+   * Qui — a differenza del calcolatore principale, dove il caso non è stimato — indennita
+   * continua a usare per prudenza l'ultimo importo noto (scaglione €2.500.001-€5.000.000,
+   * €7.722,60) come STIMA APPROSSIMATA PER DIFETTO ai soli fini del confronto costi; questo
+   * flag segnala all'interfaccia di mostrare la relativa avvertenza. Richiesto da Carlo il
+   * 28/09/2026, v. sez. 41 audit.
+   */
+  nonDeterminatoGenova: boolean;
 }
 
 export interface CostiCausaCivile {
@@ -261,7 +272,15 @@ const TABELLA_A_MEDIAZIONE_NAZIONALE = [
 // mediazioni obbligatorie/demandate si applica la riduzione 20% (rapporto esatto 0,8).
 // Le spese di PRIMO INCONTRO per COA Genova sono invece identiche a quelle nazionali
 // (getSpeseAvvioNazionaliConfronto) e non necessitano di una tabella separata.
-const TABELLA_INDENNITA_GENOVA_PROSECUZIONE = [
+//
+// Scaglione "Oltre €5.000.000": il tariffario riporta "ND" per questo scaglione (v. identica
+// nota su TABELLA_INDENNITA_GENOVA in shared/calcolo-indennita.ts). A differenza del
+// calcolatore principale — dove questo caso NON viene stimato, v. sez. 41 audit — qui, ai soli
+// fini del confronto costi, si usa per prudenza l'ultimo importo noto (scaglione precedente,
+// €7.722,60) come stima per difetto: l'importo reale può solo essere pari o superiore, mai
+// inferiore, quindi non si rischia di far apparire la mediazione più cara di quanto sarebbe.
+// Il flag `nonDeterminato` segnala all'interfaccia di mostrare l'avvertenza corrispondente.
+const TABELLA_INDENNITA_GENOVA_PROSECUZIONE: { min: number; max: number; indennitaBase: number; nonDeterminato?: boolean }[] = [
   { min: 0, max: 1000, indennitaBase: 24.40 },
   { min: 1000.01, max: 5000, indennitaBase: 48.80 },
   { min: 5000.01, max: 10000, indennitaBase: 207.40 },
@@ -272,7 +291,8 @@ const TABELLA_INDENNITA_GENOVA_PROSECUZIONE = [
   { min: 250000.01, max: 500000, indennitaBase: 2842.60 },
   { min: 500000.01, max: 1500000, indennitaBase: 4550.60 },
   { min: 1500000.01, max: 2500000, indennitaBase: 5404.60 },
-  { min: 2500000.01, max: Infinity, indennitaBase: 7722.60 },
+  { min: 2500000.01, max: 5000000, indennitaBase: 7722.60 },
+  { min: 5000000.01, max: Infinity, indennitaBase: 7722.60, nonDeterminato: true },
 ];
 
 // Indennità base (tariffe piene) per gli incontri successivi/accordo su controversie
@@ -424,6 +444,7 @@ function calcolaCostiMediazione(input: InputConfronto, valoreEffettivo: number):
 
   let speseAvvio: number;
   let indennita: number;
+  let nonDeterminatoGenova = false;
 
   if (modalita === "coa_genova") {
     // Spese di primo incontro COA Genova: identiche alle nazionali (verificato sul
@@ -434,6 +455,7 @@ function calcolaCostiMediazione(input: InputConfronto, valoreEffettivo: number):
     } else {
       const scag = findScaglione(TABELLA_INDENNITA_GENOVA_PROSECUZIONE, valoreEffettivo);
       indennita = scag.indennitaBase;
+      nonDeterminatoGenova = scag.nonDeterminato === true;
     }
     if (isObbligatoria(input.tipoMediazione)) {
       indennita = indennita * 0.8;
@@ -500,6 +522,7 @@ function calcolaCostiMediazione(input: InputConfronto, valoreEffettivo: number):
     indennitaOrganismo, speseAvvio, compensoAvvocato, speseGenerali15, iva22Avvocato,
     cpa4Avvocato, impostaRegistro, imposteImmobiliari, costoNotaio, totalePerParte,
     totaleComplessivo, creditoImposta, totaleNettoPerParte, modalitaTariffaria: modalita,
+    nonDeterminatoGenova,
   };
 }
 
