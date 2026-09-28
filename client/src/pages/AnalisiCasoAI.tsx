@@ -716,7 +716,7 @@ try {
       if (p.nome?.trim()) {
         const nome = p.nome.trim();
         const label = labels[i] || `Parte ${String.fromCharCode(65 + i)}`;
-        result = result.replace(new RegExp(nome.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "gi"), label);
+        result = result.replace(new RegExp(`\\b${nome.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}\\b`, "gi"), label);
         const parts = nome.split(/\s+/);
         if (parts.length > 1) {
           const cognome = parts[parts.length - 1];
