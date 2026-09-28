@@ -459,51 +459,72 @@ export function calcolaIndennita(input: InputCalcolo): CalcoloRisultato {
 // TABELLE PER VISUALIZZAZIONE
 // ========================
 
-export function getScaglioni(modalita: ModalitaTariffaria = "nazionale") {
+/**
+ * Tabella di riferimento degli scaglioni (usata per la tabella riassuntiva mostrata sotto
+ * al calcolatore). Accetta un `tipoMediazione` opzionale (default "volontaria", cioè tariffa
+ * piena, come prima di questa modifica) per mostrare i valori già ridotti quando l'utente ha
+ * selezionato "obbligatoria"/"demandata" — la stessa riduzione del 20% (Genova) / 1/5
+ * (nazionale) già applicata dal calcolo vero e proprio in calcolaIndennita().
+ *
+ * Prima di questa modifica la tabella mostrava SEMPRE la tariffa piena (facoltativa/
+ * contrattuale), anche quando l'utente aveva selezionato "obbligatoria" o "demandata": per
+ * COA Genova questo produceva numeri diversi da quelli dello scaglione "Obbligatorie e
+ * Demandate" del tariffario ufficiale (es. €24,40 mostrati invece di €19,52) — la tariffa
+ * piena non è mai pubblicata come tabella separata nel tariffario COA Genova "Obbligatorie
+ * e Demandate" fornito da Carlo (Agg. 23/09/2026), che riporta direttamente gli importi già
+ * ridotti del 20% come unica colonna "Indennità base". Segnalato da Carlo il 28/09/2026
+ * ("la tabella mostrata era completamente sbagliata").
+ */
+export function getScaglioni(modalita: ModalitaTariffaria = "nazionale", tipoMediazione: TipoMediazione = "volontaria") {
+  const riduzioneRate = isObbligatoria(tipoMediazione) ? 0.2 : 0;
+  const fattore = 1 - riduzioneRate;
   if (modalita === "coa_genova") {
     // Tabella delle Indennità COA Genova (incontri successivi/accordo) con spese di avvio
     // primo incontro corrispondenti (identiche alle nazionali, vedi getSpeseAvvioNazionali)
     return TABELLA_INDENNITA_GENOVA.map(s => {
-      let speseAvvio = 110;
-      if (s.max <= 1000) speseAvvio = 40;
-      else if (s.max <= 50000) speseAvvio = 75;
+      let speseAvvioPiena = 110;
+      if (s.max <= 1000) speseAvvioPiena = 40;
+      else if (s.max <= 50000) speseAvvioPiena = 75;
       return {
         label: s.label,
-        speseAvvio,
-        indennita: s.indennitaBase,
+        speseAvvio: speseAvvioPiena * fattore,
+        indennita: s.indennitaBase * fattore,
       };
     });
   }
   // Nazionale: mostra la Tabella A con spese avvio corrette
   return TABELLA_A_NAZIONALI.map(s => {
     // Determina la spesa di avvio in base allo scaglione
-    let speseAvvio = 110;
-    if (s.max <= 1000) speseAvvio = 40;
-    else if (s.max <= 50000) speseAvvio = 75;
+    let speseAvvioPiena = 110;
+    if (s.max <= 1000) speseAvvioPiena = 40;
+    else if (s.max <= 50000) speseAvvioPiena = 75;
     return {
       label: s.label,
-      speseAvvio,
-      indennita: s.minimoTabA,
+      speseAvvio: speseAvvioPiena * fattore,
+      indennita: s.minimoTabA * fattore,
     };
   });
 }
 
-export function getScaglioniGenovaIndeterminabili() {
+/** V. nota su getScaglioni() — stesso parametro tipoMediazione, stessa riduzione dinamica. */
+export function getScaglioniGenovaIndeterminabili(tipoMediazione: TipoMediazione = "volontaria") {
+  const riduzioneRate = isObbligatoria(tipoMediazione) ? 0.2 : 0;
+  const fattore = 1 - riduzioneRate;
   return [
     {
       label: "Indeterminabile — complessità bassa",
-      speseAvvio: getSpeseAvvioNazionali(0, "indeterminabile_basso"),
-      indennita: getSpeseMediazionePrimoIncontro(0, "indeterminabile_basso"),
+      speseAvvio: getSpeseAvvioNazionali(0, "indeterminabile_basso") * fattore,
+      indennita: getSpeseMediazionePrimoIncontro(0, "indeterminabile_basso") * fattore,
     },
     {
       label: "Indeterminabile — complessità media",
-      speseAvvio: getSpeseAvvioNazionali(0, "indeterminabile_medio"),
-      indennita: getSpeseMediazionePrimoIncontro(0, "indeterminabile_medio"),
+      speseAvvio: getSpeseAvvioNazionali(0, "indeterminabile_medio") * fattore,
+      indennita: getSpeseMediazionePrimoIncontro(0, "indeterminabile_medio") * fattore,
     },
     {
       label: "Indeterminabile — complessità alta",
-      speseAvvio: getSpeseAvvioNazionali(0, "indeterminabile_alto"),
-      indennita: getSpeseMediazionePrimoIncontro(0, "indeterminabile_alto"),
+      speseAvvio: getSpeseAvvioNazionali(0, "indeterminabile_alto") * fattore,
+      indennita: getSpeseMediazionePrimoIncontro(0, "indeterminabile_alto") * fattore,
     },
   ];
 }
