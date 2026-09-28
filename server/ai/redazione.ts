@@ -89,7 +89,7 @@ const RE_TELEFONO = /\b(?:\+39\s?)?3\d{2}[\s.-]?\d{6,7}\b/g;
 
 function sostituisciNomeParte(testo: string, nomeCompleto: string, token: string): string {
   if (!nomeCompleto.trim()) return testo;
-  let risultato = testo.replace(new RegExp(escapeRegExp(nomeCompleto.trim()), "gi"), token);
+  let risultato = testo.replace(new RegExp(`\\b${escapeRegExp(nomeCompleto.trim())}\\b`, "gi"), token);
   const parti = nomeCompleto.trim().split(/\s+/);
   if (parti.length > 1) {
     const cognome = parti[parti.length - 1];
