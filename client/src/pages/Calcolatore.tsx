@@ -139,7 +139,7 @@ export default function Calcolatore() {
   const [categoriaCatastale, setCategoriaCatastale] = useState<CategoriaCatastale>("prima_casa");
   const [verificaResult, setVerificaResult] = useState<RisultatoVerificaCatastale | null>(null);
 
-  const scaglioni = getScaglioni(modalitaTariffaria);
+  const scaglioni = getScaglioni(modalitaTariffaria, tipoMediazione);
 
   const handleCalcola = () => {
     const input = {
@@ -837,6 +837,11 @@ export default function Calcolatore() {
                     : "Scaglioni D.M. 150/2023 — Tabella A"}
                 </CardTitle>
               </div>
+              <p className="text-xs text-muted-foreground mt-1">
+                {tipoMediazione === "volontaria"
+                  ? "Valori a tariffa piena (mediazione volontaria)."
+                  : `Valori già ridotti del ${modalitaTariffaria === "coa_genova" ? "20%" : "1/5"} (mediazione ${tipoMediazione === "obbligatoria" ? "obbligatoria" : "demandata dal giudice"}), coerenti con lo scaglione selezionato sopra.`}
+              </p>
             </CardHeader>
             <CardContent>
               <div className="overflow-x-auto">
@@ -896,7 +901,7 @@ export default function Calcolatore() {
                         </tr>
                       </thead>
                       <tbody>
-                        {getScaglioniGenovaIndeterminabili().map((s, i) => (
+                        {getScaglioniGenovaIndeterminabili(tipoMediazione).map((s, i) => (
                           <tr key={i} className="border-b border-muted" data-testid={`row-indet-${i}`}>
                             <td className="py-3 px-4">{s.label}</td>
                             <td className="py-3 px-4 text-right font-mono" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
@@ -911,7 +916,9 @@ export default function Calcolatore() {
                     </table>
                   </div>
                   <p className="text-xs text-muted-foreground mt-2">
-                    Per mediazioni obbligatorie/demandate si applica la riduzione del 20% su spese avvio e acconto.
+                    {tipoMediazione === "volontaria"
+                      ? "Valori a tariffa piena (mediazione volontaria). Per obbligatoria/demandata si applica la riduzione del 20% su spese avvio e acconto."
+                      : "Valori già ridotti del 20% (mediazione obbligatoria/demandata)."}
                   </p>
                 </div>
               )}
