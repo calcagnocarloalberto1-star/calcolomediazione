@@ -56,7 +56,18 @@ let anthropicClient: Anthropic | null = null;
 function getAnthropicClient(): Anthropic | null {
 if (anthropicClient) return anthropicClient;
 if (process.env.ANTHROPIC_API_KEY) {
-anthropicClient = new Anthropic({ timeout: 90_000, maxRetries: 1 });
+// maxRetries era a 1 (sotto il default SDK di 2): un margine troppo
+// sottile per i picchi di 2-3 chiamate Anthropic in parallelo che la
+// pipeline lancia ai LIVELLI 1 e 2 di runPipeline (v. server/routes.ts).
+// Un errore transitorio (429/5xx) su una di quelle chiamate concorrenti
+// aveva quindi un solo, rapido tentativo di recupero prima di cadere sul
+// placeholder "Configurare API Key per risultati completi" — con Gemini
+// di fatto MAI disponibile come vero fallback, dato che resta disattivato
+// in attesa di verifica del Paid Service (v. PRIV-12). Alzato a 3 il
+// 28/09/2026 dopo la segnalazione di Carlo di un'analisi con 3 sezioni su
+// 8 non generate (Giuridica, Interessi, Bias — esattamente le chiamate
+// piu' esposte alla concorrenza dei LIVELLI 1/2).
+anthropicClient = new Anthropic({ timeout: 90_000, maxRetries: 3 });
 return anthropicClient;
 }
 return null;
