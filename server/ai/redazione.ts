@@ -88,9 +88,20 @@ const RE_IBAN = /\bIT\d{2}[A-Za-z]\d{10}\d{12}\b/gi;
 const RE_TELEFONO = /\b(?:\+39\s?)?3\d{2}[\s.-]?\d{6,7}\b/g;
 
 function sostituisciNomeParte(testo: string, nomeCompleto: string, token: string): string {
-  if (!nomeCompleto.trim()) return testo;
-  let risultato = testo.replace(new RegExp(`\\b${escapeRegExp(nomeCompleto.trim())}\\b`, "gi"), token);
-  const parti = nomeCompleto.trim().split(/\s+/);
+  const nome = nomeCompleto.trim();
+  if (!nome) return testo;
+  // Nomi di una sola lettera (es. parti indicate come "A", "B", "C" per
+  // minimizzare i metadati fin dall'inserimento) NON vengono sostituiti:
+  // sono gia' anonimi quanto possono esserlo, e con \b una singola lettera
+  // fa match anche su parole italiane comuni di una lettera (la preposizione
+  // "a", l'elisione "d'Ufficio") e su sigle con punti (S.p.A., D.M., c.p.c.),
+  // corrompendo il testo redatto senza alcun beneficio di riservatezza.
+  // Scoperto il 28/09/2026 su segnalazione di Carlo, dopo la correzione del
+  // 28/09/2026 che aveva aggiunto i \b qui sotto per il bug precedente
+  // (sostituzione senza confini di parola, ben piu' grave).
+  if (nome.length < 2) return testo;
+  let risultato = testo.replace(new RegExp(`\\b${escapeRegExp(nome)}\\b`, "gi"), token);
+  const parti = nome.split(/\s+/);
   if (parti.length > 1) {
     const cognome = parti[parti.length - 1];
     if (cognome.length >= 3) {
