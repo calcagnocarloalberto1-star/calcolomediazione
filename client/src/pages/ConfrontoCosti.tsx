@@ -867,8 +867,19 @@ export default function ConfrontoCosti() {
 
                   <TabsContent value="mediazione">
                     <div className="space-y-3">
+                      {risultato.costiMediazione.nonDeterminatoGenova && (
+                        <div className="flex items-start gap-2 py-2 px-3 border-2 border-amber-400 bg-amber-50 dark:bg-amber-950/20 text-amber-800 dark:text-amber-300 text-xs rounded">
+                          <AlertTriangle className="w-4 h-4 mt-0.5 flex-shrink-0" />
+                          <span>
+                            Per controversie oltre €5.000.000 il tariffario COA Genova non pubblica un'indennità
+                            determinata ("ND"): l'importo qui sotto è una stima per difetto basata sull'ultimo
+                            scaglione noto (€2.500.001-€5.000.000) — l'importo reale, stabilito dal Consiglio
+                            dell'Ordine caso per caso, può essere solo pari o superiore.
+                          </span>
+                        </div>
+                      )}
                       <DetailItem label="Spese avvio organismo" value={risultato.costiMediazione.speseAvvio} note={modalitaTariffaria === "coa_genova" ? "Tariffe COA Genova" : "D.M. 150/2023 — Tabella A"} />
-                      <DetailItem label="Indennità organismo mediazione" value={risultato.costiMediazione.indennitaOrganismo - risultato.costiMediazione.speseAvvio} note={tipoMediazione !== "volontaria" ? `Ridotta del 20% per mediazione ${tipoMediazione}` : "Mediazione volontaria — tariffe piene"} />
+                      <DetailItem label="Indennità organismo mediazione" value={risultato.costiMediazione.indennitaOrganismo - risultato.costiMediazione.speseAvvio} note={risultato.costiMediazione.nonDeterminatoGenova ? "Stima per difetto — oltre €5.000.000, tariffario COA Genova \"ND\" (v. avviso sopra)" : tipoMediazione !== "volontaria" ? `Ridotta del 20% per mediazione ${tipoMediazione}` : "Mediazione volontaria — tariffe piene"} />
                       <DetailItem label="Compenso avvocato (parametri stragiudiziali)" value={risultato.costiMediazione.compensoAvvocato} note="D.M. 55/2014 mod. D.M. 147/2022 — Fasi: attivazione (+30%), negoziazione (+30%), conciliazione" />
                       <DetailItem label="Spese generali 15%" value={risultato.costiMediazione.speseGenerali15} note="15% sul compenso" />
                       <DetailItem label="CPA 4%" value={risultato.costiMediazione.cpa4Avvocato} note="4% su compenso + spese generali" />
