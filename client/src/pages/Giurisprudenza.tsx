@@ -157,7 +157,7 @@ function SentenzaCard({ sentenza, isExpanded, onToggle }: { sentenza: Sentenza; 
               {sentenza.categoria}
             </Badge>
           </div>
-          <Button variant="ghost" size="icon" className="flex-shrink-0 mt-1" data-testid={`toggle-sentenza-${sentenza.id}`}>
+          <Button variant="ghost" size="icon" className="flex-shrink-0 mt-1" data-testid={`toggle-sentenza-${sentenza.id}`} aria-label={isExpanded ? "Comprimi dettagli sentenza" : "Espandi dettagli sentenza"} aria-expanded={isExpanded}>
             {isExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
           </Button>
         </div>
