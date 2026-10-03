@@ -34,7 +34,7 @@ export default function PrivacyPolicy() {
         </div>
 
         <div className="bg-card border-2 border-foreground shadow-[4px_4px_0px_0px] shadow-foreground/20 p-6 sm:p-8 space-y-7">
-          <p className="text-sm opacity-70">Ultimo aggiornamento: 14 settembre 2026</p>
+          <p className="text-sm opacity-70">Ultimo aggiornamento: 3 ottobre 2026</p>
 
           <Section title="1. Titolare del trattamento">
             <p>Il titolare del trattamento è Carlo Alberto Calcagno, gestore di CalcoloMediazione.it. Le richieste privacy possono essere inviate mediante i recapiti indicati nella pagina <Link href="/contatti"><span className="underline cursor-pointer text-primary">Contatti</span></Link>.</p>
@@ -78,13 +78,14 @@ export default function PrivacyPolicy() {
             <ul className="list-disc space-y-2 ml-5">
               <li><strong>Analisi del caso:</strong> massimo 30 giorni sul database del sito. I contenuti delle nuove analisi sono protetti a livello applicativo con cifratura autenticata AES-256-GCM; l'utente può cancellarli prima dallo storico mediante il token segreto memorizzato nel proprio browser.</li>
               <li><strong>PDF caricati nell'Analisi del caso:</strong> usati in memoria per estrarre il testo e non archiviati come file; il testo estratto confluisce nell'analisi conservata fino a 30 giorni.</li>
-              <li><strong>Documenti AML:</strong> i documenti caricati per l'assistente IA facoltativo sono elaborati in memoria per l'estrazione dei dati richiesti e non sono archiviati come file dopo la risposta; l'eventuale conservazione tecnica lato fornitore IA segue il piano e i termini a esso applicabili.</li>
+              <li><strong>Documenti AML:</strong> i documenti caricati per l'assistente IA facoltativo sono elaborati in memoria per l'estrazione dei dati richiesti e non sono archiviati come file dopo la risposta; presso il fornitore IA (Anthropic) input e output sono conservati per 30 giorni per impostazione predefinita, a fini tecnici e di sicurezza; la conservazione a zero giorni non è attiva.</li>
               <li><strong>Statistiche interne:</strong> il totale complessivo delle visualizzazioni è conservato nel database come numero aggregato; il dettaglio per pagina resta in memoria fino al riavvio del servizio. Nessuno dei due contiene IP, user-agent o identificatori del visitatore.</li>
               <li><strong>Browser dell'utente:</strong> token di accesso, storico tecnico minimizzato e modelli locali restano sul dispositivo finché l'utente non li elimina o cancella i dati del sito.</li>
             </ul>
           </Section>
 
           <Section title="6. Destinatari e misure di sicurezza">
+            <p>L'applicazione e il database sono ospitati presso Northflank, nella regione Europe – West (Londra, Regno Unito). Il trasferimento verso il Regno Unito è coperto da decisione di adeguatezza della Commissione europea; con il fornitore è in essere un accordo sul trattamento dei dati.</p>
             <p>I dati possono essere trattati dai fornitori necessari all'hosting, al database, alla diagnostica tecnica e alle API IA, nei limiti delle funzioni utilizzate. Non sono venduti né diffusi.</p>
             <p>Il sito usa HTTPS, cifratura applicativa autenticata AES-256-GCM per i contenuti delle nuove analisi conservate, risposte API non memorizzabili, cancellazione automatica, controlli di origine, limiti di frequenza e dimensione, validazione dei file e minimizzazione dei log. Per i token casuali di accesso, la colonna usata per la verifica contiene un hash SHA-256; una copia recuperabile del token è inclusa nel payload cifrato dell'analisi per consentire le procedure controllate di migrazione e ripristino. La chiave di cifratura è gestita separatamente dal database nell'ambiente protetto del servizio.</p>
             <p>Nessuna misura elimina ogni rischio: l'utente deve proteggere il proprio dispositivo e non condividere il token di accesso. La cifratura applicativa protegge il contenuto memorizzato, ma non impedisce il trattamento temporaneo necessario sul server e presso il fornitore IA durante l'elaborazione richiesta.</p>
