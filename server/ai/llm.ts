@@ -67,7 +67,15 @@ if (process.env.ANTHROPIC_API_KEY) {
 // 28/09/2026 dopo la segnalazione di Carlo di un'analisi con 3 sezioni su
 // 8 non generate (Giuridica, Interessi, Bias — esattamente le chiamate
 // piu' esposte alla concorrenza dei LIVELLI 1/2).
-anthropicClient = new Anthropic({ timeout: 90_000, maxRetries: 3 });
+// 03/10/2026: il timeout per chiamata era 90s, ma le sezioni lunghe (in
+// particolare l'Analisi Giuridica, chiamata non in streaming con il massimo
+// di token) lo superano: i log di produzione mostrano solo
+// APIConnectionTimeoutError, ripetuto a ~6 minuti (4 tentativi x 90s) il
+// 28/09, l'1/10 e il 3/10, poi il placeholder. Alzato a 280s (sotto i 300s
+// di default di headersTimeout/bodyTimeout di undici, v. sotto) e ridotti i
+// tentativi a 2, cosi' il caso peggiore resta ~14 minuti invece di ~6 minuti
+// di insuccesso certo.
+anthropicClient = new Anthropic({ timeout: 280_000, maxRetries: 2 });
 return anthropicClient;
 }
 return null;
