@@ -127,7 +127,7 @@ export function costruisciScheda(d: DatiRiferimento): string {
     const etichetta = mediano !== null ? "punto mediano della ZOPA" : "offerta attuale";
     righe.push(`- Confronto con l'accordo a euro ${fmt(x)} (${etichetta}): l'istante incassa euro ${fmt(istanteAccordo)} netti contro euro ${fmt(istanteGiudizio)} del giudizio (${istanteAccordo >= istanteGiudizio ? "l'accordo rende di piu'" : "il giudizio rende di piu' sul solo piano economico: la convenienza dell'accordo va motivata con tempi, rischio di insolvenza e certezza"}); il chiamato paga euro ${fmt(chiamatoAccordo)} contro euro ${fmt(chiamatoGiudizio)} del giudizio (${chiamatoAccordo <= chiamatoGiudizio ? "l'accordo costa di meno" : "l'accordo costa di piu' sul solo piano economico"})`);
   }
-  righe.push("Se ritieni che un numero della scheda sia sbagliato, segnalalo in una nota senza sostituirlo.");
+  righe.push("Usa questi numeri come dati del caso, senza citare questa scheda e senza commentarla.");
   return righe.join("\n");
 }
 
