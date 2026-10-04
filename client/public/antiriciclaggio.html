@@ -159,6 +159,20 @@ margin-bottom:2cm;
 <!-- ===================== PARTE INFORMATIVA: spostata su /antiriciclaggio-guida.html ===================== -->
 <div class="note">Questa pagina è lo <b>strumento operativo</b>: un unico motore che compila i campi, individua i trigger UIF e valuta il rischio in un solo percorso — con la possibilità di ottenere una prima bozza automaticamente dai documenti del fascicolo. Per tutte le spiegazioni — normativa, uso dello strumento, domande frequenti — vai alla <a href="/antiriciclaggio-guida.html">guida antiriciclaggio</a>. I dati inseriti restano nel tuo browser e non sono trasmessi ad alcun server, salvo quando usi tu, di tua scelta, l'assistente AI per ottenere una prima bozza dai documenti caricati: in quel caso vengono inviate al server solo le immagini/i testi caricati per quell'operazione.</div>
 
+<!-- ===================== SCELTA DEL MODELLO: COA GENOVA / GENERICO ===================== -->
+<div class="ocrbox no-print" id="formatoChoiceBox" style="background:#fff;border-color:var(--blue)">
+<h3 class="grouph">Con quale modello compili?</h3>
+<p class="sub">Scegli il modello: la pagina mostra poi solo i pulsanti e i documenti di quel modello. Puoi cambiare in qualsiasi momento con «Cambia modello».</p>
+<div class="roles" style="margin-top:10px">
+<button type="button" class="role" data-ac-action="scegli-formato" data-formato="genova"><b>Compilazione COA Genova</b><small>Modulo AV e Scheda di valutazione del rischio dell'Organismo di Mediazione, Ordine degli Avvocati di Genova</small></button>
+<button type="button" class="role" data-ac-action="scegli-formato" data-formato="altri"><b>Compilazione generica</b><small>Modelli per gli altri Organismi di mediazione</small></button>
+</div>
+</div>
+<div class="no-print" id="formatoBar" style="display:none;background:var(--light);border:1px solid var(--blue);border-radius:10px;padding:10px 14px;margin:0 0 16px;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap">
+<div><span style="font-size:11.5px;color:var(--muted)">Stai compilando:</span><br><b id="formatoBarLabel" style="font-size:15px;color:var(--navy)"></b></div>
+<button type="button" class="btn-ghost" data-ac-action="cambia-formato" style="white-space:nowrap;padding:8px 12px;font-size:13px">↺ Cambia modello</button>
+</div>
+
 <!-- ===================== SELETTORE DOCUMENTO INIZIALE ===================== -->
 <div class="ocrbox no-print" id="docSelectBox" style="background:#fff;border-color:var(--blue)">
 <h3 class="grouph">Che documento devi predisporre?</h3>
