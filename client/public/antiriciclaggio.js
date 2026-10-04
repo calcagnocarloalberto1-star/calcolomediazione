@@ -1342,7 +1342,8 @@ if(box) box.scrollIntoView({behavior:"smooth"});
 function aggiornaBarraDocTarget(){
 const bar = $("docTargetBar"), lbl = $("docTargetLabel");
 if(!bar || !lbl) return;
-if(formatoPagina){ bar.style.display = "none"; return; }
+// Il selettore di documento singolo non e' piu' usato: la barra resta sempre nascosta.
+bar.style.display = "none"; return;
 if(documentoTarget && DOC_LABELS[documentoTarget]){
 const conFormato = (documentoTarget==="av" || documentoTarget==="svr");
 lbl.textContent = DOC_LABELS[documentoTarget] + (conFormato ? (" · Formato " + (usaFormatoGenova?"COA Genova":"generico")) : "");
@@ -1359,6 +1360,8 @@ function aggiornaSezione19(){
 const azione = $("azionePrincipale");
 if(!azione) return;
 if(formatoPagina){ renderAzioneFormato(azione); return; }
+azione.innerHTML = '<p class="sub">Scegli prima il modello (COA Genova o generico) in cima alla pagina: qui compariranno i pulsanti per generare e scaricare i documenti.</p>';
+return;
 if(!documentoTarget){
 azione.innerHTML = '<p class="sub">Scegli il documento da predisporre in cima alla pagina per vedere qui il pulsante di generazione, oppure apri «Altre opzioni» qui sotto per il fascicolo completo.</p>';
 return;
