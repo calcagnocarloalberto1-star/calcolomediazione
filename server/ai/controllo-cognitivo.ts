@@ -1,4 +1,4 @@
-import { callLLM } from "./llm.js";
+import { callLLM, etichettaRuolo } from "./llm.js";
 
 const TEORIE_DESCRIZIONI: Record<string, string> = {
   ancoraggio: "Ancoraggio (Anchoring): tendenza ad affidarsi eccessivamente alla prima informazione ricevuta",
@@ -50,7 +50,7 @@ Formatta l'output in Markdown con indicatori di rischio visivi, tabelle e matric
 ${descrizione}
 
 **Parti:**
-${parti.map(p => `- ${p.nome} (${p.ruolo})`).join("\n")}
+${parti.map(p => `- ${p.nome} (${etichettaRuolo(p.ruolo)})`).join("\n")}
 
 **Analisi precedenti:**
 ${analisiPrecedenti}

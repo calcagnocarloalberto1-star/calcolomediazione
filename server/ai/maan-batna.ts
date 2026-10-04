@@ -1,4 +1,4 @@
-import { callLLM } from "./llm.js";
+import { callLLM, etichettaRuolo } from "./llm.js";
 import { calcolaConfronto, formatEuro, type InputConfronto } from "../../shared/costi-procedura.js";
 
 export async function analisiMaanBatna(
@@ -93,7 +93,7 @@ ${valoreLite ? `Valore della lite: EUR ${valoreLite.toLocaleString('it-IT')}` : 
 ${descrizione}
 
 **Parti:**
-${parti.map(p => `- ${p.nome} (${p.ruolo})`).join("\n")}
+${parti.map(p => `- ${p.nome} (${etichettaRuolo(p.ruolo)})`).join("\n")}
 
 **Analisi precedenti:**
 ${analisiPrecedenti}${costiContext}

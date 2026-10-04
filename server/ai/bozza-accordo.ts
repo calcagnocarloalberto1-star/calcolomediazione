@@ -1,4 +1,4 @@
-import { callLLM } from "./llm.js";
+import { callLLM, etichettaRuolo } from "./llm.js";
 
 export async function bozzaAccordo(
   descrizione: string,
@@ -29,7 +29,7 @@ ${valoreLite ? `Valore della lite: €${valoreLite.toLocaleString('it-IT')}` : "
 ${descrizione}
 
 **Parti:**
-${parti.map(p => `- ${p.nome} (${p.ruolo})`).join("\n")}
+${parti.map(p => `- ${p.nome} (${etichettaRuolo(p.ruolo)})`).join("\n")}
 
 **Analisi precedenti (sintesi):**
 ${analisiPrecedenti}

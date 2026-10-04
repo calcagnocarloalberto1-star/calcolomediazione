@@ -1,4 +1,4 @@
-import { callLLM } from "./llm.js";
+import { callLLM, etichettaRuolo } from "./llm.js";
 
 export async function estrazioneEntita(
   descrizione: string,
@@ -31,7 +31,7 @@ Tabella con colonne: Documento | Tipo | Rilevanza
 ## 5. Questioni Giuridiche
 Tabella con colonne: Materia | Pretesa | Eccezione`;
 
-  const partiStr = parti.map(p => `- ${p.nome} (${p.ruolo})`).join("\n");
+  const partiStr = parti.map(p => `- ${p.nome} (${etichettaRuolo(p.ruolo)})`).join("\n");
 
   const userPrompt = `Analizza il seguente caso di mediazione ed estrai tutte le entità rilevanti.
 

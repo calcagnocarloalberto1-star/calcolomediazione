@@ -471,7 +471,7 @@ export function generateAnalisiPdf(analisi: AnalisiCaso): Buffer {
     ? `EUR ${Number(analisi.valoreLite).toLocaleString("it-IT", { minimumFractionDigits: 2 })}`
     : "Indeterminato");
   drawMeta("Materia", (analisi.tipoAnalisi === "mediazione"
-    ? "Contratti assicurativi - Mediazione obbligatoria"
+    ? "Mediazione civile e commerciale"
     : "Negoziazione Assistita"));
   if (analisi.stato) drawMeta("Stato", analisi.stato === "completata" ? "Analisi Completata" : analisi.stato);
   y += 10;
