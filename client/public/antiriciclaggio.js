@@ -2028,10 +2028,11 @@ const nome = parte.p_nome || "(nome non individuato)";
 const cf = parte.p_cf || "";
 const rapprInfo = parte.rappr_nome ? ("rappr./difensore: "+esc(parte.rappr_nome)) : "";
 const ruoloOptions = ["istante","aderente","terzo","altro"];
-const ruoloAttuale = ruoloOptions.includes(parte.p_ruolo) ? parte.p_ruolo : "istante";
+const ruoloAttuale = ruoloOptions.includes(parte.p_ruolo) ? parte.p_ruolo : "";
 const ruoloSelect = gia
 ? '<span style="font-size:11px;font-weight:700;padding:2px 8px;border-radius:999px;background:#eef3ff;color:#243559;margin-right:6px">'+ruoloAttuale+'</span>'
 : '<select id="assist_parte_ruolo_'+i+'" style="font-size:11px;font-weight:700;padding:2px 6px;border-radius:8px;margin-right:6px;width:auto">'
+  + (ruoloAttuale ? '' : '<option value="" selected>— scegli il ruolo —</option>')
   + ruoloOptions.map(r=>'<option value="'+r+'"'+(r===ruoloAttuale?' selected':'')+'>'+r.charAt(0).toUpperCase()+r.slice(1)+'</option>').join('')
   + '</select>';
 row.innerHTML =
@@ -2061,12 +2062,19 @@ if(btnTutto) btnTutto.addEventListener("click", assistApplicaTutto);
 $("assist_review").style.display = "block";
 }
 
+function ruoloOptions_ok(r){ return ["istante","aderente","terzo","altro"].includes(r); }
 function assistApplicaParte(idx, opts){
 opts = opts || {};
 const parte = assistParti[idx];
 if(!parte) return;
 const ruoloSel = $("assist_parte_ruolo_"+idx);
 if(ruoloSel && ruoloSel.value){ parte.p_ruolo = ruoloSel.value; }
+// Il ruolo non viene piu' preimpostato su "Istante": se la lettura AI non lo indica e
+// non e' stato scelto, ci si ferma, altrimenti una parte aderente finiva nel modulo come istante.
+if(!ruoloOptions_ok(parte.p_ruolo)){
+if(!opts.silenzioso) toast("Scegli prima il ruolo di questa parte (istante, aderente, terzo, altro), poi premi «Applica».");
+return;
+}
 if(assistPartiApplicate.size > 0){
 amlClearPartyFields();
 }
@@ -2084,6 +2092,9 @@ try{ el.dispatchEvent(new Event("input",{bubbles:true})); el.dispatchEvent(new E
 Object.keys(assistProcedura).forEach(k=>setAny(k, assistProcedura[k]));
 // Dati della parte: le chiavi coincidono gia' con gli id reali dei campi del modulo.
 Object.keys(parte).forEach(k=>setAny(k, parte[k]));
+// Se la lettura AI ha spuntato indicatori di anomalia, la domanda "Sono emersi
+// indicatori?" non puo' restare su "No" (il modulo risultava contraddittorio).
+if(document.querySelector('input[id^="cb_an_"]:checked')){ setAny("anomalie_presenti","si"); }
 assistPartiApplicate.add(idx);
 const row = $("assist_parte_row_"+idx);
 if(row){ row.style.background = "#f3f9f3"; row.style.borderColor = "#8fbf8f"; }
@@ -2110,6 +2121,8 @@ toast("Modulo generato per «"+(parte.p_nome||"senza nome")+"» e salvato nel fa
 function assistApplicaTutto(){
 const daApplicare = assistParti.map((_,i)=>i).filter(i=>!assistPartiApplicate.has(i));
 if(!daApplicare.length){ toast("Tutte le parti individuate sono gia' state applicate."); return; }
+const senzaRuolo = daApplicare.filter(i=>{ const sel=$("assist_parte_ruolo_"+i); const r=(sel&&sel.value)||assistParti[i].p_ruolo; return !ruoloOptions_ok(r); });
+if(senzaRuolo.length){ toast("Prima scegli il ruolo di ogni parte (menu accanto al nome), poi premi «Applica tutto»."); return; }
 daApplicare.forEach(idx=>assistApplicaParte(idx, {silenzioso:true}));
 toast("Applicate tutte le "+daApplicare.length+" parte/i restanti: ogni modulo e' stato generato e salvato nel fascicolo di questa procedura. Usa «Genera o stampa i modelli» più sotto per scaricare o stampare il fascicolo completo con tutte le parti.");
 }
