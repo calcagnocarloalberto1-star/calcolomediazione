@@ -1239,7 +1239,7 @@ try {
                       <SelectTrigger className="border-2 border-foreground" aria-label={`Ruolo di ${p.nome || `parte ${i + 1}`}`} data-testid={`select-party-ruolo-${i}`}><SelectValue /></SelectTrigger>
                       <SelectContent className="border-2 border-foreground">
                         <SelectItem value="istante">Istante</SelectItem>
-                        <SelectItem value="convenuto">Convenuto</SelectItem>
+                        <SelectItem value="convenuto">Chiamato</SelectItem>
                         <SelectItem value="terzo">Terzo</SelectItem>
                       </SelectContent>
                     </Select>
@@ -1557,7 +1557,7 @@ function StoricoAnalisi({ onLoadAnalisi }: { onLoadAnalisi: (a: AnalisiCaso) => 
 // EXAMPLE OUTPUT PREVIEW
 // ═══════════════════════════════════════════════════════════════════════════
 const EXAMPLE_SECTIONS = [
-  { step: 1, title: "Estrazione Entità (NER)", content: "**Parti identificate:**\n- **Rossi Mario** (Istante) — proprietario unità immobiliare piano 2°\n- **Condominio Via Garibaldi 15** (Convenuto)\n\n**Importi rilevanti:**\n| Voce | Importo |\n|---|---|\n| Danno da infiltrazioni | € 35.000 |\n| Preventivo riparazione | € 12.500 |" },
+  { step: 1, title: "Estrazione Entità (NER)", content: "**Parti identificate:**\n- **Rossi Mario** (Istante) — proprietario unità immobiliare piano 2°\n- **Condominio Via Garibaldi 15** (Chiamato)\n\n**Importi rilevanti:**\n| Voce | Importo |\n|---|---|\n| Danno da infiltrazioni | € 35.000 |\n| Preventivo riparazione | € 12.500 |" },
   { step: 2, title: "Analisi Giuridica", content: "**Materia:** Condominio (art. 5, co. 1, D.Lgs. 28/2010) — Mediazione obbligatoria\n\n**Inquadramento normativo:**\nLa controversia rientra nella responsabilità del condominio per danni derivanti da parti comuni (art. 1117 c.c.)." },
   { step: 3, title: "Guida Strategica", content: "**Strategia negoziale consigliata: Approccio collaborativo con ZOPA identificata**\n\n1. Presentare la quantificazione completa con documentazione a supporto\n2. ZOPA stimata: € 20.000 – € 28.000\n3. Evidenziare i costi della causa ordinaria vs. il costo della mediazione" },
   { step: 8, title: "Analisi Economica Comparativa", content: "| Voce | Mediazione | Causa Civile |\n|---|---|---|\n| Indennità organismo / C.U. | € 528 | € 518 |\n| Compenso avvocato | € 2.847 | € 5.936 |\n| **Totale** | **€ 3.375** | **€ 9.004** |\n\n**Risparmio con mediazione: € 6.229 (69%)**" },
