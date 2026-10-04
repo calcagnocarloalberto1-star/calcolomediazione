@@ -1927,10 +1927,13 @@ localStorage.removeItem(AML_MEDLOG_KEY);
 localStorage.removeItem(AML_FASCICOLO_KEY);
 localStorage.removeItem(AML_VERIFICA_IA_KEY);
 }catch(e){ /* storage non disponibile */ }
-renderDatiSuggerimento();
-renderProcedureSalvate();
-if(typeof renderStorico === "function") renderStorico();
-toast("Tutti i dati salvati su questo browser sono stati cancellati.");
+// Il modulo a schermo e le variabili in memoria (fascicolo accumulato, risultati dell'assistente,
+// comunicazioni) restavano pieni: al primo campo toccato il salvataggio automatico riscriveva
+// tutto e i dati «cancellati» ricomparivano. Si riparte quindi da una pagina nuova (navigazione,
+// non ricarica: il browser non ripristina i campi), che azzera anche la memoria della pagina.
+clearTimeout(amlAutosaveTimer);
+toast("Tutti i dati salvati su questo browser sono stati cancellati. Riapro la pagina pulita…");
+setTimeout(function(){ try{ window.location.replace(window.location.pathname + window.location.search); }catch(e){ window.location.reload(); } }, 700);
 }
 
 function renderAggiornamenti(){
