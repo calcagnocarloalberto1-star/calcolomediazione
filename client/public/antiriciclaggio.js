@@ -552,7 +552,7 @@ const el = $(cbId);
 return goCk(!!(el && el.checked), label);
 }
 function goRow(items){
-return '<div style="font-size:12.5px;margin:4px 0;line-height:1.8;font-family:'+GO_FONT+'">'+items.join(" &nbsp; &nbsp; ")+'</div>';
+return '<div style="font-size:12.5px;margin:1px 0;line-height:1.35;font-family:'+GO_FONT+'">'+items.join(" &nbsp; &nbsp; ")+'</div>';
 }
 function goField(label, value){
 const has = value && String(value).trim();
@@ -563,7 +563,7 @@ const has = value && String(value).trim();
 // vuota a un trattino appena visibile sotto il singolo spazio non-interrompibile,
 // facendo sembrare il modulo "non compilato" anche quando i dati inseriti altrove
 // sono corretti. Il segnaposto testuale è semplice testo: sopravvive sempre.
-return '<div style="font-size:12.5px;margin:4px 0;line-height:1.5;font-family:'+GO_FONT+'"><span style="font-weight:bold">'+esc(label)+':</span> '+(has?esc(value):'<span style="color:#9aa6b6">'+blank+'</span>')+'</div>';
+return '<div style="font-size:12.5px;margin:1px 0;line-height:1.3;font-family:'+GO_FONT+'"><span style="font-weight:bold">'+esc(label)+':</span> '+(has?esc(value):'<span style="color:#9aa6b6">'+blank+'</span>')+'</div>';
 }
 function goNote(text){
 return '<p style="font-size:12px;color:#555555;font-style:italic;font-family:'+GO_FONT+'">'+esc(text)+'</p>';
@@ -1270,6 +1270,70 @@ const box = $("docSelectBox"); if(box) box.style.display = "none";
 const bar = $("docTargetBar"); if(bar) bar.scrollIntoView({behavior:"smooth", block:"start"});
 }
 
+// ---------- Scelta del modello: COA Genova oppure generico ----------
+// Con un modello scelto la pagina mostra solo i pulsanti e i documenti di quel modello:
+// niente selettore di documento singolo (che scaricava la sola parte in compilazione),
+// ma il fascicolo con tutte le parti. Il modello si puo' impostare anche dall'indirizzo
+// (?formato=genova oppure ?formato=altri).
+const FORMATO_PAGINA_KEY = "calcolomediazione_aml_formato_pagina";
+let formatoPagina = null;
+try{
+const q = new URLSearchParams(location.search).get("formato");
+formatoPagina = (q==="genova" || q==="altri") ? q : localStorage.getItem(FORMATO_PAGINA_KEY);
+} catch(e){ /* storage non disponibile: si prosegue senza persistenza */ }
+if(formatoPagina !== "genova" && formatoPagina !== "altri") formatoPagina = null;
+
+function renderAzioneFormato(azione){
+if(formatoPagina === "genova"){
+azione.innerHTML =
+'<p class="sub">Modello COA Genova. 1) Premi «Genera»: il fascicolo contiene un Modulo AV e una Scheda di rischio per ciascuna parte applicata. 2) Scarica il Word. Per cambiare parte usa lo storico, non «Nuova parte».</p>'
++ '<div class="row-btns" style="margin-top:0">'
++ '<button class="btn-primary" type="button" data-ac-action="genera-formato" data-formato="genova">Genera il fascicolo COA Genova</button>'
++ '<button class="btn-ghost" type="button" data-ac-action="scarica-word">📄 Scarica il fascicolo in Word (tutte le parti)</button>'
++ '<button class="btn-primary" type="button" data-ac-action="stampa-genova">🖨️ Genera e stampa</button>'
++ '</div>';
+} else {
+azione.innerHTML =
+'<p class="sub">Modello generico. 1) Premi «Genera». 2) Scarica il Word con tutte le parti, oppure stampa i moduli in bianco da compilare a penna.</p>'
++ '<div class="row-btns" style="margin-top:0">'
++ '<button class="btn-primary" type="button" data-ac-action="genera-formato" data-formato="altri">Genera il fascicolo (modello generico)</button>'
++ '<button class="btn-ghost" type="button" data-ac-action="scarica-word">📄 Scarica il fascicolo in Word (tutte le parti)</button>'
++ '<button class="btn-ghost" type="button" data-ac-action="moduli-bianco">🖨️ Moduli in bianco (stampa)</button>'
++ '</div>';
+}
+}
+
+function applicaFormatoPagina(f, opts){
+formatoPagina = (f==="genova" || f==="altri") ? f : null;
+try{ if(formatoPagina) localStorage.setItem(FORMATO_PAGINA_KEY, formatoPagina); else localStorage.removeItem(FORMATO_PAGINA_KEY); } catch(e){ /* storage non disponibile */ }
+const choice = $("formatoChoiceBox"), bar = $("formatoBar"), lbl = $("formatoBarLabel"), sel = $("docSelectBox");
+if(formatoPagina){
+usaFormatoGenova = (formatoPagina === "genova");
+try{ localStorage.setItem(USA_FORMATO_GENOVA_KEY, usaFormatoGenova ? "1" : "0"); } catch(e){ /* storage non disponibile */ }
+const fm = $("formato_modello"); if(fm) fm.value = formatoPagina;
+if(choice) choice.style.display = "none";
+if(sel) sel.style.display = "none";
+if(lbl) lbl.textContent = formatoPagina === "genova" ? "Modello COA Genova" : "Modello generico";
+if(bar) bar.style.display = "flex";
+} else {
+if(choice) choice.style.display = "";
+if(bar) bar.style.display = "none";
+if(sel) sel.style.display = "none";
+}
+// Nell'accordion "Altre opzioni" restano solo le voci del modello scelto.
+document.querySelectorAll("#opzioniAvanzateBox > .inner > details").forEach(d=>{
+const sm = d.querySelector("summary"); const n = sm ? parseInt(sm.textContent.trim(), 10) : NaN;
+if(isNaN(n)) return;
+let mostra = true;
+if(formatoPagina === "genova") mostra = (n===1 || n===4 || n===5);
+else if(formatoPagina === "altri") mostra = (n===2 || n===3);
+d.style.display = mostra ? "" : "none";
+});
+aggiornaBarraDocTarget();
+aggiornaSezione19();
+if(!(opts && opts.silenzioso) && formatoPagina){ const b2 = $("formatoBar"); if(b2) b2.scrollIntoView({behavior:"smooth", block:"start"}); }
+}
+
 function mostraSelettoreDocumento(){
 const box = $("docSelectBox"); if(box) box.style.display = "";
 if(box) box.scrollIntoView({behavior:"smooth"});
@@ -1278,6 +1342,7 @@ if(box) box.scrollIntoView({behavior:"smooth"});
 function aggiornaBarraDocTarget(){
 const bar = $("docTargetBar"), lbl = $("docTargetLabel");
 if(!bar || !lbl) return;
+if(formatoPagina){ bar.style.display = "none"; return; }
 if(documentoTarget && DOC_LABELS[documentoTarget]){
 const conFormato = (documentoTarget==="av" || documentoTarget==="svr");
 lbl.textContent = DOC_LABELS[documentoTarget] + (conFormato ? (" · Formato " + (usaFormatoGenova?"COA Genova":"generico")) : "");
@@ -1293,6 +1358,7 @@ bar.style.display = "none";
 function aggiornaSezione19(){
 const azione = $("azionePrincipale");
 if(!azione) return;
+if(formatoPagina){ renderAzioneFormato(azione); return; }
 if(!documentoTarget){
 azione.innerHTML = '<p class="sub">Scegli il documento da predisporre in cima alla pagina per vedere qui il pulsante di generazione, oppure apri «Altre opzioni» qui sotto per il fascicolo completo.</p>';
 return;
@@ -2754,6 +2820,8 @@ if(control.tagName==="A") event.preventDefault();
 
 switch(action){
 case "scelta-documento": sceltaDocumento(control.dataset.doc); break;
+case "scegli-formato": applicaFormatoPagina(control.dataset.formato); break;
+case "cambia-formato": applicaFormatoPagina(null); break;
 case "mostra-selettore-documento": mostraSelettoreDocumento(); break;
 case "apri-cartella": { const input=$("assist_folder"); if(input) input.click(); break; }
 case "assist-estrai": assistEstrai(); break;
@@ -2804,4 +2872,5 @@ const box = $("docSelectBox"); if(box) box.style.display = "none";
 }
 aggiornaBarraDocTarget();
 aggiornaSezione19();
+applicaFormatoPagina(formatoPagina, {silenzioso:true});
 })();
