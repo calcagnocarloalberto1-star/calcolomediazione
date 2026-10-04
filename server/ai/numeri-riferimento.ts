@@ -133,6 +133,36 @@ export function costruisciScheda(d: DatiRiferimento): string {
   return righe.join("\n");
 }
 
+/** Importo scritto in un testo italiano ("16.000,00", "€ 18.410", "18410") -> numero. */
+function importoDaTesto(t: string): number | null {
+  const m = t.match(/(\d{1,3}(?:\.\d{3})+|\d+)(?:,\d{1,2})?/);
+  if (!m) return null;
+  const n = Number(m[1].replace(/\./g, ""));
+  return Number.isFinite(n) && n > 0 ? n : null;
+}
+
+/**
+ * Cerca nei documenti i limiti dei mandati (procure sostanziali): "non meno di € X" per l'istante,
+ * "non superiore a € Y" / "importo complessivo non superiore a" per il chiamato. Deterministico:
+ * il testo dei documenti puo' essere piu' lungo di quanto passato al modello e le procure stanno in fondo.
+ */
+export function limitiDaDocumenti(testo: string): { minimoIstante: number | null; massimoChiamato: number | null; estratti: string } {
+  const t = testo.replace(/\s+/g, " ");
+  const re = /(non\s+meno\s+di|non\s+inferiore\s+a)\s*(?:€|euro|eur)?\s*([\d.]+(?:,\d{1,2})?)/i;
+  const re2 = /(non\s+superiore\s+a|non\s+oltre|fino\s+a\s+un\s+massimo\s+di)\s*(?:€|euro|eur)?\s*([\d.]+(?:,\d{1,2})?)/i;
+  const a = t.match(re);
+  const b = t.match(re2);
+  const estratti: string[] = [];
+  for (const m of [a, b]) {
+    if (m && m.index !== undefined) estratti.push(t.slice(Math.max(0, m.index - 160), m.index + 220));
+  }
+  return {
+    minimoIstante: a ? importoDaTesto(a[2]) : null,
+    massimoChiamato: b ? importoDaTesto(b[2]) : null,
+    estratti: estratti.join("\n---\n"),
+  };
+}
+
 const SYSTEM_ESTRAZIONE = `Sei un analista di mediazione civile. Dai dati del caso estrai SOLO i numeri di partenza per un calcolo, e rispondi con un unico oggetto JSON, senza testo prima o dopo e senza blocchi di codice.
 
 Schema:
@@ -161,10 +191,16 @@ export async function schedaNumeriRiferimento(
   try {
     const { callLLM } = await import("./llm.js");
     const userPrompt = `Valore dichiarato della controversia: ${valoreLite ?? "non indicato"}\nParti: ${parti.map((p) => `${p.nome} (${p.ruolo})`).join(", ")}\n\nDescrizione:\n${descrizione.slice(0, 6000)}\n\nEstrazione entita':\n${nerResult.slice(0, 8000)}${documentiText ? `\n\nTesto dei documenti (procure, lettere, ricevute):\n${documentiText.slice(0, 14000)}` : ""}`;
-    const out = await callLLM(SYSTEM_ESTRAZIONE, userPrompt, 1500);
+    const lim = limitiDaDocumenti(documentiText);
+    const promptConLimiti = lim.estratti ? `${userPrompt}\n\nPassaggi dei documenti con i limiti dei mandati:\n${lim.estratti}` : userPrompt;
+    const out = await callLLM(SYSTEM_ESTRAZIONE, promptConLimiti, 1500);
     const m = out.match(/\{[\s\S]*\}/);
     if (!m) return null;
-    const dati = normalizzaDati(JSON.parse(m[0]));
+    const grezzo = JSON.parse(m[0]) as Record<string, unknown>;
+    // I limiti scritti nelle procure prevalgono su quelli stimati dal modello.
+    if (lim.minimoIstante !== null) grezzo.minimoIstante = lim.minimoIstante;
+    if (lim.massimoChiamato !== null) grezzo.massimoChiamato = lim.massimoChiamato;
+    const dati = normalizzaDati(grezzo);
     return dati ? costruisciScheda(dati) : null;
   } catch (err) {
     console.error("Errore scheda numeri di riferimento:", err);
