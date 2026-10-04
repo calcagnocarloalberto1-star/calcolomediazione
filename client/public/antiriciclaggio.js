@@ -552,7 +552,7 @@ const el = $(cbId);
 return goCk(!!(el && el.checked), label);
 }
 function goRow(items){
-return '<div style="font-size:12.5px;margin:4px 0;line-height:1.8;font-family:'+GO_FONT+'">'+items.join(" &nbsp; &nbsp; ")+'</div>';
+return '<div style="font-size:12.5px;margin:1px 0;line-height:1.35;font-family:'+GO_FONT+'">'+items.join(" &nbsp; &nbsp; ")+'</div>';
 }
 function goField(label, value){
 const has = value && String(value).trim();
@@ -563,7 +563,7 @@ const has = value && String(value).trim();
 // vuota a un trattino appena visibile sotto il singolo spazio non-interrompibile,
 // facendo sembrare il modulo "non compilato" anche quando i dati inseriti altrove
 // sono corretti. Il segnaposto testuale è semplice testo: sopravvive sempre.
-return '<div style="font-size:12.5px;margin:4px 0;line-height:1.5;font-family:'+GO_FONT+'"><span style="font-weight:bold">'+esc(label)+':</span> '+(has?esc(value):'<span style="color:#9aa6b6">'+blank+'</span>')+'</div>';
+return '<div style="font-size:12.5px;margin:1px 0;line-height:1.3;font-family:'+GO_FONT+'"><span style="font-weight:bold">'+esc(label)+':</span> '+(has?esc(value):'<span style="color:#9aa6b6">'+blank+'</span>')+'</div>';
 }
 function goNote(text){
 return '<p style="font-size:12px;color:#555555;font-style:italic;font-family:'+GO_FONT+'">'+esc(text)+'</p>';
