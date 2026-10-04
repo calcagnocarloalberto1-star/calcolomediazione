@@ -389,17 +389,37 @@ return fullText || null;
 // Priority 1: Anthropic Claude Haiku 4.5 — affidabile per markdown e tabelle.
 // Priority 2: Gemini 2.5 Flash — fallback economico, attivo solo se manca la
 // chiave Anthropic o se Anthropic restituisce null per errore.
+// 04/10/2026: regole comuni anteposte a OGNI prompt di sistema (tutte le sezioni
+// dell'analisi). Correggono errori emersi in un'analisi di prova: terminologia
+// ("convenuto"), citazioni normative sbagliate, numeri incoerenti tra sezioni,
+// dati inventati nella bozza di accordo.
+export const REGOLE_COMUNI = `REGOLE VINCOLANTI PER TUTTE LE SEZIONI (hanno la precedenza su ogni altra indicazione):
+1. TERMINOLOGIA. In mediazione la parte che riceve la domanda si chiama sempre "chiamato" / "chiamata" / "parte chiamata" (mai "convenuto", "convenuta", "resistente"), anche se nei dati il ruolo è indicato come "convenuto". La parte che deposita la domanda è "istante". Usa questi termini in ogni tabella, titolo e frase.
+2. FATTI. Usa solo fatti, date e importi presenti nei dati forniti. Non inventare versamenti, date, clausole, numeri di procedimento. Se un dato manca scrivi "[da indicare]"; se è già presente nei dati (data del contratto, canone, parti) riportalo e non lasciarlo da compilare.
+3. NORME. Cita un articolo solo se sei certo che corrisponda al contenuto. Per la locazione: vizi della cosa locata art. 1578 c.c.; riduzione/inadempimento del locatore artt. 1575-1576-1578 c.c.; intimazione di sfratto per morosità art. 658 c.p.c. (l'art. 657 riguarda lo sfratto per finita locazione); l'art. 1656 c.c. riguarda il subappalto e non va citato per la locazione. Nel dubbio usa una formula generica senza numero.
+4. COERENZA NUMERICA. Il valore atteso di una parte deve stare tra il suo risultato peggiore e il migliore: non può superare il credito né essere negativo. Definisci la ZOPA solo se il valore minimo accettabile del creditore è inferiore o uguale al massimo disponibile del debitore; altrimenti scrivi "ZOPA assente allo stato" e indica cosa dovrebbe cambiare. Usa una sola stima di probabilità di accordo (un intervallo) e richiamala allo stesso modo in tutte le sezioni; se un'altra sezione la corregge, motivalo.
+5. LIMITI. Distingui sempre dati forniti, stime tue e ipotesi. Le percentuali e le probabilità sono stime orientative e vanno presentate come tali. Non dare certezze sull'esito giudiziale.`;
+
+// Etichetta del ruolo da mostrare ai modelli: in mediazione la parte che riceve la
+// domanda è "chiamato", anche se il valore interno del campo resta "convenuto".
+export function etichettaRuolo(ruolo: string): string {
+const r = (ruolo || "").trim().toLowerCase();
+if (r === "convenuto" || r === "convenuta" || r === "resistente") return "chiamato";
+return ruolo;
+}
+
 export async function callLLM(
 systemPrompt: string,
 userPrompt: string,
 maxTokens: number = DEFAULT_MAX_TOKENS
 ): Promise<string> {
 // Priority 1: Anthropic
-const claude = await callAnthropic(systemPrompt, userPrompt, maxTokens);
+const systemConRegole = REGOLE_COMUNI + "\n\n" + systemPrompt;
+const claude = await callAnthropic(systemConRegole, userPrompt, maxTokens);
 if (claude) return cleanAIOutput(claude);
 
 // Priority 2: Gemini (fallback)
-const gemini = await callGemini(systemPrompt, userPrompt, maxTokens);
+const gemini = await callGemini(systemConRegole, userPrompt, maxTokens);
 if (gemini) return cleanAIOutput(gemini);
 
 // Fallback finale: placeholder
@@ -409,7 +429,7 @@ return generatePlaceholder(systemPrompt);
 // ─── PLACEHOLDER ──────────────────────────────────────────────────────────
 function generatePlaceholder(systemPrompt: string): string {
 if (systemPrompt.includes("NER") || systemPrompt.includes("entità")) {
-return `## Estrazione Entità (NER)\n\n### Parti Coinvolte\n\n| Parte | Ruolo | Interessi Identificati |\n|-------|-------|----------------------|\n| Parte Istante | Richiedente | Risoluzione controversia |\n| Parte Convenuta | Resistente | Tutela posizione |\n\n> *Configurare API Key per risultati completi*`;
+return `## Estrazione Entità (NER)\n\n### Parti Coinvolte\n\n| Parte | Ruolo | Interessi Identificati |\n|-------|-------|----------------------|\n| Parte Istante | Richiedente | Risoluzione controversia |\n| Parte Chiamata | Chiamato | Tutela posizione |\n\n> *Configurare API Key per risultati completi*`;
 }
 if (systemPrompt.includes("giuridica") || systemPrompt.includes("legale")) {
 return `## Analisi Giuridica\n\n### Quadro Normativo\n\nLa controversia si inquadra nel D.Lgs. 28/2010.\n\n> *Configurare API Key per risultati completi*`;

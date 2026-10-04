@@ -1,4 +1,4 @@
-import { callLLM } from "./llm.js";
+import { callLLM, etichettaRuolo } from "./llm.js";
 import { calcolaIndennita, formatEuro } from "../../shared/calcolo-indennita.js";
 import {
   confrontaNotarile,
@@ -331,7 +331,7 @@ VERIFICA CONGRUITA' CATASTALE (art. 29 D.M. 150/2023):
 Hai a disposizione i CALCOLI GIA' EFFETTUATI dal sistema. Il tuo compito è SOLO presentarli in modo professionale, commentarli e trarre conclusioni. NON ricalcolare nulla — usa esclusivamente i numeri forniti.`;
 
   const userPrompt = `Caso: ${descrizione}
-Parti: ${parti.map((p) => `${p.nome} (${p.ruolo})`).join(", ")}
+Parti: ${parti.map((p) => `${p.nome} (${etichettaRuolo(p.ruolo)})`).join(", ")}
 Valore della lite: ${formatEuro(valore)}
 Tipo: ${tipoAnalisi === "mediazione" ? "Mediazione civile" : "Negoziazione assistita"}
 Tariffario: ${isGenova ? "COA Genova" : "Nazionale D.M. 150/2023"}

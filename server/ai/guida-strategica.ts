@@ -1,4 +1,4 @@
-import { callLLM } from "./llm.js";
+import { callLLM, etichettaRuolo } from "./llm.js";
 
 export async function guidaStrategica(
   descrizione: string,
@@ -35,7 +35,7 @@ Inserisci 4 righe con tecniche specifiche per questo caso. Celle brevi, max 40 c
 
 Sii specifico per il caso, non generico. Risposte concise. Formatta in Markdown.`;
 
-  const partiStr = parti.map(p => `- ${p.nome} (${p.ruolo})`).join("\n");
+  const partiStr = parti.map(p => `- ${p.nome} (${etichettaRuolo(p.ruolo)})`).join("\n");
 
   const userPrompt = `Fornisci la guida strategica per il seguente caso di mediazione.
 
