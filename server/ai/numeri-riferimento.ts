@@ -88,7 +88,7 @@ export function costruisciScheda(d: DatiRiferimento): string {
   const righe: string[] = [];
   righe.push("DATI DI CALCOLO DEL CASO (importi gia' calcolati: usa ESCLUSIVAMENTE questi numeri in tutte le sezioni, senza ricalcolarli e senza proporne altri per le stesse grandezze; non nominare mai questo blocco, scrivi come se i numeri fossero fatti del caso)");
   righe.push(`- Credito rivendicato dall'istante: euro ${fmt(d.creditoTotale)}`);
-  if (d.offertaChiamato !== null) righe.push(`- Offerta attuale del chiamato: euro ${fmt(d.offertaChiamato)}`);
+  if (d.offertaChiamato !== null) righe.push(`- Offerta attuale del chiamato: euro ${fmt(d.offertaChiamato)} (impegno di pagamento offerto, ancora da versare: non e' una somma gia' pagata)`);
   if (d.minimoIstante !== null) righe.push(`- Minimo accettabile dall'istante: euro ${fmt(d.minimoIstante)}`);
   if (d.massimoChiamato !== null) righe.push(`- Massimo disponibile per il chiamato: euro ${fmt(d.massimoChiamato)}`);
 
@@ -129,7 +129,7 @@ export function costruisciScheda(d: DatiRiferimento): string {
     const etichetta = mediano !== null ? "punto mediano della ZOPA" : "offerta attuale";
     righe.push(`- Confronto con l'accordo a euro ${fmt(x)} (${etichetta}): l'istante incassa euro ${fmt(istanteAccordo)} netti contro euro ${fmt(istanteGiudizio)} del giudizio (${istanteAccordo >= istanteGiudizio ? "l'accordo rende di piu'" : "il giudizio rende di piu' sul solo piano economico: la convenienza dell'accordo va motivata con tempi, rischio di insolvenza e certezza"}); il chiamato paga euro ${fmt(chiamatoAccordo)} contro euro ${fmt(chiamatoGiudizio)} del giudizio (${chiamatoAccordo <= chiamatoGiudizio ? "l'accordo costa di meno" : "l'accordo costa di piu' sul solo piano economico"})`);
   }
-  righe.push("Usa questi numeri come dati del caso, senza nominare questo blocco ne' commentarlo: non scrivere mai le parole scheda o dati di calcolo.");
+  righe.push("Usa questi numeri come dati del caso, senza nominare questo blocco ne' commentarlo: non scrivere mai le parole scheda, blocco dati o dati di calcolo. Il valore atteso lordo e netto e' uno solo, quello sopra: non produrne altre versioni.");
   return righe.join("\n");
 }
 
