@@ -1772,6 +1772,9 @@ return;
 const partyKey = amlPartyKey();
 const all = amlDatiLoadAll();
 if(!all[procKey]) all[procKey] = {};
+// Quando la parte ha un nome, il record provvisorio «(parte senza nome)» salvato prima
+// che il nome fosse inserito e' superato: lo togliamo, cosi' non resta come voce fantasma.
+if(partyKey !== "(parte senza nome)" && all[procKey]["(parte senza nome)"]) delete all[procKey]["(parte senza nome)"];
 all[procKey][partyKey] = {
 ts: new Date().toISOString(),
 role: role,
@@ -1847,11 +1850,11 @@ const procKeys = Array.from(new Set([...Object.keys(datiAll), ...Object.keys(sto
 if(!procKeys.length){ box.innerHTML = '<p class="hint">Nessuna procedura con dati salvati su questo browser.</p>'; return; }
 box.innerHTML = procKeys.map(pk=>{
 const partyKeys = Array.from(new Set([...Object.keys(datiAll[pk]||{}), ...Object.keys(storicoAll[pk]||{})]));
-const righeParti = partyKeys.map(party=>{
+const righeParti = partyKeys.filter(party=>party !== "(parte senza nome)" || partyKeys.length === 1).map(party=>{
 const d = datiAll[pk] && datiAll[pk][party];
 const ultimo = d ? new Date(d.ts).toLocaleString("it-IT") : "";
 return '<div style="display:flex;justify-content:space-between;align-items:center;gap:8px;padding:3px 0 3px 14px;font-size:12.5px">'
-+ '<span>· '+esc(party)+(ultimo ? ' — '+esc(ultimo) : ' — solo storico generazioni')+'</span>'
++ '<span>· '+esc(party === "(parte senza nome)" ? "Parte non ancora denominata" : party)+(ultimo ? ' — '+esc(ultimo) : ' — solo storico generazioni')+'</span>'
 + '<a href="#" data-open-proc="'+esc(pk)+'" data-open-party="'+esc(party)+'" style="color:#a03317;text-decoration:none;font-weight:600;white-space:nowrap">Apri ›</a>'
 + '</div>';
 }).join("");
