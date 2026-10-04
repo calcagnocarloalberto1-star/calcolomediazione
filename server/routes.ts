@@ -12,6 +12,7 @@ import { compatibilitaInteressi } from "./ai/compatibilita-interessi.js";
 import { controlloBiasCognitivi } from "./ai/controllo-cognitivo.js";
 import { bozzaAccordo } from "./ai/bozza-accordo.js";
 import { analisiEconomica } from "./ai/analisi-economica.js";
+import { schedaNumeriRiferimento } from "./ai/numeri-riferimento.js";
 import { redigiDati, ripristinaTesto, redigiMultiplo } from "./ai/redazione.js";
 import { callLLM, estraiDocumentoAI, assistenteCompilazioneAI, cercaGiurisprudenzaAI, rispostaAssistente, serviziAIDisponibili } from "./ai/llm.js";
 import { BASE_CONOSCENZA } from "./ai/assistente-kb.js";
@@ -1614,15 +1615,22 @@ const nerResult = await safeStep(
 );
 await storage.updateAnalisi(id, { prospettoEconomico: ripristinaTesto(nerResult, mappa) });
 
+// ─── NUMERI DI RIFERIMENTO (calcolati una sola volta) ───────────────────
+// Importi, ZOPA, valore atteso e probabilita' di accordo sono calcolati qui e
+// passati a tutte le sezioni successive, cosi' non vengono ricalcolati con
+// ipotesi diverse. Se l'estrazione fallisce la pipeline prosegue come prima.
+const schedaNumeri = await schedaNumeriRiferimento(descrizioneRedatta, partiRedatte, valoreLite, nerResult);
+const descrizioneAnalisi = schedaNumeri ? `${descrizioneRedatta}\n\n${schedaNumeri}` : descrizioneRedatta;
+
 // ─── LIVELLO 1: Giuridica + Strategica (dipendono solo dal NER) ────────
 // Girano in parallelo: la Strategica non deve piu' aspettare la Giuridica.
 const [giuridicaResult, strategicaResult] = await Promise.all([
 safeStep(
-() => analisiGiuridica(descrizioneRedatta, partiRedatte, truncate(nerResult), tipoAnalisi),
+() => analisiGiuridica(descrizioneAnalisi, partiRedatte, truncate(nerResult), tipoAnalisi),
 '[Analisi giuridica non disponibile]', 'Giuridica'
 ),
 safeStep(
-() => guidaStrategica(descrizioneRedatta, partiRedatte, truncate(nerResult)),
+() => guidaStrategica(descrizioneAnalisi, partiRedatte, truncate(nerResult)),
 '[Guida strategica non disponibile]', 'Strategica'
 ),
 ]);
@@ -1635,15 +1643,15 @@ guidaStrategica: ripristinaTesto(strategicaResult, mappa),
 // Tre chiamate in parallelo.
 const [maanResult, biasResult, economicaResult] = await Promise.all([
 safeStep(
-() => analisiMaanBatna(descrizioneRedatta, partiRedatte, valoreLite, truncate(giuridicaResult)),
+() => analisiMaanBatna(descrizioneAnalisi, partiRedatte, valoreLite, truncate(giuridicaResult)),
 '[Analisi MAAN/BATNA non disponibile]', 'MAAN/BATNA'
 ),
 safeStep(
-() => controlloBiasCognitivi(descrizioneRedatta, partiRedatte, teorieSelezionate, truncate(giuridicaResult)),
+() => controlloBiasCognitivi(descrizioneAnalisi, partiRedatte, teorieSelezionate, truncate(giuridicaResult)),
 '[Controllo bias non disponibile]', 'Bias'
 ),
 safeStep(
-() => analisiEconomica(descrizioneRedatta, partiRedatte, valoreLite, tipoAnalisi, truncate(giuridicaResult), opzioniEconomiche),
+() => analisiEconomica(descrizioneAnalisi, partiRedatte, valoreLite, tipoAnalisi, truncate(giuridicaResult), opzioniEconomiche),
 '[Analisi economica non disponibile]', 'Economica'
 ),
 ]);
@@ -1655,14 +1663,14 @@ analisiEconomica: ripristinaTesto(economicaResult, mappa),
 
 // ─── LIVELLO 3: Compatibilita (dipende da Giuridica + MAAN) ────────────
 const compatibilitaResult = await safeStep(
-() => compatibilitaInteressi(descrizioneRedatta, partiRedatte, `${truncate(giuridicaResult, 8000)}\n\n${truncate(maanResult, 8000)}`),
+() => compatibilitaInteressi(descrizioneAnalisi, partiRedatte, `${truncate(giuridicaResult, 8000)}\n\n${truncate(maanResult, 8000)}`),
 '[Compatibilita interessi non disponibile]', 'Compatibilita'
 );
 await storage.updateAnalisi(id, { compatibilitaInteressi: ripristinaTesto(compatibilitaResult, mappa) });
 
 // ─── LIVELLO 4: Bozza accordo (dipende da Giuridica + Compatibilita) ───
 const bozzaResult = await safeStep(
-() => bozzaAccordo(descrizioneRedatta, partiRedatte, valoreLite, `${truncate(giuridicaResult, 8000)}\n\n${truncate(compatibilitaResult, 8000)}`),
+() => bozzaAccordo(descrizioneAnalisi, partiRedatte, valoreLite, `${truncate(giuridicaResult, 8000)}\n\n${truncate(compatibilitaResult, 8000)}`),
 '[Bozza accordo non disponibile]', 'Accordo'
 );
 await storage.updateAnalisi(id, { bozzaAccordo: ripristinaTesto(bozzaResult, mappa), stato: "completata" });
