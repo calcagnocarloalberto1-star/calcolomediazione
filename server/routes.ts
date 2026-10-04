@@ -1619,7 +1619,7 @@ await storage.updateAnalisi(id, { prospettoEconomico: ripristinaTesto(nerResult,
 // Importi, ZOPA, valore atteso e probabilita' di accordo sono calcolati qui e
 // passati a tutte le sezioni successive, cosi' non vengono ricalcolati con
 // ipotesi diverse. Se l'estrazione fallisce la pipeline prosegue come prima.
-const schedaNumeri = await schedaNumeriRiferimento(descrizioneRedatta, partiRedatte, valoreLite, nerResult);
+const schedaNumeri = await schedaNumeriRiferimento(descrizioneRedatta, partiRedatte, valoreLite, nerResult, documentiTextRedatto);
 const descrizioneAnalisi = schedaNumeri ? `${descrizioneRedatta}\n\n${schedaNumeri}` : descrizioneRedatta;
 
 // ─── LIVELLO 1: Giuridica + Strategica (dipendono solo dal NER) ────────

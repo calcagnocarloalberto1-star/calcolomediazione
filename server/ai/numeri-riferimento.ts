@@ -51,6 +51,8 @@ export function normalizzaDati(raw: unknown): DatiRiferimento | null {
     const p = num(o.probabilita);
     const imp = num(o.importoCondanna);
     if (p === null || imp === null) continue;
+    // Gli scenari sono solo quelli del giudizio: l'accordo non e' uno scenario del giudizio.
+    if (typeof o.descrizione === "string" && /accord|mediazion|conciliaz|transaz/i.test(o.descrizione)) continue;
     scenari.push({
       descrizione: typeof o.descrizione === "string" ? o.descrizione.slice(0, 120) : "Scenario",
       probabilita: p,
@@ -84,7 +86,7 @@ export function normalizzaDati(raw: unknown): DatiRiferimento | null {
 /** Calcola la scheda in testo: tutti i numeri derivati sono calcolati qui, non dal modello. */
 export function costruisciScheda(d: DatiRiferimento): string {
   const righe: string[] = [];
-  righe.push("SCHEDA NUMERI DI RIFERIMENTO (calcolata una sola volta: usa ESCLUSIVAMENTE questi numeri in tutte le sezioni, senza ricalcolarli e senza proporne altri per le stesse grandezze)");
+  righe.push("DATI DI CALCOLO DEL CASO (importi gia' calcolati: usa ESCLUSIVAMENTE questi numeri in tutte le sezioni, senza ricalcolarli e senza proporne altri per le stesse grandezze; non nominare mai questo blocco, scrivi come se i numeri fossero fatti del caso)");
   righe.push(`- Credito rivendicato dall'istante: euro ${fmt(d.creditoTotale)}`);
   if (d.offertaChiamato !== null) righe.push(`- Offerta attuale del chiamato: euro ${fmt(d.offertaChiamato)}`);
   if (d.minimoIstante !== null) righe.push(`- Minimo accettabile dall'istante: euro ${fmt(d.minimoIstante)}`);
@@ -127,7 +129,7 @@ export function costruisciScheda(d: DatiRiferimento): string {
     const etichetta = mediano !== null ? "punto mediano della ZOPA" : "offerta attuale";
     righe.push(`- Confronto con l'accordo a euro ${fmt(x)} (${etichetta}): l'istante incassa euro ${fmt(istanteAccordo)} netti contro euro ${fmt(istanteGiudizio)} del giudizio (${istanteAccordo >= istanteGiudizio ? "l'accordo rende di piu'" : "il giudizio rende di piu' sul solo piano economico: la convenienza dell'accordo va motivata con tempi, rischio di insolvenza e certezza"}); il chiamato paga euro ${fmt(chiamatoAccordo)} contro euro ${fmt(chiamatoGiudizio)} del giudizio (${chiamatoAccordo <= chiamatoGiudizio ? "l'accordo costa di meno" : "l'accordo costa di piu' sul solo piano economico"})`);
   }
-  righe.push("Usa questi numeri come dati del caso, senza citare questa scheda e senza commentarla.");
+  righe.push("Usa questi numeri come dati del caso, senza nominare questo blocco ne' commentarlo: non scrivere mai le parole scheda o dati di calcolo.");
   return righe.join("\n");
 }
 
@@ -146,18 +148,19 @@ Schema:
   "probabilitaAccordoMax": percentuale oppure null
 }
 
-Regole: usa solo importi presenti nei dati; se un limite non e' indicato usa null; gli scenari sono 3 (esito favorevole al chiamato, intermedio, favorevole all'istante) con probabilita' realistiche che sommano 100; l'importo di condanna non supera il credito; i costi sono stime prudenti coerenti con il valore della controversia. Numeri puri, senza punti dei migliaia ne' simboli.`;
+Regole: i limiti minimoIstante e massimoChiamato si trovano nelle procure sostanziali o nelle lettere degli avvocati presenti nei documenti: cercali li'; usa solo importi presenti nei dati; se un limite non e' indicato usa null; gli scenari sono 3 e riguardano SOLO il giudizio, mai l'accordo in mediazione (esito favorevole al chiamato, intermedio, favorevole all'istante) con probabilita' realistiche che sommano 100; l'importo di condanna non supera il credito; i costi sono stime prudenti coerenti con il valore della controversia. Numeri puri, senza punti dei migliaia ne' simboli.`;
 
 /** Estrae i dati di partenza con una sola chiamata e costruisce la scheda. Null se non riesce. */
 export async function schedaNumeriRiferimento(
   descrizione: string,
   parti: Array<{ nome: string; ruolo: string }>,
   valoreLite: unknown,
-  nerResult: string
+  nerResult: string,
+  documentiText: string = ""
 ): Promise<string | null> {
   try {
     const { callLLM } = await import("./llm.js");
-    const userPrompt = `Valore dichiarato della controversia: ${valoreLite ?? "non indicato"}\nParti: ${parti.map((p) => `${p.nome} (${p.ruolo})`).join(", ")}\n\nDescrizione:\n${descrizione.slice(0, 6000)}\n\nEstrazione entita':\n${nerResult.slice(0, 8000)}`;
+    const userPrompt = `Valore dichiarato della controversia: ${valoreLite ?? "non indicato"}\nParti: ${parti.map((p) => `${p.nome} (${p.ruolo})`).join(", ")}\n\nDescrizione:\n${descrizione.slice(0, 6000)}\n\nEstrazione entita':\n${nerResult.slice(0, 8000)}${documentiText ? `\n\nTesto dei documenti (procure, lettere, ricevute):\n${documentiText.slice(0, 14000)}` : ""}`;
     const out = await callLLM(SYSTEM_ESTRAZIONE, userPrompt, 1500);
     const m = out.match(/\{[\s\S]*\}/);
     if (!m) return null;
