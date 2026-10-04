@@ -197,6 +197,7 @@ return manuale;
 function yn(id){ const x=v(id); if(x==="si"||x==="1") return "Sì"; if(x==="no"||x==="0") return "No"; if(x==="na") return "Non applicabile"; return x?esc(x):blank; }
 function optText(sel,val_){ const el=$(sel); if(!el) return val_; const o=[...el.options].find(o=>o.value===val_); return o?o.textContent:val_; }
 function selText(id){ const el=$(id); if(!el) return ""; return el.options[el.selectedIndex] ? el.options[el.selectedIndex].textContent : ""; }
+function itDates(s){ return String(s==null?"":s).replace(/\b(\d{4})-(\d{2})-(\d{2})\b/g,"$3/$2/$1"); }
 function dateIt(id){ const x=v(id); return x? new Date(x).toLocaleDateString("it-IT") : ""; }
 
 function modAV(){
@@ -212,7 +213,7 @@ if(isPG){
 inner += kv([
 ["Denominazione", val("p_nome")],
 ["Forma giuridica", val("p_forma_giuridica")],
-["Sede legale", val("p_nascita")],
+["Sede legale", itDates(val("p_nascita"))],
 ["Capitale sociale (ove applicabile)", val("p_capitale_sociale")],
 ["C.F./P. IVA", val("p_cf")],
 ["PEC", val("p_pec")],
@@ -221,7 +222,7 @@ inner += kv([
 } else {
 inner += kv([
 ["Nome e cognome", val("p_nome")],
-["Luogo e data di nascita", val("p_nascita")],
+["Luogo e data di nascita", itDates(val("p_nascita"))],
 ["Codice fiscale", val("p_cf")],
 ["Residenza", val("p_res")],
 ["Cittadinanza", val("p_cittadinanza")],
@@ -243,7 +244,7 @@ if(rappr && rappr!=="nessuno"){
 inner += kv([
 ["Titolo di intervento", optText("rappr_ruolo",rappr)+(rappr==="altro"?" — "+val("rappr_ruolo_altro"):"")],
 ["Nome e cognome", val("rappr_nome")],
-["Luogo e data di nascita", val("rappr_nascita")],
+["Luogo e data di nascita", itDates(val("rappr_nascita"))],
 ["Codice fiscale", val("rappr_cf")],
 ["Residenza", val("rappr_res")],
 ["Cittadinanza", val("rappr_cittadinanza")],
@@ -276,7 +277,7 @@ if(v("te_pf_opzione")==="terzo"){
 inner += kv([
 ["La parte agisce", "nell’interesse o per conto di un soggetto terzo"],
 ["Nome e cognome del titolare effettivo", val("te3_nome")],
-["Luogo e data di nascita", val("te3_nascita")],
+["Luogo e data di nascita", itDates(val("te3_nascita"))],
 ["Codice fiscale", val("te3_cf")],
 ["Residenza", val("te3_res")],
 ["Cittadinanza", val("te3_cittadinanza")],
@@ -289,7 +290,7 @@ inner += '<p>Il dichiarante afferma di agire nel proprio esclusivo interesse: no
 inner += kv([
 ["Criterio di individuazione", cbList("tecrit",{propdiretta:"Proprietà diretta",propindiretta:"Proprietà indiretta",controllo:"Controllo",poteri:"Poteri di amministrazione o direzione"})+(v("te_percentuale")?"; % partecipazione: "+val("te_percentuale"):"")],
 ["Nome e cognome", val("te_nome")],
-["Luogo e data di nascita", val("te_nascita")],
+["Luogo e data di nascita", itDates(val("te_nascita"))],
 ["Codice fiscale", val("te_cf")],
 ["Numero titolari effettivi individuati", val("te_numero")],
 ["Fonte documentale utilizzata", cbList("tefonte",{visura:"Visura camerale",statuto:"Statuto",libro:"Libro soci",assetto:"Assetto proprietario dichiarato",docsoc:"Documentazione societaria",dichparte:"Dichiarazione della parte"})],
@@ -489,6 +490,7 @@ const lvl = calcRisk();
 // a parte (☐/☑ nel modulo cartaceo "Moduli in bianco").
 const esito = lvl==="ALTO" ? "fattore di rischio elevato rilevato dal calcolo automatico → valutare la redazione del Modulo SI-AML/01 e la trasmissione al RAR"
 : lvl.indexOf("DA VALUTARE")===0 ? "valutazione del rischio non ancora effettuata (compilare le sezioni 7-11 della Scheda rischio)"
+: (lvl==="MEDIO" || document.querySelector('input[id^="cb_an_"]:checked')) ? "elementi di attenzione rilevati (rischio medio e/o indicatori di anomalia spuntati): completare gli approfondimenti indicati nella Scheda rischio prima di concludere"
 : "nessuna anomalia rilevata dal calcolo automatico";
 return docBlock("m6","FOGLIO DI ANNOTAZIONE AML — allegato riservato al fascicolo (NON inserire nel verbale)",
 kv([
@@ -671,7 +673,7 @@ h += goBar("SEZIONE B — DATI DELLA PARTE");
 if(!isPG){
 h += goSub("Persona fisica");
 h += goField("Nome e cognome", v("p_nome"));
-h += goField("Luogo e data di nascita", v("p_nascita"));
+h += goField("Luogo e data di nascita", itDates(v("p_nascita")));
 h += goField("Codice fiscale", v("p_cf"));
 h += goField("Residenza", v("p_res"));
 h += goField("Cittadinanza", v("p_cittadinanza"));
@@ -688,7 +690,7 @@ h += goField("Settore di attività", v("p_settore"));
 h += goSub("Persona giuridica");
 h += goField("Denominazione", v("p_nome"));
 h += goField("Forma giuridica", v("p_forma_giuridica"));
-h += goField("Sede legale", v("p_nascita"));
+h += goField("Sede legale", itDates(v("p_nascita")));
 h += goField("Capitale sociale (ove applicabile)", v("p_capitale_sociale"));
 h += goField("C.F./P. IVA", v("p_cf"));
 h += goField("PEC", v("p_pec"));
@@ -700,7 +702,7 @@ const rappr = v("rappr_ruolo");
 if(rappr && rappr!=="nessuno"){
 h += goRow([goCkSel("rappr_ruolo","legale_rapp","Legale rappresentante della società o dell'ente")]);
 h += goField("Nome e cognome", v("rappr_nome"));
-h += goField("Luogo e data di nascita", v("rappr_nascita"));
+h += goField("Luogo e data di nascita", itDates(v("rappr_nascita")));
 h += goField("Codice fiscale", v("rappr_cf"));
 h += goField("Residenza", v("rappr_res"));
 h += goField("Cittadinanza", v("rappr_cittadinanza"));
@@ -737,7 +739,7 @@ h += goRow([goCkSel("te_pf_opzione","proprio","Di agire nel proprio esclusivo in
 h += goRow([goCkSel("te_pf_opzione","terzo","Di agire nell'interesse o per conto del seguente soggetto:")]);
 if(v("te_pf_opzione")==="terzo"){
 h += goField("Nome e cognome", v("te3_nome"));
-h += goField("Luogo e data di nascita", v("te3_nascita"));
+h += goField("Luogo e data di nascita", itDates(v("te3_nascita")));
 h += goField("Codice fiscale", v("te3_cf"));
 h += goField("Residenza", v("te3_res"));
 h += goField("Cittadinanza", v("te3_cittadinanza"));
@@ -2892,7 +2894,7 @@ function analizzaTrigger(){
 const fired = TRIGGERS.filter(t=>trigState[t.id]);
 ultimiTriggerFired = fired;
 const anEl = $("anomalie_presenti");
-if(anEl) anEl.value = fired.length ? "si" : "no";
+if(anEl) anEl.value = (fired.length || document.querySelector('input[id^="cb_an_"]:checked')) ? "si" : "no";
 const ids = fired.map(t=>t.id); const has = x=>ids.includes(x);
 const combos = [];
 if(has("T1")&&has("T4")) combos.push("T1+T4 (fatto nuovo + reticenza)");
