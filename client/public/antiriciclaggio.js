@@ -1288,9 +1288,10 @@ if(formatoPagina !== "genova" && formatoPagina !== "altri") formatoPagina = null
 function renderAzioneFormato(azione){
 if(formatoPagina === "genova"){
 azione.innerHTML =
-'<p class="sub">Per ogni parte: completa i dati mancanti e premi «Genera». Quando hai finito tutte le parti, scarica il Word: contiene un Modulo AV e una Scheda di rischio per ciascuna parte.</p>'
+'<p class="sub">Per ogni parte: completa i dati mancanti e premi «Genera». Quando hai finito tutte le parti, stampa o salva in PDF, oppure scarica il Word: contengono un Modulo AV e una Scheda di rischio per ciascuna parte.</p>'
 + '<div class="row-btns" style="margin-top:0">'
 + '<button class="btn-primary" type="button" data-ac-action="genera-formato" data-formato="genova">Genera il fascicolo COA Genova</button>'
++ '<button class="btn-ghost" type="button" data-ac-action="stampa-genova">🖨️ Stampa o salva in PDF (tutte le parti)</button>'
 + '<button class="btn-ghost" type="button" data-ac-action="scarica-word">📄 Scarica il fascicolo in Word (tutte le parti)</button>'
 + '</div>';
 } else {
