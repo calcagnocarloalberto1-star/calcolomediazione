@@ -1286,11 +1286,10 @@ if(formatoPagina !== "genova" && formatoPagina !== "altri") formatoPagina = null
 function renderAzioneFormato(azione){
 if(formatoPagina === "genova"){
 azione.innerHTML =
-'<p class="sub">Modello COA Genova. 1) Premi «Genera»: il fascicolo contiene un Modulo AV e una Scheda di rischio per ciascuna parte applicata. 2) Scarica il Word. Per cambiare parte usa lo storico, non «Nuova parte».</p>'
+'<p class="sub">Per ogni parte: completa i dati mancanti e premi «Genera». Quando hai finito tutte le parti, scarica il Word: contiene un Modulo AV e una Scheda di rischio per ciascuna parte.</p>'
 + '<div class="row-btns" style="margin-top:0">'
 + '<button class="btn-primary" type="button" data-ac-action="genera-formato" data-formato="genova">Genera il fascicolo COA Genova</button>'
 + '<button class="btn-ghost" type="button" data-ac-action="scarica-word">📄 Scarica il fascicolo in Word (tutte le parti)</button>'
-+ '<button class="btn-primary" type="button" data-ac-action="stampa-genova">🖨️ Genera e stampa</button>'
 + '</div>';
 } else {
 azione.innerHTML =
@@ -1325,14 +1324,119 @@ document.querySelectorAll("#opzioniAvanzateBox > .inner > details").forEach(d=>{
 const sm = d.querySelector("summary"); const n = sm ? parseInt(sm.textContent.trim(), 10) : NaN;
 if(isNaN(n)) return;
 let mostra = true;
-if(formatoPagina === "genova") mostra = (n===1 || n===4 || n===5);
+if(formatoPagina === "genova") mostra = (n===5);
 else if(formatoPagina === "altri") mostra = (n===2 || n===3);
 d.style.display = mostra ? "" : "none";
 });
+document.body.classList.toggle("fmt-genova", formatoPagina === "genova");
+document.querySelectorAll(".body .note").forEach(n=>{ if(/strumento operativo/.test(n.textContent)) n.style.display = (formatoPagina==="genova") ? "none" : ""; });
+const adv = $("opzioniAvanzateBox");
+if(adv){
+const sm = adv.querySelector(":scope > summary");
+if(sm && sm.firstChild){
+if(!sm.dataset.orig) sm.dataset.orig = sm.firstChild.textContent;
+sm.firstChild.textContent = (formatoPagina==="genova") ? "Scheda di verifica del Responsabile / RAR " : sm.dataset.orig;
+}
+}
+genovaPanelAggiorna();
 aggiornaBarraDocTarget();
 aggiornaSezione19();
 if(!(opts && opts.silenzioso) && formatoPagina){ const b2 = $("formatoBar"); if(b2) b2.scrollIntoView({behavior:"smooth", block:"start"}); }
 }
+
+// ---------- Pannello "parti e dati da completare" del modello COA Genova ----------
+// Elenca le parti gia' applicate (con un pulsante per riaprirle) e, per la parte a
+// schermo, i dati che nel modello risultano ancora vuoti: ogni voce porta al campo.
+const GENOVA_MANCANTI = [
+{id:"p_nome", sez:"4", t:"Cognome e nome / denominazione"},
+{id:"p_cf", sez:"4", t:"Codice fiscale / P. IVA"},
+{id:"p_res", sez:"4", t:"Residenza / sede legale"},
+{id:"p_ident_modalita", sez:"3", t:"Modalità di identificazione"},
+{id:"p_doc_valido", sez:"3", t:"Documento verificato e in corso di validità"},
+{id:"rappr_nome", sez:"5", t:"Rappresentante: cognome e nome", se:()=>$("p_tipo") && $("p_tipo").value==="pg"},
+{id:"rappr_cf", sez:"5", t:"Rappresentante: codice fiscale", se:()=>!!v("rappr_nome")},
+{id:"rappr_res", sez:"5", t:"Rappresentante: residenza", se:()=>!!v("rappr_nome")},
+{id:"rappr_nascita", sez:"5", t:"Rappresentante: luogo e data di nascita", se:()=>!!v("rappr_nome")},
+{id:"rappr_doc", sez:"5", t:"Rappresentante: documento di identità", se:()=>!!v("rappr_nome")},
+{id:"pep_parte", sez:"6", t:"La parte è PEP?"},
+{id:"pep_rappr", sez:"6", t:"Il rappresentante è PEP?", se:()=>!!v("rappr_nome")},
+{id:"pep_te", sez:"6", t:"Il titolare effettivo è PEP?", se:()=>$("p_tipo") && $("p_tipo").value==="pg"},
+{id:"pep_esito", sez:"6", t:"Esito della verifica PEP"},
+{id:"te_esito", sez:"7", t:"Titolare effettivo: esito della verifica", se:()=>$("p_tipo") && $("p_tipo").value==="pg"},
+{id:"te_numero", sez:"7", t:"Numero dei titolari effettivi individuati", se:()=>$("p_tipo") && $("p_tipo").value==="pg"},
+{id:"sfm_verifica_effettuata", sez:"7 ter", t:"Sanzioni finanziarie mirate: verifica effettuata?"},
+{id:"sfm_esito", sez:"7 ter", t:"Sanzioni finanziarie mirate: esito"},
+{cb:["cb_provenienza_redditolav","cb_provenienza_redditoauton","cb_provenienza_redditoimpresa","cb_provenienza_disponente","cb_provenienza_finanziamento","cb_provenienza_mutuo","cb_provenienza_donazione","cb_provenienza_eredita","cb_provenienza_venditabeni","cb_provenienza_investimenti","cb_provenienza_risparmi","cb_provenienza_altro"], sez:"8", t:"Provenienza delle somme"},
+{cb:["cb_pagamento_bonifico","cb_pagamento_assegnocirc","cb_pagamento_assegnobanc","cb_pagamento_altro"], sez:"8", t:"Modalità di pagamento"},
+{id:"anomalie_presenti", sez:"11", t:"Sono emersi indicatori di anomalia?"},
+{id:"risk_livello", sez:"12", t:"Livello di rischio complessivo"},
+{id:"av_tipo", sez:"13", t:"Tipo di adeguata verifica applicata"},
+{cb:["cb_esito_nessuno","cb_esito_monitoraggio","cb_esito_rafforzata","cb_esito_ulteriori"], sez:"15", t:"Esito complessivo sulla parte"},
+{id:"trasm_tipo", sez:"16", t:"Trasmissione interna al RAR", se:()=>$("risk_livello") && $("risk_livello").value==="alto"},
+{cb:["cb_dich_veritieri","cb_dich_impegno","cb_dich_privacy"], sez:"17", t:"Dichiarazioni della parte"},
+{id:"dich_carichi", sez:"17", t:"Carichi pendenti"}
+];
+
+function genovaVaiAlCampo(id){
+const el = $(id); if(!el) return;
+let p = el.parentElement;
+while(p){ if(p.tagName === "DETAILS") p.open = true; p = p.parentElement; }
+el.scrollIntoView({behavior:"smooth", block:"center"});
+const box = el.closest(".field") || el;
+box.classList.add("gm-flash");
+try{ el.focus({preventScroll:true}); }catch(e){}
+setTimeout(()=>box.classList.remove("gm-flash"), 2200);
+}
+
+let genovaPanelTimer = null;
+function genovaPanelAggiorna(){
+const panel = $("genovaPanel");
+if(!panel) return;
+if(formatoPagina !== "genova"){ panel.style.display = "none"; return; }
+panel.style.display = "";
+const procKey = amlProcKey();
+const partiBox = $("genovaParti"), manBox = $("genovaMancanti");
+const salvate = procKey ? (amlDatiLoadAll()[procKey] || {}) : {};
+const correnteKey = amlPartyKey();
+const keys = Object.keys(salvate).filter(k=>k !== "(parte senza nome)");
+if(!procKey){
+partiBox.innerHTML = '<p class="sub">Scrivi il numero di procedura nella sezione 1: le parti appariranno qui.</p>';
+} else if(!keys.length){
+partiBox.innerHTML = '<p class="sub">Nessuna parte ancora salvata per la procedura '+esc(procKey)+'. Carica i documenti nell\'assistente e applica le parti, oppure compila i campi.</p>';
+} else {
+partiBox.innerHTML = '<p class="sub" style="margin-bottom:4px"><b>Parti della procedura '+esc(procKey)+'</b> (per completare una parte, riaprila):</p>'
++ keys.map(pk=>{
+const attuale = pk === correnteKey;
+return '<div class="gm-parte"><span>'+esc(pk)+(attuale ? ' <b>— a schermo ora</b>' : '')+'</span>'
++ (attuale ? '' : '<button type="button" class="btn-ghost" style="padding:4px 10px;font-size:12px" data-g-carica="'+esc(pk)+'">Apri per completare</button>')+'</div>';
+}).join("");
+}
+const mancanti = GENOVA_MANCANTI.filter(m=>{
+if(m.se && !m.se()) return false;
+if(m.cb) return !m.cb.some(c=>{ const e=$(c); return e && e.checked; });
+const e = $(m.id); return !!e && !String(e.value||"").trim();
+});
+const nome = (v("p_nome")||"").trim();
+if(!nome && !mancanti.length){ manBox.innerHTML = ""; return; }
+manBox.innerHTML = '<p class="sub" style="margin:10px 0 4px"><b>'+(mancanti.length
+? 'Ancora da completare per «'+esc(nome || "parte senza nome")+'» ('+mancanti.length+'):'
+: 'Per «'+esc(nome || "parte senza nome")+'» non manca nulla di quanto richiesto dal modello.')+'</b>'
++ (mancanti.length ? ' tocca una voce per andare al campo.' : ' Premi «Genera» in fondo alla pagina.')+'</p>'
++ mancanti.map(m=>'<button type="button" class="gm-item" data-g-vai="'+esc(m.cb ? m.cb[0] : m.id)+'">Sez. '+esc(m.sez)+' — '+esc(m.t)+'</button>').join("");
+}
+function genovaPanelProgramma(){
+if(formatoPagina !== "genova") return;
+clearTimeout(genovaPanelTimer);
+genovaPanelTimer = setTimeout(genovaPanelAggiorna, 400);
+}
+document.addEventListener("input", genovaPanelProgramma);
+document.addEventListener("change", genovaPanelProgramma);
+document.addEventListener("click", ev=>{
+const t = ev.target && ev.target.closest ? ev.target.closest("[data-g-vai],[data-g-carica]") : null;
+if(!t) return;
+if(t.dataset.gVai){ genovaVaiAlCampo(t.dataset.gVai); }
+else if(t.dataset.gCarica){ amlDatiCarica(amlProcKey(), t.dataset.gCarica); genovaPanelAggiorna(); }
+});
 
 function mostraSelettoreDocumento(){
 const box = $("docSelectBox"); if(box) box.style.display = "";
@@ -2175,6 +2279,9 @@ try { calcRisk(); } catch(e){ console.error("calcRisk in errore:", e); }
 // applicando le parti una alla volta o con "Applica tutto" questo teneva altrimenti la
 // vista in continuo movimento, segnalato da Carlo come molto scomodo il 17/09/2026.
 try { if(typeof genera === "function") genera(false); } catch(e){ console.error("genera() in errore:", e); }
+// Salvataggio subito, non dopo il ritardo del salvataggio automatico: applicando piu'
+// parti di seguito, solo l'ultima restava riapribile ("Apri per completare").
+try { clearTimeout(amlAutosaveTimer); amlAutosaveEsegui(); } catch(e){ console.error("salvataggio parte in errore:", e); }
 if(!opts.silenzioso){
 const restanti = assistParti.length - assistPartiApplicate.size;
 toast("Modulo generato per «"+(parte.p_nome||"senza nome")+"» e salvato nel fascicolo di questa procedura."

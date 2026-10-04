@@ -140,6 +140,13 @@ margin-bottom:2cm;
 @bottom-right{content:""}
 }
 </style>
+<style>
+body.fmt-genova #roles, body.fmt-genova #procedureSalvateBox, body.fmt-genova #dati_hint { display:none !important; }
+#genovaPanel .gm-item{display:inline-block;margin:3px 6px 3px 0;padding:5px 10px;border:1px solid #c7d6f5;border-radius:999px;background:#fff;font-size:13px;cursor:pointer}
+#genovaPanel .gm-item:hover{background:var(--light)}
+#genovaPanel .gm-parte{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid #eee}
+.gm-flash{outline:3px solid #a03317 !important;outline-offset:2px;transition:outline .3s}
+</style>
 </head>
 <body>
 <div class="wrap">
@@ -232,6 +239,11 @@ margin-bottom:2cm;
 <div id="assist_fields"></div>
 </div>
 <!-- ===================== COMPILATORE (motore unico: dati + trigger UIF + rischio) ===================== -->
+<div class="ocrbox no-print" id="genovaPanel" style="display:none;background:#fff;border-color:var(--blue)">
+<h3 class="grouph">Modello COA Genova: parti e dati da completare</h3>
+<div id="genovaParti"></div>
+<div id="genovaMancanti"></div>
+</div>
 <h2 class="no-print">Compila e genera i modelli</h2>
 <p class="sub no-print">Un solo percorso, dall'inizio alla fine: inserisci i dati una sola volta — comprese le risposte sui segnali di anomalia — e lo strumento compila da solo i modelli del fascicolo, pronti da raggruppare per Organismo, Mediatore e Avvocato più sotto.</p>
 
