@@ -1670,7 +1670,7 @@ await storage.updateAnalisi(id, { compatibilitaInteressi: ripristinaTesto(compat
 
 // ─── LIVELLO 4: Bozza accordo (dipende da Giuridica + Compatibilita) ───
 const bozzaResult = await safeStep(
-() => bozzaAccordo(descrizioneAnalisi, partiRedatte, valoreLite, `${truncate(giuridicaResult, 8000)}\n\n${truncate(compatibilitaResult, 8000)}`),
+() => bozzaAccordo(descrizioneAnalisi, partiRedatte, valoreLite, `${truncate(giuridicaResult, 8000)}\n\n${truncate(compatibilitaResult, 8000)}`, truncate(documentiTextRedatto, 9000)),
 '[Bozza accordo non disponibile]', 'Accordo'
 );
 await storage.updateAnalisi(id, { bozzaAccordo: ripristinaTesto(bozzaResult, mappa), stato: "completata" });
