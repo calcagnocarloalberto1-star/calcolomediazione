@@ -136,6 +136,8 @@
 .ac-embed .doc .dh{color:#000;background:#e9eef6}
 .ac-embed h2, .ac-embed details:not([data-print]){display:none}
 body.print-doc-only .ac-embed .body>*:not(#out){display:none!important}
+/* Stampa del fascicolo: niente intestazione, piè di pagina, elenco articoli e banner del sito (prima finivano nelle ultime pagine del PDF). */
+body.print-doc-only header, body.print-doc-only footer, body.print-doc-only [data-testid="footer"], body.print-doc-only nav{display:none!important}
 }
 @page{
 margin-bottom:2cm;
