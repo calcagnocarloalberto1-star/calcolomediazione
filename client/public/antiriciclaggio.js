@@ -1192,6 +1192,15 @@ genera();
 function genera(scroll){
 const out = $("out");
 let html = "";
+// Rischio basso, nessuna anomalia e nessuna determinazione finale scelta: si spunta da soli
+// «Nessun elemento di anomalia» (restano modificabili a mano prima della stampa).
+try{
+const ids = ["cb_esito_nessuno","cb_esito_monitoraggio","cb_esito_rafforzata","cb_esito_ulteriori"];
+if(v("risk_livello")==="basso" && v("anomalie_presenti")!=="si" && countAnomalie()===0
+&& !ids.some(i=>{ const e=$(i); return e && e.checked; })){
+const e = $("cb_esito_nessuno"); if(e) e.checked = true;
+}
+}catch(err){ /* si genera comunque */ }
 if(role==="avvocato"){
 html += '<div class="note no-print"><b>Nota.</b> L\'assistenza in mediazione è di regola esente (Regola Tecnica n. 2 CNF). I modelli sotto vanno usati solo se l\'incarico comporta un\'operazione dell\'art. 3 c. 4 lett. c).</div>';
 }
