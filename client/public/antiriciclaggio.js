@@ -1423,7 +1423,8 @@ if(m.cb) return !m.cb.some(c=>{ const e=$(c); return e && e.checked; });
 const e = $(m.id); return !!e && !String(e.value||"").trim();
 });
 const nome = (v("p_nome")||"").trim();
-if(!nome && !mancanti.length){ manBox.innerHTML = ""; return; }
+// Senza nome della parte la scheda e' ancora vuota: l'elenco di 17 voci mancanti sarebbe solo rumore.
+if(!nome){ manBox.innerHTML = ""; return; }
 manBox.innerHTML = '<p class="sub" style="margin:10px 0 4px"><b>'+(mancanti.length
 ? 'Ancora da completare per «'+esc(nome || "parte senza nome")+'» ('+mancanti.length+'):'
 : 'Per «'+esc(nome || "parte senza nome")+'» non manca nulla di quanto richiesto dal modello.')+'</b>'
