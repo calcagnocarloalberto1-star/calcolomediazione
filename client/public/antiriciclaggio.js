@@ -1325,6 +1325,16 @@ if(formatoPagina){
 usaFormatoGenova = (formatoPagina === "genova");
 try{ localStorage.setItem(USA_FORMATO_GENOVA_KEY, usaFormatoGenova ? "1" : "0"); } catch(e){ /* storage non disponibile */ }
 const fm = $("formato_modello"); if(fm) fm.value = formatoPagina;
+// Modello COA Genova: i dati dell'Organismo sono sempre gli stessi, si precompilano (solo i
+// campi ancora vuoti, mai quelli gia' scritti). Il legale rappresentante non e' precompilato.
+if(formatoPagina === "genova"){
+const odm = {
+odm_nome:"Organismo di Mediazione Forense dell'Ordine degli Avvocati di Genova",
+odm_iscr:"P.D.G. 14.3.2011 — n. 172 del Registro degli Organismi di mediazione (Ministero della Giustizia)",
+odm_sede:"Palazzo di Giustizia, Piazza Portoria 1, 16121 Genova"
+};
+Object.keys(odm).forEach(id=>{ const e = $(id); if(e && !String(e.value||"").trim()){ e.value = odm[id]; e.dispatchEvent(new Event("input",{bubbles:true})); } });
+}
 if(choice) choice.style.display = "none";
 if(sel) sel.style.display = "none";
 if(lbl) lbl.textContent = formatoPagina === "genova" ? "Modello COA Genova" : "Modello generico";
