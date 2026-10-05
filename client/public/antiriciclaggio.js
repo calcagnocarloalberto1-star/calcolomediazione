@@ -1619,8 +1619,28 @@ return (v("proc_n")||"").trim().replace(/\s+/g," ");
 // ciascuna va identificata e valutata separatamente ai fini antiriciclaggio: lo storico e i dati
 // salvati sono quindi organizzati per procedura e, all'interno, per parte (identificata dal nome/
 // denominazione inserito nella scheda). "amlPartyKey" individua la parte attualmente a schermo.
+// Chiave canonica del nome: parole in ordine alfabetico, senza maiuscole/accenti/punteggiatura,
+// cosi' «Marchesi Elena» e «Elena Marchesi» risultano la stessa persona.
+function amlNomeCanon(n){
+return String(n||"").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[^a-z0-9 ]+/g," ").split(/\s+/).filter(Boolean).sort().join(" ");
+}
 function amlPartyKey(){
-return (v("p_nome")||"").trim() || "(parte senza nome)";
+const nome = (v("p_nome")||"").trim();
+if(!nome) return "(parte senza nome)";
+// Se per questa procedura esiste gia' la stessa persona con le parole in ordine diverso,
+// si riusa il nome gia' registrato (niente doppioni da nome/cognome invertiti).
+try{
+const canon = amlNomeCanon(nome);
+const pk = (typeof amlProcKey === "function" ? amlProcKey() : "") || "";
+if(canon && pk){
+const nomi = new Set();
+Object.keys(fascicoloAccumulo||{}).forEach(k=>{ const e=fascicoloAccumulo[k]; if(e && e.procKey===pk && e.partyKey) nomi.add(e.partyKey); });
+const all = JSON.parse(localStorage.getItem(AML_DATI_KEY)||"{}");
+Object.keys(all[pk]||{}).forEach(n=>nomi.add(n));
+for(const n of nomi){ if(n!=="(parte senza nome)" && amlNomeCanon(n)===canon) return n; }
+}
+}catch(e){ /* si usa il nome cosi' com'e' */ }
+return nome;
 }
 
 function amlStoricoRegistraGenerazione(){
