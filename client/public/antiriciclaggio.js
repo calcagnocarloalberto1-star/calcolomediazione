@@ -2434,7 +2434,15 @@ docs.forEach((d, i) => fd.append("files", d.blob, "documento-" + (i + 1) + "." +
 fd.append("richiesta", richiesta || "");
 const resp = await fetch("/api/aml-assist", { method:"POST", body: fd });
 const data = await resp.json().catch(()=>({}));
-if(!resp.ok){ throw new Error((data && data.error) ? data.error : "Errore del servizio AI"); }
+if(!resp.ok || (data && data.error)){
+let msg = (data && data.error) ? data.error : "";
+if(!msg){
+if(resp.status === 429) msg = "Troppe richieste al servizio AI: attendi qualche minuto e riprova.";
+else if(resp.status === 502 || resp.status === 503 || resp.status === 504) msg = "Il server ha interrotto la richiesta (codice " + resp.status + ", probabile tempo scaduto o servizio momentaneamente non raggiungibile): riprova, magari con meno documenti per volta.";
+else msg = "Errore del servizio AI (codice " + resp.status + ").";
+}
+throw new Error(msg);
+}
 const rawEl = $("assist_raw"); if(rawEl) rawEl.textContent = JSON.stringify(data, null, 2);
 // La risposta discorsiva di ogni invio si aggiunge a quelle precedenti,
 // invece di sostituirle: con un caricamento in piu' gruppi restano tutte

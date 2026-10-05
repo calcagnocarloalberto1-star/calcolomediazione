@@ -1076,11 +1076,32 @@ const { documenti, scartati } = smistaFileAml(files);
 if (!documenti.length) {
 return res.status(400).json({ error: "Nessun documento valido ricevuto (formati accettati: JPG, PNG, WEBP, GIF, PDF).", scartati });
 }
+// La lettura di molti documenti puo' durare oltre 5 minuti. Il proxy davanti al server
+// (Istio/Envoy su Northflank) chiude le richieste che per 5 minuti non restituiscono
+// nemmeno un byte: il browser vedeva un errore generico e l'analisi sembrava "non partita"
+// (5/10/2026, convegno UNAM). Si apre quindi subito la risposta (200, JSON) e si inviano
+// spazi di tenuta ogni 20 secondi: sono ammessi davanti a un JSON e li ignora il parser.
+// Un eventuale errore viaggia nel corpo come {"error": "..."}.
+res.status(200);
+res.setHeader("Content-Type", "application/json; charset=utf-8");
+res.setHeader("Cache-Control", "no-store");
+res.setHeader("X-Accel-Buffering", "no");
+res.flushHeaders();
+const keepAlive = setInterval(() => { if (!res.writableEnded) res.write(" "); }, 20_000);
+res.on("close", () => clearInterval(keepAlive));
+try {
 const result = await assistenteCompilazioneAI(documenti, richiesta);
-res.json({ ...result, scartati: scartati.length ? scartati : undefined });
+clearInterval(keepAlive);
+res.end(JSON.stringify({ ...result, scartati: scartati.length ? scartati : undefined }));
+} catch (e: any) {
+clearInterval(keepAlive);
+console.error("Errore /api/aml-assist:", e);
+res.end(JSON.stringify({ error: (e && e.message) ? e.message : "Errore durante l'elaborazione dell'assistente AI." }));
+}
 } catch (e: any) {
 console.error("Errore /api/aml-assist:", e);
-res.status(500).json({ error: (e && e.message) ? e.message : "Errore durante l'elaborazione dell'assistente AI." });
+if (!res.headersSent) res.status(500).json({ error: (e && e.message) ? e.message : "Errore durante l'elaborazione dell'assistente AI." });
+else res.end();
 }
 });
 
