@@ -124,6 +124,9 @@ if($("out").innerHTML) genera();
 });
 }
 })();
+// Disattiva i suggerimenti di compilazione automatica del browser (valori digitati in precedenza,
+// anche per altre procedure) nei campi di testo del modulo: si confondevano con i dati salvati dallo strumento.
+document.querySelectorAll('input[type="text"],input[type="date"],input:not([type]),textarea').forEach(function(el){ el.setAttribute("autocomplete","off"); });
 if(typeof renderAggiornamenti === "function") renderAggiornamenti();
 if(typeof renderStorico === "function"){
 amlMediatoreLogAutoload();
