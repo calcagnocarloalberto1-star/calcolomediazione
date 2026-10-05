@@ -878,8 +878,8 @@ export default function ConfrontoCosti() {
                           </span>
                         </div>
                       )}
-                      <DetailItem label="Spese avvio organismo" value={risultato.costiMediazione.speseAvvio} note={modalitaTariffaria === "coa_genova" ? "Tariffe COA Genova" : "D.M. 150/2023 — Tabella A"} />
-                      <DetailItem label="Indennità organismo mediazione" value={risultato.costiMediazione.indennitaOrganismo - risultato.costiMediazione.speseAvvio} note={risultato.costiMediazione.nonDeterminatoGenova ? "Stima per difetto — oltre €5.000.000, tariffario COA Genova \"ND\" (v. avviso sopra)" : tipoMediazione !== "volontaria" ? `Ridotta del 20% per mediazione ${tipoMediazione}` : "Mediazione volontaria — tariffe piene"} />
+                      <DetailItem label="Spese avvio organismo (IVA esclusa; l'IVA è nella riga successiva)" value={risultato.costiMediazione.speseAvvio} note={modalitaTariffaria === "coa_genova" ? "Tariffe COA Genova" : "D.M. 150/2023 — Tabella A"} />
+                      <DetailItem label="Spese primo incontro + indennità organismo (con IVA 22%)" value={risultato.costiMediazione.indennitaOrganismo - risultato.costiMediazione.speseAvvio * 1.22} note={risultato.costiMediazione.nonDeterminatoGenova ? "Stima per difetto — oltre €5.000.000, tariffario COA Genova \"ND\" (v. avviso sopra)" : tipoMediazione !== "volontaria" ? `Ridotta del 20% per mediazione ${tipoMediazione}` : "Mediazione volontaria — tariffe piene"} />
                       <DetailItem label="Compenso avvocato (parametri stragiudiziali)" value={risultato.costiMediazione.compensoAvvocato} note="D.M. 55/2014 mod. D.M. 147/2022 — Fasi: attivazione (+30%), negoziazione (+30%), conciliazione" />
                       <DetailItem label="Spese generali 15%" value={risultato.costiMediazione.speseGenerali15} note="15% sul compenso" />
                       <DetailItem label="CPA 4%" value={risultato.costiMediazione.cpa4Avvocato} note="4% su compenso + spese generali" />
