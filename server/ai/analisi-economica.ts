@@ -213,7 +213,7 @@ export async function analisiEconomica(
   const altreCosts2 = 27;
   const altreCosts3 = 27;
 
-  const tot1 = cu1 + avv1 + acc1 + ctu1 + registro1 + altreCosts1 + resultNegativo.totalePerParte;
+  const tot1 = cu1 + avv1 + acc1 + ctu1 + registro1 + altreCosts1 + resultNegativo.totaleConIva;
   const tot2 = cu2 + avv2 + acc2 + ctu2 + altreCosts2;
   const tot3 = cu3 + avv3 + acc3 + altreCosts3;
 
@@ -221,7 +221,9 @@ export async function analisiEconomica(
   const cumul2 = tot1 + tot2;
   const cumul3 = tot1 + tot2 + tot3;
 
-  const totMed = resultAccordoSuccessivi.totalePerParte + compensoAvvMed + accessoriAvvMed;
+  // Indennità dell'organismo CON IVA (come nello scenario del primo incontro): prima il totale
+  // usava l'importo senza IVA e risultava inferiore di 110 EUR al costo reale per parte.
+  const totMed = resultAccordoSuccessivi.totaleConIva + compensoAvvMed + accessoriAvvMed;
 
   // ─── CONFRONTO NOTARILE MEDIAZIONE vs SENTENZA (motore unificato) ──────
   // Tutta la sezione notarile usa ora SOLO notarile.ts (confrontaNotarile),
@@ -392,7 +394,7 @@ SCENARIO A-bis — MEDIAZIONE POSITIVA (accordo al primo incontro):
 - Totale con IVA: ${formatEuro(resultAccordoPrimo.totaleConIva)}
 
 SCENARIO B — PROCESSO CIVILE I GRADO:
-- Mediazione negativa (primo incontro): ${formatEuro(resultNegativo.totalePerParte)}
+- Mediazione negativa (primo incontro, spese di avvio + spese di mediazione, IVA inclusa): ${formatEuro(resultNegativo.totaleConIva)}
 - Contributo unificato: ${formatEuro(cu1)}
 - Marca da bollo + diritti copia: ${formatEuro(altreCosts1)}
 - Compenso avvocato I grado (D.M. 55/2014 Tab. 2, valori medi): ${formatEuro(avv1)}
