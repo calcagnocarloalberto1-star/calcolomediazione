@@ -141,6 +141,16 @@ margin-bottom:2cm;
 }
 </style>
 <style>
+.modebtn[aria-pressed="true"]{background:#fff;border-color:var(--blue);box-shadow:0 0 0 2px rgba(160,51,23,.18)}
+body.mode-verifica #azionePrincipale,body.mode-verifica #opzioniAvanzateBox,body.mode-verifica #out{display:none !important}
+.vr-card{border:1px solid var(--line);border-left:5px solid var(--blue);border-radius:10px;padding:10px 14px;margin:10px 0;background:#fff}
+.vr-card h5{margin:0 0 4px;font-size:14.5px;color:var(--navy);display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.vr-badge{font-size:11.5px;font-weight:700;padding:2px 10px;border-radius:999px;color:#fff}
+.vr-ok{background:var(--ok)} .vr-fix{background:#b45309} .vr-miss{background:var(--bad)}
+.vr-card ul{margin:4px 0 8px;padding-left:20px;font-size:13px}
+.vr-card li{margin:2px 0}
+.vr-card .vr-t{font-weight:700;font-size:12.5px;margin-top:6px}
+.vr-card textarea{font-size:12.5px;margin-top:4px}
 body.fmt-genova #roles, body.fmt-genova #procedureSalvateBox, body.fmt-genova #dati_hint { display:none !important; }
 #genovaPanel .gm-item{display:inline-block;margin:3px 6px 3px 0;padding:5px 10px;border:1px solid #c7d6f5;border-radius:999px;background:#fff;font-size:13px;cursor:pointer}
 #genovaPanel .gm-item:hover{background:var(--light)}
@@ -168,16 +178,20 @@ body.fmt-genova #roles, body.fmt-genova #procedureSalvateBox, body.fmt-genova #d
 
 <!-- ===================== SCELTA DEL MODELLO: COA GENOVA / GENERICO ===================== -->
 <div class="ocrbox no-print" id="formatoChoiceBox" style="background:#fff;border-color:var(--blue)">
-<h3 class="grouph">Con quale modello compili?</h3>
-<p class="sub">Scegli il modello: la pagina mostra poi solo i pulsanti e i documenti di quel modello. Puoi cambiare in qualsiasi momento con «Cambia modello».</p>
+<h3 class="grouph">Scegli il percorso</h3>
+<p class="sub">Due percorsi, ciascuno con le sue due attività: <b>compilare</b> i moduli oppure <b>verificare</b> se i moduli ricevuti dalle parti (Modulo AV e Scheda di valutazione del rischio) sono completi. Puoi cambiare percorso o attività in qualsiasi momento.</p>
 <div class="roles" style="margin-top:10px">
-<button type="button" class="role" data-ac-action="scegli-formato" data-formato="genova"><b>Compilazione COA Genova</b><small>Modulo AV e Scheda di valutazione del rischio dell'Organismo di Mediazione, Ordine degli Avvocati di Genova</small></button>
-<button type="button" class="role" data-ac-action="scegli-formato" data-formato="altri"><b>Compilazione generica</b><small>Modelli per gli altri Organismi di mediazione</small></button>
+<button type="button" class="role" data-ac-action="scegli-formato" data-formato="genova"><b>Percorso COA Genova</b><small>Moduli dell'Organismo di Mediazione dell'Ordine degli Avvocati di Genova: compilazione (con i dati dell'Organismo già inseriti) e verifica dei moduli ricevuti</small></button>
+<button type="button" class="role" data-ac-action="scegli-formato" data-formato="altri"><b>Percorso moduli generici</b><small>Modelli per gli altri Organismi di mediazione: compilazione e verifica dei moduli ricevuti</small></button>
 </div>
 </div>
 <div class="no-print" id="formatoBar" style="display:none;background:var(--light);border:1px solid var(--blue);border-radius:10px;padding:10px 14px;margin:0 0 16px;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap">
-<div><span style="font-size:11.5px;color:var(--muted)">Stai compilando:</span><br><b id="formatoBarLabel" style="font-size:15px;color:var(--navy)"></b></div>
-<button type="button" class="btn-ghost" data-ac-action="cambia-formato" style="white-space:nowrap;padding:8px 12px;font-size:13px">↺ Cambia modello</button>
+<div><span style="font-size:11.5px;color:var(--muted)">Stai lavorando nel:</span><br><b id="formatoBarLabel" style="font-size:15px;color:var(--navy)"></b></div>
+<div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center" role="group" aria-label="Attività">
+<button type="button" class="btn-ghost modebtn" data-ac-action="modo-pagina" data-modo="compila" aria-pressed="true" style="padding:8px 12px;font-size:13px">✍️ Compila i moduli</button>
+<button type="button" class="btn-ghost modebtn" data-ac-action="modo-pagina" data-modo="verifica" aria-pressed="false" style="padding:8px 12px;font-size:13px">🔎 Verifica i moduli ricevuti</button>
+<button type="button" class="btn-ghost" data-ac-action="cambia-formato" style="white-space:nowrap;padding:8px 12px;font-size:13px">↺ Cambia percorso</button>
+</div>
 </div>
 <div class="no-print" id="procedimentoBox">
 <h3 class="grouph">1 — Dati del procedimento</h3><div class="grid"><div class="field"><label for="odm_nome">Denominazione Organismo</label><div class="hint">Nome dell'Organismo di mediazione (ODM) presso cui pende la procedura.</div><input id="odm_nome" type="text" placeholder="Organismo di Mediazione ..." ></div><div class="field"><label for="odm_iscr">N. iscrizione registro Min. Giustizia</label><div class="hint">Numero di iscrizione dell'ODM nel registro tenuto dal Ministero della Giustizia.</div><input id="odm_iscr" type="text" placeholder="n. ..." ></div><div class="field"><label for="odm_sede">Sede</label><div class="hint">Indirizzo della sede dell'Organismo.</div><input id="odm_sede" type="text" placeholder="Via ..., Città" ></div><div class="field"><label for="odm_lr">Legale rappresentante</label><div class="hint">Nome e cognome del legale rappresentante dell'Organismo.</div><input id="odm_lr" type="text" placeholder="Nome Cognome" ></div><div class="field"><label for="proc_n">N. procedura / R.G. mediazione</label><div class="hint">Numero identificativo della procedura assegnato dall'Organismo.</div><input id="proc_n" type="text" placeholder="n. .../20.." ></div></div>
@@ -246,6 +260,23 @@ body.fmt-genova #roles, body.fmt-genova #procedureSalvateBox, body.fmt-genova #d
 <h3 class="grouph">Modello COA Genova: parti e dati da completare</h3>
 <div id="genovaParti"></div>
 <div id="genovaMancanti"></div>
+</div>
+<div class="ocrbox no-print" id="verificaBox" style="display:none;background:#fff;border-color:var(--blue)">
+<h3 class="grouph">Verifica dei moduli ricevuti dalle parti</h3>
+<p class="sub">Controlla se il <b>Modulo di adeguata verifica</b> e la <b>Scheda di valutazione del rischio</b> ricevuti sono <b>completi</b> e coerenti. Come si usa: <b>1)</b> carica i moduli ricevuti nell'assistente qui sotto (oppure riporta a mano i dati nei campi del modulo più in basso); <b>2)</b> conferma i controlli sul documento fisico (firma, data, documento allegato); <b>3)</b> leggi l'esito per ciascuna parte: <b>completo</b>, <b>da correggere</b> oppure <b>incompleto</b>, con l'elenco di ciò che manca e un testo pronto per chiedere l'integrazione alla parte.</p>
+<div class="row-btns" style="margin-top:6px">
+<button type="button" class="btn-primary" data-ac-action="verifica-assistente">🔎 Analizza con l'assistente i moduli caricati</button>
+<button type="button" class="btn-ghost" data-ac-action="verifica-aggiorna">↻ Aggiorna l'esito</button>
+</div>
+<p class="hint" style="margin-top:6px">Il pulsante usa l'assistente AI della sezione «Vuoi partire da una bozza automatica?» (file caricati lì): chiede di trascrivere fedelmente quanto compilato nei moduli, senza completare i campi lasciati vuoti. L'assistente può sbagliare nella lettura: controlla sempre i campi proposti prima di applicarli. L'esito finale è calcolato con regole fisse sui dati applicati ai campi, non dall'AI.</p>
+<h4 style="margin:14px 0 4px;color:var(--navy);font-size:14px">Controlli sul documento fisico (parte a schermo)</h4>
+<div class="cbwrap" style="flex-direction:column;align-items:flex-start;gap:6px">
+<label class="cbrow"><input type="checkbox" id="vr_modulo_firmato"> Il Modulo AV ricevuto è firmato dalla parte (o dal legale rappresentante)</label>
+<label class="cbrow"><input type="checkbox" id="vr_modulo_datato"> Il Modulo AV riporta luogo e data di sottoscrizione</label>
+<label class="cbrow"><input type="checkbox" id="vr_doc_allegato"> È allegata una copia leggibile del documento di identità (e, per le società, della visura/procura)</label>
+<label class="cbrow"><input type="checkbox" id="vr_scheda_sottoscritta"> La Scheda di valutazione del rischio è sottoscritta da chi l'ha compilata</label>
+</div>
+<div id="verificaOut" style="margin-top:14px" role="status" aria-live="polite"></div>
 </div>
 <h2 class="no-print">Compila e genera i modelli</h2>
 <p class="sub no-print">Un solo percorso, dall'inizio alla fine: inserisci i dati una sola volta — comprese le risposte sui segnali di anomalia — e lo strumento compila da solo i modelli del fascicolo, pronti da raggruppare per Organismo, Mediatore e Avvocato più sotto.</p>
