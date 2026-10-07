@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import AccordoArt28 from "@/components/AccordoArt28";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -209,7 +210,8 @@ export default function AnalisiCasoAI() {
   const [privacyAcknowledged, setPrivacyAcknowledged] = useState(false);
   // Dichiarazione d'uso (decisione del titolare, 4 ottobre 2026): nessun valore preselezionato.
   const [usoDichiarato, setUsoDichiarato] = useState<"fittizio" | "accordo" | null>(null);
-  const privacyConfermata = privacyAcknowledged && usoDichiarato !== null;
+  const [accordoToken, setAccordoToken] = useState<string | null>(null);
+  const privacyConfermata = privacyAcknowledged && usoDichiarato !== null && (usoDichiarato !== "accordo" || accordoToken !== null);
   const [caseAiEnabled, setCaseAiEnabled] = useState(false);
   const [privacyControlsLoaded, setPrivacyControlsLoaded] = useState(false);
 const [minorsPathEnabled, setMinorsPathEnabled] = useState(false);
@@ -598,6 +600,7 @@ try {
       const res = await apiRequest("POST", "/api/analisi", body, {
         "X-Minors-Preflight-Token": minorsToken,
         "X-Case-Flow-Id": flowId,
+        ...(usoDichiarato === "accordo" && accordoToken ? { "X-Accordo-Token": accordoToken } : {}),
       });
       const data: AnalisiCaso & { accessToken?: string } = await res.json();
 
@@ -1388,6 +1391,7 @@ try {
                     </label>
                   </div>
                 </RadioGroup>
+                {usoDichiarato === "accordo" && <AccordoArt28 onToken={setAccordoToken} />}
                 <p className="text-xs text-muted-foreground">
                   Senza una delle due condizioni non inserire dati reali di persone. La scelta è obbligatoria e non è preselezionata.
                 </p>

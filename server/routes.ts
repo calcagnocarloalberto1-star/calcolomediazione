@@ -3,7 +3,8 @@ import { createServer, type Server } from "http";
 import multer from "multer";
 import crypto from "crypto";
 import { PDFParse } from "pdf-parse";
-import { storage, incrementaContatoreVisite, getContatoreVisite, verifyStorageHealth } from "./storage.js";
+import { storage, incrementaContatoreVisite, getContatoreVisite, verifyStorageHealth, registraAccordoArt28, verificaAccordoArt28 } from "./storage.js";
+import { ACCORDO_ART28_VERSIONE, ACCORDO_ART28_APPROVATO, ACCORDO_ART28_TESTO } from "../shared/accordo-art28.js";
 import { estrazioneEntita } from "./ai/ner-extraction.js";
 import { analisiGiuridica } from "./ai/analisi-giuridica.js";
 import { guidaStrategica } from "./ai/guida-strategica.js";
@@ -971,6 +972,42 @@ res.json(stats.getStats());
     res.json({ success: true });
   });
 
+// ─── ACCORDO ART. 28 GDPR (accettazione online dei professionisti) ───────────
+
+const accordoArt28Hash = crypto.createHash("sha256").update(`${ACCORDO_ART28_VERSIONE}\n${ACCORDO_ART28_TESTO}`, "utf8").digest("hex");
+
+app.get("/api/accordo-art28", (_req, res) => {
+res.json({
+versione: ACCORDO_ART28_VERSIONE,
+approvato: ACCORDO_ART28_APPROVATO,
+hash: accordoArt28Hash,
+testo: ACCORDO_ART28_TESTO,
+});
+});
+
+app.post("/api/accordo-art28/accetta", aiRateLimit, async (req, res) => {
+try {
+if (!ACCORDO_ART28_APPROVATO) {
+return res.status(503).json({ error: "L'accordo non è ancora disponibile per l'accettazione online." });
+}
+const { nome, ente, codiceFiscalePiva, sede, email, accetto, versione, hash } = req.body ?? {};
+if (accetto !== true) return res.status(400).json({ error: "Per procedere devi accettare espressamente l'accordo." });
+if (versione !== ACCORDO_ART28_VERSIONE || hash !== accordoArt28Hash) {
+return res.status(409).json({ error: "Il testo dell'accordo è stato aggiornato: ricarica la pagina e rileggilo." });
+}
+const clean = (v: unknown, max: number) => (typeof v === "string" ? v.trim().slice(0, max) : "");
+const n = clean(nome, 200), e = clean(ente, 200), cf = clean(codiceFiscalePiva, 32), sd = clean(sede, 300), em = clean(email, 200);
+if (n.length < 3) return res.status(400).json({ error: "Indica nome e cognome." });
+if (cf.length < 11) return res.status(400).json({ error: "Indica codice fiscale o partita IVA." });
+if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(em)) return res.status(400).json({ error: "Indica un indirizzo e-mail valido." });
+const token = await registraAccordoArt28({ versione: ACCORDO_ART28_VERSIONE, testoHash: accordoArt28Hash, nome: n, ente: e || undefined, codiceFiscalePiva: cf, sede: sd || undefined, email: em });
+res.json({ token, versione: ACCORDO_ART28_VERSIONE });
+} catch (err) {
+logSafeError("Errore accettazione accordo art. 28", err);
+res.status(500).json({ error: "Impossibile registrare l'accettazione. Riprova più tardi." });
+}
+});
+
 // ─── ANALISI AI ───────────────────────────────────────────────────────────
 
 app.get("/api/privacy-controls", (_req, res) => {
@@ -1184,6 +1221,12 @@ return res.status(400).json({ error: "Conferma l'informativa privacy prima di av
 }
 if (usoDichiarato !== "fittizio" && usoDichiarato !== "accordo") {
 return res.status(400).json({ error: "Indica se si tratta di un caso fittizio o se hai in essere l'accordo sul trattamento dei dati." });
+}
+if (usoDichiarato === "accordo") {
+const tokenAccordo = String(req.headers["x-accordo-token"] ?? "");
+if (!ACCORDO_ART28_APPROVATO || !(await verificaAccordoArt28(tokenAccordo, ACCORDO_ART28_VERSIONE))) {
+return res.status(403).json({ error: "Per usare lo strumento con dati reali devi prima accettare l'accordo sul trattamento dei dati (art. 28 GDPR)." });
+}
 }
 if (!titolo || !descrizione) {
 return res.status(400).json({ error: "Titolo e descrizione sono obbligatori" });

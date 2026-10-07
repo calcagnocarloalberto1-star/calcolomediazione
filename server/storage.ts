@@ -88,6 +88,19 @@ async function initDb() {
      ON CONFLICT (id) DO NOTHING`,
   );
   await pool.query(`
+    CREATE TABLE IF NOT EXISTS accordi_art28 (
+      id SERIAL PRIMARY KEY,
+      versione TEXT NOT NULL,
+      testo_hash TEXT NOT NULL,
+      nome TEXT NOT NULL,
+      ente TEXT,
+      codice_fiscale_piva TEXT NOT NULL,
+      sede TEXT,
+      email TEXT NOT NULL,
+      token_hash TEXT NOT NULL UNIQUE,
+      accettato_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    )`);
+  await pool.query(`
     ALTER TABLE analisi_casi ADD COLUMN IF NOT EXISTS access_token TEXT;
     ALTER TABLE analisi_casi ADD COLUMN IF NOT EXISTS secure_payload TEXT;
   `);
@@ -466,6 +479,43 @@ export async function rollbackProtectedAnalisi(): Promise<number> {
     }
   }
   return restored;
+}
+
+export interface AccordoArt28Dati {
+  versione: string;
+  testoHash: string;
+  nome: string;
+  ente?: string;
+  codiceFiscalePiva: string;
+  sede?: string;
+  email: string;
+}
+
+function hashAccordoToken(token: string): string {
+  return crypto.createHash("sha256").update(token, "utf8").digest("hex");
+}
+
+// Registra l'accettazione online e restituisce un token opaco (mostrato una sola volta
+// all'utente): nel database resta soltanto l'hash.
+export async function registraAccordoArt28(d: AccordoArt28Dati): Promise<string> {
+  await storageReady;
+  const token = crypto.randomBytes(32).toString("hex");
+  await pool.query(
+    `INSERT INTO accordi_art28 (versione, testo_hash, nome, ente, codice_fiscale_piva, sede, email, token_hash)
+     VALUES ($1,$2,$3,$4,$5,$6,$7,$8)`,
+    [d.versione, d.testoHash, d.nome, d.ente ?? null, d.codiceFiscalePiva, d.sede ?? null, d.email, hashAccordoToken(token)],
+  );
+  return token;
+}
+
+export async function verificaAccordoArt28(token: string, versione: string): Promise<boolean> {
+  if (!/^[0-9a-f]{64}$/.test(token)) return false;
+  await storageReady;
+  const r = await pool.query(
+    `SELECT 1 FROM accordi_art28 WHERE token_hash = $1 AND versione = $2 LIMIT 1`,
+    [hashAccordoToken(token), versione],
+  );
+  return (r.rowCount ?? 0) > 0;
 }
 
 export async function closeStorage(): Promise<void> {
