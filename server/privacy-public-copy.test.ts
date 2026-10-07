@@ -167,3 +167,10 @@ assert.match(analisiPage, /useState<"fittizio" \| "accordo" \| null>\(null\)/);
 assert.match(analisiPage, /Caso fittizio\./);
 assert.match(analisiPage, /Accordo in essere\./);
 assert.match(readFileSync("server/routes.ts", "utf8"), /usoDichiarato !== "fittizio" && usoDichiarato !== "accordo"/);
+
+// Accettazione online dell'accordo art. 28: fail-closed finché il testo non è approvato.
+const accordoMod = readFileSync("shared/accordo-art28.ts", "utf8");
+assert.match(accordoMod, /ACCORDO_ART28_APPROVATO = false/);
+const routesSrc = readFileSync("server/routes.ts", "utf8");
+assert.match(routesSrc, /!ACCORDO_ART28_APPROVATO \|\| !\(await verificaAccordoArt28\(/);
+assert.match(routesSrc, /app\.post\("\/api\/accordo-art28\/accetta"/);

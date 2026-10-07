@@ -1,38 +1,11 @@
-# PRIV-16 — Modello di accordo sul trattamento dei dati ex art. 28 GDPR
-
-Data di predisposizione: 12 settembre 2026
-Stato: bozza contrattuale non sottoscritta e non operativa
-
-## Avvertenza
-
-Questo documento attua la decisione di indirizzo del titolare del 12 settembre
-2026, secondo cui il futuro servizio AI destinato ai professionisti dovrà essere
-strutturato, salvo successivo riesame motivato, con:
-
-- professionista o Organismo quale titolare del trattamento, dopo verifica
-  fattuale per lo specifico scenario;
-- CalcoloMediazione quale responsabile del trattamento ai sensi dell'art. 28
-  GDPR;
-- fornitori tecnici autorizzati quali subresponsabili.
-
-La sola predisposizione di questa bozza non determina i ruoli per casi concreti,
-non prova la conformità del trattamento e non autorizza la riattivazione dei
-flussi AI. L'accordo deve essere completato, riesaminato e sottoscritto prima
-dell'uso con dati personali di pratiche reali.
-
-## Accettazione online (implementazione)
-
-Per decisione del titolare (7 ottobre 2026) l'accordo è accettato online dal
-professionista o dall'Organismo, senza firma autografa. Il testo da «Parti» a
-«Responsabilità e prevalenza» è incorporato in `shared/accordo-art28.ts`; il sito
-registra versione, hash del testo, data e ora, nome, ente, codice fiscale/P. IVA,
-sede ed e-mail (non verificata) e rilascia un token opaco, di cui conserva solo
-l'hash. Il server richiede il token per creare analisi con dichiarazione «accordo
-in essere». L'accettazione resta rifiutata (`ACCORDO_ART28_APPROVATO = false`)
-finché il titolare non ha completato i campi aperti (giorni, allegati A-C, dati del
-responsabile), rivisto il testo e aggiornato la versione.
-
-## Parti
+// Testo dell'accordo ex art. 28 GDPR proposto ai professionisti (derivato da
+// docs/PRIV-16). ATTENZIONE: contiene ancora campi da completare (giorni, allegati A-C,
+// dati del responsabile). Finché ACCORDO_ART28_APPROVATO è false il server rifiuta
+// ogni accettazione: va impostato a true solo dopo che il titolare ha completato,
+// rivisto e approvato il testo, aggiornando ACCORDO_ART28_VERSIONE.
+export const ACCORDO_ART28_VERSIONE = "bozza-2026-10-07";
+export const ACCORDO_ART28_APPROVATO = false;
+export const ACCORDO_ART28_TESTO = `## Parti
 
 ### Titolare del trattamento
 
@@ -266,18 +239,18 @@ interessati.
 | Fornitore | Servizio | Paesi | Meccanismo di trasferimento | DPA e data | Stato |
 |---|---|---|---|---|---|
 | Northflank LTD | Hosting, database e infrastruttura | Da completare per workload, backup, log e control plane | Da completare | DPA a adesione acquisito; riscontro in PRIV-12 (7 ottobre 2026); residui: trasferimento USA e conferma di applicabilità | Non approvato in questa bozza |
-| Anthropic | API AI primaria | Da verificare | Da verificare | Applicabilità all'account `carlo-api-key` da provare | Non autorizzato |
+| Anthropic | API AI primaria | Da verificare | Da verificare | Applicabilità all'account \`carlo-api-key\` da provare | Non autorizzato |
 | Google | Gemini API, solo eventuale fallback | Da verificare | Da verificare | Paid Service e DPA da archiviare | Non autorizzato |
 
 ## Allegato C — Misure tecniche e organizzative
 
 Riferimenti iniziali, da allegare nella versione firmata:
 
-- `docs/RUNBOOK-CIFRATURA-E-ACCESSO-ADMIN.md`;
-- `docs/PIANO-SICUREZZA-PRIVACY-E-INCIDENTI.md`;
-- `docs/PRIV-13-verbale-backup-2026-09-09.md`;
-- `docs/PRIV-15-checklist-riattivazione-ai.md`;
-- `docs/PRIV-17-presidi-rafforzati-minori-ai.md`.
+- \`docs/RUNBOOK-CIFRATURA-E-ACCESSO-ADMIN.md\`;
+- \`docs/PIANO-SICUREZZA-PRIVACY-E-INCIDENTI.md\`;
+- \`docs/PRIV-13-verbale-backup-2026-09-09.md\`;
+- \`docs/PRIV-15-checklist-riattivazione-ai.md\`;
+- \`docs/PRIV-17-presidi-rafforzati-minori-ai.md\`.
 
 La versione sottoscritta deve allegare copie datate o identificativi di
 versione immutabili delle misure applicabili; il semplice rinvio a documenti
@@ -297,19 +270,4 @@ servizio.
 
 Eventuali eccezioni, limiti o misure ulteriori:
 
-____________________________________________________________________
-
-## Sottoscrizione
-
-Per il titolare:
-
-- Nome e qualifica: _________________________________________________
-- Data: __________________
-- Firma: ____________________________________________________________
-
-Per il responsabile:
-
-- Nome e qualifica: Carlo Alberto Calcagno, gestore di
-  CalcoloMediazione.it
-- Data: __________________
-- Firma: ____________________________________________________________
+____________________________________________________________________`;

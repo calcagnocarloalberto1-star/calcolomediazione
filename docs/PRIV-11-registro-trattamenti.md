@@ -168,6 +168,16 @@ nella documentazione del sito.
 - **Retention, Paesi e DPA:** da verificare prima dell'approvazione del
   registro. Se non documentabili, disattivare il webhook.
 
+### 8. Accettazione online dell'accordo art. 28 (professionisti)
+
+- **Stato:** predisposto, non operativo: il server rifiuta l'accettazione finché `ACCORDO_ART28_APPROVATO` è `false` (`shared/accordo-art28.ts`).
+- **Finalità:** dimostrare che il professionista o l'Organismo che inserisce dati reali di terzi ha accettato l'accordo ex art. 28 GDPR (PRIV-16).
+- **Interessati e dati:** professionisti e rappresentanti di Organismi; nome, ente, codice fiscale/P. IVA, sede, e-mail (non verificata), versione e hash del testo, data e ora di accettazione.
+- **Base giuridica:** esecuzione del rapporto contrattuale con il professionista (art. 6.1.b) e accountability (art. 5.2, art. 28.3) — da confermare dal titolare.
+- **Destinatari:** nessuno; database su Northflank (v. PRIV-12).
+- **Conservazione:** per la durata dell'accordo e per il tempo necessario a dimostrare l'accettazione; termine da definire dal titolare.
+- **Controllo di accesso:** token opaco di 256 bit mostrato una sola volta; nel database resta solo l'hash SHA-256 (tabella `accordi_art28`).
+
 ## Matrice preliminare dei ruoli
 
 | Flusso | Ruolo di CalcoloMediazione | Responsabili tecnici candidati | Altri destinatari/fornitori da censire | Stato |
