@@ -172,10 +172,10 @@ nella documentazione del sito.
 
 | Flusso | Ruolo di CalcoloMediazione | Responsabili tecnici candidati | Altri destinatari/fornitori da censire | Stato |
 |---|---|---|---|---|
-| Navigazione e gestione del sito | Titolare | Northflank, se confermato dal DPA | Google Analytics, titolarità/ruolo da verificare | aperto |
+| Navigazione e gestione del sito | Titolare | Northflank (DPA acquisito; riscontro in PRIV-12) | Google Analytics, titolarità/ruolo da verificare | aperto |
 | Analisi AI per professionista/Organismo | Indirizzo scelto: responsabile ex art. 28, da verificare nel singolo scenario e rendere operativo con accordo | Northflank e Anthropic | Gemini solo se successivamente abilitato e documentato | attivo dal 14/09/2026, rischio residuo accettato dal titolare; accordo, base del titolare, artt. 9/10 e informativa art. 14 ancora da completare |
 | AML per professionista/Organismo | Indirizzo scelto: responsabile ex art. 28, da verificare nel singolo scenario e rendere operativo con accordo | Northflank e Anthropic, soltanto se nominabili come subresponsabili nel rapporto approvato | ulteriori soggetti da censire | attivo dal 14/09/2026, rischio residuo accettato dal titolare; richiede comunque accordo e istruzioni, autorizzazione ai subresponsabili e presupposto art. 10 |
-| Diagnostica del sito | Titolare | Northflank, se confermato dal DPA | Google Apps Script/Sheets soltanto se configurato; ruolo da verificare | aperto |
+| Diagnostica del sito | Titolare | Northflank (DPA acquisito; riscontro in PRIV-12) | Google Apps Script/Sheets soltanto se configurato; ruolo da verificare | aperto |
 
 Se CalcoloMediazione opera come responsabile per l'AML, predisporre anche il
 registro delle categorie di attività svolte per conto dei titolari ex art.
@@ -188,7 +188,7 @@ registro delle categorie di attività svolte per conto dei titolari ex art.
 | Anthropic | Elaborazione AI (Analisi del Caso, antiriciclaggio alta precisione) | Testo del caso, documenti | Sì (USA) | Ruolo da confermare per ciascun flusso; DPA con SCC incorporato nei Commercial Terms dell'API, copia datata da archiviare |
 | Google (Gemini API) | Elaborazione AI in fallback, disabilitato salvo attestazione Paid Service | Testo del caso | Sì, possibile trattamento globale | Ruolo da confermare; Cloud DPA applicabile ai Paid Services, account e fatturazione da verificare prima dell'attivazione |
 | Google Analytics | Statistiche di navigazione | Dati di navigazione, solo dopo consenso | Sì (USA) | Ruolo e DPA da verificare |
-| Hosting (Northflank) | Hosting applicativo e database | Tutti i dati del sito | Europe - West (London), Regno Unito; decisione di adeguatezza UE vigente | Responsabile; DPA acquisito e verificato su sette dei nove punti della checklist interna; verifiche puntuali ancora aperte in PRIV-12/13 |
+| Hosting (Northflank) | Hosting applicativo e database | Tutti i dati del sito | Europe - West (London), Regno Unito; decisione di adeguatezza UE vigente | Responsabile; DPA a adesione acquisito e riscontrato punto per punto in PRIV-12 (7 ottobre 2026); residui: meccanismo di trasferimento verso gli Stati Uniti, conferma scritta di applicabilità al team, luoghi di log e backup; prova di restore parziale (PRIV-13) |
 
 ## Note per il completamento
 

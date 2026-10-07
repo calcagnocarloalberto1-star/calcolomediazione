@@ -253,7 +253,7 @@ interessati.
 
 | Fornitore | Servizio | Paesi | Meccanismo di trasferimento | DPA e data | Stato |
 |---|---|---|---|---|---|
-| Northflank LTD | Hosting, database e infrastruttura | Da completare per workload, backup, log e control plane | Da completare | DPA acquisito; verifica residua in PRIV-12/13 | Non approvato in questa bozza |
+| Northflank LTD | Hosting, database e infrastruttura | Da completare per workload, backup, log e control plane | Da completare | DPA a adesione acquisito; riscontro in PRIV-12 (7 ottobre 2026); residui: trasferimento USA e conferma di applicabilità | Non approvato in questa bozza |
 | Anthropic | API AI primaria | Da verificare | Da verificare | Applicabilità all'account `carlo-api-key` da provare | Non autorizzato |
 | Google | Gemini API, solo eventuale fallback | Da verificare | Da verificare | Paid Service e DPA da archiviare | Non autorizzato |
 

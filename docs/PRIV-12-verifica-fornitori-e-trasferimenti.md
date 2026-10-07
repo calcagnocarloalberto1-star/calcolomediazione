@@ -40,6 +40,54 @@ nativi fuori dal Regno Unito. La risposta del fornitore ancora attesa
 riguarda i valori numerici RPO/RTO; ciò non chiude la prova interna di restore, che resta
 separatamente aperta in PRIV-13.
 
+### Northflank — DPA: riscontro punto per punto (verifica del 7 ottobre 2026)
+
+Documento esaminato: `DPA.docx (2).pdf`, Northflank Data Processing Addendum,
+ottenuto dal Trust Center il 10 settembre 2026. Il testo non contiene firme e
+indica il cliente solo come «l'entità che accetta l'Addendum o usa i Servizi»:
+è un DPA a adesione, di cui non risulta una controfirma. Riscontro rispetto alle
+nove domande della richiesta del 9 settembre (PRIV-14):
+
+| # | Domanda | Esito nel DPA |
+|---|---------|---------------|
+| 1 | Soggetti e subresponsabili | Sì: Northflank Ltd responsabile; Allegato 1: Google Cloud Platform, Fastly, NS1, WorkOS, PostHog |
+| 2 | Luoghi di carichi, database, log, supporto, backup | Parziale: Allegato 1 indica solo «Regno Unito / regioni scelte»; per log e backup nativi v. nota sotto |
+| 3 | Meccanismo di trasferimento extra SEE/UK | Non specificato: art. 5.1 rinvia a «garanzie appropriate»; nessuna SCC citata per i subresponsabili negli Stati Uniti |
+| 4 | Modifica dei subresponsabili | Sì: art. 4.2-4.3, preavviso e 30 giorni per opporsi; non indica dove iscriversi agli aggiornamenti |
+| 5 | Notifica degli incidenti | Parziale: «senza ingiustificato ritardo» (art. 6.2), senza termine in ore |
+| 6 | Cancellazione e restituzione | Sì: cancellazione entro 180 giorni dalla cessazione (art. 8.1) |
+| 7 | Backup, restore, RPO/RTO | Non indicati nel DPA (Allegato 2, punto 8, generico); valori verificati dal titolare nel pannello il 20 settembre 2026 (PRIV-10, addendum) |
+| 8 | SOC 2 Type II | Sì: report ottenuto dal Trust Center |
+| 9 | DPA controfirmato o self-service | Non dimostrato: DPA a adesione; manca una conferma scritta che si applichi al team del titolare |
+
+Il DPA copre in modo chiaro gli elementi tipici dell'art. 28, par. 3, GDPR:
+istruzioni documentate (art. 3.2), riservatezza (4.1), sicurezza (6.1 e
+Allegato 2), subresponsabili (4.2-4.4), assistenza per diritti degli interessati
+e artt. 32-36 (7.1), cancellazione o restituzione (8.1), informazioni e audit
+(9.1, una volta l'anno, preavviso di 30 giorni, a spese del cliente).
+
+Residuo da chiudere con il fornitore: meccanismo di trasferimento verso gli
+Stati Uniti (punto 3); conferma scritta di applicabilità del DPA all'account
+(punto 9); eventuale precisazione dei luoghi di log e backup (punto 2).
+
+#### Evidenze della corrispondenza con Northflank (settembre 2026)
+
+- **9-10 settembre:** il titolare ha proposto di sostituire legge e foro
+  dell'NDA con mediazione ICC da remoto e, in difetto, tribunale di Genova e
+  legge italiana (Delaware come ripiego, con mediazione ICC preliminare).
+  Northflank ha risposto di non poter modificare legge, foro e risoluzione delle
+  controversie del proprio NDA standard; il titolare lo ha firmato così il
+  10 settembre. La richiesta di modifica riguardava l'NDA, non il DPA: non
+  risulta alcuna richiesta di modifica del DPA né rifiuto relativo ad esso.
+- **9-10 settembre:** richiesta di migrazione a Francoforte. Northflank ha
+  risposto che servono un nuovo progetto e un periodo di
+  inattività e che backup nativi e log restano nel Regno Unito in ogni caso. Il
+  10 settembre il titolare ha deciso di non migrare e di mantenere il progetto
+  in `Europe - West (London)`.
+- **10-15 settembre:** richiesta di retention, RPO/RTO e configurabilità dei
+  backup, sollecitata il 13, 14 e 15 settembre senza risposta; dati poi
+  verificati direttamente nel pannello il 20 settembre.
+
 ## Anthropic API
 
 - Il DPA è incorporato nei Commercial Terms per i servizi commerciali:
