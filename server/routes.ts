@@ -32,6 +32,7 @@ import {
 import lastmodMap from "./lastmod-generated.json" with { type: "json" };
 import { rilevaPossibiliRiferimentiMinori } from "./security/minors-detection.js";
 import { getMinorsAuditTrail, deleteMinorsAuditEntry, isMinorsPathEnabled } from "./security/minors-preflight.js";
+import { logSafeError } from "./security/safe-error.js";
 
 const PDF_MIME = "application/pdf";
 const AML_ALLOWED_TYPES = ["image/jpeg", "image/png", "image/webp", "image/gif", PDF_MIME];
@@ -985,6 +986,10 @@ amlAiEnabled: isAmlAiEnabled(),
 
 app.post("/api/upload-pdf", uploadRateLimit, requireCaseAiEnabled, uploadPdf.array("files", 10), async (req, res) => {
 try {
+const minorsStatus = (req as any).minorsStatus;
+if (minorsStatus !== "no") {
+return res.status(503).json({ error: "Il caricamento di documenti per pratiche con possibili dati di minori non è disponibile.", code: "MINORS_UPLOAD_DISABLED" });
+}
 const files = req.files as Express.Multer.File[];
 if (!files || files.length === 0) {
 return res.status(400).json({ error: "Nessun file caricato" });
@@ -1006,14 +1011,14 @@ const info = await parser.getInfo();
 results.push({ filename: file.originalname, text: textResult.text || "", pages: info.total || 0 });
 parser.destroy();
 } catch (pdfErr) {
-console.error(`Errore parsing PDF ${file.originalname}:`, pdfErr);
+logSafeError("Errore parsing PDF", pdfErr);
 results.push({ filename: file.originalname, text: `[Errore nella lettura del file ${file.originalname}]`, pages: 0 });
 }
 }
 stats.track('upload_pdf');
 res.json({ files: results });
 } catch (error) {
-console.error("Errore upload PDF:", error);
+logSafeError("Errore upload PDF", error);
 res.status(500).json({ error: "Errore nell'elaborazione dei file" });
 }
 });
@@ -1056,7 +1061,7 @@ return res.status(400).json({ error: "Nessun documento valido ricevuto (formati 
 const fields = await estraiDocumentoAI(documenti, doctype);
 res.json({ fields, scartati: scartati.length ? scartati : undefined });
 } catch (e: any) {
-console.error("Errore /api/aml-extract:", e);
+logSafeError("Errore /api/aml-extract", e);
 res.status(500).json({ error: (e && e.message) ? e.message : "Errore durante l'estrazione AI." });
 }
 });
@@ -1095,11 +1100,11 @@ clearInterval(keepAlive);
 res.end(JSON.stringify({ ...result, scartati: scartati.length ? scartati : undefined }));
 } catch (e: any) {
 clearInterval(keepAlive);
-console.error("Errore /api/aml-assist:", e);
+logSafeError("Errore /api/aml-assist", e);
 res.end(JSON.stringify({ error: (e && e.message) ? e.message : "Errore durante l'elaborazione dell'assistente AI." }));
 }
 } catch (e: any) {
-console.error("Errore /api/aml-assist:", e);
+logSafeError("Errore /api/aml-assist", e);
 if (!res.headersSent) res.status(500).json({ error: (e && e.message) ? e.message : "Errore durante l'elaborazione dell'assistente AI." });
 else res.end();
 }
@@ -1119,7 +1124,7 @@ const risultati = await cercaGiurisprudenzaAI(query, catalogo);
 const validi = risultati.filter(r => sentenze.some(s => s.id === r.id));
 res.json({ risultati: validi });
 } catch (e: any) {
-console.error("Errore /api/giurisprudenza/cerca-ai:", e);
+logSafeError("Errore /api/giurisprudenza/cerca-ai", e);
 res.status(500).json({ error: (e && e.message) ? e.message : "Errore durante la ricerca AI." });
 }
 });
@@ -1136,7 +1141,7 @@ const user = `DATI DA SPIEGARE:\n${datiStr}`;
 const spiegazione = await callLLM(system, user);
 res.json({ spiegazione });
 } catch (e: any) {
-console.error("Errore /api/spiega:", e);
+logSafeError("Errore /api/spiega", e);
 res.status(500).json({ error: (e && e.message) ? e.message : "Errore durante la spiegazione." });
 }
 });
@@ -1155,7 +1160,7 @@ return res.status(400).json({ error: "Nessuna domanda ricevuta." });
 const risposta = await rispostaAssistente(puliti, BASE_CONOSCENZA);
 res.json({ risposta });
 } catch (e: any) {
-console.error("Errore /api/assistente:", e);
+logSafeError("Errore /api/assistente", e);
 res.status(500).json({ error: (e && e.message) ? e.message : "Errore dell'assistente." });
 }
 });
@@ -1224,6 +1229,7 @@ stato: "in_corso",
 analisiGiuridica: null, guidaStrategica: null, analisiMaanBatna: null,
 compatibilitaInteressi: null, controlloBiasCognitivi: null, bozzaAccordo: null,
 analisiEconomica: null, prospettoEconomico: null, chatHistory: [],
+minorsStatus,
 });
 stats.track('analisi_ai');
 runPipeline(
@@ -1250,11 +1256,12 @@ impostaRegistroAliquota: impostaRegistroAliquota ?? null,
 impostaIpotecaria: impostaIpotecaria ?? null,
 impostaCatastale: impostaCatastale ?? null,
 altreSpeseNotarili: altreSpeseNotarili ?? null,
-}
+},
+minorsStatus,
 );
 res.json({ ...analisi, accessToken: (analisi as any).accessToken });
 } catch (error) {
-console.error("Errore creazione analisi:", error);
+logSafeError("Errore creazione analisi", error);
 res.status(500).json({ error: "Errore interno del server" });
 }
 });
@@ -1362,7 +1369,7 @@ res.setHeader("Content-Disposition", `attachment; filename="${filename}"`);
 res.setHeader("Content-Length", pdfBuffer.length);
 res.send(pdfBuffer);
 } catch (error) {
-console.error("Errore generazione PDF:", error);
+logSafeError("Errore generazione PDF", error);
 res.status(500).json({ error: "Errore nella generazione del PDF" });
 }
 });
@@ -1401,6 +1408,18 @@ if (!analisi) return res.status(404).json({ error: "Analisi non trovata o access
       code: "MINORS_HEURISTIC_MISMATCH",
     });
   }
+  if (analisi.minorsStatus !== "no") {
+    return res.status(503).json({
+      error: "La chat per questa analisi richiede una nuova classificazione e il percorso rafforzato non è ancora disponibile.",
+      code: "MINORS_HISTORICAL_CHAT_DISABLED",
+    });
+  }
+  if (minorsStatusChat !== analisi.minorsStatus) {
+    return res.status(422).json({
+      error: "La classificazione della richiesta non coincide con quella registrata per l'analisi.",
+      code: "MINORS_STATUS_MISMATCH",
+    });
+  }
   
   const chatHistory = analisi.chatHistory || [];
 const context = [
@@ -1415,6 +1434,25 @@ analisi.analisiEconomica ? `Analisi Economica Comparativa:\n${analisi.analisiEco
 ].filter(Boolean).join("\n\n---\n\n");
 
 const prevMessages = chatHistory.map((m: any) => `${m.role === "user" ? "Utente" : "AI"}: ${m.content}`).join("\n");
+
+// La chat costituisce un nuovo trattamento. Per una pratica classificata
+// "no" non basta controllare il solo messaggio appena scritto: vengono
+// riesaminati anche dati originari, parti, risultati e cronologia. In questo
+// modo un'analisi legacy o un riferimento emerso successivamente non può
+// raggiungere il provider attraverso il percorso ordinario.
+if (rilevaPossibiliRiferimentiMinori(
+  analisi.titolo,
+  analisi.descrizione,
+  ...((analisi.parti as Array<{ nome?: string }>) || []).map(p => String(p.nome || "")),
+  context,
+  prevMessages,
+  String(message || ""),
+).rischio) {
+  return res.status(422).json({
+    error: "Il contenuto complessivo dell'analisi sembra includere possibili riferimenti a persone minorenni. La chat AI resta bloccata.",
+    code: "MINORS_HEURISTIC_MISMATCH",
+  });
+}
 
 // PRIV-09 — questo endpoint riparte da un'analisi gia' completata e quindi
 // gia' salvata con i nomi reali ripristinati (vedi runPipeline): senza
@@ -1443,7 +1481,7 @@ const updated = await storage.appendChatMessages(id, [
 ]);
 res.json({ response: aiResponse, chatHistory: updated?.chatHistory || chatHistory });
 } catch (error) {
-console.error("Errore chat:", error);
+logSafeError("Errore chat", error);
 res.status(500).json({ error: "Errore nella risposta AI" });
 }
 });
@@ -1599,7 +1637,8 @@ impostaRegistroAliquota: null,
 impostaIpotecaria: null,
 impostaCatastale: null,
 altreSpeseNotarili: null,
-}
+},
+minorsStatus: "yes" | "no" | "unknown",
 ) {
 // Contesto passato agli step a valle. Claude Haiku 4.5 ha 200k token di
 // context, quindi possiamo permetterci budget ampi senza problemi.
@@ -1613,10 +1652,16 @@ text.length > max ? text.slice(0, max) + '\n\n[...troncato per brevita...]' : te
 
 const safeStep = async <T>(stepFn: () => Promise<T>, fallback: T, stepName: string): Promise<T> => {
 try { return await stepFn(); }
-catch (err) { console.error(`Errore step ${stepName}:`, err); return fallback; }
+catch (err) { logSafeError(`Errore step ${stepName}`, err); return fallback; }
 };
 
 try {
+if (minorsStatus !== "no") {
+throw new Error("MINORS_REINFORCED_PATH_DISABLED");
+}
+if (rilevaPossibiliRiferimentiMinori(descrizione, documentiText, ...parti.map(p => p.nome)).rischio) {
+throw new Error("MINORS_RECLASSIFICATION_REQUIRED");
+}
 // PRIV-08 — redazione preventiva: descrizione/parti/documentiText vengono
 // sostituiti con token PRIMA di essere inviati al modello AI (Anthropic/
 // Gemini). Da qui in poi, tutte le chiamate AI della pipeline usano SOLO le
@@ -1698,7 +1743,7 @@ await storage.updateAnalisi(id, { bozzaAccordo: ripristinaTesto(bozzaResult, map
 stats.track('analisi_complete');
 
 } catch (error) {
-console.error("Errore fatale pipeline AI:", error);
+logSafeError("Errore fatale pipeline AI", error);
 stats.track('analisi_error');
 await storage.updateAnalisi(id, { stato: "errore" });
 }

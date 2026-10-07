@@ -20,6 +20,7 @@ const previousFlags = {
   CASE_AI_ENABLED: process.env.CASE_AI_ENABLED,
   CASE_AI_GDPR_APPROVED: process.env.CASE_AI_GDPR_APPROVED,
   MINORS_AI_PATH_ENABLED: process.env.MINORS_AI_PATH_ENABLED,
+  MINORS_AI_GDPR_APPROVED: process.env.MINORS_AI_GDPR_APPROVED,
 };
 process.env.CASE_AI_ENABLED = "true";
 process.env.CASE_AI_GDPR_APPROVED = "true";
@@ -62,7 +63,7 @@ try {
   // 1. Assenza di containsMinors → richiesta bloccata prima del parser (nessun handler chiamato).
   {
     const fid = flowId();
-    const r = await preflight({ "x-notice-version": MINORS_NOTICE_VERSION, "x-case-flow-id": fid });
+    const r = await preflight({ "x-notice-version": MINORS_NOTICE_VERSION, "x-case-flow-id": fid, "x-minors-target": "create" });
     assert.equal(r.status, 422);
     assert.equal(r.body.code, "MINORS_STATUS_INVALID");
   }
@@ -70,7 +71,7 @@ try {
   // Versione avviso disallineata → bloccato.
   {
     const fid = flowId();
-    const r = await preflight({ "x-minors-status": "no", "x-notice-version": "vecchia", "x-case-flow-id": fid });
+    const r = await preflight({ "x-minors-status": "no", "x-notice-version": "vecchia", "x-case-flow-id": fid, "x-minors-target": "create" });
     assert.equal(r.status, 422);
     assert.equal(r.body.code, "MINORS_NOTICE_STALE");
   }
@@ -78,13 +79,15 @@ try {
   // 2/3. "unknown"/"yes" con percorso rafforzato non abilitato → bloccato (MINORS_AI_PATH_ENABLED assente).
   for (const status of ["unknown", "yes"]) {
     const fid = flowId();
-    const r = await preflight({ "x-minors-status": status, "x-notice-version": MINORS_NOTICE_VERSION, "x-case-flow-id": fid });
+    const r = await preflight({ "x-minors-status": status, "x-notice-version": MINORS_NOTICE_VERSION, "x-case-flow-id": fid, "x-minors-target": "create" });
     assert.equal(r.status, 503, `status=${status}`);
     assert.equal(r.body.code, "MINORS_PATH_DISABLED");
   }
 
-  // 4. "yes" con una conferma mancante, anche a percorso abilitato → bloccato.
+  // 4. "yes" resta bloccato dalla barriera tecnica assoluta anche quando le
+  // variabili d'ambiente vengono impostate; le conferme non possono aggirarla.
   process.env.MINORS_AI_PATH_ENABLED = "true";
+  process.env.MINORS_AI_GDPR_APPROVED = "true";
   {
     const fid = flowId();
     const confermeIncomplete = Array(MINORS_CONFIRMATION_COUNT).fill("1");
@@ -93,50 +96,59 @@ try {
       "x-minors-status": "yes",
       "x-notice-version": MINORS_NOTICE_VERSION,
       "x-case-flow-id": fid,
+      "x-minors-target": "create",
       "x-minors-confirmations": confermeIncomplete.join(","),
     });
-    assert.equal(r.status, 422);
-    assert.equal(r.body.code, "MINORS_CONFIRMATIONS_MISSING");
+    assert.equal(r.status, 503);
+    assert.equal(r.body.code, "MINORS_PATH_DISABLED");
   }
 
-  // "yes" con tutte le conferme → emette un token valido.
-  let tokenYes: string;
+  // Anche con entrambe le variabili impostate, il percorso rafforzato resta
+  // non attivabile finché la barriera tecnica non viene deliberatamente
+  // rimossa dopo un nuovo riesame.
   {
     const fid = flowId();
     const r = await preflight({
       "x-minors-status": "yes",
       "x-notice-version": MINORS_NOTICE_VERSION,
       "x-case-flow-id": fid,
+      "x-minors-target": "create",
       "x-minors-confirmations": Array(MINORS_CONFIRMATION_COUNT).fill("1").join(","),
     });
-    assert.equal(r.status, 200);
-    assert.ok(typeof r.body.token === "string" && r.body.token.length > 10);
-    tokenYes = r.body.token;
-    const call = await callProtected("/api/analisi", tokenYes, fid);
-    assert.equal(call.status, 200, JSON.stringify(call.body));
-    assert.equal(call.body.minorsStatus, "yes");
-
-    // 8. Doppio utilizzo dello stesso token → solo la prima richiesta lo consuma.
-    const second = await callProtected("/api/analisi", tokenYes, fid);
-    assert.equal(second.status, 422);
-    assert.equal(second.body.code, "MINORS_PREFLIGHT_REQUIRED");
+    assert.equal(r.status, 503);
+    assert.equal(r.body.code, "MINORS_PATH_DISABLED");
   }
   delete process.env.MINORS_AI_PATH_ENABLED;
+  delete process.env.MINORS_AI_GDPR_APPROVED;
 
   // "no" non richiede conferme ed emette comunque un token.
   {
     const fid = flowId();
-    const r = await preflight({ "x-minors-status": "no", "x-notice-version": MINORS_NOTICE_VERSION, "x-case-flow-id": fid });
+    const r = await preflight({ "x-minors-status": "no", "x-notice-version": MINORS_NOTICE_VERSION, "x-case-flow-id": fid, "x-minors-target": "create" });
     assert.equal(r.status, 200);
     const call = await callProtected("/api/analisi", r.body.token, fid);
     assert.equal(call.status, 200);
     assert.equal(call.body.minorsStatus, "no");
+    const replay = await callProtected("/api/analisi", r.body.token, fid);
+    assert.equal(replay.status, 422);
+    assert.equal(replay.body.code, "MINORS_PREFLIGHT_REQUIRED");
+  }
+
+  // Il token è vincolato all'operazione esatta: un token per create non può
+  // autorizzare upload o chat.
+  {
+    const fid = flowId();
+    const r = await preflight({ "x-minors-status": "no", "x-notice-version": MINORS_NOTICE_VERSION, "x-case-flow-id": fid, "x-minors-target": "create" });
+    assert.equal(r.status, 200);
+    const wrongTarget = await callProtected("/api/upload-pdf", r.body.token, fid);
+    assert.equal(wrongTarget.status, 422);
+    assert.equal(wrongTarget.body.code, "MINORS_PREFLIGHT_REQUIRED");
   }
 
   // 6/7. Token assente, o legato a un altro flowId (sessione diversa) → bloccato prima del parser.
   {
     const fid = flowId();
-    const r = await preflight({ "x-minors-status": "no", "x-notice-version": MINORS_NOTICE_VERSION, "x-case-flow-id": fid });
+    const r = await preflight({ "x-minors-status": "no", "x-notice-version": MINORS_NOTICE_VERSION, "x-case-flow-id": fid, "x-minors-target": "create" });
     assert.equal(r.status, 200);
     const senzaToken = await callProtected("/api/analisi", undefined, fid);
     assert.equal(senzaToken.status, 422);
@@ -150,7 +162,8 @@ try {
   // Le tre rotte protette (upload-pdf, analisi, chat) richiedono tutte il token.
   for (const path of ["/api/upload-pdf", "/api/analisi", "/api/analisi/1/chat"]) {
     const fid = flowId();
-    const r = await preflight({ "x-minors-status": "no", "x-notice-version": MINORS_NOTICE_VERSION, "x-case-flow-id": fid });
+    const target = path === "/api/upload-pdf" ? "upload" : path === "/api/analisi" ? "create" : "chat:1";
+    const r = await preflight({ "x-minors-status": "no", "x-notice-version": MINORS_NOTICE_VERSION, "x-case-flow-id": fid, "x-minors-target": target });
     const call = await callProtected(path, r.body.token, fid);
     assert.equal(call.status, 200, `${path}: ${JSON.stringify(call.body)}`);
   }
@@ -160,7 +173,7 @@ try {
   {
     delete (process.env as any).CASE_AI_ENABLED;
     const fid = flowId();
-    const r = await preflight({ "x-minors-status": "no", "x-notice-version": MINORS_NOTICE_VERSION, "x-case-flow-id": fid });
+    const r = await preflight({ "x-minors-status": "no", "x-notice-version": MINORS_NOTICE_VERSION, "x-case-flow-id": fid, "x-minors-target": "create" });
     assert.equal(r.status, 503);
     assert.equal(r.body.code, "CASE_AI_DISABLED");
     process.env.CASE_AI_ENABLED = "true";
@@ -182,6 +195,9 @@ try {
   assert.equal(rilevaPossibiliRiferimentiMinori("Nessun riferimento particolare in questo testo.").rischio, false);
   assert.equal(rilevaPossibiliRiferimentiMinori("Il figlio minorenne delle parti frequenta la scuola elementare.").rischio, true);
   assert.equal(rilevaPossibiliRiferimentiMinori("La bambina ha 9 anni e vive con la madre.").rischio, true);
+  assert.equal(rilevaPossibiliRiferimentiMinori("Il figlio di 9 anni vive con la madre.").rischio, true);
+  assert.equal(rilevaPossibiliRiferimentiMinori("La parte ha 17 anni.").rischio, true);
+  assert.equal(rilevaPossibiliRiferimentiMinori("Diagnosi pediatrica dettagliata.").rischio, true);
   assert.equal(rilevaPossibiliRiferimentiMinori(`Il minore è nato il 3 marzo ${new Date().getFullYear() - 5}.`).rischio, true);
   assert.equal(rilevaPossibiliRiferimentiMinori("Nessun indizio", null, undefined, "ma qui si parla di affidamento dei figli").rischio, true);
 }

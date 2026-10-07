@@ -35,11 +35,19 @@ export const insertAnalisiCasoSchema = createInsertSchema(analisiCasi).omit({
   createdAt: true,
 });
 
-export type InsertAnalisiCaso = z.infer<typeof insertAnalisiCasoSchema>;
+export type MinorsStatus = "yes" | "no" | "unknown";
+
+export type InsertAnalisiCaso = z.infer<typeof insertAnalisiCasoSchema> & {
+  // Conservato esclusivamente nel payload cifrato. Le analisi create prima
+  // dell'introduzione del presidio vengono trattate come "unknown".
+  minorsStatus: MinorsStatus;
+};
 export type AnalisiCaso = Omit<
   typeof analisiCasi.$inferSelect,
   "accessTokenHash" | "securePayload"
->;
+> & {
+  minorsStatus: MinorsStatus;
+};
 
 // Storico calcoli indennità
 export const calcoli = pgTable("calcoli", {
