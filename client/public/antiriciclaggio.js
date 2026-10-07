@@ -1367,6 +1367,7 @@ sm.firstChild.textContent = (formatoPagina==="genova") ? "Scheda di verifica del
 genovaPanelAggiorna();
 aggiornaBarraDocTarget();
 aggiornaSezione19();
+if(typeof applicaModoPagina === "function" && !(opts && opts.noModo)) applicaModoPagina(modoPagina, {silenzioso:true});
 if(!(opts && opts.silenzioso) && formatoPagina){ const b2 = $("formatoBar"); if(b2) b2.scrollIntoView({behavior:"smooth", block:"start"}); }
 }
 
@@ -2993,6 +2994,11 @@ switch(action){
 case "scelta-documento": sceltaDocumento(control.dataset.doc); break;
 case "scegli-formato": applicaFormatoPagina(control.dataset.formato); break;
 case "cambia-formato": applicaFormatoPagina(null); break;
+case "modo-pagina": applicaModoPagina(control.dataset.modo); break;
+case "verifica-aggiorna": verificaAggiorna(); break;
+case "verifica-assistente": verificaConAssistente(); break;
+case "verifica-copia": verificaCopia(control.dataset.pk); break;
+case "verifica-scarica": verificaScarica(); break;
 case "mostra-selettore-documento": mostraSelettoreDocumento(); break;
 case "apri-cartella": { const input=$("assist_folder"); if(input) input.click(); break; }
 case "assist-estrai": assistEstrai(); break;
@@ -3027,6 +3033,289 @@ if(!(control instanceof HTMLInputElement) || control.dataset.acAction!=="assist-
 assistAggiungiFile(control.files);
 });
 
+// ---------- Percorso "Verifica dei moduli ricevuti" ----------
+// Dice, parte per parte, se il Modulo AV e la Scheda di valutazione del rischio ricevuti sono
+// COMPLETI, DA CORREGGERE (incoerenze) o INCOMPLETI (dati mancanti). L'esito e' calcolato con
+// regole fisse sui campi della pagina (anche quelli riempiti dall'assistente AI leggendo i moduli
+// ricevuti): l'AI non decide mai l'esito. Vale per entrambi i percorsi (COA Genova e generico);
+// cambia solo il rigore su alcune voci (v. "gen" sotto).
+const MODO_PAGINA_KEY = "calcolomediazione_aml_modo_pagina";
+let modoPagina = "compila";
+try{ if(localStorage.getItem(MODO_PAGINA_KEY)==="verifica") modoPagina = "verifica"; } catch(e){ /* storage non disponibile */ }
+
+function applicaModoPagina(m, opts){
+modoPagina = (m==="verifica") ? "verifica" : "compila";
+try{ localStorage.setItem(MODO_PAGINA_KEY, modoPagina); } catch(e){ /* storage non disponibile */ }
+document.querySelectorAll('[data-ac-action="modo-pagina"]').forEach(b=>{
+b.setAttribute("aria-pressed", b.dataset.modo===modoPagina ? "true" : "false");
+});
+const attivo = !!formatoPagina && modoPagina==="verifica";
+const box = $("verificaBox"); if(box) box.style.display = attivo ? "" : "none";
+document.body.classList.toggle("mode-verifica", attivo);
+if(attivo){
+verificaAggiorna();
+if(!(opts && opts.silenzioso) && box) box.scrollIntoView({behavior:"smooth", block:"start"});
+}
+}
+
+function vrRank(l){ return l==="alto" ? 3 : (l==="medio" ? 2 : (l==="basso" ? 1 : 0)); }
+
+// Stesso calcolo di calcRisk(), ma su un insieme di campi salvati (qualsiasi parte della procedura).
+function vrLivelloSuggerito(c){
+const g = id => String(c[id]==null ? "" : c[id]).trim();
+let s = 0;
+if(g("p_area")==="extraue") s += 1;
+if(g("p_area")==="altorischio") s += 2;
+const pep = (g("pep_parte")!=="no" && g("pep_parte")!=="") || g("pep_te")==="si" || g("pep_rappr")==="si" || g("pep_esito")==="presenza" || g("pep_esito")==="rafforzate";
+if(pep) s += 2;
+if(g("te_esito")==="approfondimento") s += 2; else if(g("te_esito")==="integrare") s += 1;
+const nAn = Object.keys(c).filter(k=>/^cb_an_/.test(k) && c[k]===true).length;
+if(nAn>0) s += 1;
+if(nAn>=3) s += 1;
+if(g("anomalie_presenti")==="si" && g("anomalie_spiegate")==="no") s += 2;
+if(["trust","estera"].includes(g("p_natgiur"))) s += 1;
+return s===0 ? "basso" : (s<=2 ? "medio" : "alto");
+}
+
+// Restituisce {manca:[], incoerenze:[], avvisi:[], esito}. Ogni voce: {sez, t, vai?}
+function verificaParte(c, percorso){
+const gen = percorso === "genova";
+const g = id => String(c[id]==null ? "" : c[id]).trim();
+const ck = ids => ids.some(i=>c[i]===true);
+const manca = [], incoerenze = [], avvisi = [];
+const M = (sez, t, vai) => manca.push({sez, t, vai});
+const I = (sez, t, vai) => incoerenze.push({sez, t, vai});
+const A = (sez, t, vai) => avvisi.push({sez, t, vai});
+const isPG = g("p_tipo")==="pg";
+const haRappr = !!g("rappr_nome") || (g("rappr_ruolo")!=="" && g("rappr_ruolo")!=="nessuno");
+
+// --- Identificazione della parte (Modulo AV)
+if(!g("p_tipo")) M("4","Parte: persona fisica o giuridica?","p_tipo");
+if(!g("p_nome")) M("4","Cognome e nome / denominazione","p_nome");
+if(!g("p_cf")) M("4","Codice fiscale / P. IVA","p_cf");
+if(!g("p_res")) M("4","Residenza / sede legale","p_res");
+if(!isPG && !g("p_nascita")) M("4","Luogo e data di nascita","p_nascita");
+if(!g("p_ident_modalita")) M("3","Modalità di identificazione","p_ident_modalita");
+if(!g("p_doc_valido")) M("3","Documento verificato e in corso di validità","p_doc_valido");
+else if(g("p_doc_valido")==="no") I("3","Il documento di identità risulta non valido: va acquisito un documento in corso di validità","p_doc_valido");
+if(!g("p_doc") && !isPG) M("4","Estremi del documento di identità","p_doc");
+if(g("p_doc_scadenza")){
+const d = new Date(g("p_doc_scadenza"));
+if(!isNaN(d) && d < new Date(new Date().toDateString())) I("4","Documento di identità scaduto il "+d.toLocaleDateString("it-IT")+": chiedere un documento valido","p_doc_scadenza");
+} else if(!isPG){ A("4","Manca la data di scadenza del documento: non si può verificare che sia in corso di validità","p_doc_scadenza"); }
+
+// --- Rappresentante / esecutore
+if(isPG && !haRappr) M("5","Rappresentante legale o esecutore: nessun dato","rappr_ruolo");
+if(haRappr){
+if(!g("rappr_nome")) M("5","Rappresentante: cognome e nome","rappr_nome");
+if(!g("rappr_cf")) M("5","Rappresentante: codice fiscale","rappr_cf");
+if(!g("rappr_res")) M("5","Rappresentante: residenza","rappr_res");
+if(!g("rappr_nascita")) M("5","Rappresentante: luogo e data di nascita","rappr_nascita");
+if(!g("rappr_doc")) M("5","Rappresentante: documento di identità","rappr_doc");
+else if(g("rappr_doc_scadenza")){ const d = new Date(g("rappr_doc_scadenza")); if(!isNaN(d) && d < new Date(new Date().toDateString())) I("5","Documento del rappresentante scaduto il "+d.toLocaleDateString("it-IT"),"rappr_doc_scadenza"); }
+if(!ck(["cb_rappr_titolo_statuto","cb_rappr_titolo_visura","cb_rappr_titolo_procnot","cb_rappr_titolo_procsp","cb_rappr_titolo_altro"])) M("5","Titolo da cui derivano i poteri di rappresentanza","cb_rappr_titolo_statuto");
+if(!ck(["cb_rappr_poteri_rappresentare","cb_rappr_poteri_proposte","cb_rappr_poteri_disporre","cb_rappr_poteri_sottoscrivere","cb_rappr_poteri_altro"])) M("5","Poteri conferiti al rappresentante","cb_rappr_poteri_rappresentare");
+}
+
+// --- PEP
+if(!g("pep_parte")) M("6","La parte è PEP?","pep_parte");
+if(haRappr && !g("pep_rappr")) M("6","Il rappresentante è PEP?","pep_rappr");
+if(isPG && !g("pep_te")) M("6","Il titolare effettivo è PEP?","pep_te");
+if(!g("pep_esito")) M("6","Esito della verifica PEP","pep_esito");
+const pepFlag = (g("pep_parte")!=="no" && g("pep_parte")!=="") || g("pep_te")==="si" || g("pep_rappr")==="si" || g("pep_esito")==="presenza" || g("pep_esito")==="rafforzate";
+if(pepFlag){
+if(!g("pep_carica")) M("6","PEP: carica ricoperta","pep_carica");
+if(!g("pep_motivazione") && !g("pep_rapporto")) A("6","PEP: manca la motivazione / il rapporto con la persona esposta","pep_motivazione");
+if(g("pep_esito")==="nessuna") I("6","Indicata una qualifica PEP ma l'esito della verifica dice «nessuna qualifica PEP»","pep_esito");
+}
+
+// --- Titolare effettivo
+if(isPG){
+if(!g("te_esito")) M("7","Titolare effettivo: esito della verifica","te_esito");
+if(!g("te_numero") && !g("te_nome")) M("7","Titolare effettivo: numero o nominativo dei titolari effettivi","te_numero");
+if(g("te_nome") && !g("te_cf")) A("7","Titolare effettivo: manca il codice fiscale","te_cf");
+if(!ck(["cb_tefonte_visura","cb_tefonte_statuto","cb_tefonte_libro","cb_tefonte_assetto","cb_tefonte_docsoc","cb_tefonte_dichparte","cb_tefonte_altro"])) A("7","Titolare effettivo: fonte da cui è stato individuato","cb_tefonte_visura");
+} else if(g("te_pf_opzione")==="terzo"){
+if(!g("te3_nome")) M("7","Titolare effettivo diverso dalla parte: cognome e nome","te3_nome");
+if(!g("te3_cf")) M("7","Titolare effettivo diverso dalla parte: codice fiscale","te3_cf");
+}
+
+// --- Sanzioni finanziarie mirate
+if(!g("sfm_verifica_effettuata")) M("7 ter","Sanzioni finanziarie mirate: verifica effettuata?","sfm_verifica_effettuata");
+if(!g("sfm_esito")) M("7 ter","Sanzioni finanziarie mirate: esito","sfm_esito");
+else if(g("sfm_esito")!=="non_risultano") I("7 ter","Sanzioni finanziarie mirate: l'esito indica una possibile corrispondenza: servono approfondimenti prima di procedere","sfm_esito");
+
+// --- Provenienza delle somme e pagamento
+const accordoPag = c["cb_accordo_pagamento"]===true;
+const provOk = ck(["cb_provenienza_redditolav","cb_provenienza_redditoauton","cb_provenienza_redditoimpresa","cb_provenienza_disponente","cb_provenienza_finanziamento","cb_provenienza_mutuo","cb_provenienza_donazione","cb_provenienza_eredita","cb_provenienza_venditabeni","cb_provenienza_investimenti","cb_provenienza_risparmi","cb_provenienza_altro"]);
+const pagOk = ck(["cb_pagamento_bonifico","cb_pagamento_assegnocirc","cb_pagamento_assegnobanc","cb_pagamento_altro"]);
+if(!provOk){ if(gen || accordoPag) M("8","Provenienza delle somme","cb_provenienza_redditolav"); else A("8","Provenienza delle somme non indicata","cb_provenienza_redditolav"); }
+if(!pagOk){ if(gen || accordoPag) M("8","Modalità di pagamento","cb_pagamento_bonifico"); else A("8","Modalità di pagamento non indicata","cb_pagamento_bonifico"); }
+
+// --- Valutazione del rischio (Scheda)
+if(!g("scheda_compilata_da")) M("9","Scheda: chi l'ha compilata","scheda_compilata_da");
+const elemParte = ["rp_naturagiur","rp_attivita","rp_coerenza","rp_areageo","rp_trasparenza_te","rp_pep"];
+const nonValParte = elemParte.filter(id=>!g(id));
+if(nonValParte.length) M("9","Valutazione della parte: "+nonValParte.length+" elementi su "+elemParte.length+" senza livello attribuito",nonValParte[0]);
+const elemOp = ["vp_tipologia","vp_valore","vp_modalita","vp_coerenza","vp_complessita"];
+const nonValOp = elemOp.filter(id=>!g(id));
+if(nonValOp.length) A("10","Valutazione della prestazione: "+nonValOp.length+" elementi su "+elemOp.length+" senza livello attribuito (è ammesso «non applicabile»)",nonValOp[0]);
+if(!g("anomalie_presenti")) M("11","Sono emersi indicatori di anomalia?","anomalie_presenti");
+const nAn = Object.keys(c).filter(k=>/^cb_an_/.test(k) && c[k]===true).length;
+if(g("anomalie_presenti")==="si"){
+if(!nAn) M("11","Anomalie dichiarate ma nessun indicatore selezionato","cb_an_1");
+if(!g("anomalie_spiegate")) M("11","Le anomalie hanno una spiegazione ragionevole e documentata?","anomalie_spiegate");
+if(!g("anomalie_approfondimenti")) A("11","Anomalie: mancano gli approfondimenti svolti","anomalie_approfondimenti");
+}
+if(g("anomalie_presenti")==="no" && nAn>0) I("11","Indicata l'assenza di anomalie ma risultano selezionati "+nAn+" indicatori","anomalie_presenti");
+
+const lvl = g("risk_livello");
+if(!lvl) M("12","Livello di rischio complessivo","risk_livello");
+const sugg = vrLivelloSuggerito(c);
+if(lvl){
+if(vrRank(lvl) < vrRank(sugg)) I("12","Rischio attribuito «"+lvl+"» inferiore a quello indicato dai dati della scheda («"+sugg+"»): rivalutare oppure motivare","risk_livello");
+if((lvl==="medio" || lvl==="alto" || vrRank(lvl)!==vrRank(sugg)) && !g("risk_motivazione")) M("12","Motivazione del livello di rischio attribuito","risk_motivazione");
+}
+if(!g("av_tipo")) M("13","Tipo di adeguata verifica applicata","av_tipo");
+if(lvl && g("av_tipo")){
+if(lvl==="alto" && g("av_tipo")!=="rafforzata") I("13","Rischio alto ma adeguata verifica non rafforzata","av_tipo");
+if(lvl==="basso" && g("av_tipo")==="rafforzata") A("13","Rischio basso con adeguata verifica rafforzata: controllare la coerenza","av_tipo");
+if(lvl==="medio" && g("av_tipo")==="semplificata") I("13","Rischio medio con adeguata verifica semplificata: non coerente","av_tipo");
+}
+if(g("av_tipo")==="rafforzata" && !ck(["cb_avmis_docint","cb_avmis_approftit","cb_avmis_provfondi","cb_avmis_benef","cb_avmis_terzi","cb_avmis_altro"])) M("13","Misure rafforzate adottate","cb_avmis_docint");
+if(lvl==="alto"){
+if(!g("trasm_tipo")) M("16","Rischio alto: trasmissione interna al RAR","trasm_tipo");
+else if(g("trasm_tipo")==="non_necessaria") A("16","Rischio alto con trasmissione al RAR «non necessaria»: controllare","trasm_tipo");
+else if(g("trasm_tipo")==="effettuata" && !g("trasm_data")) M("16","Data della trasmissione al RAR","trasm_data");
+}
+if(lvl==="basso" && sugg!=="basso") A("12","Rischio basso ma i dati della scheda indicano «"+sugg+"»","risk_livello");
+
+// --- Documentazione ed esito
+if(!c["cb_docacq_identita"]) M("14","Documentazione acquisita: documento di identità","cb_docacq_identita");
+if(isPG && !ck(["cb_docacq_visura","cb_docacq_statuto","cb_docacq_attocost"])) M("14","Documentazione acquisita: visura, statuto o atto costitutivo","cb_docacq_visura");
+if(g("rappr_ruolo")==="procuratore" && !ck(["cb_docacq_procspec","cb_docacq_procnot","cb_docacq_procalliti"])) M("14","Documentazione acquisita: procura del rappresentante","cb_docacq_procspec");
+if(!ck(["cb_esito_nessuno","cb_esito_monitoraggio","cb_esito_rafforzata","cb_esito_ulteriori"])) M("15","Esito complessivo sulla parte","cb_esito_nessuno");
+else if(c["cb_esito_nessuno"]===true && (g("anomalie_presenti")==="si" || lvl==="alto")) I("15","Esito «nessun elemento di anomalia» incoerente con le anomalie dichiarate o con il rischio alto","cb_esito_nessuno");
+
+// --- Dichiarazioni della parte (Modulo AV)
+const dichMancanti = [["cb_dich_veritieri","dati veritieri e completi"],["cb_dich_impegno","impegno a comunicare le variazioni"],["cb_dich_privacy","presa visione dell'informativa privacy"]].filter(x=>c[x[0]]!==true);
+if(dichMancanti.length) M("17","Dichiarazioni della parte non spuntate: "+dichMancanti.map(x=>x[1]).join("; "),dichMancanti[0][0]);
+if(!g("dich_carichi")) M("17","Carichi pendenti: dichiarazione","dich_carichi");
+else if(g("dich_carichi")==="presenti"){ if(!g("dich_carichi_dettaglio")) M("17","Carichi pendenti dichiarati: manca il dettaglio","dich_carichi_dettaglio"); else A("17","Carichi pendenti dichiarati: valutare l'incidenza sul rischio","dich_carichi"); }
+
+// --- Documento fisico ricevuto
+if(c["vr_modulo_firmato"]!==true) M("doc","Modulo AV non firmato dalla parte (o non confermato)","vr_modulo_firmato");
+if(c["vr_modulo_datato"]!==true) M("doc","Modulo AV senza luogo e data di sottoscrizione (o non confermato)","vr_modulo_datato");
+if(c["vr_doc_allegato"]!==true) M("doc","Copia leggibile del documento di identità non allegata (o non confermata)","vr_doc_allegato");
+if(c["vr_scheda_sottoscritta"]!==true) M("doc","Scheda di rischio non sottoscritta da chi l'ha compilata (o non confermato)","vr_scheda_sottoscritta");
+
+const esito = manca.length ? "INCOMPLETO" : (incoerenze.length ? "DA CORREGGERE" : "COMPLETO");
+return {manca, incoerenze, avvisi, esito};
+}
+
+function vrTestoIntegrazione(nome, proc, r){
+const elenco = [].concat(
+r.manca.filter(x=>x.sez!=="doc").map(x=>"- "+x.t),
+r.manca.filter(x=>x.sez==="doc").map(x=>"- "+x.t),
+r.incoerenze.map(x=>"- "+x.t)
+);
+return "Gentile "+(nome && nome!=="(parte senza nome)" ? nome : "Signore/Signora")+",\n"
++"in relazione alla procedura di mediazione n. "+(proc||"____")+", dall'esame del Modulo di adeguata verifica e della documentazione ricevuta risulta necessario integrare o correggere quanto segue:\n"
++elenco.join("\n")
++"\n\nLa preghiamo di inviarci quanto richiesto prima dell'incontro di mediazione. Restiamo a disposizione per ogni chiarimento.\nCordiali saluti";
+}
+
+function vrLista(titolo, voci, cls, correnteKey, isCorrente){
+if(!voci.length) return "";
+return '<div class="vr-t">'+esc(titolo)+' ('+voci.length+')</div><ul>'+voci.map(x=>
+'<li>'+(x.sez!=="doc" ? 'Sez. '+esc(x.sez)+' — ' : '')+esc(x.t)
++ (isCorrente && x.vai ? ' <button type="button" class="gm-item" data-g-vai="'+esc(x.vai)+'" style="padding:2px 8px;font-size:11.5px">vai al campo</button>' : '')
++'</li>').join("")+'</ul>';
+}
+
+let vrUltimo = [];
+function verificaAggiorna(){
+const out = $("verificaOut"); if(!out) return;
+const percorso = formatoPagina || "altri";
+const procKey = amlProcKey();
+const correnteKey = amlPartyKey();
+const salvate = procKey ? (amlDatiLoadAll()[procKey] || {}) : {};
+const parti = {};
+Object.keys(salvate).forEach(pk=>{ if(pk!=="(parte senza nome)") parti[pk] = {campi: salvate[pk].campi || {}, role: salvate[pk].role}; });
+const nomeCorrente = (v("p_nome")||"").trim();
+// La parte a schermo usa sempre i valori vivi dei campi (anche se non ancora salvati).
+if(nomeCorrente) parti[correnteKey] = {campi: amlRaccogliCampi(), role: role};
+const chiavi = Object.keys(parti);
+if(!procKey){ out.innerHTML = '<div class="ocr-warn">Scrivi il <b>numero di procedura</b> nella sezione 1: le parti compariranno qui.</div>'; vrUltimo=[]; return; }
+if(!chiavi.length){ out.innerHTML = '<div class="ocr-warn">Nessuna parte ancora presente per la procedura '+esc(procKey)+'. Carica i moduli ricevuti nell\'assistente e applica le parti, oppure scrivi il nome della parte nella sezione 4.</div>'; vrUltimo=[]; return; }
+vrUltimo = [];
+let html = '';
+if(chiavi.length < 2) html += '<div class="ocr-warn">Per la procedura risulta <b>una sola parte</b>: ogni mediazione coinvolge almeno due parti (istante e chiamato) e il Modulo AV va ricevuto da ciascuna.</div>';
+chiavi.forEach(pk=>{
+const r = verificaParte(parti[pk].campi, percorso);
+const isCorrente = (pk===correnteKey) && !!nomeCorrente;
+vrUltimo.push({pk, r});
+const cls = r.esito==="COMPLETO" ? "vr-ok" : (r.esito==="DA CORREGGERE" ? "vr-fix" : "vr-miss");
+const bordo = r.esito==="COMPLETO" ? "var(--ok)" : (r.esito==="DA CORREGGERE" ? "#b45309" : "var(--bad)");
+html += '<div class="vr-card" style="border-left-color:'+bordo+'"><h5>'+esc(pk)+(isCorrente?' <span style="font-weight:400;font-size:12px;color:var(--muted)">— a schermo ora</span>':'')
++ ' <span class="vr-badge '+cls+'">'+esc(r.esito)+'</span></h5>';
+if(r.esito==="COMPLETO") html += '<p class="sub" style="margin:2px 0 4px">Tutti i dati richiesti dal modello sono presenti e coerenti.'+(r.avvisi.length?' Restano '+r.avvisi.length+' avvisi da valutare.':'')+'</p>';
+html += vrLista("Dati mancanti", r.manca, "m", correnteKey, isCorrente)
++ vrLista("Incoerenze da correggere", r.incoerenze, "i", correnteKey, isCorrente)
++ vrLista("Avvisi (da valutare)", r.avvisi, "a", correnteKey, isCorrente);
+if(!isCorrente) html += '<div class="row-btns" style="margin-top:6px"><button type="button" class="btn-ghost" style="padding:5px 10px;font-size:12px" data-g-carica="'+esc(pk)+'">Apri questa parte per correggere o confermare i controlli sul documento fisico</button></div>';
+if(r.manca.length || r.incoerenze.length){
+html += '<div class="vr-t">Testo per chiedere l\'integrazione alla parte</div><textarea rows="6" readonly aria-label="Richiesta di integrazione per '+esc(pk)+'">'+esc(vrTestoIntegrazione(pk, procKey, r))+'</textarea>'
++ '<div class="row-btns" style="margin-top:6px"><button type="button" class="btn-ghost" style="padding:5px 10px;font-size:12px" data-ac-action="verifica-copia" data-pk="'+esc(pk)+'">Copia il testo</button></div>';
+}
+html += '</div>';
+});
+html += '<div class="row-btns"><button type="button" class="btn-ghost" data-ac-action="verifica-scarica">📄 Scarica il rapporto di verifica (Word)</button></div>';
+out.innerHTML = html;
+}
+
+let vrTimer = null;
+function verificaProgramma(){
+if(!formatoPagina || modoPagina!=="verifica") return;
+clearTimeout(vrTimer);
+vrTimer = setTimeout(verificaAggiorna, 500);
+}
+document.addEventListener("input", verificaProgramma);
+document.addEventListener("change", verificaProgramma);
+
+function verificaCopia(pk){
+const e = vrUltimo.find(x=>x.pk===pk); if(!e) return;
+const txt = vrTestoIntegrazione(pk, amlProcKey(), e.r);
+try{ navigator.clipboard.writeText(txt).then(()=>toast("Testo copiato")); } catch(err){ toast("Copia non riuscita: seleziona il testo e copialo a mano."); }
+}
+
+function verificaScarica(){
+if(!vrUltimo.length){ toast("Nessuna parte da verificare."); return; }
+const procKey = amlProcKey();
+let h = '<p>Percorso: <b>'+(formatoPagina==="genova"?"COA Genova":"moduli generici")+'</b> · procedura n. '+esc(procKey)+'</p>';
+vrUltimo.forEach(({pk, r})=>{
+const sez = (t, voci)=> voci.length ? '<p><b>'+t+' ('+voci.length+')</b></p><ul>'+voci.map(x=>'<li>'+(x.sez!=="doc"?'Sez. '+esc(x.sez)+' — ':'')+esc(x.t)+'</li>').join("")+'</ul>' : '';
+h += '<h2 style="font-size:15px">'+esc(pk)+' — '+esc(r.esito)+'</h2>'
++ (r.esito==="COMPLETO" ? '<p>Tutti i dati richiesti dal modello sono presenti e coerenti.</p>' : '')
++ sez("Dati mancanti", r.manca) + sez("Incoerenze da correggere", r.incoerenze) + sez("Avvisi", r.avvisi);
+});
+h += '<p style="font-size:11px;color:#555">Esito calcolato con regole fisse sui dati inseriti o letti dai moduli ricevuti; non sostituisce la valutazione professionale del mediatore e del Responsabile antiriciclaggio.</p>';
+esportaDocSingoloWord("Rapporto di verifica dei moduli AV e di rischio ricevuti", h, "Verifica_moduli_AV_procedura_"+(procKey||"senza_numero").replace(/[^A-Za-z0-9_-]+/g,"_")+".doc");
+}
+
+function verificaConAssistente(){
+const files = $("assist_files");
+if(!files || !files.files || !files.files.length){
+const lista = $("assist_filelist");
+toast("Prima carica i moduli ricevuti nella sezione «Vuoi partire da una bozza automatica?» qui sopra, poi premi di nuovo.");
+const ab = $("assistbox"); if(ab) ab.scrollIntoView({behavior:"smooth", block:"start"});
+return;
+}
+const r = $("assist_richiesta");
+if(r) r.value = "Questi documenti sono i Moduli di adeguata verifica e le Schede di valutazione del rischio compilati e ricevuti dalle parti. Trascrivi nei campi ESATTAMENTE quanto risulta compilato, senza completare di tua iniziativa i campi lasciati vuoti e senza dedurre valutazioni non scritte. Nella risposta elenca, parte per parte: i campi lasciati vuoti, le firme o le date mancanti, i documenti di identità scaduti e le incoerenze (ad esempio rischio indicato basso con PEP o anomalie).";
+const b = $("assist_btn"); if(b) b.click();
+}
+
 buildTriggers();
 
 // Ripristina lo stato del selettore documento iniziale se una scelta era già
@@ -3044,4 +3333,5 @@ const box = $("docSelectBox"); if(box) box.style.display = "none";
 aggiornaBarraDocTarget();
 aggiornaSezione19();
 applicaFormatoPagina(formatoPagina, {silenzioso:true});
+applicaModoPagina(modoPagina, {silenzioso:true});
 })();
