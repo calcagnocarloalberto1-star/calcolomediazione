@@ -65,7 +65,7 @@ Per ogni fornitore conservare PDF o copia datata di contratto, DPA, elenco subpr
 
 - NDA reciproco sottoscritto il 10 settembre 2026; accesso al Trust Center
   Vanta ottenuto.
-- DPA acquisito e verificato su sette dei nove punti della checklist interna.
+- DPA a adesione acquisito e riscontrato punto per punto il 7 ottobre 2026 (v. PRIV-12): residui sul trasferimento verso gli Stati Uniti e sulla conferma scritta di applicabilità.
 - SOC 2 Type II verificato senza eccezioni sui controlli testati.
 - Penetration test Kaiju Security verificato con rischio `Low` in tutte le
   aree testate.
