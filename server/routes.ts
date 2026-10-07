@@ -1177,10 +1177,13 @@ attivaCalcoloCostiNotarili, tipoAttoNotarile, valoreImmobile,
 applicaPrezzoValore, venditoreImpresaIva,
 onorarioNotarileStimato, impostaRegistroAliquota, impostaIpotecaria,
 impostaCatastale, altreSpeseNotarili,
-privacyAcknowledged,
+privacyAcknowledged, usoDichiarato,
 } = req.body;
 if (privacyAcknowledged !== true) {
 return res.status(400).json({ error: "Conferma l'informativa privacy prima di avviare l'analisi." });
+}
+if (usoDichiarato !== "fittizio" && usoDichiarato !== "accordo") {
+return res.status(400).json({ error: "Indica se si tratta di un caso fittizio o se hai in essere l'accordo sul trattamento dei dati." });
 }
 if (!titolo || !descrizione) {
 return res.status(400).json({ error: "Titolo e descrizione sono obbligatori" });

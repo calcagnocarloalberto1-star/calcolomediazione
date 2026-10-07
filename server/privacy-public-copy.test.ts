@@ -159,3 +159,11 @@ for (const restoredAiControl of [
 }
 
 console.log("privacy public copy tests passed");
+
+// Dichiarazione d'uso (decisione del titolare, 4 ottobre 2026): «caso fittizio o
+// accordo in essere», obbligatoria, non preselezionata, verificata anche dal server.
+const analisiPage = readFileSync("client/src/pages/AnalisiCasoAI.tsx", "utf8");
+assert.match(analisiPage, /useState<"fittizio" \| "accordo" \| null>\(null\)/);
+assert.match(analisiPage, /Caso fittizio\./);
+assert.match(analisiPage, /Accordo in essere\./);
+assert.match(readFileSync("server/routes.ts", "utf8"), /usoDichiarato !== "fittizio" && usoDichiarato !== "accordo"/);

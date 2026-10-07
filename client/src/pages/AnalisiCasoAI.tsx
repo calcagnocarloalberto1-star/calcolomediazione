@@ -207,6 +207,9 @@ export default function AnalisiCasoAI() {
   const [dragActive, setDragActive] = useState(false);
   const [files, setFiles] = useState<File[]>([]);
   const [privacyAcknowledged, setPrivacyAcknowledged] = useState(false);
+  // Dichiarazione d'uso (decisione del titolare, 4 ottobre 2026): nessun valore preselezionato.
+  const [usoDichiarato, setUsoDichiarato] = useState<"fittizio" | "accordo" | null>(null);
+  const privacyConfermata = privacyAcknowledged && usoDichiarato !== null;
   const [caseAiEnabled, setCaseAiEnabled] = useState(false);
   const [privacyControlsLoaded, setPrivacyControlsLoaded] = useState(false);
 const [minorsPathEnabled, setMinorsPathEnabled] = useState(false);
@@ -460,8 +463,8 @@ const [minorsPathEnabled, setMinorsPathEnabled] = useState(false);
   const handleDrop = async (e: React.DragEvent) => {
     e.preventDefault(); e.stopPropagation(); setDragActive(false);
     if (!caseAiEnabled) return;
-    if (!privacyAcknowledged) {
-      toast({ title: "Conferma privacy necessaria", description: "Prima di caricare documenti, conferma l'informativa posta sotto l'area di upload.", variant: "destructive" });
+    if (!privacyConfermata) {
+      toast({ title: "Conferma privacy necessaria", description: "Prima di caricare documenti, indica come usi lo strumento e conferma l'informativa posta sotto l'area di upload.", variant: "destructive" });
       return;
     }
     if (!minorsStatus || !minorsReinforcedConfirmed) {
@@ -488,7 +491,7 @@ const [minorsPathEnabled, setMinorsPathEnabled] = useState(false);
       e.target.value = "";
       return;
     }
-    if (!privacyAcknowledged) {
+    if (!privacyConfermata) {
       e.target.value = "";
       toast({ title: "Conferma privacy necessaria", description: "Conferma l'informativa prima di selezionare documenti.", variant: "destructive" });
       return;
@@ -512,7 +515,7 @@ const [minorsPathEnabled, setMinorsPathEnabled] = useState(false);
       e.target.value = "";
       return;
     }
-    if (!privacyAcknowledged) {
+    if (!privacyConfermata) {
       e.target.value = "";
       toast({ title: "Conferma privacy necessaria", description: "Conferma l'informativa prima di selezionare documenti.", variant: "destructive" });
       return;
@@ -558,7 +561,7 @@ try {
 
   // ─── SUBMIT ───────────────────────────────────────────────────────────────
   const handleSubmit = async () => {
-    if (!caseAiEnabled || !titolo || descrizione.length < 50 || !privacyAcknowledged) return;
+    if (!caseAiEnabled || !titolo || descrizione.length < 50 || !privacyConfermata) return;
     if (!minorsStatus || !minorsReinforcedConfirmed) {
       toast({ title: "Verifica minori necessaria", description: "Rispondi alla domanda sui dati di minori e, se richiesto, spunta tutte le conferme prima di avviare l'analisi.", variant: "destructive" });
       return;
@@ -589,6 +592,7 @@ try {
         applicaPrezzoValore: materiaImmobiliare && attivaCalcoloCostiNotarili && applicaPrezzoValore,
         venditoreImpresaIva: materiaImmobiliare && attivaCalcoloCostiNotarili && venditoreImpresaIva,
         privacyAcknowledged: true,
+        usoDichiarato,
       };
 
       const res = await apiRequest("POST", "/api/analisi", body, {
@@ -1363,6 +1367,31 @@ try {
                   </p>
                 </div>
               )}
+              <div className="space-y-2 border-2 border-foreground/20 p-3" data-testid="uso-dichiarato">
+                <p className="text-sm font-semibold">Come stai usando questo strumento?</p>
+                <RadioGroup
+                  value={usoDichiarato ?? undefined}
+                  onValueChange={value => setUsoDichiarato(value === "fittizio" || value === "accordo" ? value : null)}
+                  disabled={!caseAiEnabled}
+                  className="space-y-2"
+                >
+                  <div className="flex items-start gap-3">
+                    <RadioGroupItem value="fittizio" id="uso-fittizio" className="mt-0.5" data-testid="radio-uso-fittizio" />
+                    <label htmlFor="uso-fittizio" className="text-sm leading-relaxed cursor-pointer">
+                      <strong>Caso fittizio.</strong> Sto inserendo un caso di fantasia o dati resi del tutto non riconducibili a persone reali.
+                    </label>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <RadioGroupItem value="accordo" id="uso-accordo" className="mt-0.5" data-testid="radio-uso-accordo" />
+                    <label htmlFor="uso-accordo" className="text-sm leading-relaxed cursor-pointer">
+                      <strong>Accordo in essere.</strong> Sono un professionista o un Organismo e ho in essere con CalcoloMediazione l'accordo sul trattamento dei dati (art. 28 GDPR) per i dati di terzi che inserisco.
+                    </label>
+                  </div>
+                </RadioGroup>
+                <p className="text-xs text-muted-foreground">
+                  Senza una delle due condizioni non inserire dati reali di persone. La scelta è obbligatoria e non è preselezionata.
+                </p>
+              </div>
               <div className="flex items-start gap-3 border-2 border-foreground/20 p-3">
                 <Checkbox
                   id="privacy-ai-ack"
@@ -1436,7 +1465,7 @@ try {
             </div>
 
             {/* Submit */}
-            <Button onClick={handleSubmit} disabled={!caseAiEnabled || !titolo || descrizione.length < 50 || !privacyAcknowledged || !minorsStatus || !minorsReinforcedConfirmed || isRunning}
+            <Button onClick={handleSubmit} disabled={!caseAiEnabled || !titolo || descrizione.length < 50 || !privacyConfermata || !minorsStatus || !minorsReinforcedConfirmed || isRunning}
               className="w-full py-6 text-base font-bold border-2 border-foreground shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] transition-all duration-150"
               data-testid="button-avvia-analisi">
               {isRunning ? <><Loader2 className="w-5 h-5 mr-2 animate-spin" />Analisi in corso...</>
