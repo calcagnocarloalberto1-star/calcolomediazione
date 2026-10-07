@@ -168,11 +168,11 @@ console.log("\n=== TEST 10: Tabella delle Indennità COA Genova ===");
 
 const t10vol: InputCalcolo = { tipoMediazione: "volontaria", esito: "accordo_successivi", tipoValore: "determinato", valoreLite: 20000, modalitaTariffaria: "coa_genova" };
 const r10vol = calcolaIndennita(t10vol);
-assert(r10vol.speseBase === 390.40, `Genova indennità base €20.000 = €390,40 (got ${r10vol.speseBase})`);
+assert(Math.abs(r10vol.speseBase * 1.22 - 390.40) < 0.01, `Genova indennità base €20.000 = €390,40 con IVA (netto ${r10vol.speseBase}) (got ${r10vol.speseBase * 1.22})`);
 
 const t10obb: InputCalcolo = { tipoMediazione: "obbligatoria", esito: "nessuno_successivi", tipoValore: "determinato", valoreLite: 20000, modalitaTariffaria: "coa_genova" };
 const r10obb = calcolaIndennita(t10obb);
-assert(Math.abs(r10obb.speseBase * 0.8 - 312.32) < 0.01, `Genova indennità base obbligatoria €20.000 *0.8 = €312,32 (got ${r10obb.speseBase * 0.8})`);
+assert(Math.abs(r10obb.speseBase * 1.22 * 0.8 - 312.32) < 0.01, `Genova indennità base obbligatoria €20.000 *0.8 = €312,32 (got ${r10obb.speseBase * 0.8})`);
 
 // ==========================================
 // TEST 11 — UX-05 (casi C6/C7): la "Tabella delle Indennità" COA Genova è un SALDO
@@ -189,13 +189,13 @@ console.log("\n=== TEST 11: COA Genova — nessuna doppia detrazione sul saldo p
 const t11: InputCalcolo = { tipoMediazione: "volontaria", esito: "accordo_successivi", tipoValore: "determinato", valoreLite: 2000, modalitaTariffaria: "coa_genova" };
 const r11 = calcolaIndennita(t11);
 assert(r11.detrazioneSpese === 0, `Genova: nessuna detrazione del primo incontro sul saldo prosecuzione (got detrazioneSpese=${r11.detrazioneSpese})`);
-assert(Math.abs(r11.ulterioriSpese - 60.80) < 0.01, `Genova €2.000 accordo successivi: ulteriori spese nette = €60,80 (indennità base €48,80 + 25% = €12) (got ${r11.ulterioriSpese})`);
+assert(Math.abs(r11.ulterioriSpese * 1.22 - 61.00) < 0.02, `Genova €2.000 accordo successivi: ulteriori spese nette = €60,80 (indennità base €48,80 + 25% = €12) (got ${r11.ulterioriSpese})`);
 assert(r11.ulterioriSpese > 0, "Genova: le ulteriori spese NON devono azzerarsi per gli scaglioni bassi (bug corretto UX-05)");
 
 // Verifica anche lo scaglione più basso (fino a €1.000), ancora più esposto al bug prima della correzione
 const t11b: InputCalcolo = { tipoMediazione: "volontaria", esito: "accordo_successivi", tipoValore: "determinato", valoreLite: 500, modalitaTariffaria: "coa_genova" };
 const r11b = calcolaIndennita(t11b);
-assert(Math.abs(r11b.ulterioriSpese - 30.40) < 0.01, `Genova €500 accordo successivi: ulteriori spese nette = €30,40 (indennità base €24,40 + 25% = €6) (got ${r11b.ulterioriSpese})`);
+assert(Math.abs(r11b.ulterioriSpese * 1.22 - 30.50) < 0.02, `Genova €500 accordo successivi: ulteriori spese nette = €30,40 (indennità base €24,40 + 25% = €6) (got ${r11b.ulterioriSpese})`);
 
 // La detrazione nazionale (Tabella A) resta invece invariata (art. 34 co. 2 si applica)
 const t11nat: InputCalcolo = { tipoMediazione: "volontaria", esito: "accordo_successivi", tipoValore: "determinato", valoreLite: 2000, modalitaTariffaria: "nazionale" };
@@ -204,3 +204,9 @@ assert(r11nat.detrazioneSpese === 120, `Nazionale: detrazione primo incontro inv
 
 // ==========================================
 console.log("\n✅ TUTTI I TEST SUPERATI ✅\n");
+
+// TEST 12: Genova — il saldo prosecuzione del tariffario è GIÀ con IVA (312,32 = 256 × 1,22):
+// totale con IVA = primo incontro con IVA (190,32) + saldo (312,32) = 502,64, senza doppia IVA.
+console.log("\n=== TEST 12: COA Genova — nessuna doppia IVA sul saldo prosecuzione ===");
+const r12 = calcolaIndennita({ tipoMediazione: "obbligatoria", esito: "nessuno_successivi", tipoValore: "determinato", valoreLite: 20000, modalitaTariffaria: "coa_genova" });
+assert(Math.abs(r12.totaleConIva - 502.64) < 0.02, `Genova obbligatoria €20.000 prosecuzione: totale con IVA = €502,64 (got ${r12.totaleConIva})`);

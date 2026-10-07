@@ -19,7 +19,7 @@
  * - Gratuito Patrocinio: D.P.R. 115/2002, art. 76 — limite 2025: €13.659,64
  */
 
-import { formatEuro, type ModalitaTariffaria } from "./calcolo-indennita.js";
+import { formatEuro, calcolaIndennita, type ModalitaTariffaria } from "./calcolo-indennita.js";
 import { calcolaCostiNotarili as calcolaCostiNotarileUnif, type RegimeFiscale, type ScenarioNotarile } from "./notarile.js";
 
 // ========================
@@ -442,40 +442,21 @@ function calcolaCostiMediazione(input: InputConfronto, valoreEffettivo: number):
   const modalita = input.modalitaTariffaria || "nazionale";
   const isGP = input.gratuitoPatrocinio === true;
 
-  let speseAvvio: number;
-  let indennita: number;
-  let nonDeterminatoGenova = false;
+  // Motore unico (calcolaIndennita): spese di avvio + spese primo incontro + ulteriori spese
+  // (scenario con accordo), IVA 22% inclusa. Così il confronto coincide con il Calcolatore.
+  const rInd = calcolaIndennita({
+    valoreLite: valoreEffettivo,
+    tipoMediazione: input.tipoMediazione,
+    esito: "accordo_successivi",
+    tipoValore: input.tipoValore,
+    modalitaTariffaria: modalita,
+    mediatoreEsperto: input.mediatoreEsperto,
+    proceduraComplessa: input.proceduraComplessa,
+  });
+  const speseAvvio = rInd.speseAvvio;
+  const nonDeterminatoGenova = rInd.nonDeterminato === true;
 
-  if (modalita === "coa_genova") {
-    // Spese di primo incontro COA Genova: identiche alle nazionali (verificato sul
-    // Tariffario Mediazione 2026 COA Genova — Facoltative e Contrattuali)
-    speseAvvio = getSpeseAvvioNazionaliConfronto(valoreEffettivo, input.tipoValore);
-    if (input.tipoValore !== "determinato") {
-      indennita = INDENNITA_GENOVA_PROSECUZIONE_INDETERMINABILI[input.tipoValore] ?? 1256.60;
-    } else {
-      const scag = findScaglione(TABELLA_INDENNITA_GENOVA_PROSECUZIONE, valoreEffettivo);
-      indennita = scag.indennitaBase;
-      nonDeterminatoGenova = scag.nonDeterminato === true;
-    }
-    if (isObbligatoria(input.tipoMediazione)) {
-      indennita = indennita * 0.8;
-      speseAvvio = Math.round(speseAvvio * 0.8);
-    }
-  } else {
-    speseAvvio = getSpeseAvvioNazionaliConfronto(valoreEffettivo, input.tipoValore);
-    const scagTabA = findScaglione(TABELLA_A_MEDIAZIONE_NAZIONALE, valoreEffettivo);
-    indennita = scagTabA.minimoTabA;
-    if (isObbligatoria(input.tipoMediazione)) {
-      indennita = indennita * 0.8;
-      speseAvvio = Math.round(speseAvvio * 0.8);
-    }
-  }
-
-  if (input.mediatoreEsperto || input.proceduraComplessa) {
-    indennita = indennita + Math.round(indennita * 0.2);
-  }
-
-  let indennitaOrganismo = speseAvvio + indennita;
+  let indennitaOrganismo = rInd.totaleConIva;
   if (isGP) indennitaOrganismo = 0;
 
   const paramStrag = findScaglione(PARAMETRI_FORENSI_STRAGIUDIZIALI, valoreEffettivo);

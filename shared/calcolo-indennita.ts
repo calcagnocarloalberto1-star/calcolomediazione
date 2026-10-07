@@ -231,11 +231,15 @@ function getValorePerTabellaA(valoreLite: number, tipoValore: TipoValore): numbe
  * viene applicata a valle da calcolaIndennita (riduzioneRate), come per la modalità nazionale.
  */
 function getUlterioriSpeseBaseGenova(valoreLite: number, tipoValore: TipoValore): number | null {
+  // Gli importi del tariffario COA Genova ("Saldo indennità prosecuzione — Totale con IVA",
+  // es. €312,32 = 256 × 1,22) sono GIÀ comprensivi di IVA 22%. Il motore lavora sul netto e
+  // aggiunge l'IVA alla fine: qui si scorpora, così il totale con IVA coincide col tariffario.
+  const scorpora = (x: number) => Math.round((x / 1.22) * 100) / 100;
   if (tipoValore !== "determinato") {
-    return INDENNITA_GENOVA_PROSECUZIONE_INDETERMINABILI[tipoValore] ?? 1256.60;
+    return scorpora(INDENNITA_GENOVA_PROSECUZIONE_INDETERMINABILI[tipoValore] ?? 1256.60);
   }
   const scaglione = getScaglioneFromTable(TABELLA_INDENNITA_GENOVA, valoreLite);
-  return scaglione.indennitaBase; // null per "Oltre €5.000.000" (ND nel tariffario)
+  return scaglione.indennitaBase === null ? null : scorpora(scaglione.indennitaBase); // null per "Oltre €5.000.000" (ND)
 }
 
 // ========================
@@ -404,7 +408,7 @@ export function calcolaIndennita(input: InputCalcolo): CalcoloRisultato {
     const ulterioriSpeseRidotte = ulterioriSpeseBase - riduzioneObbligatoriaUlteriori;
 
     // Maggiorazione +10% per conciliazione al primo incontro (art. 31, co. 1)
-    const maggiorazioneSuccesso = Math.round(ulterioriSpeseRidotte * 0.10);
+    const maggiorazioneSuccesso = Math.round(ulterioriSpeseRidotte * 0.10 * 100) / 100;
 
     // Detrazione spese mediazione primo incontro (art. 34, co. 2) — SOLO nazionale.
     // Verificato contro il Tariffario Mediazione 2026 COA Genova (Facoltative/Contrattuali
@@ -500,7 +504,7 @@ export function calcolaIndennita(input: InputCalcolo): CalcoloRisultato {
   // Maggiorazione per accordo: +25% per conciliazione agli incontri successivi (art. 30, co. 2)
   let maggiorazioneSuccesso = 0;
   if (esito === "accordo_successivi") {
-    maggiorazioneSuccesso = Math.round((ulterioriSpeseBase - riduzioneObbligatoriaUlteriori) * 0.25);
+    maggiorazioneSuccesso = Math.round((ulterioriSpeseBase - riduzioneObbligatoriaUlteriori) * 0.25 * 100) / 100;
     ulterioriSpeseCalc += maggiorazioneSuccesso;
   }
 
