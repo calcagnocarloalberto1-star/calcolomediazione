@@ -133,9 +133,11 @@ account e piano API commerciale effettivamente associati. ZDR non attestata.
   per un'organizzazione individuale. È stata predisposta una richiesta di
   conferma scritta al supporto (esito da registrare qui). Fino alla risposta
   l'applicabilità al conto effettivo resta non provata.
-- **Subresponsabili (elenco letto l'8 ottobre 2026 alle 22:3x da
-  https://trust.anthropic.com/subprocessors, 20 voci; nessuna copia PDF
-  disponibile, il salvataggio della pagina non conserva l'elenco):**
+- **Subresponsabili (elenco di 20 voci da
+  https://trust.anthropic.com/subprocessors, letto l'8 ottobre 2026 alle
+  22:3x; copia della pagina salvata dal titolare alle 22:33, impronta SHA-256
+  `e7ed9e20dffd937967279b9b41834af06484b29ac89882846ec862cd39587bef`,
+  con elenco identico a quello letto; l'originale è nell'archivio riservato):**
   - Infrastruttura e rete, tutti i prodotti: Google Cloud Platform, Amazon Web
     Services, Microsoft Azure (mondiale); Cloudflare, CDN (mondiale, locale al
     cliente).
