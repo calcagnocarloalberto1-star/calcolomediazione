@@ -108,6 +108,35 @@ produzione è stata identificata dal titolare come `carlo-api-key`; è stata
 esclusa `olismo-proxy-2026-05-v2`. Restano da registrare organizzazione,
 account e piano API commerciale effettivamente associati. ZDR non attestata.
 
+### Evidenze Anthropic acquisite l'8 ottobre 2026
+
+- **Copia datata del DPA:** versione in vigore dal 24 febbraio 2025, acquisita
+  dal titolare il 8 ottobre 2026 alle 22:21 (stampa PDF del sito, 21 pagine);
+  impronta SHA-256
+  `845569f3a333d3a453dc97189ed6a73290157f1382315dcceb6fccaa9306ec32`.
+  L'originale è conservato nell'archivio riservato, non nel repository.
+- **Contenuto verificato nella copia:** il DPA è incorporato nei Commercial
+  Terms of Service; Anthropic è responsabile e il cliente titolare (B.1);
+  autorizzazione generale ai subresponsabili dell'elenco pubblicato, con
+  diritto di obiezione entro 15 giorni dalla notifica (C.3); notifica di una
+  violazione entro 48 ore (G.1); restituzione e cancellazione entro 30 giorni
+  dalla cessazione (H.1); SCC 2021/914 Moduli 2 e 3 incorporate per
+  riferimento, con legge e foro irlandesi (I.1, Schedule 3); supporto per la
+  valutazione d'impatto sui trasferimenti (I.4); audit su richiesta (F);
+  categorie particolari di dati: «None» (Schedule 1, B.3).
+- **Pannello della Console (8 ottobre 2026):** l'organizzazione è «Carlo's
+  Individual Org»; conservazione dei dati attiva a 30 giorni, non è attiva la
+  conservazione zero. Nei campi dell'organizzazione indirizzo e partita IVA
+  risultano non compilati.
+- **Residuo:** dalla Console non risulta la data di accettazione dei
+  Commercial Terms per questa organizzazione, né è documentato che valgano
+  per un'organizzazione individuale. È stata predisposta una richiesta di
+  conferma scritta al supporto (esito da registrare qui). Fino alla risposta
+  l'applicabilità al conto effettivo resta non provata.
+- **Subresponsabili:** elenco consultabile su
+  https://trust.anthropic.com/subprocessors (cloud: Google Cloud, AWS,
+  Microsoft Azure; CDN: Cloudflare); copia datata da archiviare.
+
 ## Google Gemini API
 
 - Per utenti e applicazioni nello SEE, in Svizzera o nel Regno Unito i
