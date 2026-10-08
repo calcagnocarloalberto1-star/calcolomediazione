@@ -124,10 +124,20 @@ account e piano API commerciale effettivamente associati. ZDR non attestata.
   riferimento, con legge e foro irlandesi (I.1, Schedule 3); supporto per la
   valutazione d'impatto sui trasferimenti (I.4); audit su richiesta (F);
   categorie particolari di dati: «None» (Schedule 1, B.3).
-- **Pannello della Console (8 ottobre 2026):** l'organizzazione è «Carlo's
-  Individual Org»; conservazione dei dati attiva a 30 giorni, non è attiva la
-  conservazione zero. Nei campi dell'organizzazione indirizzo e partita IVA
-  risultano non compilati.
+- **Pannello della Console (8 ottobre 2026, schermate delle 22:44-22:47):**
+  l'organizzazione è «Carlo's Individual Org», ID
+  `f563bab2-9c9b-464d-b3ea-e06e4c2321bc`; indirizzo (Via Trieste 4/9, 16011
+  Arenzano GE) e partita IVA (IT03718420106) coincidono con i dati del
+  responsabile nella bozza dell'accordo (in una lettura precedente della
+  stessa sera risultavano non compilati); conservazione dei dati attiva a 30
+  giorni, conservazione zero non attiva; adesione al Development Partner
+  Program non attiva (la pagina offre il pulsante «Unisciti»); feedback degli
+  utenti disattivato; registrazione delle metriche di Claude Code attiva
+  (riguarda Claude Code, non le chiamate del sito). La pagina di fatturazione
+  mostra una fattura mensile pagata e crediti acquistati a partire dall'11
+  aprile 2026 (la cronologia visibile non esclude voci anteriori): è un
+  riscontro indiretto dell'uso commerciale, non della data di accettazione dei
+  termini.
 - **Residuo:** dalla Console non risulta la data di accettazione dei
   Commercial Terms per questa organizzazione, né è documentato che valgano
   per un'organizzazione individuale. È stata predisposta una richiesta di
