@@ -138,11 +138,24 @@ account e piano API commerciale effettivamente associati. ZDR non attestata.
   aprile 2026 (la cronologia visibile non esclude voci anteriori): è un
   riscontro indiretto dell'uso commerciale, non della data di accettazione dei
   termini.
-- **Residuo:** dalla Console non risulta la data di accettazione dei
-  Commercial Terms per questa organizzazione, né è documentato che valgano
-  per un'organizzazione individuale. È stata predisposta una richiesta di
-  conferma scritta al supporto (esito da registrare qui). Fino alla risposta
-  l'applicabilità al conto effettivo resta non provata.
+- **Risposta del supporto Anthropic (8 ottobre 2026, ricevuta alle 22:54
+  circa, tramite il canale di assistenza; testo conservato dal titolare):**
+  il DPA con le SCC è incorporato automaticamente nei Commercial Terms e
+  l'accettazione di questi comporta l'accettazione del DPA, in vigore dal 24
+  febbraio 2025; il DPA si applica a tutti i prodotti commerciali, API
+  compresa, e quindi, per l'uso dell'API da Console a fini professionali,
+  anche all'organizzazione del titolare; i Commercial Terms contengono
+  l'impegno vincolante a non addestrare i modelli sui contenuti del cliente,
+  applicato di default a tutti i clienti commerciali; per una copia
+  controfirmata o ulteriore documentazione il supporto rinvia a un operatore
+  umano. Il mittente dichiara di non avere accesso alla data di accettazione
+  dei Commercial Terms da parte dell'organizzazione.
+- **Residuo:** la risposta conferma l'applicabilità per l'organizzazione e
+  l'impegno di non addestramento, ma è un messaggio del canale di assistenza,
+  non un atto firmato, e non indica la data di accettazione. Restano aperti:
+  la data di accettazione (da cercare tra le email di conferma o i registri
+  dell'organizzazione) e l'eventuale copia controfirmata, da chiedere a un
+  operatore umano.
 - **Subresponsabili (elenco di 20 voci da
   https://trust.anthropic.com/subprocessors, letto l'8 ottobre 2026 alle
   22:3x; copia della pagina salvata dal titolare alle 22:33, impronta SHA-256
