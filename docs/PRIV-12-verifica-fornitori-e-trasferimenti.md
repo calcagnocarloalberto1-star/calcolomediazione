@@ -150,6 +150,18 @@ account e piano API commerciale effettivamente associati. ZDR non attestata.
   controfirmata o ulteriore documentazione il supporto rinvia a un operatore
   umano. Il mittente dichiara di non avere accesso alla data di accettazione
   dei Commercial Terms da parte dell'organizzazione.
+- **Riscontro dalla posta del titolare (8 ottobre 2026):** nella casella del
+  titolare non risulta alcuna email di benvenuto, di conferma dell'account
+  API o sui Commercial Terms. La prima prova dell'uso a pagamento dell'API è
+  la ricevuta del sabato 11 aprile 2026 (ore 19:48), acquisto di crediti una
+  tantum, emessa da Anthropic Ireland, Limited con IVA italiana al 22%;
+  numero di fattura 9BF0758D-645559, coincidente con la cronologia fatture
+  della Console. Le email anteriori (novembre 2025) riguardano l'abbonamento
+  Pro di Claude.ai e non provano l'accettazione dei Commercial Terms. L'11
+  aprile 2026 è quindi solo un riscontro indiretto: non è la data di
+  accettazione, che può essere anteriore, ma indica come controparte del
+  rapporto per l'uso dell'API l'entità irlandese, coerente con le SCC
+  irlandesi del DPA.
 - **Residuo:** la risposta conferma l'applicabilità per l'organizzazione e
   l'impegno di non addestramento, ma è un messaggio del canale di assistenza,
   non un atto firmato, e non indica la data di accettazione. Restano aperti:
