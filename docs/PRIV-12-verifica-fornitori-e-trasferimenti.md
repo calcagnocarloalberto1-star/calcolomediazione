@@ -133,9 +133,26 @@ account e piano API commerciale effettivamente associati. ZDR non attestata.
   per un'organizzazione individuale. È stata predisposta una richiesta di
   conferma scritta al supporto (esito da registrare qui). Fino alla risposta
   l'applicabilità al conto effettivo resta non provata.
-- **Subresponsabili:** elenco consultabile su
-  https://trust.anthropic.com/subprocessors (cloud: Google Cloud, AWS,
-  Microsoft Azure; CDN: Cloudflare); copia datata da archiviare.
+- **Subresponsabili (elenco letto l'8 ottobre 2026 alle 22:3x da
+  https://trust.anthropic.com/subprocessors, 20 voci; nessuna copia PDF
+  disponibile, il salvataggio della pagina non conserva l'elenco):**
+  - Infrastruttura e rete, tutti i prodotti: Google Cloud Platform, Amazon Web
+    Services, Microsoft Azure (mondiale); Cloudflare, CDN (mondiale, locale al
+    cliente).
+  - Fatturazione e accesso: Stripe (USA; Developer Platform incluso), WorkOS
+    (USA; Claude for Work e Developer Platform).
+  - Assistenza clienti e comunicazioni: Intercom, Twilio, Iterable (USA);
+    Nutun (Sudafrica); Boldr (Canada); Functional Software/Sentry, errori e
+    assistenza (USA).
+  - Antifrode: Sift e Arkose Labs (USA).
+  - Ricerca web: Brave Search e TurboPuffer (USA).
+  - Altri prodotti non usati dal sito: ElevenLabs (Claude for Work),
+    Palantir Federal Cloud Service (Claude for Government), Persona (USA) e
+    Yoti (Regno Unito) per Claude Free/Pro/Max.
+  - Nota: l'elenco è dell'intero servizio Anthropic; non indica quali
+    subresponsabili trattino i contenuti dell'API. Da chiarire con il
+    supporto insieme alla conferma di applicabilità, e da verificare per
+    possibili trasferimenti verso Paesi terzi (USA, Sudafrica, Canada).
 
 ## Google Gemini API
 
