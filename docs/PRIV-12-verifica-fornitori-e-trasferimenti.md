@@ -108,6 +108,52 @@ produzione è stata identificata dal titolare come `carlo-api-key`; è stata
 esclusa `olismo-proxy-2026-05-v2`. Restano da registrare organizzazione,
 account e piano API commerciale effettivamente associati. ZDR non attestata.
 
+### Evidenze Anthropic acquisite l'8 ottobre 2026
+
+- **Copia datata del DPA:** versione in vigore dal 24 febbraio 2025, acquisita
+  dal titolare il 8 ottobre 2026 alle 22:21 (stampa PDF del sito, 21 pagine);
+  impronta SHA-256
+  `845569f3a333d3a453dc97189ed6a73290157f1382315dcceb6fccaa9306ec32`.
+  L'originale è conservato nell'archivio riservato, non nel repository.
+- **Contenuto verificato nella copia:** il DPA è incorporato nei Commercial
+  Terms of Service; Anthropic è responsabile e il cliente titolare (B.1);
+  autorizzazione generale ai subresponsabili dell'elenco pubblicato, con
+  diritto di obiezione entro 15 giorni dalla notifica (C.3); notifica di una
+  violazione entro 48 ore (G.1); restituzione e cancellazione entro 30 giorni
+  dalla cessazione (H.1); SCC 2021/914 Moduli 2 e 3 incorporate per
+  riferimento, con legge e foro irlandesi (I.1, Schedule 3); supporto per la
+  valutazione d'impatto sui trasferimenti (I.4); audit su richiesta (F);
+  categorie particolari di dati: «None» (Schedule 1, B.3).
+- **Pannello della Console (8 ottobre 2026):** l'organizzazione è «Carlo's
+  Individual Org»; conservazione dei dati attiva a 30 giorni, non è attiva la
+  conservazione zero. Nei campi dell'organizzazione indirizzo e partita IVA
+  risultano non compilati.
+- **Residuo:** dalla Console non risulta la data di accettazione dei
+  Commercial Terms per questa organizzazione, né è documentato che valgano
+  per un'organizzazione individuale. È stata predisposta una richiesta di
+  conferma scritta al supporto (esito da registrare qui). Fino alla risposta
+  l'applicabilità al conto effettivo resta non provata.
+- **Subresponsabili (elenco letto l'8 ottobre 2026 alle 22:3x da
+  https://trust.anthropic.com/subprocessors, 20 voci; nessuna copia PDF
+  disponibile, il salvataggio della pagina non conserva l'elenco):**
+  - Infrastruttura e rete, tutti i prodotti: Google Cloud Platform, Amazon Web
+    Services, Microsoft Azure (mondiale); Cloudflare, CDN (mondiale, locale al
+    cliente).
+  - Fatturazione e accesso: Stripe (USA; Developer Platform incluso), WorkOS
+    (USA; Claude for Work e Developer Platform).
+  - Assistenza clienti e comunicazioni: Intercom, Twilio, Iterable (USA);
+    Nutun (Sudafrica); Boldr (Canada); Functional Software/Sentry, errori e
+    assistenza (USA).
+  - Antifrode: Sift e Arkose Labs (USA).
+  - Ricerca web: Brave Search e TurboPuffer (USA).
+  - Altri prodotti non usati dal sito: ElevenLabs (Claude for Work),
+    Palantir Federal Cloud Service (Claude for Government), Persona (USA) e
+    Yoti (Regno Unito) per Claude Free/Pro/Max.
+  - Nota: l'elenco è dell'intero servizio Anthropic; non indica quali
+    subresponsabili trattino i contenuti dell'API. Da chiarire con il
+    supporto insieme alla conferma di applicabilità, e da verificare per
+    possibili trasferimenti verso Paesi terzi (USA, Sudafrica, Canada).
+
 ## Google Gemini API
 
 - Per utenti e applicazioni nello SEE, in Svizzera o nel Regno Unito i
