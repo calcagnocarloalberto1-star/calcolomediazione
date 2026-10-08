@@ -124,18 +124,30 @@ account e piano API commerciale effettivamente associati. ZDR non attestata.
   riferimento, con legge e foro irlandesi (I.1, Schedule 3); supporto per la
   valutazione d'impatto sui trasferimenti (I.4); audit su richiesta (F);
   categorie particolari di dati: «None» (Schedule 1, B.3).
-- **Pannello della Console (8 ottobre 2026):** l'organizzazione è «Carlo's
-  Individual Org»; conservazione dei dati attiva a 30 giorni, non è attiva la
-  conservazione zero. Nei campi dell'organizzazione indirizzo e partita IVA
-  risultano non compilati.
+- **Pannello della Console (8 ottobre 2026, schermate delle 22:44-22:47):**
+  l'organizzazione è «Carlo's Individual Org», ID
+  `f563bab2-9c9b-464d-b3ea-e06e4c2321bc`; indirizzo (Via Trieste 4/9, 16011
+  Arenzano GE) e partita IVA (IT03718420106) coincidono con i dati del
+  responsabile nella bozza dell'accordo (in una lettura precedente della
+  stessa sera risultavano non compilati); conservazione dei dati attiva a 30
+  giorni, conservazione zero non attiva; adesione al Development Partner
+  Program non attiva (la pagina offre il pulsante «Unisciti»); feedback degli
+  utenti disattivato; registrazione delle metriche di Claude Code attiva
+  (riguarda Claude Code, non le chiamate del sito). La pagina di fatturazione
+  mostra una fattura mensile pagata e crediti acquistati a partire dall'11
+  aprile 2026 (la cronologia visibile non esclude voci anteriori): è un
+  riscontro indiretto dell'uso commerciale, non della data di accettazione dei
+  termini.
 - **Residuo:** dalla Console non risulta la data di accettazione dei
   Commercial Terms per questa organizzazione, né è documentato che valgano
   per un'organizzazione individuale. È stata predisposta una richiesta di
   conferma scritta al supporto (esito da registrare qui). Fino alla risposta
   l'applicabilità al conto effettivo resta non provata.
-- **Subresponsabili (elenco letto l'8 ottobre 2026 alle 22:3x da
-  https://trust.anthropic.com/subprocessors, 20 voci; nessuna copia PDF
-  disponibile, il salvataggio della pagina non conserva l'elenco):**
+- **Subresponsabili (elenco di 20 voci da
+  https://trust.anthropic.com/subprocessors, letto l'8 ottobre 2026 alle
+  22:3x; copia della pagina salvata dal titolare alle 22:33, impronta SHA-256
+  `e7ed9e20dffd937967279b9b41834af06484b29ac89882846ec862cd39587bef`,
+  con elenco identico a quello letto; l'originale è nell'archivio riservato):**
   - Infrastruttura e rete, tutti i prodotti: Google Cloud Platform, Amazon Web
     Services, Microsoft Azure (mondiale); Cloudflare, CDN (mondiale, locale al
     cliente).
