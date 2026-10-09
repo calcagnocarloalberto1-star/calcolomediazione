@@ -1,4 +1,5 @@
 import { callLLM, etichettaRuolo } from "./llm.js";
+import { REGOLE_NO_PROFILAZIONE } from "./regole-no-profilazione.js";
 
 export async function guidaStrategica(
   descrizione: string,
@@ -25,13 +26,15 @@ Produci queste 7 sezioni in ordine, ognuna breve e concreta:
 | Nome tecnica breve | Momento specifico | Risultato atteso |
 Inserisci 4 righe con tecniche specifiche per questo caso. Celle brevi, max 40 caratteri ciascuna.
 
-4. **Caucus**: quando convocarli e cosa esplorare con ciascuna parte
+4. **Caucus**: quando convocarli e quali temi e domande aperte esplorare con ciascuna parte
 
 5. **Punti critici**: 3-4 rischi e opportunità specifici per questo caso
 
 6. **Gestione impasse**: 3 strategie concrete per sbloccare la negoziazione
 
 7. **Chiusura**: come riconoscere il momento giusto e spingere verso l'accordo
+
+${REGOLE_NO_PROFILAZIONE}
 
 Sii specifico per il caso, non generico. Risposte concise. Formatta in Markdown.`;
 

@@ -1,4 +1,5 @@
 import { callLLM, etichettaRuolo } from "./llm.js";
+import { REGOLE_NO_PROFILAZIONE } from "./regole-no-profilazione.js";
 
 const TEORIE_DESCRIZIONI: Record<string, string> = {
   ancoraggio: "Ancoraggio (Anchoring): tendenza ad affidarsi eccessivamente alla prima informazione ricevuta",
@@ -25,12 +26,12 @@ export async function controlloBiasCognitivi(
 
   const systemPrompt = `Sei un esperto di economia comportamentale, teoria delle decisioni e psicologia della negoziazione applicata alla mediazione civile. Il tuo compito è analizzare i potenziali bias cognitivi e applicare i framework decisionali selezionati al caso di mediazione.
 
-Per ciascun bias cognitivo selezionato (Ancoraggio, Avversione alla Perdita, Framing, Overconfidence, Sunk Cost, Availability), analizza:
-1. **Livello di rischio**: scala 1-5
-2. **Come si manifesta nel caso specifico**: esempi concreti
-3. **Impatto sulla negoziazione**: come potrebbe distorcere le decisioni
+Per ciascun bias cognitivo selezionato (Ancoraggio, Avversione alla Perdita, Framing, Overconfidence, Sunk Cost, Availability) descrivi il RISCHIO PER LA TRATTATIVA, non le caratteristiche delle persone:
+1. **Rilevanza per questa trattativa**: scala 1-5
+2. **Come può manifestarsi la dinamica nella situazione**: esempi concreti riferiti ai fatti e alle cifre del caso, senza attribuirla a una parte determinata
+3. **Impatto sulla negoziazione**: come potrebbe distorcere le decisioni di chiunque si trovi in questa posizione
 4. **Strategie di mitigazione**: tecniche per il mediatore
-5. **Domande di debiasing**: domande specifiche da porre alle parti
+5. **Domande di debiasing**: domande aperte e neutre che il mediatore può porre a ciascuna parte
 
 Per ciascun framework decisionale selezionato, applica l'analisi specifica:
 
@@ -41,6 +42,8 @@ Per ciascun framework decisionale selezionato, applica l'analisi specifica:
 
 Teorie/framework da analizzare:
 - ${teorie}
+
+${REGOLE_NO_PROFILAZIONE}
 
 Formatta l'output in Markdown con indicatori di rischio visivi, tabelle e matrici.`;
 

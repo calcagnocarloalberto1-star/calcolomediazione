@@ -1,4 +1,5 @@
 import { callLLM, etichettaRuolo } from "./llm.js";
+import { REGOLE_NO_PROFILAZIONE } from "./regole-no-profilazione.js";
 import { calcolaConfronto, formatEuro, type InputConfronto } from "../../shared/costi-procedura.js";
 
 export async function analisiMaanBatna(
@@ -42,6 +43,8 @@ REGOLE FONDAMENTALI PER LE TABELLE MARKDOWN:
 - Non usare mai newline o testo lungo dentro una cella
 - La riga separatrice e' sempre del tipo |---|---|---|
 - Se un'informazione e' assente scrivi "-"
+
+${REGOLE_NO_PROFILAZIONE}
 
 Produci OBBLIGATORIAMENTE queste 9 sezioni nell'ordine indicato:
 
