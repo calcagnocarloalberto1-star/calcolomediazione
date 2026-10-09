@@ -61,7 +61,9 @@ poteri delle autorità nazionali e formazione). Questa nota la imposta.
 
 - L. 132/2025: principio antropocentrico e obbligo informativo del professionista
   verso il cliente.
-- d.lgs. 179/2026: AgID e ACN autorità di vigilanza; art. 23 sanzioni (fino a 15
+- d.lgs. 179/2026: AgID autorità di notifica (art. 4), ACN autorità di vigilanza del
+  mercato sui sistemi di IA (art. 5), con le autorità di settore finanziario e il Garante
+  per i casi dell'art. 74, par. 8, AI Act; art. 23 sanzioni (fino a 15
   milioni di euro o 3% del fatturato per gli obblighi dei fornitori, deployer e
   della trasparenza, con criterio ridotto per PMI e microimprese); art. 47
   formazione sull'IA nei corsi degli ordini e delle associazioni L. 4/2013 (entro
