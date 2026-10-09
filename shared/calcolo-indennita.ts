@@ -257,7 +257,7 @@ function calcolaEsenzioneArt17(esito: EsitoMediazione, valoreLite: number): Esen
       esenteRegistro: true,
       limiteEsenzione,
       impostaRegistroRisparmiata,
-      note: "Accordo raggiunto: esenzione totale imposta di bollo su tutti gli atti (art. 17, c. 2) ed esenzione imposta di registro fino a €100.000 (art. 17, c. 3, D.Lgs. 28/2010).",
+      note: "Accordo raggiunto: esenzione totale imposta di bollo su tutti gli atti (art. 17, c. 1) ed esenzione imposta di registro fino a €100.000 (art. 17, c. 2, D.Lgs. 28/2010).",
     };
   }
 
@@ -266,7 +266,7 @@ function calcolaEsenzioneArt17(esito: EsitoMediazione, valoreLite: number): Esen
     esenteRegistro: false,
     limiteEsenzione: 0,
     impostaRegistroRisparmiata: 0,
-    note: "Esenzione parziale: imposta di bollo esente sugli atti del procedimento (art. 17, c. 2, D.Lgs. 28/2010). Esenzione imposta di registro non applicabile in assenza di accordo.",
+    note: "Esenzione parziale: imposta di bollo esente sugli atti del procedimento (art. 17, c. 1, D.Lgs. 28/2010). Esenzione imposta di registro non applicabile in assenza di accordo.",
   };
 }
 

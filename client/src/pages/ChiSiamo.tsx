@@ -112,7 +112,7 @@ export default function ChiSiamo() {
             <FeatureCard
               icon={Gavel}
               title="Banca Dati Giurisprudenza"
-              description="Raccolta di 88 pronunce di Corte Costituzionale, Cassazione SS.UU., Cassazione e merito dal 2010 ad oggi, con massime, principi di diritto e note esplicative."
+              description="Raccolta di 96 pronunce di Corte Costituzionale, Cassazione SS.UU., Cassazione e merito dal 2010 ad oggi, con massime, principi di diritto e note esplicative."
               href="/giurisprudenza"
             />
             <FeatureCard

@@ -159,7 +159,7 @@ export const chiSiamoJsonLd = {
         { "@type": "ListItem", position: 4, name: "Calcolo Costi Notarili Accordo", url: `${SITE_URL}/costi-notarili` },
         { "@type": "ListItem", position: 5, name: "Credito d'Imposta Mediazione", url: `${SITE_URL}/credito-imposta` },
         { "@type": "ListItem", position: 6, name: "Generatore Procura Speciale Sostanziale", url: `${SITE_URL}/generatore-procura` },
-        { "@type": "ListItem", position: 7, name: "Banca Dati Giurisprudenza Mediazione (88 pronunce)", url: `${SITE_URL}/giurisprudenza` },
+        { "@type": "ListItem", position: 7, name: "Banca Dati Giurisprudenza Mediazione (96 pronunce)", url: `${SITE_URL}/giurisprudenza` },
         { "@type": "ListItem", position: 8, name: "Strategie di Negoziazione", url: `${SITE_URL}/strategie-negoziazione` },
         { "@type": "ListItem", position: 9, name: "Guida operativa al D.M. 150/2023", url: `${SITE_URL}/guida-dm-150` },
         { "@type": "ListItem", position: 10, name: "Glossario della Mediazione", url: `${SITE_URL}/glossario` },
