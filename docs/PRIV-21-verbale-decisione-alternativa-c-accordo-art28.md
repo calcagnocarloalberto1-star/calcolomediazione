@@ -30,11 +30,11 @@ Elementi della scelta:
 
 Il titolare ha autorizzato la preparazione, senza attivazione, della proposta di
 testo dell'accordo con giorni (15 per l'obiezione ai subresponsabili, 30 per la
-cancellazione) e Allegati A–C compilati, e nuova versione `proposta-2026-10-09`.
+cancellazione) Allegati A–C e dati del responsabile compilati, e nuova versione `proposta-2026-10-09`.
 
 ## Ancora da fare prima del flag a `true`
 
-1. Inserire codice fiscale o partita IVA del responsabile e verificare sede e recapiti.
+1. Verificare i dati del responsabile inseriti (P. IVA 03718420106; Via Trieste 4/9, 16011 Arenzano (GE); email), ripresi dalla pagina Contatti del sito.
 2. Rileggere e approvare il testo; aggiornare la versione se cambia.
 3. Verificare i valori degli Allegati A–C (in particolare le misure indicate come attive).
 4. Aggiornare DPIA (PRIV-10) e registro (PRIV-11) con i nuovi ruoli.

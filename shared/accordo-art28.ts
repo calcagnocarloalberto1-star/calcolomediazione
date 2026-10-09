@@ -1,6 +1,6 @@
 // Testo dell'accordo ex art. 28 GDPR proposto ai professionisti (derivato da
-// docs/PRIV-16). ATTENZIONE: contiene ancora un campo da completare (codice fiscale/P. IVA del
-// responsabile); giorni e Allegati A-C sono compilati come proposta (PRIV-21). Finché ACCORDO_ART28_APPROVATO è false il server rifiuta
+// docs/PRIV-16). ATTENZIONE: giorni, Allegati A-C e dati del responsabile (da pagina Contatti) sono
+// compilati come proposta (PRIV-21); manca l'approvazione finale del titolare. Finché ACCORDO_ART28_APPROVATO è false il server rifiuta
 // ogni accettazione: va impostato a true solo dopo che il titolare ha completato,
 // rivisto e approvato il testo, aggiornando ACCORDO_ART28_VERSIONE.
 export const ACCORDO_ART28_VERSIONE = "proposta-2026-10-09";
@@ -18,8 +18,8 @@ export const ACCORDO_ART28_TESTO = `## Parti
 
 - Nome: Carlo Alberto Calcagno
 - Servizio: CalcoloMediazione.it
-- Codice fiscale/P. IVA: ___________________________________________
-- Sede e recapiti: Via Macaggi 23/4, 16121 Genova; recapiti come indicati nella pagina Contatti del servizio
+- Codice fiscale/P. IVA: P. IVA 03718420106
+- Sede e recapiti: Via Trieste 4/9, 16011 Arenzano (GE); email calcagnocarloalberto1@gmail.com
 - Referente privacy: Carlo Alberto Calcagno
 
 ## Oggetto, durata, natura e finalità
