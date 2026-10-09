@@ -1,7 +1,7 @@
 # PRIV-19 — Nota di sintesi per la decisione sull'attivazione dell'accordo art. 28 online
 
 Data: 9 ottobre 2026
-Stato: nota istruttoria per il titolare; **nessuna decisione presa**. La decisione
+Stato: nota istruttoria per il titolare. Il 9 ottobre 2026 il titolare ha scelto l'alternativa C (verbale PRIV-21); l'attivazione resta da autorizzare. La decisione
 e la sua motivazione vanno registrate in un verbale separato (come PRIV-18).
 
 ## 1. Che cosa si decide
