@@ -4,6 +4,7 @@ import multer from "multer";
 import crypto from "crypto";
 import { PDFParse } from "pdf-parse";
 import { storage, incrementaContatoreVisite, getContatoreVisite, verifyStorageHealth, registraAccordoArt28, verificaAccordoArt28 } from "./storage.js";
+import { AML_REATI_DECLARATION_VERSION } from "../shared/aml-reati.js";
 import { ACCORDO_ART28_VERSIONE, ACCORDO_ART28_APPROVATO, ACCORDO_ART28_TESTO } from "../shared/accordo-art28.js";
 import { estrazioneEntita } from "./ai/ner-extraction.js";
 import { analisiGiuridica } from "./ai/analisi-giuridica.js";
@@ -1080,8 +1081,21 @@ documenti.push({ base64: f.buffer.toString("base64"), mediaType });
 return { documenti, scartati };
 }
 
+// PRIV-19: l'assistente AI antiriciclaggio richiede, prima di ogni invio, la dichiarazione
+// sui dati relativi a condanne e reati (art. 10 GDPR). Il campo arriva nel multipart,
+// quindi il controllo va dopo multer; la versione deve coincidere con quella del server.
+function requireAmlReatiDeclaration(req: any, res: any, next: any) {
+  if ((req.body?.dichiarazioneReati || "").toString() !== AML_REATI_DECLARATION_VERSION) {
+    return res.status(400).json({
+      code: "AML_REATI_DECLARATION_REQUIRED",
+      error: "Prima di usare l'assistente AI devi confermare la dichiarazione sui dati relativi a condanne e reati (art. 10 GDPR).",
+    });
+  }
+  next();
+}
+
 // ─── ESTRAZIONE AI DA DOCUMENTO (tool antiriciclaggio, modalita' alta precisione) ─
-app.post("/api/aml-extract", aiRateLimit, requireAmlAiEnabled, uploadAml.array("files", 20), async (req, res) => {
+app.post("/api/aml-extract", aiRateLimit, requireAmlAiEnabled, uploadAml.array("files", 20), requireAmlReatiDeclaration, async (req, res) => {
 try {
 const files = ((req as any).files as Array<{ buffer: Buffer; mimetype: string; originalname?: string }>) || [];
 const doctype = (req.body?.doctype || "id").toString();
@@ -1104,7 +1118,7 @@ res.status(500).json({ error: (e && e.message) ? e.message : "Errore durante l'e
 });
 
 // ─── ASSISTENTE AI DI COMPILAZIONE (tool antiriciclaggio, piu' documenti + richiesta libera) ─
-app.post("/api/aml-assist", aiRateLimit, requireAmlAiEnabled, uploadAml.array("files", 20), async (req, res) => {
+app.post("/api/aml-assist", aiRateLimit, requireAmlAiEnabled, uploadAml.array("files", 20), requireAmlReatiDeclaration, async (req, res) => {
 try {
 const files = ((req as any).files as Array<{ buffer: Buffer; mimetype: string; originalname?: string }>) || [];
 const richiesta = (req.body?.richiesta || "").toString().slice(0, 4000);
