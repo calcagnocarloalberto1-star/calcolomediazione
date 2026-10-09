@@ -1360,7 +1360,9 @@ try {
                     Carica solo documenti per i quali hai una base giuridica adeguata e hai informato
                     l'interessato, ed elimina prima del caricamento i dati non necessari. Il sistema
                     applica una pseudonimizzazione automatica best-effort, che non equivale ad
-                    anonimizzazione. Verifica sempre professionalmente i risultati prima dell'uso.
+                    anonimizzazione. Verifica sempre professionalmente i risultati prima dell'uso. L'analisi
+                    è prodotta da un sistema di intelligenza artificiale: informa il cliente di
+                    questo uso (art. 13 L. 132/2025).
                   </p>
                   <p>
                     Consulta la{" "}
