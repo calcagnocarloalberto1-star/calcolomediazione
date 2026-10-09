@@ -74,6 +74,6 @@ data (non verificate in questa nota), e tenere copia della scheda.
 
 ## 5. Decisione del titolare
 
-[ ] Approvo la procedura e il testo del canale reclami (punti 2–3)
+[x] Approvo la procedura e il testo del canale reclami (punti 2–3) — pubblicati il 9 ottobre 2026 in Contatti, informativa e pagina statica, su sua richiesta «inserisci tutto quello che puoi inserire»
 [ ] Approvo la scheda (punto 4) da usare se si sostiene l'esenzione
 Data: ________   Titolare: Carlo Alberto Calcagno

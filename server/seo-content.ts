@@ -252,6 +252,8 @@ export const SEO_CONTENT: Record<string, string> = {
 <li>Iscrizione Albo: Ordine degli Avvocati di Genova, n. 2127</li>
 </ul>
 <p>Le richieste inviate via email vengono generalmente evase entro 48 ore lavorative.</p>
+<h2>Reclami e segnalazioni sulle funzioni di intelligenza artificiale</h2>
+<p>Se ritieni che una funzione di intelligenza artificiale del sito abbia prodotto un risultato errato, lesivo o contrario alla normativa, puoi scrivere al titolare all'indirizzo email indicato in questa pagina, con oggetto «Reclamo funzioni IA». Riceverai conferma entro 5 giorni lavorativi e una risposta motivata entro 30 giorni. Restano ferma la possibilità di rivolgersi all'Agenzia per la cybersicurezza nazionale (art. 85 del Regolamento (UE) 2024/1689; d.lgs. 179/2026) e, per i profili di protezione dei dati personali, al Garante per la protezione dei dati personali.</p>
 <h2>Segnalazioni e suggerimenti</h2>
 <p>Il sito accoglie segnalazioni su: errori di calcolo nelle indennita o nei confronti economici, aggiornamenti normativi non ancora recepiti, proposte per nuove funzionalita, problemi tecnici o bug.</p>
 <h2>Altri progetti</h2>
