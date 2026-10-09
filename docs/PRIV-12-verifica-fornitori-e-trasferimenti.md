@@ -70,6 +70,16 @@ Residuo da chiudere con il fornitore: meccanismo di trasferimento verso gli
 Stati Uniti (punto 3); conferma scritta di applicabilità del DPA all'account
 (punto 9); eventuale precisazione dei luoghi di log e backup (punto 2).
 
+**Seconda richiesta a Northflank (9 ottobre 2026, ore 09:50 circa).** Inviata dal
+titolare, tramite il connettore Gmail, a legal@northflank.com (id messaggio
+1a11fa42242669e0), oggetto «Follow-up: DPA applicability, US transfer mechanism
+and log/backup locations — CalcoloMediazione.it». Chiede: (1) conferma scritta
+dell'applicabilità del DPA all'account e della data di decorrenza; (2) meccanismo
+di trasferimento per i subresponsabili statunitensi (SCC con addendum UK o Data
+Privacy Framework); (3) luoghi di log, backup nativi e accesso del supporto per il
+progetto di Londra; (4) dove iscriversi agli aggiornamenti dei subresponsabili.
+Risposta: in attesa; da registrare qui con data e allegati alla ricezione.
+
 #### Evidenze della corrispondenza con Northflank (settembre 2026)
 
 - **9-10 settembre:** il titolare ha proposto di sostituire legge e foro
