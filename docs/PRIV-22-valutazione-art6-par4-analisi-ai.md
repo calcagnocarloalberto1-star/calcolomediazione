@@ -140,9 +140,25 @@ ripetere.
 
 | Decisione | Scelta |
 |-----------|--------|
-| Opzione sulla fase dei bias | A / B / C |
-| Invocare l'esenzione dell'art. 6, par. 3, lett. d) | Sì / No |
-| Data della valutazione | ____________ |
+| Opzione sulla fase dei bias | **A (riformulare)** — approvata dal titolare il 9 ottobre 2026 |
+| Invocare l'esenzione dell'art. 6, par. 3, lett. d) | **Sì, condizionata** al superamento dei test del § 6 — approvata il 9 ottobre 2026 |
+| Data della valutazione | da apporre quando i test sono superati |
 | Firma | ____________ |
 
-Fino alla decisione, nulla in questa bozza modifica il comportamento del sito.
+## 10. Stato dell'attuazione (9 ottobre 2026)
+
+- **Fatto:** prompt delle fasi «bias cognitivi», «compatibilità degli interessi», «guida
+  strategica» e «MAAN/BATNA» con le regole comuni in `server/ai/regole-no-profilazione.ts`
+  (divieto di valutare caratteristiche personali, di attribuire bias a una parte
+  determinata, di prevedere comportamenti; interessi come ipotesi da verificare). Test
+  automatico `server/ai/prompt-no-profilazione.test.ts` (controlla che le regole siano nei
+  prompt e che le vecchie formulazioni non tornino).
+- **Non ancora fatto:** i test del § 6 su output reali. Servono una chiave API e la lettura
+  degli output; lo script `server/ai/prova-profilazione.ts` esegue tre casi sintetici e
+  cerca attribuzioni a persone, ma il controllo automatico non sostituisce la lettura.
+  Esito dello script: 0 nessuna violazione, 1 violazioni, 2 chiave mancante.
+- **Dopo i test:** firmare questa valutazione, registrare il sistema nella banca dati UE nei
+  termini applicabili e predisporre il canale reclami (§ 8).
+
+Fino a quando i test non sono superati e la valutazione non è firmata, l'esenzione non va
+presentata come accertata.

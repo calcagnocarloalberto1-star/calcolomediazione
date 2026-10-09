@@ -1,4 +1,5 @@
 import { callLLM, etichettaRuolo } from "./llm.js";
+import { REGOLE_NO_PROFILAZIONE } from "./regole-no-profilazione.js";
 
 export async function compatibilitaInteressi(
   descrizione: string,
@@ -11,9 +12,11 @@ Devi includere:
 1. **Matrice degli interessi**: mappa completa degli interessi di ciascuna parte (economici, relazionali, temporali, reputazionali, emotivi)
 2. **Interessi convergenti**: aree dove le parti hanno obiettivi compatibili
 3. **Interessi divergenti**: punti di conflitto e loro intensità
-4. **Interessi nascosti**: bisogni non dichiarati ma probabili
+4. **Interessi da verificare**: ipotesi su bisogni non dichiarati, formulate come domande aperte da porre alle parti, non come affermazioni sulle persone
 5. **Soluzioni creative**: proposte di accordo che massimizzino il valore per entrambe le parti (win-win)
 6. **Package deals**: combinazioni di concessioni reciproche
+
+${REGOLE_NO_PROFILAZIONE}
 
 Formatta l'output in Markdown con tabelle e indicatori visivi.`;
 
