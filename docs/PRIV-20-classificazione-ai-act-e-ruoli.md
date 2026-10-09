@@ -113,7 +113,8 @@ poteri delle autorità nazionali e formazione). Questa nota la imposta.
 
 1. Dichiarare l'assistente flottante come sistema di IA (fatto, PR #142).
 2. Decidere se redigere la valutazione documentata dell'art. 6, par. 4 per
-   l'Analisi AI del caso e quale conclusione sostenere (esenzione o alto rischio).
+   l'Analisi AI del caso e quale conclusione sostenere (esenzione o alto rischio):
+   bozza in PRIV-22.
 3. Rileggere i testi della fase «bias cognitivi» per escludere l'effetto di
    profilazione.
 4. Se si sceglie l'esenzione: preparare il fascicolo della valutazione e valutare
