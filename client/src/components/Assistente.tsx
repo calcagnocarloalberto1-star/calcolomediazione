@@ -7,7 +7,7 @@ type Msg = { role: "user" | "assistant"; content: string };
 const BENVENUTO: Msg = {
   role: "assistant",
   content:
-    "Ciao! Sono l'assistente di CalcoloMediazione. Posso rispondere a domande sulla mediazione civile e commerciale (procedura, costi, condizione di procedibilità, Riforma Cartabia, antiriciclaggio…) e indicarti gli strumenti giusti del sito. Come posso aiutarti?",
+    "Ciao! Sono l'assistente virtuale di CalcoloMediazione e sono un sistema di intelligenza artificiale, non una persona: le mie risposte possono contenere errori e non sono una consulenza legale. Posso rispondere a domande sulla mediazione civile e commerciale (procedura, costi, condizione di procedibilità, Riforma Cartabia, antiriciclaggio…) e indicarti gli strumenti giusti del sito. Come posso aiutarti?",
 };
 
 // Assistente flottante ancorato ai contenuti del sito (FAQ, glossario, guide).
@@ -63,7 +63,7 @@ export default function Assistente() {
           <div className="flex items-center justify-between px-4 py-3 bg-primary text-primary-foreground">
             <div className="flex items-center gap-2">
               <MessageCircle className="w-5 h-5" />
-              <span className="font-semibold text-sm">Assistente mediazione</span>
+              <span className="font-semibold text-sm">Assistente mediazione (IA)</span>
             </div>
             <button onClick={() => setAperto(false)} aria-label="Chiudi" className="p-1 hover:opacity-80">
               <X className="w-5 h-5" />
