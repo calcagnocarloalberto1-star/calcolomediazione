@@ -71,6 +71,15 @@ export default function Contatti() {
               />
             </div>
 
+            <div className="mt-8 p-4 border border-foreground/20 bg-background/50" data-testid="box-reclami-ia">
+              <h3 className="font-bold text-sm mb-2" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
+                Reclami e segnalazioni sulle funzioni di intelligenza artificiale
+              </h3>
+              <p className="text-xs leading-relaxed opacity-80">
+                Se ritieni che una funzione di intelligenza artificiale del sito abbia prodotto un risultato errato, lesivo o contrario alla normativa, puoi scrivere al titolare all'indirizzo email indicato in questa pagina, con oggetto «Reclamo funzioni IA». Riceverai conferma entro 5 giorni lavorativi e una risposta motivata entro 30 giorni. Restano ferma la possibilità di rivolgersi all'Agenzia per la cybersicurezza nazionale (art. 85 del Regolamento (UE) 2024/1689; d.lgs. 179/2026) e, per i profili di protezione dei dati personali, al Garante per la protezione dei dati personali.
+              </p>
+            </div>
+
             <div className="mt-8 p-4 border border-foreground/20 bg-background/50">
               <h3 className="font-bold text-sm mb-2" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
                 Orari di Risposta
