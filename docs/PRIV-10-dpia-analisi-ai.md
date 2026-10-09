@@ -230,9 +230,9 @@ Dei quattro prerequisiti elencati nella Motivazione della Decisione del titolare
    3. Restano aperti, invariati rispetto al 14/09/2026, i punti 3 (verifica formale del DPA Anthropic, issue #80) e 4 (accordo ex art. 28, `PRIV-16`) della Motivazione.
    4. 
 
-### Addendum 09/10/2026 — BOZZA per approvazione del titolare (perimetro dell'alternativa C)
+### Addendum 09/10/2026 — APPROVATO dal titolare (perimetro dell'alternativa C)
 
-**Stato: bozza preparata, non approvata.** Non modifica la decisione del 14/09/2026. Va
+**Stato: approvato dal titolare il 9 ottobre 2026.** Non modifica la decisione del 14/09/2026. Va
 fatta propria, corretta o respinta dal titolare. Un'eventuale apertura ai dati reali di terzi
 richiede comunque la data di attivazione e il flag (v. PRIV-21).
 
@@ -266,5 +266,6 @@ richiede comunque la data di attivazione e il flag (v. PRIV-21).
    residuo non risulti alto dopo le misure; da riesaminare dopo la prova e prima
    dell'attivazione.
 
-[ ] Addendum approvato  [ ] Approvato con modifiche  [ ] Respinto
-Data: ________   Titolare: Carlo Alberto Calcagno
+[x] Addendum approvato  [ ] Approvato con modifiche  [ ] Respinto
+Data: 9 ottobre 2026   Titolare: Carlo Alberto Calcagno
+Approvato dal titolare il 9 ottobre 2026 (firma digitale sul fascicolo «Decisioni del titolare da firmare», scheda 1; conservato dal titolare). Restano da fare la prova dei prompt su output reali e il riesame prima dell'attivazione (punti 3, 7 e 8).

@@ -258,9 +258,9 @@ Dei quattro prerequisiti elencati nella "Nota sul rischio residuo accettato" sop
    3. Restano aperti, invariati, i punti 3 (DPA Anthropic, issue #80) e 4 (accordo ex art. 28, `PRIV-16`).
    4. 
 
-### Addendum 09/10/2026 — BOZZA per approvazione del titolare (aggiornamenti dopo PRIV-19–PRIV-24)
+### Addendum 09/10/2026 — APPROVATO dal titolare (aggiornamenti dopo PRIV-19–PRIV-24)
 
-**Stato: bozza, non approvata.** Segue le voci già descritte e le aggiorna per il perimetro
+**Stato: approvato dal titolare il 9 ottobre 2026.** Segue le voci già descritte e le aggiorna per il perimetro
 dell'alternativa C (PRIV-21).
 
 - **Voce 3 — Analisi AI del caso.** Stato: attiva con casi fittizi; apertura ai dati reali
@@ -286,5 +286,6 @@ dell'alternativa C (PRIV-21).
   categorie di trattamento svolte (Analisi AI).
 - **Sistemi di IA.** Classificazione in PRIV-20 e PRIV-22; assistente flottante dichiarato IA.
 
-[ ] Addendum approvato  [ ] Approvato con modifiche  [ ] Respinto
-Data: ________   Titolare: Carlo Alberto Calcagno
+[x] Addendum approvato  [ ] Approvato con modifiche  [ ] Respinto
+Data: 9 ottobre 2026   Titolare: Carlo Alberto Calcagno
+Approvato dal titolare il 9 ottobre 2026 (firma digitale sul fascicolo «Decisioni del titolare da firmare», scheda 2; conservato dal titolare). Restano da redigere il registro del responsabile (art. 30, par. 2) prima dell'attivazione e la verifica della base giuridica della voce 9.
