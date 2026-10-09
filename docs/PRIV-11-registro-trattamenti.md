@@ -257,3 +257,34 @@ Dei quattro prerequisiti elencati nella "Nota sul rischio residuo accettato" sop
   
    3. Restano aperti, invariati, i punti 3 (DPA Anthropic, issue #80) e 4 (accordo ex art. 28, `PRIV-16`).
    4. 
+
+### Addendum 09/10/2026 — BOZZA per approvazione del titolare (aggiornamenti dopo PRIV-19–PRIV-24)
+
+**Stato: bozza, non approvata.** Segue le voci già descritte e le aggiorna per il perimetro
+dell'alternativa C (PRIV-21).
+
+- **Voce 3 — Analisi AI del caso.** Stato: attiva con casi fittizi; apertura ai dati reali
+  prevista a data da fissare, solo per professionisti/organismi con accordo art. 28
+  accettato online (versione `proposta-2026-10-09`). Ruolo: CalcoloMediazione responsabile;
+  professionista/organismo titolare. Dati: invariati; dati di minori esclusi (PRIV-23).
+  Funzione «bias cognitivi» riformulata come indicazioni di lavoro sulla trattativa, senza
+  attribuzioni a persone (PRIV-22; PR #147). Termine: 30 giorni. Destinatari:
+  Anthropic (subresponsabile); Gemini disabilitato.
+- **Voce 4 — Antiriciclaggio con assistente AI.** Fuori dall'Allegato A dell'accordo art. 28;
+  il presupposto dell'art. 10 GDPR non è definito; dichiarazione preliminare obbligatoria
+  sui dati relativi a reati (PR #140); nessuna conservazione lato server.
+- **Voce 8 — Accettazione online dell'accordo art. 28.** Testo con termini di 15 giorni
+  (obiezione ai subresponsabili) e 30 giorni (cancellazione) e Allegati A–C compilati; dati
+  del responsabile compilati; `ACCORDO_ART28_APPROVATO = false` finché il titolare non
+  decide.
+- **Nuova voce 9 — Registro dei reclami sulle funzioni IA** (PRIV-24, se approvata): finalità
+  rispondere a reclami e dimostrare gli esiti; dati: autore, funzione, data, esito; base:
+  obbligo legale e interesse legittimo (art. 6.1.c e f, da confermare); conservazione 24
+  mesi (proposta); nessun destinatario.
+- **Registro dell'art. 30, par. 2** (responsabile): da redigere prima dell'attivazione, con
+  titolari per conto dei quali si opera (i professionisti che accettano l'accordo) e
+  categorie di trattamento svolte (Analisi AI).
+- **Sistemi di IA.** Classificazione in PRIV-20 e PRIV-22; assistente flottante dichiarato IA.
+
+[ ] Addendum approvato  [ ] Approvato con modifiche  [ ] Respinto
+Data: ________   Titolare: Carlo Alberto Calcagno
