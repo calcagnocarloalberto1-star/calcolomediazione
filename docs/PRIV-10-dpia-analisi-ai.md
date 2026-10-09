@@ -229,3 +229,42 @@ Dei quattro prerequisiti elencati nella Motivazione della Decisione del titolare
   
    3. Restano aperti, invariati rispetto al 14/09/2026, i punti 3 (verifica formale del DPA Anthropic, issue #80) e 4 (accordo ex art. 28, `PRIV-16`) della Motivazione.
    4. 
+
+### Addendum 09/10/2026 — BOZZA per approvazione del titolare (perimetro dell'alternativa C)
+
+**Stato: bozza preparata, non approvata.** Non modifica la decisione del 14/09/2026. Va
+fatta propria, corretta o respinta dal titolare. Un'eventuale apertura ai dati reali di terzi
+richiede comunque la data di attivazione e il flag (v. PRIV-21).
+
+1. **Perimetro.** L'apertura ai dati reali riguarda soltanto l'Analisi AI del caso, per
+   professionisti e organismi che abbiano accettato l'accordo art. 28 (versione
+   `proposta-2026-10-09`). L'assistente AI antiriciclaggio è escluso dall'Allegato A finché
+   non è definito il presupposto dell'art. 10 GDPR (PRIV-21).
+2. **Minori.** Le pratiche con dati di minori restano escluse (`minorsPathEnabled = false`);
+   l'ipotesi di decisione sull'issue #83 è in PRIV-23. Uno scenario specifico per minori
+   nella presente DPIA è precondizione per qualsiasi futura abilitazione (PRIV-17).
+3. **Nuovo rischio: profilazione di persone.** La fase «bias cognitivi» poteva essere letta
+   come valutazione di caratteristiche delle parti. Misura: opzione A di PRIV-22 (PR #146):
+   i prompt sono riformulati come indicazioni di lavoro sulla trattativa, con regole che
+   vietano di attribuire tratti, motivazioni o giudizi a persone (`server/ai/regole-no-profilazione.ts`,
+   PR #147). Verifica: test automatici dei prompt e prova manuale su output reali
+   (`server/ai/prova-profilazione.ts`), **non ancora eseguita**.
+   Rischio residuo: l'output di un modello può comunque contenere attribuzioni; mitigazione:
+   avviso all'utente, verifica umana obbligatoria, canale reclami (PRIV-24).
+4. **Nuovo rischio: classificazione errata (AI Act).** Il sistema è un candidato
+   all'Allegato III, punto 8, lett. a); l'esenzione dell'art. 6, par. 3 vale solo con
+   valutazione documentata (art. 6, par. 4), assenza di profilazione e registrazione (art. 49,
+   par. 2). Misura: PRIV-22 e scheda in PRIV-24. Sanzione in caso di errore: art. 23 d.lgs.
+   179/2026 (scaglione 15 milioni / 3%, ridotto per PMI).
+5. **Trasparenza e supervisione.** Avvisi aggiornati (informativa, termini, pagina Analisi
+   AI); art. 50 sull'assistente flottante (PR #142); l'utente professionista informa il cliente
+   (art. 13 L. 132/2025) e conserva la decisione.
+6. **Reclami.** Procedura in PRIV-24.
+7. **Gravità e probabilità.** Rimangono non valutate in modo conclusivo (mancano metriche
+   d'uso e prove sugli output): inerente alto, residuo da stimare dopo la prova del punto 3.
+8. **Esito proposto.** Nessuna consultazione preventiva ex art. 36 GDPR finché il rischio
+   residuo non risulti alto dopo le misure; da riesaminare dopo la prova e prima
+   dell'attivazione.
+
+[ ] Addendum approvato  [ ] Approvato con modifiche  [ ] Respinto
+Data: ________   Titolare: Carlo Alberto Calcagno
