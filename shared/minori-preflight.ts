@@ -31,3 +31,10 @@ export const MINORS_CATEGORIZATION_QUESTION =
   "La pratica contiene o può contenere dati riferiti a persone di età inferiore a 18 anni?";
 
 export type MinorsStatus = "yes" | "no" | "unknown";
+
+// PRIV-23 (issue #83) — seconda domanda, solo lato interfaccia: la pratica
+// riguarda una mediazione familiare o la separazione dei genitori? Se la risposta
+// non è «no», la pratica è trattata come possibile pratica con minori (stato
+// «unknown» verso il server), quindi bloccata finché il percorso minori resta spento.
+export const MINORS_FAMILY_QUESTION =
+  "La pratica riguarda una mediazione familiare o la separazione dei genitori?";

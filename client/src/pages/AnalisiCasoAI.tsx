@@ -30,7 +30,7 @@ import type { AnalisiCaso } from "@shared/schema";
 import { COEFFICIENTI_CATASTALI, type CategoriaCatastale } from "@shared/valore-catastale";
 import {
     MINORS_NOTICE_VERSION, MINORS_NOTICE_TEXT, MINORS_CONFIRMATION_LABELS,
-    MINORS_CATEGORIZATION_QUESTION, type MinorsStatus,
+    MINORS_CATEGORIZATION_QUESTION, MINORS_FAMILY_QUESTION, type MinorsStatus,
 } from "@shared/minori-preflight";
 
 // ─── COSTANTI ────────────────────────────────────────────────────────────────
@@ -219,6 +219,10 @@ const [minorsPathEnabled, setMinorsPathEnabled] = useState(false);
   // PRIV-17 — categorizzazione obbligatoria minori, protocollo di preflight.
   // Nessun valore preselezionato (vedi specifica: docs/PRIV-17-presidi-rafforzati-minori-ai.md).
   const [minorsStatus, setMinorsStatus] = useState<MinorsStatus | null>(null);
+  // PRIV-23: seconda domanda (mediazione familiare / separazione dei genitori).
+  const [familyStatus, setFamilyStatus] = useState<MinorsStatus | null>(null);
+  // Se la pratica è familiare (o non si sa), verso il server vale «unknown»: blocco fail-closed.
+  const effectiveMinorsStatus: MinorsStatus | null = minorsStatus === "no" && familyStatus !== "no" ? "unknown" : minorsStatus;
   const [minorsConfirmations, setMinorsConfirmations] = useState<boolean[]>(
     () => MINORS_CONFIRMATION_LABELS.map(() => false),
     );
@@ -234,16 +238,16 @@ const [minorsPathEnabled, setMinorsPathEnabled] = useState(false);
   });
 
   async function getMinorsPreflightToken(target: "upload" | "create" | `chat:${number}`): Promise<string> {
-    if (!minorsStatus) {
+    if (!minorsStatus || !effectiveMinorsStatus) {
       throw new Error("Indica prima se la pratica riguarda dati di persone minorenni.");
     }
     const headers: Record<string, string> = {
-      "X-Minors-Status": minorsStatus,
+      "X-Minors-Status": effectiveMinorsStatus,
       "X-Notice-Version": MINORS_NOTICE_VERSION,
       "X-Case-Flow-Id": flowId,
       "X-Minors-Target": target,
     };
-    if (minorsStatus !== "no") {
+    if (effectiveMinorsStatus !== "no") {
       headers["X-Minors-Confirmations"] = minorsConfirmations.map(v => (v ? "1" : "0")).join(",");
     }
     const res = await fetch("/api/analisi/minori-preflight", { method: "POST", headers });
@@ -255,7 +259,7 @@ const [minorsPathEnabled, setMinorsPathEnabled] = useState(false);
   }
 
   const minorsReinforcedConfirmed = minorsStatus === "no"
-  ? true
+  ? familyStatus === "no"
     : (minorsPathEnabled && minorsConfirmations.every(Boolean));
 
   const changeMinorsStatus = (value: MinorsStatus) => {
@@ -723,6 +727,7 @@ try {
     setFiles([]); setUploadedTexts([]); setUploadingFiles(false); setIsAnonymized(false);
     setPrivacyAcknowledged(false);
     setMinorsStatus(null);
+    setFamilyStatus(null);
     setMinorsConfirmations(MINORS_CONFIRMATION_LABELS.map(() => false));
   };
 
@@ -1007,6 +1012,8 @@ try {
         <StoricoAnalisi onLoadAnalisi={(a) => {
           setAnalisi(a);
           setMinorsStatus(a.minorsStatus || "unknown");
+          // Analisi già registrata con «no» prima della seconda domanda: la chat sullo storico resta possibile.
+          setFamilyStatus(a.minorsStatus === "no" ? "no" : null);
           setMinorsConfirmations(MINORS_CONFIRMATION_LABELS.map(() => false));
           let completed = 0;
           if (a.prospettoEconomico) completed++;
@@ -1049,6 +1056,40 @@ try {
       <label htmlFor="minori-nonso" className="text-sm cursor-pointer">Non so</label>
     </div>
   </RadioGroup>
+
+  {minorsStatus === "no" && (
+    <div className="space-y-3 pt-2" data-testid="section-familiare">
+      <Label className="text-sm font-semibold">{MINORS_FAMILY_QUESTION}</Label>
+      <RadioGroup
+        value={familyStatus ?? undefined}
+        onValueChange={(value) => { setFamilyStatus(value as MinorsStatus); setFiles([]); setUploadedTexts([]); setUploadingFiles(false); }}
+        disabled={!caseAiEnabled}
+        className="flex flex-col sm:flex-row gap-3"
+      >
+        <div className="flex items-center gap-2">
+          <RadioGroupItem value="no" id="familiare-no" data-testid="radio-familiare-no" />
+          <label htmlFor="familiare-no" className="text-sm cursor-pointer">No</label>
+        </div>
+        <div className="flex items-center gap-2">
+          <RadioGroupItem value="yes" id="familiare-si" data-testid="radio-familiare-si" />
+          <label htmlFor="familiare-si" className="text-sm cursor-pointer">Sì</label>
+        </div>
+        <div className="flex items-center gap-2">
+          <RadioGroupItem value="unknown" id="familiare-nonso" data-testid="radio-familiare-nonso" />
+          <label htmlFor="familiare-nonso" className="text-sm cursor-pointer">Non so</label>
+        </div>
+      </RadioGroup>
+      {(familyStatus === "yes" || familyStatus === "unknown") && (
+        <div className="border-2 border-red-600/50 bg-red-50 dark:bg-red-950/20 p-3 text-sm" data-testid="avviso-familiare">
+          Le pratiche di mediazione familiare e di separazione dei genitori coinvolgono di regola dati di minori:
+          per ora non possono essere trattate con l'AI. Consulta la{" "}
+          <Link href="/privacy-policy#servizi-ia">
+            <span className="underline font-semibold cursor-pointer">Privacy Policy, sezione servizi IA</span>
+          </Link>.
+        </div>
+      )}
+    </div>
+  )}
 
   {(minorsStatus === "yes" || minorsStatus === "unknown") && (
     !minorsPathEnabled ? (

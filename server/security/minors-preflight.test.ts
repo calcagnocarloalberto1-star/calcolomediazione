@@ -198,6 +198,8 @@ try {
   assert.equal(rilevaPossibiliRiferimentiMinori("Il figlio di 9 anni vive con la madre.").rischio, true);
   assert.equal(rilevaPossibiliRiferimentiMinori("La parte ha 17 anni.").rischio, true);
   assert.equal(rilevaPossibiliRiferimentiMinori("Diagnosi pediatrica dettagliata.").rischio, true);
+  assert.equal(rilevaPossibiliRiferimentiMinori("Separazione dei genitori e regolazione dei tempi.").rischio, true);
+  assert.equal(rilevaPossibiliRiferimentiMinori("I genitori separati concordano le modalità.").rischio, true);
   assert.equal(rilevaPossibiliRiferimentiMinori(`Il minore è nato il 3 marzo ${new Date().getFullYear() - 5}.`).rischio, true);
   assert.equal(rilevaPossibiliRiferimentiMinori("Nessun indizio", null, undefined, "ma qui si parla di affidamento dei figli").rischio, true);
 }

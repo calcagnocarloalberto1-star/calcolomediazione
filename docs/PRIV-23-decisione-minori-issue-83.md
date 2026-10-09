@@ -21,7 +21,7 @@ Tre punti, da chiudere con una decisione motivata del titolare:
 | Domanda obbligatoria «la pratica contiene o può contenere dati di minori?» (sì / no / non so), senza valore preselezionato | `client/src/pages/AnalisiCasoAI.tsx` | `sì` e `non so` attivano il percorso rafforzato |
 | Preflight a due fasi con token firmato, monouso, prima del parser | `server/security/minors-preflight.ts` | Senza token valido la richiesta è rifiutata prima di leggere il contenuto |
 | Rilevamento prudenziale di riferimenti a minori dopo il parsing e prima del provider | `server/security/minors-detection.ts` | Se il preflight dice `no` ma il testo indica un minore, la richiesta è bloccata |
-| Flag del percorso minori, **spento** (`minorsPathEnabled = false`) | `server/routes.ts`, `isMinorsPathEnabled()` | Con `sì` o `non so` l'analisi non parte: nessun invio a provider |
+| Percorso minori **bloccato nel codice**: la costante `MINORS_REINFORCED_PATH_IMPLEMENTED` è `false`, quindi `isMinorsPathEnabled()` restituisce sempre `false` anche con le variabili d'ambiente | `server/security/minors-preflight.ts`, `server/routes.ts` | Con `sì` o `non so` l'analisi non parte: nessun invio a provider |
 | Registro minimizzato delle attestazioni (max 30 giorni, cancellabile) | `getMinorsAuditTrail`, `deleteMinorsAuditEntry` | Solo se il percorso fosse abilitato |
 
 Conseguenza pratica: **oggi nessuna pratica con minori può essere inviata ai flussi AI**.
@@ -97,5 +97,21 @@ rivolti, oggi, ai soli casi per cui si può escludere la presenza di minori.
 Quando il titolare ha registrato la decisione in questa nota (data e firma o commit
 autenticato) e, se approva i punti 6.1–6.2, aperto l'intervento tecnico separato.
 
-Decisione del titolare: [ ] approvata  [ ] approvata con modifiche  [ ] respinta
-Data: ________   Titolare: Carlo Alberto Calcagno
+Decisione del titolare: [x] approvata  [ ] approvata con modifiche  [ ] respinta
+Data: 9 ottobre 2026 (approvazione data in chat, con la parola «Approva», sulla proposta dei punti 3, 4 e 5 di questa nota)   Titolare: Carlo Alberto Calcagno
+
+## 8. Attuazione (9 ottobre 2026)
+
+- Seconda domanda nella pagina Analisi AI («La pratica riguarda una mediazione familiare o la
+  separazione dei genitori?»), mostrata quando la risposta sui minori è «no»; con «sì» o
+  «non so» l'interfaccia blocca la pratica e verso il server la dichiarazione vale «non so»
+  (`unknown`), quindi la richiesta è rifiutata prima del parser. La seconda domanda non
+  introduce nuovi dati né nuove intestazioni verso il server.
+- Rilevamento prudenziale esteso alle espressioni «separazione dei genitori», «separazione dei
+  coniugi/personale dei coniugi» e «genitori separati».
+- Avviso nell'assistente antiriciclaggio: non caricare documenti di persone di età inferiore
+  a 18 anni (il testo della dichiarazione sull'art. 10 GDPR non è stato modificato).
+- Le analisi già registrate con «no» restano consultabili e utilizzabili nella chat.
+- Limite dichiarato: la domanda è una dichiarazione dell'utente; chi dichiara «no» a entrambe
+  le domande è fermato solo dal rilevamento sul testo.
+- Il percorso rafforzato resta bloccato nel codice.
