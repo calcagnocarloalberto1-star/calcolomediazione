@@ -2386,10 +2386,14 @@ cb.addEventListener("change", ()=>{ assistRecognized[+cb.dataset.assistidx].chec
 $("assist_review").style.display = "block";
 }
 
+// Versione della dichiarazione art. 10 GDPR: deve coincidere con shared/aml-reati.ts (test).
+const AML_REATI_DECLARATION_VERSION = "aml-reati-v1";
 async function assistEstrai(){
 const files = assistSelectedFiles.slice();
 const richiesta = v("assist_richiesta");
 if(!files.length){ assistSetStatus("Carica almeno un documento del fascicolo prima di procedere."); return; }
+const reatiBox = $("assist_reati");
+if(!reatiBox || !reatiBox.checked){ assistSetStatus("Per procedere spunta la dichiarazione sui dati relativi a condanne e reati (art. 10 GDPR)."); if(reatiBox) reatiBox.focus(); return; }
 const ok = confirm(
 "Assistente AI di compilazione\n\n" +
 "I documenti caricati verranno trasmessi all'API di Anthropic per leggerli e proporre la compilazione dei campi. " +
@@ -2433,6 +2437,7 @@ await new Promise(r=>setTimeout(r, 400));
 const fd = new FormData();
 docs.forEach((d, i) => fd.append("files", d.blob, "documento-" + (i + 1) + "." + d.ext));
 fd.append("richiesta", richiesta || "");
+fd.append("dichiarazioneReati", AML_REATI_DECLARATION_VERSION);
 const resp = await fetch("/api/aml-assist", { method:"POST", body: fd });
 const data = await resp.json().catch(()=>({}));
 if(!resp.ok || (data && data.error)){
