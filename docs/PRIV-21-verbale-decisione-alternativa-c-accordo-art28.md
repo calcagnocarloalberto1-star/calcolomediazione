@@ -32,12 +32,16 @@ Il titolare ha autorizzato la preparazione, senza attivazione, della proposta di
 testo dell'accordo con giorni (15 per l'obiezione ai subresponsabili, 30 per la
 cancellazione) Allegati A–C e dati del responsabile compilati, e nuova versione `proposta-2026-10-09`.
 
+## Approvazione del testo (9 ottobre 2026)
+
+Il titolare ha approvato il testo dell'accordo art. 28, versione `proposta-2026-10-09`, con firma digitale sul fascicolo «Decisioni del titolare da firmare» (scheda 3, conservato dal titolare). L'approvazione del testo **non attiva** il servizio: la data di attivazione resta vuota e `ACCORDO_ART28_APPROVATO` resta `false`.
+
 ## Ancora da fare prima del flag a `true`
 
 1. Verificare i dati del responsabile inseriti (P. IVA 03718420106; Via Trieste 4/9, 16011 Arenzano (GE); email), ripresi dalla pagina Contatti del sito.
-2. Rileggere e approvare il testo; aggiornare la versione se cambia.
+2. ~~Rileggere e approvare il testo~~ — fatto il 9 ottobre 2026 (versione `proposta-2026-10-09`); aggiornare la versione se cambia.
 3. Verificare i valori degli Allegati A–C (in particolare le misure indicate come attive).
-4. Aggiornare DPIA (PRIV-10) e registro (PRIV-11) con i nuovi ruoli.
+4. ~~Aggiornare DPIA (PRIV-10) e registro (PRIV-11)~~ — addendum approvati il 9 ottobre 2026.
 5. Fissare la data e registrarla con un verbale di attivazione.
 6. Prova end to end con un'accettazione di prova e una dichiarazione «accordo in essere».
 7. Valutare, prima di aprire a dati reali, i punti di PRIV-20 (classificazione AI Act,
