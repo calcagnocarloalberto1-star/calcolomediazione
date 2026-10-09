@@ -1,7 +1,7 @@
 # PRIV-17 — Presidi rafforzati per dati di minori nei flussi AI
 
 Data di predisposizione: 12 settembre 2026
-Stato: specifica operativa non implementata e non approvata per il rilascio
+Stato: protocollo tecnico (preflight, rilevamento, audit) realizzato; **percorso rafforzato bloccato nel codice** e non approvato per il rilascio. Decisione del 9 ottobre 2026 e attuazione in `PRIV-23`.
 
 ## Decisione di indirizzo
 

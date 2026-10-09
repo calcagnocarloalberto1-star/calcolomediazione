@@ -26,6 +26,8 @@ const PAROLE_CHIAVE: RegExp[] = [
     /\bcuratore\s+speciale\s+del\s+minore\b/i,
     /\baffidamento\s+(dei\s+)?figli/i,
     /\bmediazione\s+familiare\b/i,
+    /\bseparazione\s+(?:dei\s+genitori|personale\s+dei\s+coniugi|dei\s+coniugi)\b/i,
+    /\bgenitori\s+separat\w*/i,
     /\bfigli?[oa]\b.{0,24}\b(?:\d{1,2}|undici|dodici|tredici|quattordici|quindici|sedici|diciassette)\s+ann[oi]\b/i,
     /\b(?:ha|aveva|compie|compiuto)\s+(?:\d{1,2}|undici|dodici|tredici|quattordici|quindici|sedici|diciassette)\s+ann[oi]\b/i,
     /\b(?:undicenne|dodicenne|tredicenne|quattordicenne|quindicenne|sedicenne|diciassettenne)\b/i,
