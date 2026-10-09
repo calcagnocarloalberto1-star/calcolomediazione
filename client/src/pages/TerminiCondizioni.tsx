@@ -19,7 +19,7 @@ export default function TerminiCondizioni() {
         </div>
 
         <div className="bg-card border-[2px] border-foreground shadow-[4px_4px_0px_0px] shadow-foreground/20 p-6 sm:p-8 space-y-6">
-          <p className="text-sm opacity-60">Ultimo aggiornamento: settembre 2026</p>
+          <p className="text-sm opacity-60">Ultimo aggiornamento: ottobre 2026</p>
 
           <Section title="1. Premessa">
             <p>I presenti Termini e Condizioni regolano l'accesso e l'utilizzo del sito web CalcoloMediazione.it (di seguito "il Sito"), di proprietà di Carlo Alberto Calcagno. L'utilizzo del Sito implica l'accettazione integrale dei presenti Termini.</p>
@@ -112,6 +112,7 @@ export default function TerminiCondizioni() {
               <li>Possono contenere errori o imprecisioni</li>
               <li>Non sostituiscono la consulenza di un professionista qualificato</li>
               <li>Devono essere verificate dall'utente prima di qualsiasi utilizzo</li>
+              <li>Sono generate da un sistema di intelligenza artificiale e vanno presentate come tali a clienti e parti; il professionista che le usa resta responsabile e deve informare il cliente ai sensi dell'art. 13 della L. 132/2025</li>
             </ul>
           </Section>
 
@@ -122,6 +123,7 @@ export default function TerminiCondizioni() {
               <li>D.M. 150/2023 — Regolamento indennità di mediazione</li>
               <li>D.Lgs. 149/2022 — Riforma Cartabia</li>
               <li>D.Lgs. 216/2024 — Correttivo Cartabia (durata mediazione 6 mesi)</li>
+              <li>Regolamento (UE) 2024/1689 (AI Act), L. 132/2025 e D.Lgs. 179/2026 — Intelligenza artificiale (per le funzioni IA del sito)</li>
               <li>D.M. 55/2014 (agg. D.M. 147/2022) — Parametri forensi</li>
               <li>D.P.R. 115/2002 — Contributo unificato</li>
               <li>D.P.R. 131/1986 — Imposta di registro</li>

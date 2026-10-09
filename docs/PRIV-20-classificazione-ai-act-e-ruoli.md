@@ -70,6 +70,45 @@ poteri delle autorità nazionali e formazione). Questa nota la imposta.
   sei mesi dall'entrata in vigore); art. 49 modulazione dell'equo compenso in base
   alla classe di rischio del sistema usato, parametri entro dodici mesi.
 
+## 5-bis. Sanzioni, procedimento e obblighi del d.lgs. 179/2026 per il sito
+
+- **Scaglioni (art. 23).** 35 milioni o 7% per le pratiche vietate (art. 5 AI Act);
+  15 milioni o 3% per gli obblighi di fornitori (artt. 16, 22–25), deployer (art. 26),
+  trasparenza (art. 50), incidenti gravi (art. 73) e classificazione (art. 80);
+  7,5 milioni o 1% per informazioni inesatte alle autorità; 1 milione o 0,5% per
+  valutazione d'impatto sui diritti fondamentali (art. 27) e diritto alla
+  spiegazione (art. 86). Per PMI e start-up si applica il criterio più favorevole
+  dell'art. 99, par. 6; si tiene conto anche della natura sostanziale o formale
+  dell'obbligo violato (art. 23, comma 6).
+- **Misure non pecuniarie (art. 22).** Per le violazioni di scarsa offensività
+  l'autorità può ordinare di eliminare l'infrazione entro un termine, o, se
+  cessata, irrogare la dichiarazione pubblica; l'inosservanza dell'ordine comporta
+  la sanzione pecuniaria aumentata fino a un terzo.
+- **Pubblicazione (art. 24, comma 4).** I provvedimenti sanzionatori sono pubblicati
+  per estratto sul sito dell'autorità: per il titolare il rischio reputazionale è
+  rilevante quanto l'importo.
+- **Reclami e vigilanza (artt. 16 e 18).** L'ACN procede d'ufficio, su reclami non
+  manifestamente infondati (art. 85 AI Act), su segnalazioni di incidenti gravi e di
+  altre autorità: serve un canale di ricezione dei reclami sulle funzioni IA.
+- **Riflessi sulle scelte aperte.** L'errata classificazione di un sistema come
+  non ad alto rischio (art. 80 AI Act) rientra nello scaglione da 15 milioni: la
+  valutazione documentata dell'art. 6, par. 4 non è una formalità. L'obbligo di
+  trasparenza dell'art. 50 sulle uscite generate (par. 2: marcatura leggibile da
+  macchina del testo sintetico) va verificato per l'Analisi AI e le sue
+  esportazioni, che oggi riportano la dicitura «Documento generato ... Analisi AI».
+- **Utenti professionisti.** L'avvocato che usa lo strumento è deployer e deve
+  informare il cliente (art. 13 L. 132/2025). Per gli avvocati, anche mediatori in
+  organismi forensi (nei COA i mediatori sono avvocati), la formazione sull'IA entra
+  nei regolamenti del Consiglio nazionale forense entro il 23 aprile 2027 (art. 47);
+  il compenso potrà essere modulato con i parametri forensi integrati entro il 23
+  ottobre 2027 (art. 49). Utile, per l'utente, un rinvio informativo nella pagina
+  dello strumento (fatto con la PR collegata a questa nota).
+- **Non rilevanti per il sito:** art. 41 (decisioni sul personale; si segnala solo
+  nell'informativa che le funzioni non sono destinate a questo uso), artt. 26–31
+  (spazi di sperimentazione, opportunità eventuale per fornitori di IA), artt. 52–53
+  (segreto commerciale: i prompt e le configurazioni del sito possono rientrare
+  fra le informazioni da proteggere con misure adeguate).
+
 ## 6. Azioni proposte
 
 1. Dichiarare l'assistente flottante come sistema di IA (fatto, PR #142).
@@ -79,5 +118,6 @@ poteri delle autorità nazionali e formazione). Questa nota la imposta.
    profilazione.
 4. Se si sceglie l'esenzione: preparare il fascicolo della valutazione e valutare
    la registrazione nella banca dati UE nei termini applicabili.
-5. Aggiornare DPIA (PRIV-10) e registro (PRIV-11) con il rinvio a questa nota.
-6. Riesaminare la nota al testo definitivo del Digital Omnibus.
+5. Predisporre il canale per i reclami sulle funzioni IA (art. 85 AI Act; artt. 16 e 18 d.lgs. 179/2026) e verificare l'art. 50, par. 2, sulle uscite dell'Analisi AI.
+6. Aggiornare DPIA (PRIV-10) e registro (PRIV-11) con il rinvio a questa nota.
+7. Riesaminare la nota al testo definitivo del Digital Omnibus.
