@@ -1,9 +1,9 @@
 // Testo dell'accordo ex art. 28 GDPR proposto ai professionisti (derivato da
-// docs/PRIV-16). ATTENZIONE: contiene ancora campi da completare (giorni, allegati A-C,
-// dati del responsabile). Finché ACCORDO_ART28_APPROVATO è false il server rifiuta
+// docs/PRIV-16). ATTENZIONE: contiene ancora un campo da completare (codice fiscale/P. IVA del
+// responsabile); giorni e Allegati A-C sono compilati come proposta (PRIV-21). Finché ACCORDO_ART28_APPROVATO è false il server rifiuta
 // ogni accettazione: va impostato a true solo dopo che il titolare ha completato,
 // rivisto e approvato il testo, aggiornando ACCORDO_ART28_VERSIONE.
-export const ACCORDO_ART28_VERSIONE = "bozza-2026-10-07";
+export const ACCORDO_ART28_VERSIONE = "proposta-2026-10-09";
 export const ACCORDO_ART28_APPROVATO = false;
 export const ACCORDO_ART28_TESTO = `## Parti
 
@@ -19,8 +19,8 @@ export const ACCORDO_ART28_TESTO = `## Parti
 - Nome: Carlo Alberto Calcagno
 - Servizio: CalcoloMediazione.it
 - Codice fiscale/P. IVA: ___________________________________________
-- Sede e recapiti: _________________________________________________
-- Referente privacy: _______________________________________________
+- Sede e recapiti: Via Macaggi 23/4, 16121 Genova; recapiti come indicati nella pagina Contatti del servizio
+- Referente privacy: Carlo Alberto Calcagno
 
 ## Oggetto, durata, natura e finalità
 
@@ -153,7 +153,7 @@ ogni nuova nomina o sostituzione:
 
 1. il responsabile comunica preventivamente identità, funzione, Paese e data
    prevista;
-2. il titolare dispone di ____ giorni per formulare un'obiezione motivata;
+2. il titolare dispone di 15 giorni per formulare un'obiezione motivata;
 3. prima di qualsiasi trattamento, il responsabile conclude con il
    subresponsabile un contratto scritto e giuridicamente vincolante che impone
    gli stessi obblighi in materia di protezione dei dati previsti dal presente
@@ -163,10 +163,10 @@ ogni nuova nomina o sostituzione:
    nei confronti del titolare l'intera responsabilità dell'adempimento degli
    obblighi del subresponsabile.
 
-Anthropic e Google Gemini non possono essere inseriti nell'Allegato B per il
-trattamento di pratiche reali finché account effettivo, DPA, condizioni
-commerciali, subprocessori, retention e trasferimenti non siano verificati e
-archiviati.
+Anthropic è indicato nell'Allegato B con i residui di verifica ivi dichiarati.
+Google Gemini non può essere inserito nell'Allegato B per il trattamento di
+pratiche reali finché account effettivo, DPA, condizioni commerciali,
+subprocessori, retention e trasferimenti non siano verificati e archiviati.
 
 ## Trasferimenti internazionali
 
@@ -192,7 +192,7 @@ Alla cessazione, il titolare sceglie tra restituzione ed eliminazione dei dati,
 salvo obblighi di legge. Il responsabile:
 
 - rende disponibili gli strumenti di esportazione previsti;
-- elimina i dati attivi entro ____ giorni dalla richiesta o cessazione;
+- elimina i dati attivi entro 30 giorni dalla richiesta o cessazione;
 - cancella tutte le copie esistenti, incluse quelle in sistemi attivi, repliche,
   cache, code e backup, secondo tempi documentati, salvo obbligo di legge;
 - documenta tempi e modalità di eliminazione da backup e log;
@@ -221,53 +221,69 @@ interessati.
 
 ## Allegato A — Scheda delle istruzioni
 
-- Funzioni autorizzate: _____________________________________________
-- Finalità specifiche: ______________________________________________
-- Interessati ammessi: ______________________________________________
-- Categorie di dati ammesse: ________________________________________
-- Dati in ingresso e metadati tecnici ammessi: _______________________
-- Output e inferenze generate autorizzati: ___________________________
-- Dati di audit e attestazioni autorizzati: ___________________________
-- Categorie espressamente escluse: __________________________________
-- Presupposti artt. 6, 9 e 10: ______________________________________
-- Retention: ________________________________________________________
-- Utenti autorizzati: _______________________________________________
-- Istruzioni aggiuntive: ____________________________________________
+- Funzioni autorizzate: Analisi AI del caso (creazione di nuove analisi,
+  caricamento di PDF del fascicolo, chat sul caso). L'assistente AI antiriciclaggio
+  NON è autorizzato.
+- Finalità specifiche: supporto preparatorio del professionista nell'analisi di
+  pratiche di mediazione o negoziazione; nessuna decisione automatizzata.
+- Interessati ammessi: parti, difensori, rappresentanti di persone giuridiche e
+  altri partecipanti alla pratica. I minori sono esclusi.
+- Categorie di dati ammesse: dati identificativi e di contatto, informazioni
+  professionali, economiche, contrattuali e processuali, previa minimizzazione e
+  pseudonimizzazione best-effort.
+- Dati in ingresso e metadati tecnici ammessi: testi e PDF del fascicolo; metadati
+  tecnici minimi di funzionamento e sicurezza.
+- Output e inferenze generate autorizzati: analisi in otto fasi, bozza di accordo
+  e risposte della chat, da considerare bozze di lavoro soggette a verifica umana.
+- Dati di audit e attestazioni autorizzati: dichiarazione preliminare («caso
+  fittizio» o «accordo in essere»), accettazione dell'accordo con versione e
+  impronta del testo.
+- Categorie espressamente escluse: dati di minori; categorie particolari ex art. 9
+  GDPR; dati ex art. 10 GDPR; documenti d'identità e moduli di adeguata verifica
+  antiriciclaggio; decisioni unicamente automatizzate.
+- Presupposti artt. 6, 9 e 10: basi giuridiche e informativa (artt. 13 e 14 GDPR)
+  determinate e documentate dal titolare; artt. 9 e 10 non autorizzati.
+- Retention: analisi conservate per un massimo di 30 giorni, salvo cancellazione
+  anticipata richiesta dal titolare.
+- Utenti autorizzati: persone che il titolare abilita e che dispongono del token di
+  accesso alle singole analisi.
+- Istruzioni aggiuntive: il titolare informa i clienti e le parti dell'uso di
+  strumenti di intelligenza artificiale (art. 13 L. 132/2025) e mantiene una
+  supervisione umana effettiva sugli output.
 
 ## Allegato B — Subresponsabili autorizzati
 
 | Fornitore | Servizio | Paesi | Meccanismo di trasferimento | DPA e data | Stato |
 |---|---|---|---|---|---|
-| Northflank LTD | Hosting, database e infrastruttura | Da completare per workload, backup, log e control plane | Da completare | DPA a adesione acquisito; riscontro in PRIV-12 (7 ottobre 2026); residui: trasferimento USA e conferma di applicabilità | Non approvato in questa bozza |
-| Anthropic | API AI primaria | Da verificare | Da verificare | Applicabilità all'account \`carlo-api-key\` da provare | Non autorizzato |
-| Google | Gemini API, solo eventuale fallback | Da verificare | Da verificare | Paid Service e DPA da archiviare | Non autorizzato |
+| Northflank LTD | Hosting, database e infrastruttura | Regno Unito (Londra) per i dati applicativi; ubicazione di log e backup e subresponsabili statunitensi in attesa di conferma scritta | Decisione di adeguatezza UK per Londra; meccanismo per i subresponsabili statunitensi da confermare | DPA a adesione verificato il 7 ottobre 2026; applicabilità all'account da confermare | Autorizzato con i residui qui dichiarati |
+| Anthropic | API di intelligenza artificiale | Stati Uniti e altri Paesi dei subresponsabili del fornitore | Clausole contrattuali standard 2021/914 (moduli 2 e 3) incorporate nel DPA dei Commercial Terms | DPA dei Commercial Terms; data di accettazione non documentata (richiesta in corso) | Autorizzato con i residui qui dichiarati |
+| Google | Gemini API, solo eventuale fallback | Non applicabile | Non applicabile | Non applicabile | Disabilitato e non autorizzato |
 
 ## Allegato C — Misure tecniche e organizzative
 
-Riferimenti iniziali, da allegare nella versione firmata:
+Riferimenti, da allegare nella versione sottoscritta con identificativo di
+versione immutabile (commit o copia datata):
 
-- \`docs/RUNBOOK-CIFRATURA-E-ACCESSO-ADMIN.md\`;
-- \`docs/PIANO-SICUREZZA-PRIVACY-E-INCIDENTI.md\`;
-- \`docs/PRIV-13-verbale-backup-2026-09-09.md\`;
-- \`docs/PRIV-15-checklist-riattivazione-ai.md\`;
-- \`docs/PRIV-17-presidi-rafforzati-minori-ai.md\`.
-
-La versione sottoscritta deve allegare copie datate o identificativi di
-versione immutabili delle misure applicabili; il semplice rinvio a documenti
-modificabili nel repository non è sufficiente.
-
-Prima della firma, ogni misura deve essere classificata nella seguente matrice:
+- docs/RUNBOOK-CIFRATURA-E-ACCESSO-ADMIN.md;
+- docs/PIANO-SICUREZZA-PRIVACY-E-INCIDENTI.md;
+- docs/PRIV-13-verbale-backup-2026-09-09.md;
+- docs/PRIV-15-checklist-riattivazione-ai.md;
+- docs/PRIV-17-presidi-rafforzati-minori-ai.md.
 
 | Misura | Stato: attiva/futura/non provata | Evidenza e versione | Limiti o dipendenze |
 |---|---|---|---|
-| __________________________________ | __________________ | __________________ | __________________ |
-| __________________________________ | __________________ | __________________ | __________________ |
-| __________________________________ | __________________ | __________________ | __________________ |
+| HTTPS e header di sicurezza | Attiva | Piano di sicurezza | Nessuno |
+| Cifratura AES-256-GCM dei contenuti conservati | Attiva | Runbook cifratura | Chiavi separate dal database |
+| Autenticazione a più fattori per l'area amministrativa | Attiva | Runbook cifratura | Solo area amministrativa |
+| Pseudonimizzazione preventiva best-effort | Attiva | PRIV-10 | Non equivale ad anonimizzazione |
+| Conservazione di 30 giorni e cancellazione su richiesta | Attiva | Informativa privacy, sezione 4 | Backup secondo i tempi del fornitore |
+| Verifica fail-closed prima dell'analisi (dichiarazione e accordo) | Attiva | PRIV-15 | Dipende dal flag di approvazione dell'accordo |
+| Backup e ripristino | Attiva; prova eseguita | PRIV-13 | RTO circa 2 minuti; RPO circa 22 ore; valori del fornitore non ottenuti; ubicazione di log e backup non provata |
+| Esclusione dei minori dai flussi | Attiva (percorso disattivato) | PRIV-17 | Approvazione finale del titolare ancora da registrare |
 
 Le misure future o non provate non possono essere presentate come garanzie già
-operative e, se indispensabili al trattamento, impediscono l'avvio del
-servizio.
+operative e, se indispensabili al trattamento, impediscono l'avvio del servizio.
 
-Eventuali eccezioni, limiti o misure ulteriori:
-
-____________________________________________________________________`;
+Eventuali eccezioni, limiti o misure ulteriori: ubicazione di log e backup
+nativi del fornitore e meccanismo di trasferimento per i subresponsabili
+statunitensi di Northflank sono in attesa di conferma scritta.`;
