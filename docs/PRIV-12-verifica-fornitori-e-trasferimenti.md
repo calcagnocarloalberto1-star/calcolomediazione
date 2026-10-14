@@ -58,7 +58,7 @@ nove domande della richiesta del 9 settembre (PRIV-14):
 | 6 | Cancellazione e restituzione | Sì: cancellazione entro 180 giorni dalla cessazione (art. 8.1) |
 | 7 | Backup, restore, RPO/RTO | Non indicati nel DPA (Allegato 2, punto 8, generico); valori verificati dal titolare nel pannello il 20 settembre 2026 (PRIV-10, addendum) |
 | 8 | SOC 2 Type II | Sì: report ottenuto dal Trust Center |
-| 9 | DPA controfirmato o self-service | Non dimostrato: DPA a adesione; manca una conferma scritta che si applichi al team del titolare |
+| 9 | DPA controfirmato o self-service | DPA a adesione. Anthropic (operatore umano, 14 ottobre 2026): incorporato nei Commercial Terms, vincolante dall'accettazione; per un account self-service non si emette né si richiede copia controfirmata. Per Northflank resta non dimostrato (richiesta del 9 ottobre) |
 
 Il DPA copre in modo chiaro gli elementi tipici dell'art. 28, par. 3, GDPR:
 istruzioni documentate (art. 3.2), riservatezza (4.1), sicurezza (6.1 e
@@ -178,6 +178,37 @@ account e piano API commerciale effettivamente associati. ZDR non attestata.
   la data di accettazione (da cercare tra le email di conferma o i registri
   dell'organizzazione) e l'eventuale copia controfirmata, da chiedere a un
   operatore umano.
+- **Risposta di un operatore umano di Anthropic (14 ottobre 2026; testo
+  incollato dal titolare in chat, conservato da lui; firmata «Rudy»; seguito
+  della richiesta con ID conversazione 215476307755517):**
+  - *DPA:* con le SCC è incorporato per rinvio nei Commercial Terms e diventa
+    vincolante nel momento in cui l'account li accetta, senza altra azione; per
+    un account self-service l'accettazione dei Commercial Terms è l'unico
+    accordo operativo e **non si emette né si richiede una copia controfirmata**.
+    Versione corrente e data di efficacia:
+    https://www.anthropic.com/legal/data-processing-addendum.
+  - *Entità contraente:* è indicata nei Commercial Terms, nella versione
+    applicabile all'organizzazione; Anthropic non la afferma nella risposta e
+    rinvia a quella clausola.
+  - *Addestramento:* di default non avviene sui dati dell'API; il Development
+    Partner Program è solo opt-in. Verificabile in Console, Settings → Privacy
+    controls: uno screenshot di quella pagina è la prova più forte per il
+    fascicolo art. 28/30, perché riflette la configurazione reale dell'account.
+  - *Data di accettazione:* per un account self-service non è emesso un
+    certificato; si documenta con i propri atti: data di creazione
+    dell'organizzazione in Console, email di registrazione originaria, prima
+    fattura (11 aprile 2026, numero 9BF0758D-645559).
+  - *Altra documentazione:* SCC, misure tecniche e organizzative, elenco dei
+    subresponsabili e certificazioni (SOC 2, ISO 27001/42001, CSA STAR) nel
+    Trust Center; per una risposta scritta formale, il responsabile della
+    protezione dei dati di Anthropic (dpo@anthropic.com).
+  - *Effetto sui residui:* cade la richiesta della copia controfirmata. Resta,
+    a carico del titolare, documentare la data con i propri atti (in
+    particolare la data di creazione dell'organizzazione in Console, che non
+    risulta ancora acquisita; nella posta non c'è una email di registrazione) e
+    leggere nei Commercial Terms il nome dell'entità contraente. Messaggio del
+    canale di assistenza, non atto firmato: il suo valore è di conferma
+    dell'impostazione contrattuale, non di prova della data.
 - **Subresponsabili (elenco di 20 voci da
   https://trust.anthropic.com/subprocessors, letto l'8 ottobre 2026 alle
   22:3x; copia della pagina salvata dal titolare alle 22:33, impronta SHA-256
