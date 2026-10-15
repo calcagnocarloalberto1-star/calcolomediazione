@@ -209,6 +209,27 @@ account e piano API commerciale effettivamente associati. ZDR non attestata.
     leggere nei Commercial Terms il nome dell'entità contraente. Messaggio del
     canale di assistenza, non atto firmato: il suo valore è di conferma
     dell'impostazione contrattuale, non di prova della data.
+- **Riscontri del titolare in Console (15 ottobre 2026, schermate delle 10:53 e
+  10:56, ricevute in chat; conservate da lui):**
+  - *Pagina «Organizzazione»:* nome «Carlo's Individual Org», ID
+    `f563bab2-9c9b-464d-b3ea-e06e4c2321bc`, indirizzo (Via Trieste 4/9, 16011
+    Arenzano GE) e partita IVA IT03718420106, invariati rispetto all'8 ottobre.
+    La pagina non mostra una data di creazione dell'organizzazione.
+  - *Pagina «Conservazione dei dati» (Settings → Privacy controls):*
+    conservazione predefinita dell'organizzazione «Attivo - 30 giorni»;
+    Development Partner Program non attivo (è offerto il pulsante «Unisciti»);
+    feedback degli utenti disattivato; registrazione delle metriche di Claude
+    Code ora **disattivata** (l'8 ottobre risultava attiva; riguarda Claude
+    Code, non le chiamate del sito). È la verifica in Console che l'operatore
+    di Anthropic indicava come prova della configurazione reale.
+  - *Data di accettazione:* la chiave API più vecchia ancora presente in
+    Console è del 9 settembre 2026; non è la data di creazione
+    dell'organizzazione (possono esistere chiavi eliminate). Il riscontro più
+    antico del rapporto resta la prima fattura dell'11 aprile 2026 (n.
+    9BF0758D-645559). La data di accettazione dei Commercial Terms resta
+    documentata con quella fattura e con i riscontri sopra, non certificata.
+  - *Ancora da acquisire:* il nome dell'entità contraente letto nei Commercial
+    Terms.
 - **Subresponsabili (elenco di 20 voci da
   https://trust.anthropic.com/subprocessors, letto l'8 ottobre 2026 alle
   22:3x; copia della pagina salvata dal titolare alle 22:33, impronta SHA-256
