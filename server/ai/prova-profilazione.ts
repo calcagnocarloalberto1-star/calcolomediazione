@@ -22,11 +22,15 @@ const out = async (c: typeof CASI[number]) => [
   await compatibilitaInteressi(c.descrizione, c.parti, ""),
   await guidaStrategica(c.descrizione, c.parti, ""),
 ];
+process.env.PROVA_DEBUG = "1"; // mostra il motivo degli errori (solo casi sintetici)
 let violazioni = 0;
 let registro = `# Prova profilazione - ${new Date().toISOString()}\n`;
 for (const [i, c] of CASI.entries()) {
+  console.log(`Caso ${i + 1} di ${CASI.length}: in corso (puo' richiedere alcuni minuti)...`);
+  const inizio = Date.now();
   const testi = await out(c);
-  if (testi.some(t => /Configurare API Key/.test(t))) { console.error("Chiave API mancante: nessuna prova eseguita."); process.exit(2); }
+  console.log(`Caso ${i + 1} concluso in ${Math.round((Date.now() - inizio) / 1000)} s`);
+  if (testi.some(t => /Configurare API Key/.test(t))) { console.error("Una o piu' chiamate non hanno prodotto un testo (vedi l'errore sopra): prova non valida."); writeFileSync("prova-profilazione-output.md", registro + "\n" + testi.join("\n---\n")); process.exit(2); }
   testi.forEach((t, fase) => { registro += `\n## Caso ${i + 1}, fase ${fase + 1}\n\n${t}\n`; });
   testi.forEach((t, fase) => t.split("\n").forEach(riga => {
     if (VIOLAZIONI.some(r => r.test(riga))) { violazioni++; console.error(`Caso ${i + 1}, fase ${fase + 1}: ${riga.slice(0, 200)}`); }

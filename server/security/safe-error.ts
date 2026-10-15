@@ -15,6 +15,12 @@ export function safeErrorMetadata(error: unknown): Record<string, unknown> {
     name: typeof candidate.name === "string" ? candidate.name : "Error",
   };
 
+  // Solo per la prova manuale su casi sintetici (server/ai/prova-profilazione.ts):
+  // PROVA_DEBUG=1 aggiunge il messaggio dell'errore. Mai impostato in produzione.
+  if (process.env.PROVA_DEBUG === "1" && typeof candidate.message === "string") {
+    metadata.message = candidate.message.slice(0, 300);
+  }
+
   for (const key of ["status", "statusCode", "code", "type"]) {
     const value = candidate[key];
     if (typeof value === "string" || typeof value === "number") {
