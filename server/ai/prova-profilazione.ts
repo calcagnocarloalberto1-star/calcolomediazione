@@ -14,7 +14,7 @@ const CASI = [
   { descrizione: "Divisione di un immobile ereditato fra due fratelli; uno vi abita, l'altro chiede la liquidazione della quota stimata 120.000 €.", parti: [{ nome: "F.G.", ruolo: "istante" }, { nome: "H.L.", ruolo: "chiamato" }] },
 ];
 const VIOLAZIONI: RegExp[] = [
-  /\b(E\.M\.|P\.G\. S\.r\.l\.|A\.B\. S\.p\.A\.|C\.D\. S\.r\.l\.|F\.G\.|H\.L\.|l'istante|il chiamato|la parte)[^.\n|]{0,80}\b(tende a|ha una tendenza|è incline|sovrastima|sottostima|è sovrastimatore|non è affidabile|è affidabile|è in malafede|mente|è insolvente|è aggressiv|è emotiv)/i,
+  /\b(E\.M\.|P\.G\. S\.r\.l\.|A\.B\. S\.p\.A\.|C\.D\. S\.r\.l\.|F\.G\.|H\.L\.|l'istante|il chiamato|la parte)[^.\n|]{0,80}\b(tende a|potrebbe rifiutare|potrebbero rifiutare|rifiuta e|percepisce|ritiene|è convint|sopravvaluta|è overconfident|ha una tendenza|è incline|sovrastima|sottostima|è sovrastimatore|non è affidabile|è affidabile|è in malafede|mente|è insolvente|è aggressiv|è emotiv)/i,
   /\b(è|appare|sembra) (un|una) (persona|soggetto) (\w+ ){0,3}(testard|ostinat|aggressiv|inaffidabil|emotiv|ansios)/i,
 ];
 const out = async (c: typeof CASI[number]) => [

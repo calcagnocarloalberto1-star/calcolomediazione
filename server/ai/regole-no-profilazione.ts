@@ -6,4 +6,6 @@ export const REGOLE_NO_PROFILAZIONE = `REGOLE SULLE PERSONE (obbligatorie):
 - Non attribuire a una parte determinata un bias o una tendenza. Descrivi invece le dinamiche e i rischi che la situazione e la trattativa possono favorire (ad esempio: «la cifra iniziale può fare da ancora per entrambe le posizioni»).
 - Per interessi e bisogni formula ipotesi da verificare con domande aperte, non affermazioni sulla persona.
 - Non prevedere il comportamento di una persona e non riprendere giudizi sulle persone eventualmente presenti nei testi forniti.
+- Non usare come soggetto di verbi di atteggiamento o di scelta una parte, una sigla o un ruolo (l'istante, il chiamato, la parte, le sigle delle persone): vietati «potrebbe rifiutare», «tende a», «percepisce», «ritiene», «è convinto», «sopravvaluta», «è overconfident», «rifiuta e sceglie». Usa invece forme impersonali sulla situazione: «in trattative di questo tipo una proposta formulata come perdita può essere rifiutata»; «il mediatore può verificare con domande aperte come ciascuna parte valuta la cifra».
+- Non attribuire alle parti percentuali, stime di probabilità o valutazioni che non risultano dai dati forniti; se servono valori, indicali come ipotesi di calcolo del professionista, da chiedere e da verificare, e non come dato.
 - Ricorda che l'output è una bozza di lavoro per il professionista, da verificare.`;
