@@ -1,7 +1,9 @@
 // Prova manuale (richiede una chiave API): esegue le fasi che trattano di persone su casi
 // sintetici e cerca nell'output attribuzioni di tratti o tendenze a una persona.
 // Uso: ANTHROPIC_API_KEY=... npx tsx server/ai/prova-profilazione.ts
+// Gli output completi sono salvati in prova-profilazione-output.md (cartella corrente) per la lettura umana.
 // Esito: 0 = nessuna violazione; 1 = violazioni; 2 = chiave mancante (nessuna prova eseguita).
+import { writeFileSync } from "node:fs";
 import { controlloBiasCognitivi } from "./controllo-cognitivo.js";
 import { compatibilitaInteressi } from "./compatibilita-interessi.js";
 import { guidaStrategica } from "./guida-strategica.js";
@@ -21,12 +23,15 @@ const out = async (c: typeof CASI[number]) => [
   await guidaStrategica(c.descrizione, c.parti, ""),
 ];
 let violazioni = 0;
+let registro = `# Prova profilazione - ${new Date().toISOString()}\n`;
 for (const [i, c] of CASI.entries()) {
   const testi = await out(c);
   if (testi.some(t => /Configurare API Key/.test(t))) { console.error("Chiave API mancante: nessuna prova eseguita."); process.exit(2); }
+  testi.forEach((t, fase) => { registro += `\n## Caso ${i + 1}, fase ${fase + 1}\n\n${t}\n`; });
   testi.forEach((t, fase) => t.split("\n").forEach(riga => {
     if (VIOLAZIONI.some(r => r.test(riga))) { violazioni++; console.error(`Caso ${i + 1}, fase ${fase + 1}: ${riga.slice(0, 200)}`); }
   }));
 }
+writeFileSync("prova-profilazione-output.md", registro);
 console.log(violazioni ? `❌ ${violazioni} possibili violazioni` : "✅ nessuna violazione rilevata (controllo automatico: leggere comunque gli output)");
 process.exit(violazioni ? 1 : 0);
