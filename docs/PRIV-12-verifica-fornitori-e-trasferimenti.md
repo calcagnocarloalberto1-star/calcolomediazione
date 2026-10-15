@@ -228,8 +228,14 @@ account e piano API commerciale effettivamente associati. ZDR non attestata.
     antico del rapporto resta la prima fattura dell'11 aprile 2026 (n.
     9BF0758D-645559). La data di accettazione dei Commercial Terms resta
     documentata con quella fattura e con i riscontri sopra, non certificata.
-  - *Ancora da acquisire:* il nome dell'entità contraente letto nei Commercial
-    Terms.
+  - *Entità contraente (lettura del 15 ottobre 2026):* nel preambolo dei
+    Commercial Terms pubblici (https://www.anthropic.com/legal/commercial-terms,
+    versione in vigore dal 17 giugno 2025) «Anthropic» è Anthropic Ireland,
+    Limited per il cliente residente nel SEE; coincide con l'emittente della
+    fattura dell'11 aprile 2026. Letto sul testo pubblico corrente, non sulla
+    versione accettata dall'account: da verificare dal titolare sul preambolo
+    della versione applicabile. L'indirizzo della sede legale non risulta da
+    quella pagina e non è indicato qui.
 - **Subresponsabili (elenco di 20 voci da
   https://trust.anthropic.com/subprocessors, letto l'8 ottobre 2026 alle
   22:3x; copia della pagina salvata dal titolare alle 22:33, impronta SHA-256
