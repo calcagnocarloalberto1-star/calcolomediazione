@@ -197,6 +197,17 @@ try {
   assert.equal(rilevaPossibiliRiferimentiMinori("La bambina ha 9 anni e vive con la madre.").rischio, true);
   assert.equal(rilevaPossibiliRiferimentiMinori("Il figlio di 9 anni vive con la madre.").rischio, true);
   assert.equal(rilevaPossibiliRiferimentiMinori("La parte ha 17 anni.").rischio, true);
+  // Durate e intervalli nei testi giuridici (falsi positivi dell'analisi 133, 16 ottobre 2026)
+  assert.equal(rilevaPossibiliRiferimentiMinori("Durata stimata | 1-6 mesi | 2-4 anni |").rischio, false);
+  assert.equal(rilevaPossibiliRiferimentiMinori("Non affrontare 2-4 anni di lite con costi.").rischio, false);
+  assert.equal(rilevaPossibiliRiferimentiMinori("Durata stimata | 2-5 anni | Nota sul contraddittorio").rischio, false);
+  assert.equal(rilevaPossibiliRiferimentiMinori("Il giudizio dura da 2 a 4 anni.").rischio, false);
+  assert.equal(rilevaPossibiliRiferimentiMinori("Negli ultimi 5 anni i canoni sono stati pagati.").rischio, false);
+  assert.equal(rilevaPossibiliRiferimentiMinori("| Primo grado | 2 anni | 5 anni |").rischio, false);
+  assert.equal(rilevaPossibiliRiferimentiMinori("| **Cumulo: I + II + III grado** | **6 anni** | **12 anni** |").rischio, false);
+  assert.equal(rilevaPossibiliRiferimentiMinori("Tre gradi di giudizio e tempi cumulativi fino a 12 anni.").rischio, false);
+  assert.equal(rilevaPossibiliRiferimentiMinori("Una ragazza di 15 anni vive con il padre.").rischio, true);
+  assert.equal(rilevaPossibiliRiferimentiMinori("Un ragazzo di 16 anni frequenta il liceo.").rischio, true);
   assert.equal(rilevaPossibiliRiferimentiMinori("Diagnosi pediatrica dettagliata.").rischio, true);
   assert.equal(rilevaPossibiliRiferimentiMinori("Separazione dei genitori e regolazione dei tempi.").rischio, true);
   assert.equal(rilevaPossibiliRiferimentiMinori("I genitori separati concordano le modalità.").rischio, true);
