@@ -57,6 +57,13 @@ function contieneDataNascitaRecente(testo: string): boolean {
 // prescrizione, ecc.) per ridurre i falsi positivi più comuni in un testo
 // giuridico — resta comunque un'euristica, non una prova.
 const CONTESTI_ESCLUSI = /\b(mutu\w*|contratt\w*|caus\w*|prescri\w*|locazion\w*|comodat\w*|garanzi\w*|pena|reclusion\w*|concession\w*|licenz\w*|affitt\w*|leasing)\D{0,20}$/i;
+// Durate, intervalli e stime di tempo («2-4 anni», «per 5 anni», «durata
+// stimata 3 anni», «negli ultimi 5 anni»): non sono l'eta' di una persona.
+// Il contesto che precede il numero deve essere una parola di durata oppure
+// un intervallo («2-», «da 2 a», «tra 2 e») oppure l'inizio di una cella di
+// tabella («| 2 anni |», come nelle tabelle dei tempi di giudizio). Un'eta' come «ragazza di 15 anni»
+// continua a essere rilevata.
+const CONTESTI_DURATA = /(?:\b(?:per|da|entro|oltre|circa|dopo|tra|fra|nei|negli|ultimi|prossimi|durata|durare|dura|stimat\w*|pluriennal\w*|termine|scadenza|fino|tempi|tempo|cumulativ\w*)\b\D{0,20}|\d\s*(?:-|\u2013|\u2014|a|e)\s*|\|\s*\**\s*)$/i;
 function contieneEtaMinorenne(testo: string): boolean {
     const regexEta = /\b(\d{1,2})\s+ann[oi]\b/gi;
     let m: RegExpExecArray | null;
@@ -65,6 +72,7 @@ function contieneEtaMinorenne(testo: string): boolean {
           if (eta >= 0 && eta < 18) {
                   const contestoPrima = testo.slice(Math.max(0, m.index - 30), m.index);
                   if (CONTESTI_ESCLUSI.test(contestoPrima)) continue;
+                  if (CONTESTI_DURATA.test(contestoPrima)) continue;
                   return true;
           }
     }
