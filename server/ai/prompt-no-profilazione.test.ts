@@ -17,7 +17,7 @@ assert.doesNotMatch(cog, /Livello di rischio\*\*: scala 1-5/);
 const int = readFileSync("server/ai/compatibilita-interessi.ts", "utf8");
 assert.doesNotMatch(int, /bisogni non dichiarati ma probabili/);
 
-for (const frase of ["Non valutare", "Non attribuire a una parte", "ipotesi da verificare", "bozza di lavoro"]) {
+for (const frase of ["Non valutare", "Non attribuire a una parte", "ipotesi da verificare", "bozza di lavoro", "potrebbe rifiutare", "percentuali, stime di probabilità"]) {
   assert.ok(REGOLE_NO_PROFILAZIONE.includes(frase), `regole: manca «${frase}»`);
 }
 console.log("✅ prompt-no-profilazione.test.ts: asserzioni OK");
