@@ -64,6 +64,8 @@ const CONTESTI_ESCLUSI = /\b(mutu\w*|contratt\w*|caus\w*|prescri\w*|locazion\w*|
 // tabella («| 2 anni |», come nelle tabelle dei tempi di giudizio). Un'eta' come «ragazza di 15 anni»
 // continua a essere rilevata.
 const CONTESTI_DURATA = /(?:\b(?:per|da|entro|oltre|circa|dopo|tra|fra|nei|negli|ultimi|prossimi|durata|durare|dura|stimat\w*|pluriennal\w*|termine|scadenza|fino|tempi|tempo|cumulativ\w*)\b\D{0,20}|\d\s*(?:-|\u2013|\u2014|a|e)\s*|\|\s*\**\s*)$/i;
+// Parole che rendono «N anni» l'eta' di una persona (nei 40 caratteri prima).
+const INDIZI_PERSONA = /\b(?:ragazz\w*|giovan\w*|studente\w*|studentess\w*|alunn\w*|persona|soggetto|et[aà]|nat[oa]|figli\w*|bambin\w*|minor\w*|adolescent\w*|giovanissim\w*)\b[^.\n]{0,40}$/i;
 function contieneEtaMinorenne(testo: string): boolean {
     const regexEta = /\b(\d{1,2})\s+ann[oi]\b/gi;
     let m: RegExpExecArray | null;
@@ -73,6 +75,10 @@ function contieneEtaMinorenne(testo: string): boolean {
                   const contestoPrima = testo.slice(Math.max(0, m.index - 30), m.index);
                   if (CONTESTI_ESCLUSI.test(contestoPrima)) continue;
                   if (CONTESTI_DURATA.test(contestoPrima)) continue;
+                  // «N anni» senza un indizio di persona nelle vicinanze e' una durata
+                  // («in 3 anni», «3 anni prima», «ritardo di 3 anni»), non un'eta'.
+                  const contestoPersona = testo.slice(Math.max(0, m.index - 40), m.index);
+                  if (!INDIZI_PERSONA.test(contestoPersona)) continue;
                   return true;
           }
     }

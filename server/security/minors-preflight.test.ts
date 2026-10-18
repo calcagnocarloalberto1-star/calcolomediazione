@@ -206,6 +206,10 @@ try {
   assert.equal(rilevaPossibiliRiferimentiMinori("| Primo grado | 2 anni | 5 anni |").rischio, false);
   assert.equal(rilevaPossibiliRiferimentiMinori("| **Cumulo: I + II + III grado** | **6 anni** | **12 anni** |").rischio, false);
   assert.equal(rilevaPossibiliRiferimentiMinori("Tre gradi di giudizio e tempi cumulativi fino a 12 anni.").rischio, false);
+  assert.equal(rilevaPossibiliRiferimentiMinori("Incassa 3 anni prima e guadagna 3 anni di tempo.").rischio, false);
+  assert.equal(rilevaPossibiliRiferimentiMinori("Il pagamento forzato di 23.000 euro in 3 anni, con un ritardo di 2 anni.").rischio, false);
+  assert.equal(rilevaPossibiliRiferimentiMinori("Termine di disdetta di 6 mesi o 1 anno.").rischio, false);
+  assert.equal(rilevaPossibiliRiferimentiMinori("L'eta' della persona e' di 12 anni.").rischio, true);
   assert.equal(rilevaPossibiliRiferimentiMinori("Una ragazza di 15 anni vive con il padre.").rischio, true);
   assert.equal(rilevaPossibiliRiferimentiMinori("Un ragazzo di 16 anni frequenta il liceo.").rischio, true);
   assert.equal(rilevaPossibiliRiferimentiMinori("Diagnosi pediatrica dettagliata.").rischio, true);
