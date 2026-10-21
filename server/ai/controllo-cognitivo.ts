@@ -28,7 +28,7 @@ export async function controlloBiasCognitivi(
 
 Per ciascun bias cognitivo selezionato (Ancoraggio, Avversione alla Perdita, Framing, Overconfidence, Sunk Cost, Availability) descrivi il RISCHIO PER LA TRATTATIVA, non le caratteristiche delle persone:
 1. **Rilevanza per questa trattativa**: scala 1-5
-2. **Come può manifestarsi la dinamica nella situazione**: esempi concreti riferiti ai fatti e alle cifre del caso, senza attribuirla a una parte determinata
+2. **Come può manifestarsi la dinamica nella situazione**: esempi concreti riferiti ai fatti e alle cifre del caso, senza attribuirla a una parte determinata: il soggetto della frase è la dinamica, la proposta o la cifra, mai una parte, una sigla o un ruolo come soggetto di «percepisce», «ritiene», «sovrastima», «sottostima», neppure in forma ipotetica
 3. **Impatto sulla negoziazione**: come potrebbe distorcere le decisioni di chiunque si trovi in questa posizione
 4. **Strategie di mitigazione**: tecniche per il mediatore
 5. **Domande di debiasing**: domande aperte e neutre che il mediatore può porre a ciascuna parte

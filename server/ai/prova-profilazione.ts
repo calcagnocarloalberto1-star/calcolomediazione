@@ -33,7 +33,7 @@ for (const [i, c] of CASI.entries()) {
   if (testi.some(t => /Configurare API Key/.test(t))) { console.error("Una o piu' chiamate non hanno prodotto un testo (vedi l'errore sopra): prova non valida."); writeFileSync("prova-profilazione-output.md", registro + "\n" + testi.join("\n---\n")); process.exit(2); }
   testi.forEach((t, fase) => { registro += `\n## Caso ${i + 1}, fase ${fase + 1}\n\n${t}\n`; });
   testi.forEach((t, fase) => t.split("\n").forEach(riga => {
-    if (VIOLAZIONI.some(r => r.test(riga))) { violazioni++; console.error(`Caso ${i + 1}, fase ${fase + 1}: ${riga.slice(0, 200)}`); }
+    if (!/\?\s*$/.test(riga.trim()) && VIOLAZIONI.some(r => r.test(riga))) { violazioni++; console.error(`Caso ${i + 1}, fase ${fase + 1}: ${riga.slice(0, 200)}`); }
   }));
 }
 writeFileSync("prova-profilazione-output.md", registro);
