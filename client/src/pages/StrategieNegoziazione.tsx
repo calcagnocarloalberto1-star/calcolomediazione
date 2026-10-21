@@ -49,11 +49,11 @@ const strategySections: StrategySection[] = [
     questions: [
       {
         q: "Cos'è la ZOPA?",
-        a: "La ZOPA — Zone of Possible Agreement, Zona di Possibile Accordo — è l'intervallo in cui le posizioni delle parti si sovrappongono, rendendo possibile un accordo vantaggioso per entrambe. È stata formalizzata da Howard Raiffa in \"The Art and Science of Negotiation\" (1982). In termini concreti: se l'attore non accetta meno di 30.000 euro e il convenuto è disposto a pagare fino a 40.000 euro, la ZOPA è lo spazio tra 30.000 e 40.000 euro. Qualsiasi accordo in quell'intervallo è migliore, per entrambe le parti, rispetto all'alternativa del giudizio.",
+        a: "La ZOPA — Zone of Possible Agreement, Zona di Possibile Accordo — è l'intervallo in cui le posizioni delle parti si sovrappongono, rendendo possibile un accordo vantaggioso per entrambe. È stata formalizzata da Howard Raiffa in \"The Art and Science of Negotiation\" (1982). In termini concreti: se l'istante non accetta meno di 30.000 euro e il chiamato è disposto a pagare fino a 40.000 euro, la ZOPA è lo spazio tra 30.000 e 40.000 euro. Qualsiasi accordo in quell'intervallo è migliore, per entrambe le parti, rispetto all'alternativa del giudizio.",
       },
       {
         q: "Come si collega la ZOPA alla MAAN?",
-        a: "La ZOPA dipende direttamente dalla MAAN di ciascuna parte. Il limite inferiore della ZOPA è determinato dal \"prezzo di riserva\" dell'attore — il punto sotto il quale preferisce andare in giudizio (la sua MAAN). Il limite superiore è il prezzo di riserva del convenuto — il punto sopra il quale preferisce difendersi in tribunale. Se le due MAAN non si sovrappongono (il minimo dell'attore supera il massimo del convenuto), la ZOPA è negativa e l'accordo, su quella base, non è possibile. Per questo calcolare le MAAN è il primo passo per identificare la ZOPA.",
+        a: "La ZOPA dipende direttamente dalla MAAN di ciascuna parte. Il limite inferiore della ZOPA è determinato dal \"prezzo di riserva\" dell'istante — il punto sotto il quale preferisce andare in giudizio (la sua MAAN). Il limite superiore è il prezzo di riserva del chiamato — il punto sopra il quale preferisce difendersi in tribunale. Se le due MAAN non si sovrappongono (il minimo dell'istante supera il massimo del chiamato), la ZOPA è negativa e l'accordo, su quella base, non è possibile. Per questo calcolare le MAAN è il primo passo per identificare la ZOPA.",
       },
       {
         q: "Cosa succede quando la ZOPA è negativa?",
@@ -72,7 +72,7 @@ const strategySections: StrategySection[] = [
     questions: [
       {
         q: "Cos'è l'effetto ancoraggio nella negoziazione?",
-        a: "L'effetto ancoraggio è un bias cognitivo descritto da Amos Tversky e Daniel Kahneman nel 1974: la prima informazione ricevuta — l'\"àncora\" — influenza in modo sproporzionato tutte le valutazioni successive, anche quando è arbitraria o irrilevante. In una negoziazione, la prima cifra messa sul tavolo diventa il punto di riferimento per l'intera trattativa. Se l'attore apre con una richiesta di 100.000 euro, le offerte successive vengono valutate in relazione a quel numero, anche se il valore realistico della controversia è molto diverso.",
+        a: "L'effetto ancoraggio è un bias cognitivo descritto da Amos Tversky e Daniel Kahneman nel 1974: la prima informazione ricevuta — l'\"àncora\" — influenza in modo sproporzionato tutte le valutazioni successive, anche quando è arbitraria o irrilevante. In una negoziazione, la prima cifra messa sul tavolo diventa il punto di riferimento per l'intera trattativa. Se l'istante apre con una richiesta di 100.000 euro, le offerte successive vengono valutate in relazione a quel numero, anche se il valore realistico della controversia è molto diverso.",
       },
       {
         q: "L'ancoraggio funziona anche con i professionisti esperti?",
@@ -122,7 +122,7 @@ const strategySections: StrategySection[] = [
       },
       {
         q: "Come si applica il framing alla mediazione?",
-        a: "In mediazione, il framing ha un'applicazione diretta e concreta. La stessa proposta può essere formulata in due modi: \"Accettando l'accordo a 40.000 euro ottieni 40.000 euro certi\" (frame positivo, guadagno) oppure \"Rifiutando l'accordo rischi di perdere tutto al processo e di spendere altri 15.000 euro\" (frame negativo, perdita). La ricerca mostra che gli attori (che ragionano in termini di guadagno) tendono ad accettare le offerte ragionevoli, mentre i convenuti (che ragionano in termini di perdita) tendono a rifiutarle preferendo il rischio del giudizio. Il mediatore consapevole può calibrare la comunicazione per aiutare ciascuna parte a valutare la proposta nel frame più appropriato.",
+        a: "In mediazione, il framing ha un'applicazione diretta e concreta. La stessa proposta può essere formulata in due modi: \"Accettando l'accordo a 40.000 euro ottieni 40.000 euro certi\" (frame positivo, guadagno) oppure \"Rifiutando l'accordo rischi di perdere tutto al processo e di spendere altri 15.000 euro\" (frame negativo, perdita). La ricerca mostra che gli istanti (che ragionano in termini di guadagno) tendono ad accettare le offerte ragionevoli, mentre i chiamati (che ragionano in termini di perdita) tendono a rifiutarle preferendo il rischio del giudizio. Il mediatore consapevole può calibrare la comunicazione per aiutare ciascuna parte a valutare la proposta nel frame più appropriato.",
       },
       {
         q: "Framing e avversione alla perdita sono collegati?",
@@ -141,7 +141,7 @@ const strategySections: StrategySection[] = [
       },
       {
         q: "Come si manifesta l'effetto dotazione in mediazione?",
-        a: "In mediazione civile, l'effetto dotazione si manifesta in modo pervasivo. Il proprietario di un immobile oggetto di controversia gli attribuisce un valore superiore a quello di mercato. L'attore che ha già una sentenza di primo grado favorevole la considera più solida e più \"sua\" di quanto non sia oggettivamente. Il titolare di un credito contestato lo percepisce come un bene acquisito a cui sta \"rinunciando\". Il risultato è che le aspettative vengono gonfiate — le parti chiedono di più e concedono di meno di quanto sarebbe razionalmente giustificato.",
+        a: "In mediazione civile, l'effetto dotazione si manifesta in modo pervasivo. Il proprietario di un immobile oggetto di controversia gli attribuisce un valore superiore a quello di mercato. L'istante che ha già una sentenza di primo grado favorevole la considera più solida e più \"sua\" di quanto non sia oggettivamente. Il titolare di un credito contestato lo percepisce come un bene acquisito a cui sta \"rinunciando\". Il risultato è che le aspettative vengono gonfiate — le parti chiedono di più e concedono di meno di quanto sarebbe razionalmente giustificato.",
       },
       {
         q: "Come può il mediatore gestire l'effetto dotazione?",
@@ -179,11 +179,11 @@ const strategySections: StrategySection[] = [
       },
       {
         q: "Perché la Prospect Theory è rilevante per la mediazione?",
-        a: "La Prospect Theory è il quadro teorico che unifica tutti i bias cognitivi rilevanti per la negoziazione. L'avversione alla perdita, il framing, l'ancoraggio, l'effetto dotazione — sono tutti fenomeni che la Prospect Theory predice e spiega. In mediazione, la teoria spiega perché gli attori (che ragionano in termini di guadagno) e i convenuti (che ragionano in termini di perdita) si comportano in modo sistematicamente diverso di fronte alla stessa proposta. Spiega perché le concessioni sono così difficili, perché le aspettative sono spesso irrealistiche, e perché il modo in cui si presenta un'opzione conta almeno quanto il contenuto dell'opzione stessa.",
+        a: "La Prospect Theory è il quadro teorico che unifica tutti i bias cognitivi rilevanti per la negoziazione. L'avversione alla perdita, il framing, l'ancoraggio, l'effetto dotazione — sono tutti fenomeni che la Prospect Theory predice e spiega. In mediazione, la teoria spiega perché gli istanti (che ragionano in termini di guadagno) e i chiamati (che ragionano in termini di perdita) si comportano in modo sistematicamente diverso di fronte alla stessa proposta. Spiega perché le concessioni sono così difficili, perché le aspettative sono spesso irrealistiche, e perché il modo in cui si presenta un'opzione conta almeno quanto il contenuto dell'opzione stessa.",
       },
       {
         q: "Come può un mediatore usare la Prospect Theory nella pratica?",
-        a: "Il mediatore informato dalla Prospect Theory adotta un approccio strategico alla comunicazione. Con l'attore (che valuta guadagni), enfatizza il valore certo dell'accordo rispetto all'incertezza del giudizio. Con il convenuto (che valuta perdite), enfatizza il costo certo del giudizio rispetto al risparmio dell'accordo. Utilizza i dati economici come strumento di reframing: il prospetto dei costi trasforma la percezione da \"rinuncio a qualcosa\" a \"evito un costo maggiore\". Gestisce le àncore con consapevolezza, introduce le proposte in modo da minimizzare la svalutazione reattiva, e aiuta le parti a superare l'effetto dotazione confrontando le aspettative con i numeri reali.",
+        a: "Il mediatore informato dalla Prospect Theory adotta un approccio strategico alla comunicazione. Con l'istante (che valuta guadagni), enfatizza il valore certo dell'accordo rispetto all'incertezza del giudizio. Con il chiamato (che valuta perdite), enfatizza il costo certo del giudizio rispetto al risparmio dell'accordo. Utilizza i dati economici come strumento di reframing: il prospetto dei costi trasforma la percezione da \"rinuncio a qualcosa\" a \"evito un costo maggiore\". Gestisce le àncore con consapevolezza, introduce le proposte in modo da minimizzare la svalutazione reattiva, e aiuta le parti a superare l'effetto dotazione confrontando le aspettative con i numeri reali.",
       },
       {
         q: "CalcoloMediazione.it integra la Prospect Theory?",
