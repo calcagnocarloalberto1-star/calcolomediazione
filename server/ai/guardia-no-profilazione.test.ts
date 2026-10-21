@@ -32,23 +32,23 @@ for (const r of [
 ]) assert.ok(!rigaViolante(r), `non deve essere segnalata: ${r}`);
 
 const testo = ["# Titolo", "- **Effetto:** L'istante percepisce una perdita; tende a rifiutare.", "- Frase neutra.", "- Il chiamato ritiene il prezzo alto."].join("\n");
-const buona = await applicaGuardiaNoProfilazione(testo, async righe => righe.map((_, i) => i === 0 ? "- **Effetto:** Una proposta letta come perdita può essere rifiutata." : "- Il mediatore può chiedere come viene valutato il prezzo."));
+const buona = await applicaGuardiaNoProfilazione(testo, async righe => righe.map((_, i) => i === 0 ? "- **Effetto:** Una proposta letta come perdita può essere rifiutata." : "- Il mediatore può chiedere come viene valutato il prezzo."), [], null);
 assert.ok(buona.includes("Una proposta letta come perdita"));
 assert.ok(buona.includes("Frase neutra"));
 assert.ok(!buona.includes("percepisce"));
 assert.ok(!buona.includes("omessa"));
 
 // riscrittura che non migliora → omissione, e il resto del testo resta
-const cattiva = await applicaGuardiaNoProfilazione(testo, async righe => righe);
+const cattiva = await applicaGuardiaNoProfilazione(testo, async righe => righe, [], null);
 assert.equal((cattiva.match(/frase omessa/g) ?? []).length, 2);
 assert.ok(cattiva.includes("Frase neutra") && cattiva.startsWith("# Titolo"));
 
 // riscrittore che fallisce → omissione
-const errore = await applicaGuardiaNoProfilazione(testo, async () => { throw new Error("x"); });
+const errore = await applicaGuardiaNoProfilazione(testo, async () => { throw new Error("x"); }, [], null);
 assert.ok(!errore.includes("percepisce"));
 
 // riga di tabella → citazione, mai testo nella tabella
-const tab = await applicaGuardiaNoProfilazione("| A | Il chiamato percepisce una perdita |", async r => r);
+const tab = await applicaGuardiaNoProfilazione("| A | Il chiamato percepisce una perdita |", async r => r, [], null);
 assert.ok(tab.startsWith("> [frase omessa"));
 
 // nomi reali delle parti (non sigle dei casi di prova)
@@ -59,6 +59,23 @@ assert.ok(!rigaViolante("Mario Rossi ha depositato il ricorso.", ["Mario Rossi"]
 // testo pulito: invariato, nessuna chiamata
 let chiamate = 0;
 const pulito = "Nessuna frase problematica.\n- Voce.";
-assert.equal(await applicaGuardiaNoProfilazione(pulito, async r => { chiamate++; return r; }), pulito);
+assert.equal(await applicaGuardiaNoProfilazione(pulito, async r => { chiamate++; return r; }, [], null), pulito);
 assert.equal(chiamate, 0);
+// controllo di significato: righe che nessuna regola di parole riconosce
+const sfuggente = ["# Titolo", "- Il fratello che abita potrebbe temere di perdere l'abitazione.", "- Il mediatore può chiedere quali interessi prevalgano.", "- Una stima ottimista può spostare la soglia di accordo."].join("\n");
+let viste: string[] = [];
+const sem = await applicaGuardiaNoProfilazione(
+  sfuggente,
+  async righe => { viste = righe; return righe.map(() => "- La cessione della quota può essere letta come rischio per l'abitazione: il mediatore può chiedere come viene valutata."); },
+  [],
+  async () => [0, 1, 99, -1], // «# Titolo» (intestazione), indici fuori intervallo: ignorati; riga 1 valida
+);
+assert.deepEqual(viste, ["- Il fratello che abita potrebbe temere di perdere l'abitazione."]);
+assert.ok(sem.startsWith("# Titolo") && sem.includes("può essere letta come rischio") && !sem.includes("temere"));
+assert.ok(sem.includes("quali interessi prevalgano"));
+
+// il controllo di significato che fallisce non blocca il resto
+const fallito = await applicaGuardiaNoProfilazione(testo, async righe => righe.map(() => "- Il mediatore può chiedere come viene valutato il prezzo."), [], async () => { throw new Error("rete"); });
+assert.ok(!fallito.includes("percepisce"));
+
 console.log("✅ guardia-no-profilazione.test.ts: asserzioni OK");
