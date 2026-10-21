@@ -84,11 +84,15 @@ async function individuaConLLM(righe: string[]): Promise<number[]> {
       `Sei un revisore di conformità. Ricevi righe numerate («numero|testo») di un'analisi di mediazione. Indica i numeri delle righe che violano questa regola: l'analisi non deve profilare persone. Violano la regola le righe che attribuiscono a una parte, a una persona o a un ruolo (l'istante, il chiamato, una sigla o un nome, «una delle parti», «chi abita l'immobile», «il fratello», «la parte»…), anche in modo indiretto, ipotetico o con «può/potrebbe/possono»: convinzioni, percezioni, sentimenti, paure, preferenze, intenzioni, tendenze, bias, stime di probabilità o percentuali, comportamenti futuri («sarà più riluttante», «accetterebbe»); oppure che inventano fatti non presenti nel caso (precedenti, amici, esperienze di una parte). NON violano la regola: domande aperte rivolte al mediatore o alle parti; dinamiche descritte in modo impersonale («una proposta formulata come perdita può essere rifiutata»); calcoli e tabelle di scenario senza soggetto; descrizioni di fatti e cifre forniti nel caso; formulazioni di interessi come ipotesi da verificare. Rispondi SOLO con i numeri delle righe che violano, separati da virgole, oppure con la parola NESSUNA.`,
       testo,
     );
-    if (/NESSUNA/i.test(out)) return;
-    for (const m of out.match(/\d+/g) ?? []) {
-      const n = Number(m) - 1;
-      if (n >= da && n < a) trovate.push(n);
-    }
+    const pulito = out.trim();
+    if (process.env.PROVA_DEBUG === "1") console.warn(`[guardia-revisore] blocco ${da + 1}-${a}: risposta «${pulito.slice(0, 200).replace(/\s+/g, " ")}»`);
+    if (/^NESSUNA\.?$/i.test(pulito)) return;
+    // Risposta valida solo se è un semplice elenco di numeri: ogni altra cosa si scarta.
+    if (!/^\d+(\s*,\s*\d+)*\.?$/.test(pulito)) { console.warn(`[guardia-revisore] risposta non valida, blocco ${da + 1}-${a} ignorato`); return; }
+    const nums = pulito.match(/\d+/g)!.map(m => Number(m) - 1).filter(n => n >= da && n < a);
+    // Se segnala più di un quinto delle righe non è affidabile: scartata.
+    if (nums.length > Math.max(5, (a - da) * 0.2)) { console.warn(`[guardia-revisore] troppe righe segnalate (${nums.length}), blocco ${da + 1}-${a} ignorato`); return; }
+    trovate.push(...nums);
   }));
   return Array.from(new Set(trovate)).sort((x, y) => x - y);
 }
@@ -102,8 +106,11 @@ export async function applicaGuardiaNoProfilazione(
   testo: string,
   riscrivi: Riscrittore = riscriviConLLM,
   nomiParti: string[] = [],
-  individua: Individuatore | null = individuaConLLM,
+  individua: Individuatore | null | undefined = undefined,
 ): Promise<string> {
+  // Il controllo di significato resta SPENTO finché non è stato collaudato su risposte reali:
+  // si attiva solo con GUARDIA_REVISORE_LLM=1 (prova 21/10/2026: segnalava quasi ogni riga).
+  if (individua === undefined) individua = process.env.GUARDIA_REVISORE_LLM === "1" ? individuaConLLM : null;
   const righe = testo.split("\n");
   const regole = costruisciViolazioni(nomiParti);
   const viola = (r: string) => { const t = r.trim(); return !!t && !/\?\s*$/.test(t) && regole.some(x => x.test(r)); };
