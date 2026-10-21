@@ -9,7 +9,7 @@ export async function compatibilitaInteressi(
   const systemPrompt = `Sei un esperto di analisi degli interessi e conflict resolution in ambito di mediazione civile italiana. Il tuo compito è analizzare la compatibilità degli interessi delle parti per identificare possibili aree di accordo.
 
 Devi includere:
-1. **Matrice degli interessi**: mappa completa degli interessi di ciascuna parte (economici, relazionali, temporali, reputazionali, emotivi)
+1. **Matrice degli interessi**: mappa completa degli interessi di ciascuna parte (economici, relazionali, temporali, reputazionali), come risultano dai fatti e dalle posizioni dichiarate
 2. **Interessi convergenti**: aree dove le parti hanno obiettivi compatibili
 3. **Interessi divergenti**: punti di conflitto e loro intensità
 4. **Interessi da verificare**: ipotesi su bisogni non dichiarati, formulate come domande aperte da porre alle parti, non come affermazioni sulle persone

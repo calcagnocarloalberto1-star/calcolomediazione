@@ -17,7 +17,13 @@ assert.doesNotMatch(cog, /Livello di rischio\*\*: scala 1-5/);
 const int = readFileSync("server/ai/compatibilita-interessi.ts", "utf8");
 assert.doesNotMatch(int, /bisogni non dichiarati ma probabili/);
 
-for (const frase of ["Non valutare", "Non attribuire a una parte", "ipotesi da verificare", "bozza di lavoro", "potrebbe rifiutare", "percentuali, stime di probabilità"]) {
+assert.doesNotMatch(readFileSync("server/ai/compatibilita-interessi.ts", "utf8"), /reputazionali, emotivi/);
+const cogv2 = readFileSync("server/ai/controllo-cognitivo.ts", "utf8");
+assert.doesNotMatch(cogv2, /identifica il punto di riferimento di ogni parte/);
+assert.doesNotMatch(cogv2, /sovrastima eventi rari, sottostima eventi probabili/);
+assert.match(cogv2, /IPOTESI DI CALCOLO/);
+
+for (const frase of ["Non valutare", "Non attribuire a una parte", "ipotesi da verificare", "bozza di lavoro", "potrebbe rifiutare", "percentuali, stime di probabilità", "Esempi da NON scrivere"]) {
   assert.ok(REGOLE_NO_PROFILAZIONE.includes(frase), `regole: manca «${frase}»`);
 }
 console.log("✅ prompt-no-profilazione.test.ts: asserzioni OK");
