@@ -72,10 +72,10 @@ export default function MaanZopaMediazione() {
           <section>
             <SectionTitle icon={Crosshair} title="Secondo passo: individuare la ZOPA" />
             <p>
-              Supponiamo che l'attore, forte di elementi probatori solidi, stimi la propria MAAN economica netta
+              Supponiamo che l'istante, forte di elementi probatori solidi, stimi la propria MAAN economica netta
               (importo che otterrebbe vincendo la causa, al netto dei costi di giudizio) attorno ai{" "}
               <strong className="text-foreground">€22.000</strong>: sotto questa soglia, andare in giudizio gli
-              conviene di più che accettare un accordo peggiore. Il convenuto, dal canto suo, stima che perdere la
+              conviene di più che accettare un accordo peggiore. Il chiamato, dal canto suo, stima che perdere la
               causa gli costerebbe complessivamente circa <strong className="text-foreground">€32.000</strong>{" "}
               (importo della domanda più i costi di giudizio): sopra questa soglia, preferisce anch'egli il
               giudizio. La <strong className="text-foreground">ZOPA</strong> è quindi lo spazio tra questi due
@@ -90,7 +90,7 @@ export default function MaanZopaMediazione() {
             <p>
               Conoscere la propria MAAN — e, per quanto possibile, stimare quella della controparte — cambia
               concretamente il modo in cui si negozia. Una proposta che cade fuori dalla ZOPA (ad esempio,
-              un'offerta del convenuto inferiore a €22.000) non verrà mai accettata da una parte razionale, perché
+              un'offerta del chiamato inferiore a €22.000) non verrà mai accettata da una parte razionale, perché
               per lei conviene di più il giudizio: il mediatore può usare questo dato per aiutare le parti a
               correggere proposte fuori mercato, invece di lasciarle scontrarsi su posizioni. Al contrario, quando
               entrambe le parti dispongono di un quadro economico oggettivo — come quello generato dal nostro
