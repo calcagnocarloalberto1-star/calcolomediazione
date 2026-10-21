@@ -1,6 +1,7 @@
-import { callLLM, etichettaRuolo } from "./llm.js";
+import { callLLM } from "./llm.js";
 import { REGOLE_NO_PROFILAZIONE } from "./regole-no-profilazione.js";
 import { applicaGuardiaNoProfilazione } from "./guardia-no-profilazione.js";
+import { anonimizzaParti } from "./anonimizza-parti.js";
 
 const TEORIE_DESCRIZIONI: Record<string, string> = {
   ancoraggio: "Ancoraggio (Anchoring): tendenza ad affidarsi eccessivamente alla prima informazione ricevuta",
@@ -46,20 +47,23 @@ Teorie/framework da analizzare:
 
 ${REGOLE_NO_PROFILAZIONE}
 
+PARTI NON IDENTIFICATE: in questa fase nomi e ruoli delle parti sono omessi (compaiono come «una parte»). Non ricostruire chi sia l'una o l'altra parte e non assegnare a nessuna un atteggiamento, una percezione, una preferenza, una stima o un comportamento. Descrivi le dinamiche che la trattativa, le cifre e i fatti possono favorire, con soggetto impersonale (la proposta, la cifra, la dinamica), e le domande che il mediatore può porre per verificarle.
+
 Formatta l'output in Markdown con indicatori di rischio visivi, tabelle e matrici.`;
 
   const userPrompt = `Analizza bias cognitivi e framework decisionali per il seguente caso di mediazione.
 
 **Descrizione:**
-${descrizione}
+${anonimizzaParti(descrizione, parti)}
 
 **Parti:**
-${parti.map(p => `- ${p.nome} (${etichettaRuolo(p.ruolo)})`).join("\n")}
+Identità e ruoli omessi (due o più parti).
 
 **Analisi precedenti:**
-${analisiPrecedenti}
+${anonimizzaParti(analisiPrecedenti, parti)}
 
 Procedi con il controllo dei bias cognitivi.`;
 
-  return applicaGuardiaNoProfilazione(await callLLM(systemPrompt, userPrompt), undefined, parti.map(p => p.nome));
+  const testo = await applicaGuardiaNoProfilazione(await callLLM(systemPrompt, userPrompt), undefined, parti.map(p => p.nome));
+  return `${testo}\n\n*Nota: in questa fase le parti non sono identificate, per evitare attribuzioni a singole persone; l'applicazione al caso concreto spetta al professionista.*`;
 }
