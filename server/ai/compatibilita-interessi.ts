@@ -1,5 +1,6 @@
 import { callLLM, etichettaRuolo } from "./llm.js";
 import { REGOLE_NO_PROFILAZIONE } from "./regole-no-profilazione.js";
+import { applicaGuardiaNoProfilazione } from "./guardia-no-profilazione.js";
 
 export async function compatibilitaInteressi(
   descrizione: string,
@@ -33,5 +34,5 @@ ${analisiPrecedenti}
 
 Procedi con l'analisi della compatibilità degli interessi.`;
 
-  return callLLM(systemPrompt, userPrompt);
+  return applicaGuardiaNoProfilazione(await callLLM(systemPrompt, userPrompt));
 }
