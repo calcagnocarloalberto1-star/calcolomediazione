@@ -209,6 +209,15 @@ dei bias com'è, anonimizzare le parti nell'input della fase, tornare al testo p
 nei prompt e la guardia sull'output, accettando il rischio residuo descritto sopra, perché le
 attribuzioni sono ipotetiche e il testo è una bozza di lavoro che il professionista verifica.
 
+**Argomenti del titolare a sostegno della scelta (21 ottobre 2026).** Il titolare ha rilevato che
+(a) le frasi sono formulate sempre al condizionale, come ipotesi e non come constatazioni, e per
+questo non ravvisa un rischio elevato; (b) le note sui bias cognitivi non sono visibili ad alcuno
+se non al mediatore, che le usa come strumento di lavoro. Gli argomenti sono registrati come
+valutazione del titolare. Si osserva che il condizionale attenua l'effetto della frase ma non
+cambia il suo oggetto, e che il rilievo della visibilità limitata ai soli professionisti riduce
+l'esposizione senza escludere che la frase riguardi una persona identificabile; per questo il
+rischio resta qualificato come residuo e accettato, e la firma della scheda 5 spetta al titolare.
+
 **Misure che accompagnano la scelta.**
 
 - avvertenza di bozza da verificare in ogni fase e dicitura di origine IA (§ 6, punti 2–3);
