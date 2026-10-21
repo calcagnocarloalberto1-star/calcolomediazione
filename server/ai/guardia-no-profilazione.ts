@@ -6,17 +6,45 @@
 // i conteggi, mai il testo (riservatezza dei fascicoli).
 import { callLLM } from "./llm.js";
 
-export const VIOLAZIONI: RegExp[] = [
-  /\b(E\.M\.|P\.G\. S\.r\.l\.|A\.B\. S\.p\.A\.|C\.D\. S\.r\.l\.|F\.G\.|H\.L\.|l'istante|il chiamato|la parte)[^.\n|]{0,80}\b(tende a|tendono a|potrebbe rifiutare|potrebbero rifiutare|rifiuta e|percepisce|ritiene|è convint|sopravvaluta|è overconfident|ha una tendenza|è incline|sovrastima|sottostima|è sovrastimatore|non è affidabile|è affidabile|è in malafede|mente|è insolvente|è aggressiv|è emotiv)/i,
-  /\b(è|appare|sembra) (un|una) (persona|soggetto) (\w+ ){0,3}(testard|ostinat|aggressiv|inaffidabil|emotiv|ansios)/i,
-];
+const SOGGETTI_FISSI = ["E\\.M\\.", "P\\.G\\. S\\.r\\.l\\.", "A\\.B\\. S\\.p\\.A\\.", "C\\.D\\. S\\.r\\.l\\.", "F\\.G\\.", "H\\.L\\.", "A\\.B\\.", "C\\.D\\.", "l'istante", "il chiamato", "la parte", "una parte", "le parti", "entrambe le parti", "entrambi", "ciascuna parte"];
+const VERBI_COMPLETI = "(?:tende a|tendono a|potrebbe rifiutare|potrebbero rifiutare|rifiuta e|rifiuterebbe|accetterebbe|percepisce|percepiscono|ritiene|ritengono|crede|credono|sente|sentono|si sente|potrebbe sentirsi|potrebbero sentirsi|preferisce|preferiscono|preferirebbe|potrebbe preferire|potrebbero preferire|vuole|vogliono|teme|temono|spera|sperando|desidera|sopravvaluta|sovrastima|sovrastimano|sottostima|sottostimano|potrebbe sovrastimare|potrebbero sovrastimare|potrebbe sottostimare|potrebbero sottostimare|è overconfident|ha una tendenza|è incline|sarà più incline|è più incline|è sovrastimatore|non è affidabile|è affidabile|è in malafede|mente|è insolvente)(?![\\p{L}])";
+const VERBI_RADICE = "(?:è convint|è aggressiv|è emotiv|è (?:molto |più |poco |del tutto )?(?:sicur|ottimist|pessimist|fiducios))";
+const VERBI = `(?:${VERBI_COMPLETI}|${VERBI_RADICE})`;
+
+function escapeRe(s: string): string {
+  return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+// Soggetti da riconoscere oltre a quelli generici: nomi (e cognomi) delle parti del caso.
+function soggettiDaNomi(nomiParti: string[]): string[] {
+  const out: string[] = [];
+  for (const nome of nomiParti) {
+    const n = nome.trim();
+    if (n.length < 2) continue;
+    out.push(escapeRe(n));
+    for (const tok of n.split(/\s+/)) {
+      if (tok.length >= 3 && !/^(s\.?\s?r\.?\s?l|s\.?\s?p\.?\s?a|s\.?n\.?c|s\.?a\.?s)\.?$/i.test(tok)) out.push(escapeRe(tok));
+    }
+  }
+  return out;
+}
+
+export function costruisciViolazioni(nomiParti: string[] = []): RegExp[] {
+  const soggetti = [...SOGGETTI_FISSI, ...soggettiDaNomi(nomiParti)].join("|");
+  return [
+    new RegExp(`(?<![\\p{L}\\d'’])(?:${soggetti})[^.\\n|]{0,80}(?<![\\p{L}])${VERBI}`, "iu"),
+    /\b(è|appare|sembra) (un|una) (persona|soggetto) (\w+ ){0,3}(testard|ostinat|aggressiv|inaffidabil|emotiv|ansios)/i,
+    /\b(?:pessimista|ottimista) per\b/i,
+  ];
+}
+export const VIOLAZIONI: RegExp[] = costruisciViolazioni();
 
 const OMISSIONE = "[frase omessa dal controllo automatico: attribuiva una valutazione a una persona; il mediatore può verificarla con una domanda aperta]";
 
-export function rigaViolante(riga: string): boolean {
+export function rigaViolante(riga: string, nomiParti: string[] = []): boolean {
   const t = riga.trim();
   if (!t || /\?\s*$/.test(t)) return false; // una domanda al professionista non è un giudizio
-  return VIOLAZIONI.some(r => r.test(riga));
+  return (nomiParti.length ? costruisciViolazioni(nomiParti) : VIOLAZIONI).some(r => r.test(riga));
 }
 
 type Riscrittore = (righe: string[]) => Promise<string[]>;
@@ -24,7 +52,7 @@ type Riscrittore = (righe: string[]) => Promise<string[]>;
 async function riscriviConLLM(righe: string[]): Promise<string[]> {
   const elenco = righe.map((r, i) => `${i + 1}|${r}`).join("\n");
   const out = await callLLM(
-    `Riscrivi frasi di un'analisi di mediazione. Regola: nessuna frase deve avere come soggetto una parte, una sigla o un ruolo (l'istante, il chiamato, la parte, E.M., F.G. ecc.) di verbi di percezione, valutazione, tendenza o scelta (percepisce, ritiene, sovrastima, sottostima, tende a, rifiuta, accetta, è convinto), neppure in forma ipotetica. Riscrivi ogni frase con soggetto impersonale (la proposta, la cifra, la dinamica, la situazione) oppure come domanda aperta che il mediatore può porre. Mantieni lo stesso significato pratico, gli stessi numeri e la stessa formattazione Markdown (trattini, grassetti, barre di tabella). Rispondi SOLO con le frasi riscritte, una per riga, nel formato «numero|frase», senza altro testo.`,
+    `Riscrivi frasi di un'analisi di mediazione. Regola: nessuna frase deve avere come soggetto una parte, una sigla o un ruolo (l'istante, il chiamato, la parte, E.M., F.G. ecc.) di verbi di percezione, valutazione, tendenza o scelta (percepisce, ritiene, sovrastima, sottostima, tende a, rifiuta, accetta, è convinto), neppure in forma ipotetica. Riscrivi ogni frase con soggetto impersonale (la proposta, la cifra, la dinamica, la situazione) oppure come domanda aperta che il mediatore può porre. Le percentuali o stime riferite a una parte («l'istante crede 70%») diventano scenari numerici senza soggetto («scenario con probabilità del 70%») o domande («su quali elementi si fonda la stima di ciascun lato?»); «pessimista/ottimista per X» diventa «scenario con probabilità più bassa/più alta». Mantieni lo stesso significato pratico, gli stessi numeri e la stessa formattazione Markdown (trattini, grassetti, barre di tabella). Rispondi SOLO con le frasi riscritte, una per riga, nel formato «numero|frase», senza altro testo.`,
     elenco,
   );
   const mappa = new Map<number, string>();
@@ -43,9 +71,12 @@ function prefisso(riga: string): string {
 export async function applicaGuardiaNoProfilazione(
   testo: string,
   riscrivi: Riscrittore = riscriviConLLM,
+  nomiParti: string[] = [],
 ): Promise<string> {
   const righe = testo.split("\n");
-  const idx = righe.map((r, i) => (rigaViolante(r) ? i : -1)).filter(i => i >= 0);
+  const regole = costruisciViolazioni(nomiParti);
+  const viola = (r: string) => { const t = r.trim(); return !!t && !/\?\s*$/.test(t) && regole.some(x => x.test(r)); };
+  const idx = righe.map((r, i) => (viola(r) ? i : -1)).filter(i => i >= 0);
   if (idx.length === 0) return testo;
 
   let nuove: string[];
@@ -58,7 +89,7 @@ export async function applicaGuardiaNoProfilazione(
   let omesse = 0;
   idx.forEach((i, k) => {
     const candidata = nuove[k] ?? righe[i];
-    if (candidata !== righe[i] && !rigaViolante(candidata) && !/\|/.test(righe[i]) === !/\|/.test(candidata)) {
+    if (candidata !== righe[i] && !viola(candidata) && !/\|/.test(righe[i]) === !/\|/.test(candidata)) {
       righe[i] = candidata;
       riscritte++;
     } else {

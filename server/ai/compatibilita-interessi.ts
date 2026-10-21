@@ -34,5 +34,5 @@ ${analisiPrecedenti}
 
 Procedi con l'analisi della compatibilità degli interessi.`;
 
-  return applicaGuardiaNoProfilazione(await callLLM(systemPrompt, userPrompt));
+  return applicaGuardiaNoProfilazione(await callLLM(systemPrompt, userPrompt), undefined, parti.map(p => p.nome));
 }

@@ -8,11 +8,22 @@ for (const r of [
   "Un accordo su 32.000 EUR è razionale solo se la parte ritiene di avere scarsissime probabilità di vincere.",
   "- Segnale che la parte non ritiene il calcolo economico attendibile.",
   "Se H.L. ritiene il valore più basso, la trattativa si complica.",
+  "- In dinamica reciproca: l'istante crede di avere il 80% di probabilità, il chiamato crede di avere il 70% di probabilità.",
+  "- Una formulazione da evitare: \"Voi potete ridurre la vostra richiesta\" (A.B. sente perdita).",
+  "   - Se 37.000 è formulato come perdita (A.B.), A.B. potrebbe preferire il rischio della causa, sperando di recuperare di più.",
+  "- Separare gli interessi: F.G. vuole liquidità + certezza; H.L. vuole conservazione immobile.",
+  "| 40% (pessimista per A.B.) | ZOPA amplia |",
+  "Se A.B. è molto sicuro di vincere (es. 90%), avrà meno incentivo a scendere.",
+  "- Le parti tendono a proporre cifre iniziali ottimistiche.",
+  "Se A.B. accetterebbe da +25.200 euro, l'accordo è facile.",
 ]) assert.ok(rigaViolante(r), `deve essere segnalata: ${r}`);
 for (const r of [
   "Ha informazioni aggiornate sulla solidità economica di P.G. S.r.l.? Ritiene che l'azienda continui a operare?",
   "Una proposta formulata come perdita può essere rifiutata.",
   "",
+  "- Qual è il minimo che A.B. accetterebbe oggi per chiudere senza processo?",
+  "Entrambe le parti hanno interesse a terminare l'indivisione.",
+  "La proposta di 16.000 euro può fare da ancora per entrambe le posizioni.",
 ]) assert.ok(!rigaViolante(r), `non deve essere segnalata: ${r}`);
 
 const testo = ["# Titolo", "- **Effetto:** L'istante percepisce una perdita; tende a rifiutare.", "- Frase neutra.", "- Il chiamato ritiene il prezzo alto."].join("\n");
@@ -34,6 +45,11 @@ assert.ok(!errore.includes("percepisce"));
 // riga di tabella → citazione, mai testo nella tabella
 const tab = await applicaGuardiaNoProfilazione("| A | Il chiamato percepisce una perdita |", async r => r);
 assert.ok(tab.startsWith("> [frase omessa"));
+
+// nomi reali delle parti (non sigle dei casi di prova)
+assert.ok(rigaViolante("Mario Rossi preferisce il certo dell'accordo.", ["Mario Rossi"]));
+assert.ok(rigaViolante("Rossi crede di avere il 70% di probabilità.", ["Mario Rossi"]));
+assert.ok(!rigaViolante("Mario Rossi ha depositato il ricorso.", ["Mario Rossi"]));
 
 // testo pulito: invariato, nessuna chiamata
 let chiamate = 0;

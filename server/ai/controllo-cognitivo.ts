@@ -61,5 +61,5 @@ ${analisiPrecedenti}
 
 Procedi con il controllo dei bias cognitivi.`;
 
-  return applicaGuardiaNoProfilazione(await callLLM(systemPrompt, userPrompt));
+  return applicaGuardiaNoProfilazione(await callLLM(systemPrompt, userPrompt), undefined, parti.map(p => p.nome));
 }
