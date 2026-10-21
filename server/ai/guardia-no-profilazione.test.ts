@@ -21,6 +21,8 @@ for (const r of [
   "- Una delle parti ritiene che il proprio argomento legale sia così forte da garantire la vittoria.",
   "- **Dinamica asimmetrica**: L'istante potrebbe considerare l'accordo favorevole; il chiamato potrebbe considerarlo sfavorevole.",
   "La fiducia viene sopravvalutata perché una parte ricorda un precedente favorevole.",
+  "  - Probabilità di accettazione dell'istante (stima ipotesi): 40%",
+  "- **Probabilità di accettazione da parte del chiamato (stima ipotesi):** 45%",
 ]) assert.ok(rigaViolante(r), `deve essere segnalata: ${r}`);
 for (const r of [
   "Ha informazioni aggiornate sulla solidità economica di P.G. S.r.l.? Ritiene che l'azienda continui a operare?",

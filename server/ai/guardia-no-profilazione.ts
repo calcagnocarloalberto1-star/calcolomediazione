@@ -35,6 +35,8 @@ export function costruisciViolazioni(nomiParti: string[] = []): RegExp[] {
     new RegExp(`(?<![\\p{L}\\d'’])(?:${soggetti})[^.\\n|]{0,80}(?<![\\p{L}])${VERBI}`, "iu"),
     /\b(è|appare|sembra) (un|una) (persona|soggetto) (\w+ ){0,3}(testard|ostinat|aggressiv|inaffidabil|emotiv|ansios)/i,
     /\b(?:pessimista|ottimista) per\b/i,
+    // «Probabilità di accettazione dell'istante (stima ipotesi): 40%»: stima di un comportamento futuro di una parte
+    /\bprobabilit[àa] di (?:accettazione|rifiuto|accettare|rifiutare)\b[^.\n|]{0,40}\b(?:dell'istante|del chiamato|della parte|delle parti|di ciascuna parte|di E\.M\.|di P\.G\.|di A\.B\.|di C\.D\.|di F\.G\.|di H\.L\.)/iu,
     /\b(?:porterebbe|porterebbero|indurrebbe|spingerebbe|porta|induce|spinge)\s+(?:l'istante|il chiamato|la parte|ciascuna parte|entrambe le parti|una delle parti|E\.M\.|P\.G\.|A\.B\.|C\.D\.|F\.G\.|H\.L\.)\s+a\b/i,
   ];
 }
