@@ -162,3 +162,73 @@ ripetere.
 
 Fino a quando i test non sono superati e la valutazione non è firmata, l'esenzione non va
 presentata come accertata.
+
+## 11. Esito dei test del 21 ottobre 2026
+
+**Prova.** Tre casi sintetici (locazione commerciale, contratto di fornitura, divisione di un
+immobile ereditato) con `server/ai/prova-profilazione.ts`, chiave API temporanea, fasi «bias
+cognitivi», «compatibilità degli interessi» e «guida strategica».
+
+**Sequenza.**
+
+| Passaggio | Segnalazioni del controllo automatico |
+|-----------|---------------------------------------|
+| Prima prova, prompt come da § 10 | 17 |
+| Dopo la riscrittura dei prompt su Teoria del Prospetto e Decision Analysis | 4 |
+| Dopo gli esempi espliciti nei prompt | 7 |
+| Dopo l'introduzione della guardia sull'output (`server/ai/guardia-no-profilazione.ts`) | nessuna |
+
+La guardia rilegge ogni risposta, riscrive in forma impersonale le frasi che attribuiscono a
+una parte percezioni, preferenze, stime o comportamenti e, se la riscrittura non basta, omette
+la frase con un avviso; riconosce i nomi reali delle parti, i ruoli, i soggetti descrittivi
+(«chi abita l'immobile») e un elenco esteso di verbi. Nella prova finale ha riscritto circa
+venti frasi e ne ha omesse cinque; nei log restano solo i conteggi.
+
+**Controllo di significato.** Un secondo passaggio del modello, che avrebbe dovuto indicare le
+righe problematiche anche senza parole-spia, è stato provato e disattivato: con il modello in
+uso rispondeva in modo incoerente (elenchi di tutte le righe, testo al posto dei numeri,
+falsi positivi). Resta disponibile solo con un'impostazione esplicita (`GUARDIA_REVISORE_LLM=1`).
+
+**Lettura umana dell'output finale** (circa 2.800 righe). Il controllo automatico dà esito
+positivo, ma la lettura trova ancora circa 35–40 righe, quasi tutte nella fase dei bias, con
+attribuzioni formulate come ipotesi («il debitore può rifiutare…», «entrambe le parti
+potrebbero sopravvalutare la probabilità di vincere», «per F.G. la mancata ricezione può essere
+interpretata come perdita di un diritto», «chi abita l'immobile potrebbe sopravvalutare…»).
+Nelle fasi su interessi e guida strategica gli interessi sono formulati come ipotesi da
+verificare e come domande.
+
+**Esito rispetto ai criteri del § 6.** I criteri 2–4 (valori numerici come ipotesi di calcolo,
+dicitura di origine IA, nessuna qualifica di affidabilità, solvibilità o intenzioni) risultano
+rispettati. Il criterio 1 («nessuna frase del tipo "la parte X ha tendenza a"») non è
+soddisfatto in senso letterale: restano frasi ipotetiche sulle dinamiche che possono riguardare
+una parte.
+
+**Decisione del titolare (21 ottobre 2026).** Sono state valutate tre soluzioni: lasciare la fase
+dei bias com'è, anonimizzare le parti nell'input della fase, tornare al testo precedente al
+9 ottobre. Il titolare ha scelto di lasciare la fase com'è (senza anonimizzare), con le regole
+nei prompt e la guardia sull'output, accettando il rischio residuo descritto sopra, perché le
+attribuzioni sono ipotetiche e il testo è una bozza di lavoro che il professionista verifica.
+
+**Misure che accompagnano la scelta.**
+
+- avvertenza di bozza da verificare in ogni fase e dicitura di origine IA (§ 6, punti 2–3);
+- guardia sull'output attiva nelle quattro fasi che trattano di persone;
+- revisione del professionista prima di qualunque uso;
+- nuova prova (script e lettura) a ogni modifica dei prompt della fase dei bias;
+- possibilità di spegnere la fase dei bias se emergessero attribuzioni più nette (opzione B del
+  § 9) e di anonimizzare le parti (soluzione già predisposta e non adottata).
+
+**Punto da valutare con attenzione.** L'art. 6, par. 3, ultimo comma, AI Act esclude
+l'esenzione quando il sistema effettua profilazione di persone fisiche. Se le frasi ipotetiche
+residue fossero ritenute una valutazione di aspetti personali delle parti (art. 4, n. 4, GDPR),
+l'esenzione non sarebbe invocabile e il sistema andrebbe trattato come ad alto rischio. La
+valutazione e la firma spettano al titolare.
+
+**Aperto.** L'output della fase dei bias si interrompe per limite di lunghezza oltre i
+45.000 caratteri circa; da risolvere a parte.
+
+| Decisione | Scelta |
+|-----------|--------|
+| Rischio residuo sulla fase dei bias | Accettato con le misure sopra — scelta del 21 ottobre 2026 |
+| Data della valutazione | da apporre alla firma |
+| Firma | ____________ |
