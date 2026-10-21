@@ -1,5 +1,6 @@
 import { callLLM, etichettaRuolo } from "./llm.js";
 import { REGOLE_NO_PROFILAZIONE } from "./regole-no-profilazione.js";
+import { applicaGuardiaNoProfilazione } from "./guardia-no-profilazione.js";
 import { calcolaConfronto, formatEuro, type InputConfronto } from "../../shared/costi-procedura.js";
 
 export async function analisiMaanBatna(
@@ -105,5 +106,5 @@ Produci tutte e 9 le sezioni richieste. Celle delle tabelle brevi, max 50 caratt
 
   // maxTokens omesso: il dispatcher chiede sempre il massimo del provider
   // e gestisce continuazione automatica in caso di troncamento.
-  return callLLM(systemPrompt, userPrompt);
+  return applicaGuardiaNoProfilazione(await callLLM(systemPrompt, userPrompt));
 }

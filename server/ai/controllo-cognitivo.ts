@@ -1,5 +1,6 @@
 import { callLLM, etichettaRuolo } from "./llm.js";
 import { REGOLE_NO_PROFILAZIONE } from "./regole-no-profilazione.js";
+import { applicaGuardiaNoProfilazione } from "./guardia-no-profilazione.js";
 
 const TEORIE_DESCRIZIONI: Record<string, string> = {
   ancoraggio: "Ancoraggio (Anchoring): tendenza ad affidarsi eccessivamente alla prima informazione ricevuta",
@@ -60,5 +61,5 @@ ${analisiPrecedenti}
 
 Procedi con il controllo dei bias cognitivi.`;
 
-  return callLLM(systemPrompt, userPrompt);
+  return applicaGuardiaNoProfilazione(await callLLM(systemPrompt, userPrompt));
 }

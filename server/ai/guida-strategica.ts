@@ -1,5 +1,6 @@
 import { callLLM, etichettaRuolo } from "./llm.js";
 import { REGOLE_NO_PROFILAZIONE } from "./regole-no-profilazione.js";
+import { applicaGuardiaNoProfilazione } from "./guardia-no-profilazione.js";
 
 export async function guidaStrategica(
   descrizione: string,
@@ -53,5 +54,5 @@ ${nerContext}
 
 Produci tutte e 7 le sezioni richieste.`;
 
-  return callLLM(systemPrompt, userPrompt);
+  return applicaGuardiaNoProfilazione(await callLLM(systemPrompt, userPrompt));
 }

@@ -7,15 +7,12 @@ import { writeFileSync } from "node:fs";
 import { controlloBiasCognitivi } from "./controllo-cognitivo.js";
 import { compatibilitaInteressi } from "./compatibilita-interessi.js";
 import { guidaStrategica } from "./guida-strategica.js";
+import { rigaViolante } from "./guardia-no-profilazione.js";
 
 const CASI = [
   { descrizione: "Locazione commerciale, nove canoni non pagati per 23.450 €; il chiamato attribuisce il calo degli incassi ai lavori stradali. Proposta del chiamato: 16.000 € a saldo.", parti: [{ nome: "E.M.", ruolo: "istante" }, { nome: "P.G. S.r.l.", ruolo: "chiamato" }] },
   { descrizione: "Contratto di fornitura interrotto: il fornitore chiede 48.000 € di penale, il cliente contesta i ritardi e offre 20.000 €. Rapporto commerciale decennale.", parti: [{ nome: "A.B. S.p.A.", ruolo: "istante" }, { nome: "C.D. S.r.l.", ruolo: "chiamato" }] },
   { descrizione: "Divisione di un immobile ereditato fra due fratelli; uno vi abita, l'altro chiede la liquidazione della quota stimata 120.000 €.", parti: [{ nome: "F.G.", ruolo: "istante" }, { nome: "H.L.", ruolo: "chiamato" }] },
-];
-const VIOLAZIONI: RegExp[] = [
-  /\b(E\.M\.|P\.G\. S\.r\.l\.|A\.B\. S\.p\.A\.|C\.D\. S\.r\.l\.|F\.G\.|H\.L\.|l'istante|il chiamato|la parte)[^.\n|]{0,80}\b(tende a|potrebbe rifiutare|potrebbero rifiutare|rifiuta e|percepisce|ritiene|è convint|sopravvaluta|è overconfident|ha una tendenza|è incline|sovrastima|sottostima|è sovrastimatore|non è affidabile|è affidabile|è in malafede|mente|è insolvente|è aggressiv|è emotiv)/i,
-  /\b(è|appare|sembra) (un|una) (persona|soggetto) (\w+ ){0,3}(testard|ostinat|aggressiv|inaffidabil|emotiv|ansios)/i,
 ];
 const out = async (c: typeof CASI[number]) => [
   await controlloBiasCognitivi(c.descrizione, c.parti, ["ancoraggio", "avversione_perdita", "overconfidence", "sunk_cost"], ""),
@@ -33,7 +30,7 @@ for (const [i, c] of CASI.entries()) {
   if (testi.some(t => /Configurare API Key/.test(t))) { console.error("Una o piu' chiamate non hanno prodotto un testo (vedi l'errore sopra): prova non valida."); writeFileSync("prova-profilazione-output.md", registro + "\n" + testi.join("\n---\n")); process.exit(2); }
   testi.forEach((t, fase) => { registro += `\n## Caso ${i + 1}, fase ${fase + 1}\n\n${t}\n`; });
   testi.forEach((t, fase) => t.split("\n").forEach(riga => {
-    if (!/\?\s*$/.test(riga.trim()) && VIOLAZIONI.some(r => r.test(riga))) { violazioni++; console.error(`Caso ${i + 1}, fase ${fase + 1}: ${riga.slice(0, 200)}`); }
+    if (rigaViolante(riga)) { violazioni++; console.error(`Caso ${i + 1}, fase ${fase + 1}: ${riga.slice(0, 200)}`); }
   }));
 }
 writeFileSync("prova-profilazione-output.md", registro);
