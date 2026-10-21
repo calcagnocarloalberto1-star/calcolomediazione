@@ -106,5 +106,5 @@ Produci tutte e 9 le sezioni richieste. Celle delle tabelle brevi, max 50 caratt
 
   // maxTokens omesso: il dispatcher chiede sempre il massimo del provider
   // e gestisce continuazione automatica in caso di troncamento.
-  return applicaGuardiaNoProfilazione(await callLLM(systemPrompt, userPrompt));
+  return applicaGuardiaNoProfilazione(await callLLM(systemPrompt, userPrompt), undefined, parti.map(p => p.nome));
 }

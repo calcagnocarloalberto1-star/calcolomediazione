@@ -54,5 +54,5 @@ ${nerContext}
 
 Produci tutte e 7 le sezioni richieste.`;
 
-  return applicaGuardiaNoProfilazione(await callLLM(systemPrompt, userPrompt));
+  return applicaGuardiaNoProfilazione(await callLLM(systemPrompt, userPrompt), undefined, parti.map(p => p.nome));
 }

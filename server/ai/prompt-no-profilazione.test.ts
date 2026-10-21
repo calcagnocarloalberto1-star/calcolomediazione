@@ -23,7 +23,7 @@ assert.doesNotMatch(cogv2, /identifica il punto di riferimento di ogni parte/);
 assert.doesNotMatch(cogv2, /sovrastima eventi rari, sottostima eventi probabili/);
 assert.match(cogv2, /IPOTESI DI CALCOLO/);
 
-for (const frase of ["Non valutare", "Non attribuire a una parte", "ipotesi da verificare", "bozza di lavoro", "potrebbe rifiutare", "percentuali, stime di probabilità", "Esempi da NON scrivere", "anche in forma ipotetica"]) {
+for (const frase of ["Non valutare", "Non attribuire a una parte", "ipotesi da verificare", "bozza di lavoro", "potrebbe rifiutare", "percentuali, stime di probabilità", "Esempi da NON scrivere", "anche in forma ipotetica", "«sente», «preferisce», «crede», «vuole»", "scenario con probabilità"]) {
   assert.ok(REGOLE_NO_PROFILAZIONE.includes(frase), `regole: manca «${frase}»`);
 }
 console.log("✅ prompt-no-profilazione.test.ts: asserzioni OK");
