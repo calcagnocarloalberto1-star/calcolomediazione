@@ -73,7 +73,7 @@ const RIGHE_PER_BLOCCO = 250;
 // indiretto o ipotetico) convinzioni, sentimenti, preferenze, stime, tendenze o
 // comportamenti futuri, o che inventano fatti non presenti nel caso. Le righe indicate
 // passano poi dalla stessa riscrittura del primo controllo.
-async function individuaConLLM(righe: string[]): Promise<number[]> {
+export async function individuaConLLM(righe: string[]): Promise<number[]> {
   const trovate: number[] = [];
   const blocchi: Array<[number, number]> = [];
   for (let i = 0; i < righe.length; i += RIGHE_PER_BLOCCO) blocchi.push([i, Math.min(i + RIGHE_PER_BLOCCO, righe.length)]);
