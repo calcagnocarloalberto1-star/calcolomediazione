@@ -6,8 +6,8 @@
 // i conteggi, mai il testo (riservatezza dei fascicoli).
 import { callLLM } from "./llm.js";
 
-const SOGGETTI_FISSI = ["E\\.M\\.", "P\\.G\\. S\\.r\\.l\\.", "A\\.B\\. S\\.p\\.A\\.", "C\\.D\\. S\\.r\\.l\\.", "F\\.G\\.", "H\\.L\\.", "A\\.B\\.", "C\\.D\\.", "l'istante", "il chiamato", "la parte", "una parte", "le parti", "entrambe le parti", "entrambi", "ciascuna parte"];
-const VERBI_COMPLETI = "(?:tende a|tendono a|potrebbe rifiutare|potrebbero rifiutare|rifiuta e|rifiuterebbe|accetterebbe|percepisce|percepiscono|ritiene|ritengono|crede|credono|sente|sentono|si sente|potrebbe sentirsi|potrebbero sentirsi|preferisce|preferiscono|preferirebbe|potrebbe preferire|potrebbero preferire|vuole|vogliono|teme|temono|spera|sperando|desidera|sopravvaluta|sovrastima|sovrastimano|sottostima|sottostimano|potrebbe sovrastimare|potrebbero sovrastimare|potrebbe sottostimare|potrebbero sottostimare|è overconfident|ha una tendenza|è incline|sarà più incline|è più incline|è sovrastimatore|non è affidabile|è affidabile|è in malafede|mente|è insolvente)(?![\\p{L}])";
+const SOGGETTI_FISSI = ["E\\.M\\.", "P\\.G\\. S\\.r\\.l\\.", "A\\.B\\. S\\.p\\.A\\.", "C\\.D\\. S\\.r\\.l\\.", "F\\.G\\.", "H\\.L\\.", "A\\.B\\.", "C\\.D\\.", "l'istante", "il chiamato", "la parte", "una parte", "le parti", "entrambe le parti", "entrambi", "ciascuna parte", "una delle parti", "uno dei due", "l'altra parte", "chi abita", "chi occupa", "chi vive", "chi detiene", "il debitore", "il creditore", "il fornitore", "il cliente", "il conduttore", "il locatore", "il coerede", "il fratello", "la sorella"];
+const VERBI_COMPLETI = "(?:tende a|tendono a|potrebbe rifiutare|potrebbero rifiutare|rifiuta e|rifiuterebbe|accetterebbe|percepisce|percepiscono|ritiene|ritengono|crede|credono|sente|sentono|si sente|potrebbe sentirsi|potrebbero sentirsi|preferisce|preferiscono|preferirebbe|potrebbe preferire|potrebbero preferire|vuole|vogliono|teme|temono|spera|sperando|desidera|sopravvaluta|sovrastima|sovrastimano|sottostima|sottostimano|potrebbe sovrastimare|potrebbero sovrastimare|potrebbe sottostimare|potrebbero sottostimare|è overconfident|considera|considerano|potrebbe considerare|potrebbero considerare|porterebbe (?:l'istante|il chiamato|la parte|ciascuna parte|entrambe le parti) a|trovano|ricorda|ricordano|ignora|ignorano|ignorando|si aspetta|si aspettano|pensa|pensano|reagisce|reagiscono|sa valutare|è convint[oaie]|ha una tendenza|è incline|sarà più incline|è più incline|è sovrastimatore|non è affidabile|è affidabile|è in malafede|mente|è insolvente)(?![\\p{L}])";
 const VERBI_RADICE = "(?:è convint|è aggressiv|è emotiv|è (?:molto |più |poco |del tutto )?(?:sicur|ottimist|pessimist|fiducios))";
 const VERBI = `(?:${VERBI_COMPLETI}|${VERBI_RADICE})`;
 
@@ -35,6 +35,7 @@ export function costruisciViolazioni(nomiParti: string[] = []): RegExp[] {
     new RegExp(`(?<![\\p{L}\\d'’])(?:${soggetti})[^.\\n|]{0,80}(?<![\\p{L}])${VERBI}`, "iu"),
     /\b(è|appare|sembra) (un|una) (persona|soggetto) (\w+ ){0,3}(testard|ostinat|aggressiv|inaffidabil|emotiv|ansios)/i,
     /\b(?:pessimista|ottimista) per\b/i,
+    /\b(?:porterebbe|porterebbero|indurrebbe|spingerebbe|porta|induce|spinge)\s+(?:l'istante|il chiamato|la parte|ciascuna parte|entrambe le parti|una delle parti|E\.M\.|P\.G\.|A\.B\.|C\.D\.|F\.G\.|H\.L\.)\s+a\b/i,
   ];
 }
 export const VIOLAZIONI: RegExp[] = costruisciViolazioni();

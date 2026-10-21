@@ -16,6 +16,11 @@ for (const r of [
   "Se A.B. è molto sicuro di vincere (es. 90%), avrà meno incentivo a scendere.",
   "- Le parti tendono a proporre cifre iniziali ottimistiche.",
   "Se A.B. accetterebbe da +25.200 euro, l'accordo è facile.",
+  "Una riduzione di rischio significativa porterebbe l'istante a considerare favorevolmente un accordo fino a circa 28.000 euro.",
+  "- Chi abita l'immobile è convinto di poter evitare pagamenti, ignorando che la normativa è cristallizzata.",
+  "- Una delle parti ritiene che il proprio argomento legale sia così forte da garantire la vittoria.",
+  "- **Dinamica asimmetrica**: L'istante potrebbe considerare l'accordo favorevole; il chiamato potrebbe considerarlo sfavorevole.",
+  "La fiducia viene sopravvalutata perché una parte ricorda un precedente favorevole.",
 ]) assert.ok(rigaViolante(r), `deve essere segnalata: ${r}`);
 for (const r of [
   "Ha informazioni aggiornate sulla solidità economica di P.G. S.r.l.? Ritiene che l'azienda continui a operare?",
