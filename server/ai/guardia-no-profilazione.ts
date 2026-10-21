@@ -64,6 +64,35 @@ async function riscriviConLLM(righe: string[]): Promise<string[]> {
   return righe.map((r, i) => mappa.get(i + 1) ?? r);
 }
 
+type Individuatore = (righe: string[]) => Promise<number[]>;
+
+const RIGHE_PER_BLOCCO = 250;
+
+// Secondo controllo, di significato e non di parole: un secondo passaggio del modello legge
+// il testo numerato e indica le righe che attribuiscono a una persona (anche in modo
+// indiretto o ipotetico) convinzioni, sentimenti, preferenze, stime, tendenze o
+// comportamenti futuri, o che inventano fatti non presenti nel caso. Le righe indicate
+// passano poi dalla stessa riscrittura del primo controllo.
+async function individuaConLLM(righe: string[]): Promise<number[]> {
+  const trovate: number[] = [];
+  const blocchi: Array<[number, number]> = [];
+  for (let i = 0; i < righe.length; i += RIGHE_PER_BLOCCO) blocchi.push([i, Math.min(i + RIGHE_PER_BLOCCO, righe.length)]);
+  await Promise.all(blocchi.map(async ([da, a]) => {
+    const testo = righe.slice(da, a).map((r, k) => (r.trim() ? `${da + k + 1}|${r}` : "")).filter(Boolean).join("\n");
+    if (!testo) return;
+    const out = await callLLM(
+      `Sei un revisore di conformità. Ricevi righe numerate («numero|testo») di un'analisi di mediazione. Indica i numeri delle righe che violano questa regola: l'analisi non deve profilare persone. Violano la regola le righe che attribuiscono a una parte, a una persona o a un ruolo (l'istante, il chiamato, una sigla o un nome, «una delle parti», «chi abita l'immobile», «il fratello», «la parte»…), anche in modo indiretto, ipotetico o con «può/potrebbe/possono»: convinzioni, percezioni, sentimenti, paure, preferenze, intenzioni, tendenze, bias, stime di probabilità o percentuali, comportamenti futuri («sarà più riluttante», «accetterebbe»); oppure che inventano fatti non presenti nel caso (precedenti, amici, esperienze di una parte). NON violano la regola: domande aperte rivolte al mediatore o alle parti; dinamiche descritte in modo impersonale («una proposta formulata come perdita può essere rifiutata»); calcoli e tabelle di scenario senza soggetto; descrizioni di fatti e cifre forniti nel caso; formulazioni di interessi come ipotesi da verificare. Rispondi SOLO con i numeri delle righe che violano, separati da virgole, oppure con la parola NESSUNA.`,
+      testo,
+    );
+    if (/NESSUNA/i.test(out)) return;
+    for (const m of out.match(/\d+/g) ?? []) {
+      const n = Number(m) - 1;
+      if (n >= da && n < a) trovate.push(n);
+    }
+  }));
+  return Array.from(new Set(trovate)).sort((x, y) => x - y);
+}
+
 function prefisso(riga: string): string {
   const m = riga.match(/^(\s*(?:[-*]\s+|\d+\.\s+)?)/);
   return m ? m[1] : "";
@@ -73,11 +102,21 @@ export async function applicaGuardiaNoProfilazione(
   testo: string,
   riscrivi: Riscrittore = riscriviConLLM,
   nomiParti: string[] = [],
+  individua: Individuatore | null = individuaConLLM,
 ): Promise<string> {
   const righe = testo.split("\n");
   const regole = costruisciViolazioni(nomiParti);
   const viola = (r: string) => { const t = r.trim(); return !!t && !/\?\s*$/.test(t) && regole.some(x => x.test(r)); };
-  const idx = righe.map((r, i) => (viola(r) ? i : -1)).filter(i => i >= 0);
+  const perParole = righe.map((r, i) => (viola(r) ? i : -1)).filter(i => i >= 0);
+  let perSignificato: number[] = [];
+  if (individua) {
+    try {
+      perSignificato = (await individua(righe)).filter(i => i >= 0 && i < righe.length && righe[i].trim() !== "" && !/^\s*#/.test(righe[i]));
+    } catch {
+      perSignificato = []; // il controllo di significato è un'aggiunta: se fallisce resta quello per parole
+    }
+  }
+  const idx = Array.from(new Set([...perParole, ...perSignificato])).sort((a, b) => a - b);
   if (idx.length === 0) return testo;
 
   let nuove: string[];
@@ -98,6 +137,6 @@ export async function applicaGuardiaNoProfilazione(
       omesse++;
     }
   });
-  console.warn(`[guardia-no-profilazione] frasi riscritte=${riscritte} omesse=${omesse}`);
+  console.warn(`[guardia-no-profilazione] frasi riscritte=${riscritte} omesse=${omesse} (per parole=${perParole.length}, per significato=${perSignificato.filter(i => !perParole.includes(i)).length})`);
   return righe.join("\n");
 }
