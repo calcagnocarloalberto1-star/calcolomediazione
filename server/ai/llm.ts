@@ -27,15 +27,18 @@ const ANTHROPIC_MODEL_AML_ASSIST = "claude-sonnet-5";
 const AML_ASSIST_MAX_CONTINUATIONS = 2;
 
 // Output massimo per modello (in token).
-// Gemini 2.5 Flash supporta fino a 65536; Claude Haiku 4.5 fino a 16384.
+// Gemini 2.5 Flash supporta fino a 65536; Claude Haiku 4.5 fino a 64000.
+// 21/10/2026: Anthropic portato da 16384 a 32000 perche' la fase «bias
+// cognitivi» veniva interrotta a ~47-49mila caratteri (16384 token). Il
+// timeout del client (280s) resta sufficiente a questa velocita' di output.
 const GEMINI_MAX_OUTPUT = 32768;
-const ANTHROPIC_MAX_OUTPUT = 16384;
+const ANTHROPIC_MAX_OUTPUT = 32000;
 // Default richiesto al provider: il dispatcher chiede SEMPRE il massimo del
 // provider, cosi' non c'e' mai un cap artificioso che tronca l'output.
-const DEFAULT_MAX_TOKENS = 16384;
+const DEFAULT_MAX_TOKENS = 32000;
 
 // Massimo numero di continuazioni automatiche se la risposta viene troncata.
-// Con 4 continuazioni e 16k token Anthropic possiamo arrivare a ~80k token
+// Con 4 continuazioni e 32k token Anthropic possiamo arrivare a ~160k token
 // totali di output, sufficienti anche per analisi molto lunghe senza tagli.
 const MAX_CONTINUATIONS = 4;
 
