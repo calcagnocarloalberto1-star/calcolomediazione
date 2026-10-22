@@ -1,10 +1,12 @@
 // Testo dell'accordo ex art. 28 GDPR proposto ai professionisti (derivato da
 // docs/PRIV-16). ATTENZIONE: giorni, Allegati A-C e dati del responsabile (da pagina Contatti) sono
-// compilati come proposta (PRIV-21); manca l'approvazione finale del titolare. Finché ACCORDO_ART28_APPROVATO è false il server rifiuta
-// ogni accettazione: va impostato a true solo dopo che il titolare ha completato,
-// rivisto e approvato il testo, aggiornando ACCORDO_ART28_VERSIONE.
+// compilati come da PRIV-21. Il titolare ha approvato il testo il 9 ottobre 2026 e ne ha fissato
+// l'attivazione al 22 ottobre 2026. Se ACCORDO_ART28_APPROVATO torna false il server rifiuta
+// ogni accettazione. Il testo approvato corrisponde alla versione sotto indicata: se il testo
+// cambia va aggiornato ACCORDO_ART28_VERSIONE e va ottenuta una nuova approvazione.
 export const ACCORDO_ART28_VERSIONE = "proposta-2026-10-09";
-export const ACCORDO_ART28_APPROVATO = false;
+export const ACCORDO_ART28_DATA_ATTIVAZIONE = "2026-10-22";
+export const ACCORDO_ART28_APPROVATO = true;
 export const ACCORDO_ART28_TESTO = `## Parti
 
 ### Titolare del trattamento

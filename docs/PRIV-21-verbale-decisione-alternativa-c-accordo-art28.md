@@ -46,3 +46,17 @@ Il titolare ha approvato il testo dell'accordo art. 28, versione `proposta-2026-
 6. Prova end to end con un'accettazione di prova e una dichiarazione «accordo in essere».
 7. Valutare, prima di aprire a dati reali, i punti di PRIV-20 (classificazione AI Act,
    valutazione dell'art. 6, par. 4, canale per i reclami).
+
+## Verbale di attivazione (22 ottobre 2026)
+
+Il 22 ottobre 2026 il titolare ha fissato come data di attivazione «oggi» e ha chiesto di inserirla.
+Con la PR «Attiva l'accordo art. 28» `ACCORDO_ART28_APPROVATO` passa a `true` (versione del testo
+invariata, `proposta-2026-10-09`, quella approvata il 9 ottobre) e `ACCORDO_ART28_DATA_ATTIVAZIONE`
+è `2026-10-22`; l'informativa privacy è aggiornata. L'attivazione ha effetto con la fusione della PR e
+la pubblicazione su Northflank (circa 20 minuti).
+
+Restano come rischio residuo accettato (PRIV-19, alternativa C): conferma scritta di Northflank
+sull'applicabilità del DPA, meccanismo di trasferimento USA, ubicazione di log e backup; data di
+accettazione dei Commercial Terms Anthropic non certificata dal fornitore. Il percorso rafforzato
+per i dati di minori resta bloccato (`MINORS_REINFORCED_PATH_IMPLEMENTED = false`). Per spegnere
+l'accettazione basta riportare il flag a `false`.

@@ -170,7 +170,7 @@ nella documentazione del sito.
 
 ### 8. Accettazione online dell'accordo art. 28 (professionisti)
 
-- **Stato:** predisposto, non operativo: il server rifiuta l'accettazione finché `ACCORDO_ART28_APPROVATO` è `false` (`shared/accordo-art28.ts`).
+- **Stato:** operativo dal 22 ottobre 2026 (`ACCORDO_ART28_APPROVATO = true`, `shared/accordo-art28.ts`); se il flag torna `false` il server rifiuta l'accettazione.
 - **Finalità:** dimostrare che il professionista o l'Organismo che inserisce dati reali di terzi ha accettato l'accordo ex art. 28 GDPR (PRIV-16).
 - **Interessati e dati:** professionisti e rappresentanti di Organismi; nome, ente, codice fiscale/P. IVA, sede, e-mail (non verificata), versione e hash del testo, data e ora di accettazione.
 - **Base giuridica:** esecuzione del rapporto contrattuale con il professionista (art. 6.1.b) e accountability (art. 5.2, art. 28.3) — da confermare dal titolare.
