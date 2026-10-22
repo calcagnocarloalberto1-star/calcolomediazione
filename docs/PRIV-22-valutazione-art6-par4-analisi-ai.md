@@ -233,8 +233,13 @@ residue fossero ritenute una valutazione di aspetti personali delle parti (art. 
 l'esenzione non sarebbe invocabile e il sistema andrebbe trattato come ad alto rischio. La
 valutazione e la firma spettano al titolare.
 
-**Aperto.** L'output della fase dei bias si interrompe per limite di lunghezza oltre i
-45.000 caratteri circa; da risolvere a parte.
+**Prova del 22 ottobre 2026 (limite di lunghezza).** Il limite di output del modello è stato
+portato da 16.384 a 32.000 token (PR #189). Ripetuta la prova sugli stessi tre casi con una chiave
+temporanea: il controllo automatico dà esito positivo (la guardia ha riscritto 4+2+1 frasi nel
+caso 1, 2+2 nel caso 2, 3 e 1 nel caso 3, e ne ha omessa una nel caso 3; nessuna segnalazione
+residua) e le fasi dei bias arrivano alla conclusione, fino a circa 50.000 caratteri. Il problema
+dell'interruzione è risolto. La lettura umana delle frasi ipotetiche sulle parti resta quella
+descritta sopra; la chiave temporanea è stata eliminata.
 
 | Decisione | Scelta |
 |-----------|--------|
