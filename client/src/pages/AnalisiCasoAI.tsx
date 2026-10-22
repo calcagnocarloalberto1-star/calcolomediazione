@@ -374,6 +374,7 @@ const [minorsPathEnabled, setMinorsPathEnabled] = useState(false);
   // Export / view state
   const [exportingPdf, setExportingPdf] = useState(false);
   const [isAnonymized, setIsAnonymized] = useState(false);
+  const [includiBiasExport, setIncludiBiasExport] = useState(false);
 
   // ─── POLLING ──────────────────────────────────────────────────────────────
   useEffect(() => {
@@ -656,8 +657,11 @@ try {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 25000);
     try {
-      const anonParam = isAnonymized ? "?anonimizza=1" : "";
-      const res = await fetch(`/api/analisi/${analisi.id}/pdf${anonParam}`, {
+      const params = new URLSearchParams();
+      if (isAnonymized) params.set("anonimizza", "1");
+      if (includiBiasExport) params.set("includiBias", "1");
+      const qs = params.toString();
+      const res = await fetch(`/api/analisi/${analisi.id}/pdf${qs ? `?${qs}` : ""}`, {
         signal: controller.signal,
         headers: token ? { "X-Access-Token": token } : {},
       });
@@ -704,7 +708,7 @@ try {
       analisi.guidaStrategica ? `## Guida Strategica\n\n${t(analisi.guidaStrategica)}` : "",
       analisi.analisiMaanBatna ? `## Analisi MAAN/BATNA\n\n${t(analisi.analisiMaanBatna)}` : "",
       analisi.compatibilitaInteressi ? `## Compatibilita Interessi\n\n${t(analisi.compatibilitaInteressi)}` : "",
-      analisi.controlloBiasCognitivi ? `## Controllo Bias Cognitivi\n\n${t(analisi.controlloBiasCognitivi)}` : "",
+      includiBiasExport && analisi.controlloBiasCognitivi ? `## Controllo Bias Cognitivi\n\n${t(analisi.controlloBiasCognitivi)}` : "",
       analisi.bozzaAccordo ? `## Bozza Accordo\n\n${t(analisi.bozzaAccordo)}` : "",
       analisi.analisiEconomica ? `## Analisi Economica Comparativa\n\n${t(analisi.analisiEconomica)}` : "",
       "", "---", "Documento generato da CalcoloMediazione - Analisi AI",
@@ -724,7 +728,7 @@ try {
   const handleNewAnalysis = () => {
     setAnalisi(null); setIsRunning(false); setCurrentStep(0);
     setChatMessages([]); setChatInput(""); setTitolo(""); setDescrizione("");
-    setFiles([]); setUploadedTexts([]); setUploadingFiles(false); setIsAnonymized(false);
+    setFiles([]); setUploadedTexts([]); setUploadingFiles(false); setIsAnonymized(false); setIncludiBiasExport(false);
     setPrivacyAcknowledged(false);
     setMinorsStatus(null);
     setFamilyStatus(null);
@@ -813,6 +817,10 @@ try {
                   data-testid="button-anonimizza">
                   <EyeOff className="w-3 h-3 mr-1" />{isAnonymized ? "Dati reali" : "Anonimizza"}
                 </Button>
+                <label className="flex items-center gap-2 text-xs" data-testid="label-includi-bias">
+                  <Checkbox checked={includiBiasExport} onCheckedChange={(v) => setIncludiBiasExport(v === true)} data-testid="checkbox-includi-bias" />
+                  Includi le note sui bias nell'esportazione
+                </label>
                 <Button variant="outline" size="sm" onClick={handleNewAnalysis}
                   className="text-xs border-2 border-foreground shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[1px] hover:translate-y-[1px] transition-all duration-150"
                   data-testid="button-new-analysis">
