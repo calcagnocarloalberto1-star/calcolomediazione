@@ -161,7 +161,7 @@ ripetere.
   termini applicabili e predisporre il canale reclami (§ 8).
 
 Fino a quando i test non sono superati e la valutazione non è firmata, l'esenzione non va
-presentata come accertata.
+presentata come accertata. (Firmata il 22 ottobre 2026: v. § 12.)
 
 ## 11. Esito dei test del 21 ottobre 2026
 
@@ -236,8 +236,36 @@ valutazione e la firma spettano al titolare.
 **Aperto.** L'output della fase dei bias si interrompe per limite di lunghezza oltre i
 45.000 caratteri circa; da risolvere a parte.
 
+## 12. Firma della valutazione (22 ottobre 2026)
+
+Il titolare ha firmato il 22 ottobre 2026 la scheda 5, versione 2 («Decisione del titolare»),
+barrando **«Approvo con riesame»**: invoca l'esenzione dell'art. 6, par. 3, lett. d), AI Act e
+accetta il rischio residuo sulla fase dei bias alle misure e alle condizioni seguenti.
+
+**Misure.** Quelle del § 11, con in più l'esclusione della sezione «Controllo Bias Cognitivi»
+dal PDF dell'Analisi AI per impostazione predefinita (da attuare con modifica al codice: nel
+PDF attuale la sezione è inclusa, quindi l'argomento «le note sono visibili solo al mediatore»
+regge solo se il mediatore non consegna il PDF ad altri).
+
+**Condizioni di spegnimento della fase dei bias (opzione B).** Se (a) in una rilettura di
+campione compare una frase che attribuisce a una parte, in forma non ipotetica, una
+caratteristica, un atteggiamento o un comportamento; (b) arriva un reclamo sul punto; (c) la
+Commissione o l'autorità competente pubblica indicazioni che portino a ritenere l'esenzione non
+invocabile.
+
+**Riesame.** Entro sei mesi dalla firma (**22 aprile 2027**), o dopo i primi casi reali con dati
+di terzi se anteriori, con lettura di un campione degli output.
+
+**Annotazione.** La scheda firmata è conservata dal titolare. Il margine di incertezza
+sull'ultimo comma dell'art. 6, par. 3, AI Act (profilazione) resta indicato nella scheda: la
+decisione è con riesame e non senza riserve.
+
 | Decisione | Scelta |
 |-----------|--------|
-| Rischio residuo sulla fase dei bias | Accettato con le misure sopra — scelta del 21 ottobre 2026 |
-| Data della valutazione | da apporre alla firma |
-| Firma | ____________ |
+| Rischio residuo sulla fase dei bias | Accettato con le misure e le condizioni sopra |
+| Esenzione art. 6, par. 3, lett. d) | Invocata con riesame |
+| Data della valutazione | 22 ottobre 2026 |
+| Firma | Apposta dal titolare sulla scheda 5 (versione 2) |
+
+Restano da fare: esclusione della sezione dei bias dal PDF di default; registrazione nella banca
+dati UE nei termini applicabili (§ 8, punto 2); data di attivazione dell'accordo art. 28.
