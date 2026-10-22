@@ -1420,7 +1420,8 @@ analisiEconomica: anonReplace(analisi.analisiEconomica),
 };
 }
 
-const pdfBuffer = generateAnalisiPdf(analisiForPdf);
+// PRIV-22 (scheda 5): la sezione sui bias cognitivi resta fuori dal PDF salvo ?includiBias=1.
+const pdfBuffer = generateAnalisiPdf(analisiForPdf, { includiBias: req.query.includiBias === '1' });
 const prefix = shouldAnonymize ? 'anonimo-' : '';
 const filename = `${prefix}analisi-${analisi.titolo.replace(/[^a-zA-Z0-9]/g, "-").toLowerCase()}.pdf`;
 stats.track('pdf_export');

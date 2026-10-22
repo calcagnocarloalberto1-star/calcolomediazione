@@ -257,7 +257,34 @@ function extractSections(text: string): Array<{ level: number; heading: string; 
   return sections;
 }
 
-export function generateAnalisiPdf(analisi: AnalisiCaso): Buffer {
+export interface OpzioniPdfAnalisi {
+  /** Include la sezione «Controllo Bias Cognitivi». Default: false (PRIV-22 §12). */
+  includiBias?: boolean;
+}
+
+/**
+ * Sezioni dell'Analisi AI da riportare nel PDF. La sezione «Controllo Bias
+ * Cognitivi» e' uno strumento di lavoro del mediatore: per misura di PRIV-22
+ * (scheda 5, 22/10/2026) resta fuori dal PDF salvo scelta esplicita.
+ */
+export function sezioniAnalisiPdf(
+  analisi: AnalisiCaso,
+  includiBias = false
+): Array<{ title: string; content: string | null; icon: string }> {
+  const tutte = [
+    { title: "1. Estrazione Entita (NER)", content: analisi.prospettoEconomico, icon: "NER" },
+    { title: "2. Analisi Giuridica",       content: analisi.analisiGiuridica,    icon: "GIU" },
+    { title: "3. Guida Strategica",        content: analisi.guidaStrategica,     icon: "STR" },
+    { title: "4. Analisi MAAN/BATNA",      content: analisi.analisiMaanBatna,    icon: "MAA" },
+    { title: "5. Compatibilita Interessi", content: analisi.compatibilitaInteressi, icon: "INT" },
+    { title: "6. Controllo Bias Cognitivi",content: analisi.controlloBiasCognitivi, icon: "BIA" },
+    { title: "7. Bozza Accordo",           content: analisi.bozzaAccordo,        icon: "ACC" },
+    { title: "8. Analisi Economica Comparativa", content: analisi.analisiEconomica, icon: "ECO" },
+  ];
+  return includiBias ? tutte : tutte.filter(sec => sec.icon !== "BIA");
+}
+
+export function generateAnalisiPdf(analisi: AnalisiCaso, opzioni: OpzioniPdfAnalisi = {}): Buffer {
   ensureAutoTable();
   const doc = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
   const pageWidth = doc.internal.pageSize.getWidth();
@@ -545,16 +572,7 @@ export function generateAnalisiPdf(analisi: AnalisiCaso): Buffer {
   }
 
   // ─── SEZIONI CONTENUTO ────────────────────────────────────────────────────
-  const sections = [
-    { title: "1. Estrazione Entita (NER)", content: analisi.prospettoEconomico, icon: "NER" },
-    { title: "2. Analisi Giuridica",       content: analisi.analisiGiuridica,    icon: "GIU" },
-    { title: "3. Guida Strategica",        content: analisi.guidaStrategica,     icon: "STR" },
-    { title: "4. Analisi MAAN/BATNA",      content: analisi.analisiMaanBatna,    icon: "MAA" },
-    { title: "5. Compatibilita Interessi", content: analisi.compatibilitaInteressi, icon: "INT" },
-    { title: "6. Controllo Bias Cognitivi",content: analisi.controlloBiasCognitivi, icon: "BIA" },
-    { title: "7. Bozza Accordo",           content: analisi.bozzaAccordo,        icon: "ACC" },
-    { title: "8. Analisi Economica Comparativa", content: analisi.analisiEconomica, icon: "ECO" },
-  ];
+  const sections = sezioniAnalisiPdf(analisi, opzioni.includiBias === true);
 
   for (const sec of sections) {
     if (!sec.content) continue;

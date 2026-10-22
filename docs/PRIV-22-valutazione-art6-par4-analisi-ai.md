@@ -248,9 +248,11 @@ barrando **«Approvo con riesame»**: invoca l'esenzione dell'art. 6, par. 3, le
 accetta il rischio residuo sulla fase dei bias alle misure e alle condizioni seguenti.
 
 **Misure.** Quelle del § 11, con in più l'esclusione della sezione «Controllo Bias Cognitivi»
-dal PDF dell'Analisi AI per impostazione predefinita (da attuare con modifica al codice: nel
-PDF attuale la sezione è inclusa, quindi l'argomento «le note sono visibili solo al mediatore»
-regge solo se il mediatore non consegna il PDF ad altri).
+dal PDF dell'Analisi AI per impostazione predefinita (prima era inclusa, quindi l'argomento «le
+note sono visibili solo al mediatore» reggeva solo se il mediatore non consegnava il PDF ad
+altri). Attuata con la PR «PDF senza bias di default» del 22 ottobre 2026: la sezione entra nel
+PDF e nell'esportazione TXT solo se il mediatore spunta «Includi le note sui bias
+nell'esportazione».
 
 **Condizioni di spegnimento della fase dei bias (opzione B).** Se (a) in una rilettura di
 campione compare una frase che attribuisce a una parte, in forma non ipotetica, una
@@ -272,5 +274,5 @@ decisione è con riesame e non senza riserve.
 | Data della valutazione | 22 ottobre 2026 |
 | Firma | Apposta dal titolare sulla scheda 5 (versione 2) |
 
-Restano da fare: esclusione della sezione dei bias dal PDF di default; registrazione nella banca
+Restano da fare: registrazione nella banca
 dati UE nei termini applicabili (§ 8, punto 2); data di attivazione dell'accordo art. 28.
