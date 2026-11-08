@@ -20,7 +20,6 @@ Tre punti, da chiudere con una decisione motivata del titolare:
 |---|---|---|
 | Domanda obbligatoria «la pratica contiene o può contenere dati di minori?» (sì / no / non so), senza valore preselezionato | `client/src/pages/AnalisiCasoAI.tsx` | `sì` e `non so` attivano il percorso rafforzato |
 | Preflight a due fasi con token firmato, monouso, prima del parser | `server/security/minors-preflight.ts` | Senza token valido la richiesta è rifiutata prima di leggere il contenuto |
-| Rilevamento prudenziale di riferimenti a minori dopo il parsing e prima del provider | `server/security/minors-detection.ts` | Se il preflight dice `no` ma il testo indica un minore, la richiesta è bloccata |
 | Percorso minori **bloccato nel codice**: la costante `MINORS_REINFORCED_PATH_IMPLEMENTED` è `false`, quindi `isMinorsPathEnabled()` restituisce sempre `false` anche con le variabili d'ambiente | `server/security/minors-preflight.ts`, `server/routes.ts` | Con `sì` o `non so` l'analisi non parte: nessun invio a provider |
 | Registro minimizzato delle attestazioni (max 30 giorni, cancellabile) | `getMinorsAuditTrail`, `deleteMinorsAuditEntry` | Solo se il percorso fosse abilitato |
 
@@ -115,3 +114,15 @@ Data: 9 ottobre 2026 (approvazione data in chat, con la parola «Approva», sull
 - Limite dichiarato: la domanda è una dichiarazione dell'utente; chi dichiara «no» a entrambe
   le domande è fermato solo dal rilevamento sul testo.
 - Il percorso rafforzato resta bloccato nel codice.
+
+
+## Aggiornamento 8 novembre 2026 — rimozione del rilevamento euristico
+
+Il rilevamento prudenziale di riferimenti a minori nel testo (parole chiave, età,
+date di nascita) è stato rimosso da creazione dell'analisi, pipeline e chat: dava
+falsi positivi continui su pratiche tra adulti (patto di famiglia, consorzio,
+associazione in partecipazione) e il servizio non tratta pratiche con minori,
+nemmeno simulate. Restano la dichiarazione preliminare obbligatoria «nessun
+minore» e il blocco dei percorsi per pratiche con minori. Nei Termini e Condizioni
+(art. 6, Obblighi dell'Utente) l'utente si impegna a non inserire dati o
+riferimenti a minori e risponde del contenuto che inserisce.
