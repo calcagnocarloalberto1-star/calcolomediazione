@@ -14,7 +14,6 @@ import {
   MINORS_NOTICE_VERSION,
   MINORS_CONFIRMATION_COUNT,
 } from "./minors-preflight.js";
-import { rilevaPossibiliRiferimentiMinori } from "./minors-detection.js";
 
 const previousFlags = {
   CASE_AI_ENABLED: process.env.CASE_AI_ENABLED,
@@ -186,52 +185,6 @@ try {
     if (value === undefined) delete (process.env as any)[name];
     else process.env[name] = value;
   }
-}
-
-// Rilevamento euristico (fase 2, dopo il parsing) — test di accettazione n.9.
-{
-  assert.equal(rilevaPossibiliRiferimentiMinori("Il contratto ha una durata di 20 anni.").rischio, false);
-  assert.equal(rilevaPossibiliRiferimentiMinori("Il mutuo trentennale e la causa prescritta dopo 15 anni.").rischio, false);
-  assert.equal(rilevaPossibiliRiferimentiMinori("Nessun riferimento particolare in questo testo.").rischio, false);
-  assert.equal(rilevaPossibiliRiferimentiMinori("Il figlio minorenne delle parti frequenta la scuola elementare.").rischio, true);
-  assert.equal(rilevaPossibiliRiferimentiMinori("La bambina ha 9 anni e vive con la madre.").rischio, true);
-  assert.equal(rilevaPossibiliRiferimentiMinori("Il figlio di 9 anni vive con la madre.").rischio, true);
-  assert.equal(rilevaPossibiliRiferimentiMinori("La parte ha 17 anni.").rischio, true);
-  // Durate e intervalli nei testi giuridici (falsi positivi dell'analisi 133, 16 ottobre 2026)
-  assert.equal(rilevaPossibiliRiferimentiMinori("Durata stimata | 1-6 mesi | 2-4 anni |").rischio, false);
-  assert.equal(rilevaPossibiliRiferimentiMinori("Non affrontare 2-4 anni di lite con costi.").rischio, false);
-  assert.equal(rilevaPossibiliRiferimentiMinori("Durata stimata | 2-5 anni | Nota sul contraddittorio").rischio, false);
-  assert.equal(rilevaPossibiliRiferimentiMinori("Il giudizio dura da 2 a 4 anni.").rischio, false);
-  assert.equal(rilevaPossibiliRiferimentiMinori("Negli ultimi 5 anni i canoni sono stati pagati.").rischio, false);
-  assert.equal(rilevaPossibiliRiferimentiMinori("| Primo grado | 2 anni | 5 anni |").rischio, false);
-  assert.equal(rilevaPossibiliRiferimentiMinori("| **Cumulo: I + II + III grado** | **6 anni** | **12 anni** |").rischio, false);
-  assert.equal(rilevaPossibiliRiferimentiMinori("Tre gradi di giudizio e tempi cumulativi fino a 12 anni.").rischio, false);
-  assert.equal(rilevaPossibiliRiferimentiMinori("Incassa 3 anni prima e guadagna 3 anni di tempo.").rischio, false);
-  assert.equal(rilevaPossibiliRiferimentiMinori("Il pagamento forzato di 23.000 euro in 3 anni, con un ritardo di 2 anni.").rischio, false);
-  assert.equal(rilevaPossibiliRiferimentiMinori("Termine di disdetta di 6 mesi o 1 anno.").rischio, false);
-  assert.equal(rilevaPossibiliRiferimentiMinori("L'eta' della persona e' di 12 anni.").rischio, true);
-  assert.equal(rilevaPossibiliRiferimentiMinori("Una ragazza di 15 anni vive con il padre.").rischio, true);
-  assert.equal(rilevaPossibiliRiferimentiMinori("Un ragazzo di 16 anni frequenta il liceo.").rischio, true);
-  assert.equal(rilevaPossibiliRiferimentiMinori("Diagnosi pediatrica dettagliata.").rischio, true);
-  assert.equal(rilevaPossibiliRiferimentiMinori("Separazione dei genitori e regolazione dei tempi.").rischio, true);
-  assert.equal(rilevaPossibiliRiferimentiMinori("I genitori separati concordano le modalità.").rischio, true);
-  assert.equal(rilevaPossibiliRiferimentiMinori(`Il minore è nato il 3 marzo ${new Date().getFullYear() - 5}.`).rischio, true);
-  assert.equal(rilevaPossibiliRiferimentiMinori("Nessun indizio", null, undefined, "ma qui si parla di affidamento dei figli").rischio, true);
-  // «minori» come comparativo nelle analisi economiche (chat bloccata, 8 novembre 2026)
-  assert.equal(rilevaPossibiliRiferimentiMinori("La mediazione comporta costi minori rispetto al giudizio.").rischio, false);
-  // «mediazione familiare» tra adulti (successione aziendale) non e' un minore.
-  assert.equal(rilevaPossibiliRiferimentiMinori("La mediazione familiare riguarda la successione aziendale dei Rossi.").rischio, false);
-  assert.equal(rilevaPossibiliRiferimentiMinori("Mediazione familiare con affidamento dei figli.").rischio, true);
-  assert.equal(rilevaPossibiliRiferimentiMinori("Tempi minori e minore incertezza per entrambe le parti.").rischio, false);
-  assert.equal(rilevaPossibiliRiferimentiMinori("I costi della mediazione sono minori.").rischio, false);
-  assert.equal(rilevaPossibiliRiferimentiMinori("Con minori spese e minor rischio per l'istante.").rischio, false);
-  assert.equal(rilevaPossibiliRiferimentiMinori("| Rischio | alto | minori |").rischio, true);
-  // ...mentre i riferimenti a persone minori d'età restano segnalati
-  assert.equal(rilevaPossibiliRiferimentiMinori("La tutela dei minori coinvolti.").rischio, true);
-  assert.equal(rilevaPossibiliRiferimentiMinori("Le spese per i minori sono a carico del padre.").rischio, true);
-  assert.equal(rilevaPossibiliRiferimentiMinori("I tempi di permanenza dei minori presso la madre.").rischio, true);
-  assert.equal(rilevaPossibiliRiferimentiMinori("I figli sono minori.").rischio, true);
-  assert.equal(rilevaPossibiliRiferimentiMinori("Il caso riguarda dati di minori.").rischio, true);
 }
 
 // Verifica statica: i gate PRIV-17 devono essere montati prima dei parser globali.

@@ -19,7 +19,7 @@ export default function TerminiCondizioni() {
         </div>
 
         <div className="bg-card border-[2px] border-foreground shadow-[4px_4px_0px_0px] shadow-foreground/20 p-6 sm:p-8 space-y-6">
-          <p className="text-sm opacity-60">Ultimo aggiornamento: ottobre 2026</p>
+          <p className="text-sm opacity-60">Ultimo aggiornamento: 8 novembre 2026</p>
 
           <Section title="1. Premessa">
             <p>I presenti Termini e Condizioni regolano l'accesso e l'utilizzo del sito web CalcoloMediazione.it (di seguito "il Sito"), di proprietà di Carlo Alberto Calcagno. L'utilizzo del Sito implica l'accettazione integrale dei presenti Termini.</p>
@@ -79,6 +79,7 @@ export default function TerminiCondizioni() {
               <li>Non tentare di accedere in modo non autorizzato ai sistemi informatici del Sito</li>
               <li>Non sovraccaricare i server con richieste eccessive o automatizzate</li>
               <li>Non tentare di aggirare la sospensione delle nuove Analisi AI o di trasmettere dati personali mediante endpoint non disponibili</li>
+              <li>Non inserire nel Sito, nelle Analisi AI e nella chat dati, documenti o riferimenti relativi a persone minorenni, nemmeno in forma di esempio o di caso simulato: l'utente garantisce che le pratiche sottoposte non riguardano minori e risponde del contenuto che inserisce</li>
             </ul>
           </Section>
 

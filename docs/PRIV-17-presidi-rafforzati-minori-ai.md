@@ -212,15 +212,12 @@ Devono essere eseguiti senza dati personali reali:
 17. accessibilità → avviso, campi e errori annunciati correttamente da tastiera
     e screen reader.
 
-### Nota operativa (8 novembre 2026) — chat dell'analisi
+### Nota operativa (8 novembre 2026) — rilevamento euristico rimosso
 
-Il rilevamento euristico della chat si applica ai dati inseriti dall'utente:
-titolo, descrizione, nomi delle parti, messaggi precedenti dell'utente e
-messaggio corrente. Non si riesamina il testo generato dall'AI (risultati
-dell'analisi e risposte precedenti), che deriva da dati già controllati alla
-creazione e contiene formule giuridiche generiche («tutela dei minori»,
-«affidamento dei figli») che bloccavano la chat su pratiche tra adulti. Un
-riferimento a un minore scritto dall'utente nella chat resta intercettato.
+Il rilevamento euristico del testo (fase 2) non è più applicato: vedi
+PRIV-23, aggiornamento dell'8 novembre 2026. Restano la dichiarazione
+preliminare e il divieto contrattuale di inserire dati di minori (Termini e
+Condizioni, art. 6). Il test di accettazione n. 9 non si applica più.
 
 ## Criteri per la chiusura di PRIV-02-D
 

@@ -32,7 +32,6 @@ import {
   requireCaseAiEnabled,
 } from "./privacy-controls.js";
 import lastmodMap from "./lastmod-generated.json" with { type: "json" };
-import { rilevaPossibiliRiferimentiMinori } from "./security/minors-detection.js";
 import { getMinorsAuditTrail, deleteMinorsAuditEntry, isMinorsPathEnabled } from "./security/minors-preflight.js";
 import { logSafeError } from "./security/safe-error.js";
 
@@ -1266,16 +1265,6 @@ return res.status(400).json({ error: "Troppe parti indicate (max 20)." });
   if (minorsStatus !== "yes" && minorsStatus !== "no" && minorsStatus !== "unknown") {
     return res.status(422).json({ error: "Verifica preliminare sui dati di minori mancante o non valida.", code: "MINORS_PREFLIGHT_REQUIRED" });
   }
-  if (minorsStatus === "no") {
-    const nomiParti = Array.isArray(parti) ? parti.map((p: any) => String(p?.nome || "")) : [];
-    const { rischio } = rilevaPossibiliRiferimentiMinori(String(titolo), String(descrizione), typeof documentiText === "string" ? documentiText : "", ...nomiParti);
-    if (rischio) {
-      return res.status(422).json({
-        error: "Il testo inserito sembra contenere possibili riferimenti a persone minorenni, ma la verifica preliminare indicava che la pratica non ne contiene. Ripeti la verifica selezionando la risposta corretta.",
-        code: "MINORS_HEURISTIC_MISMATCH",
-      });
-    }
-  }
 if (!serviziAIDisponibili()) {
 return res.status(503).json({ error: "Il servizio di intelligenza artificiale non è al momento disponibile. Riprova più tardi." });
 }
@@ -1466,12 +1455,6 @@ if (!analisi) return res.status(404).json({ error: "Analisi non trovata o access
   if (minorsStatusChat !== "yes" && minorsStatusChat !== "no" && minorsStatusChat !== "unknown") {
     return res.status(422).json({ error: "Verifica preliminare sui dati di minori mancante o non valida.", code: "MINORS_PREFLIGHT_REQUIRED" });
   }
-  if (minorsStatusChat === "no" && rilevaPossibiliRiferimentiMinori(String(message || "")).rischio) {
-    return res.status(422).json({
-      error: "Il messaggio sembra contenere possibili riferimenti a persone minorenni, ma la verifica preliminare indicava che la pratica non ne contiene. Ripeti la verifica selezionando la risposta corretta.",
-      code: "MINORS_HEURISTIC_MISMATCH",
-    });
-  }
   if (analisi.minorsStatus !== "no") {
     return res.status(503).json({
       error: "La chat per questa analisi richiede una nuova classificazione e il percorso rafforzato non è ancora disponibile.",
@@ -1498,31 +1481,6 @@ analisi.analisiEconomica ? `Analisi Economica Comparativa:\n${analisi.analisiEco
 ].filter(Boolean).join("\n\n---\n\n");
 
 const prevMessages = chatHistory.map((m: any) => `${m.role === "user" ? "Utente" : "AI"}: ${m.content}`).join("\n");
-
-// La chat costituisce un nuovo trattamento. Per una pratica classificata
-// "no" si riesaminano i dati inseriti dall'utente: titolo, descrizione, parti,
-// i suoi messaggi precedenti e quello appena scritto. NON si riesamina il testo
-// generato dall'AI (risultati dell'analisi e risposte precedenti): deriva da dati
-// gia' controllati alla creazione, e contiene spesso formule giuridiche generiche
-// («tutela dei minori», «affidamento dei figli») che bloccavano la chat anche su
-// pratiche tra adulti (8 novembre 2026: patto di famiglia, associazione in
-// partecipazione). Un riferimento a un minore scritto dall'utente nella chat
-// resta intercettato.
-const messaggiUtentePrecedenti = chatHistory
-  .filter((m: any) => m && m.role === "user")
-  .map((m: any) => String(m.content || ""));
-if (rilevaPossibiliRiferimentiMinori(
-  analisi.titolo,
-  analisi.descrizione,
-  ...((analisi.parti as Array<{ nome?: string }>) || []).map(p => String(p.nome || "")),
-  ...messaggiUtentePrecedenti,
-  String(message || ""),
-).rischio) {
-  return res.status(422).json({
-    error: "I dati inseriti sembrano includere possibili riferimenti a persone minorenni. La chat AI resta bloccata.",
-    code: "MINORS_HEURISTIC_MISMATCH",
-  });
-}
 
 // PRIV-09 — questo endpoint riparte da un'analisi gia' completata e quindi
 // gia' salvata con i nomi reali ripristinati (vedi runPipeline): senza
@@ -1739,9 +1697,6 @@ catch (err) { logSafeError(`Errore step ${stepName}`, err); return fallback; }
 try {
 if (minorsStatus !== "no") {
 throw new Error("MINORS_REINFORCED_PATH_DISABLED");
-}
-if (rilevaPossibiliRiferimentiMinori(descrizione, documentiText, ...parti.map(p => p.nome)).rischio) {
-throw new Error("MINORS_RECLASSIFICATION_REQUIRED");
 }
 // PRIV-08 — redazione preventiva: descrizione/parti/documentiText vengono
 // sostituiti con token PRIMA di essere inviati al modello AI (Anthropic/
