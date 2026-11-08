@@ -105,6 +105,17 @@ async function initDb() {
     ALTER TABLE analisi_casi ADD COLUMN IF NOT EXISTS secure_payload TEXT;
   `);
   console.log("✓ Schema di protezione dati verificato");
+
+  // La pipeline AI gira dentro il processo del server: se il server si riavvia
+  // (nuovo deploy, crash) le analisi in corso restano ferme a meta' e
+  // sembravano "bloccate" per sempre (8 novembre 2026: analisi ferma alla
+  // Giuridica). All'avvio le segniamo come interrotte, cosi' l'utente lo vede
+  // e puo' rilanciarle.
+  const interrotte = await pool.query(
+    `UPDATE analisi_casi SET stato = 'errore'
+     WHERE stato = 'in_corso' AND created_at < NOW() - INTERVAL '3 minutes'`,
+  );
+  if (interrotte.rowCount) console.log(`✓ ${interrotte.rowCount} analisi interrotte dal riavvio segnate come errore`);
 }
 
 export const storageReady = initDb();
