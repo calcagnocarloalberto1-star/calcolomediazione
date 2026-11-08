@@ -276,3 +276,12 @@ decisione è con riesame e non senza riserve.
 
 Restano da fare: registrazione nella banca
 dati UE nei termini applicabili (§ 8, punto 2); data di attivazione dell'accordo art. 28.
+
+## Aggiornamento 8 novembre 2026 — la guardia non omette più le frasi
+
+La guardia anti-profilazione resta attiva con le stesse regole, ma cambia l'ultima
+istanza: invece di sostituire una frase non riscrivibile con un avviso di omissione
+(che interrompeva le tabelle e lasciava un vuoto nel testo), tenta due volte la
+riscrittura impersonale e poi trasforma la frase in una domanda aperta per il
+mediatore; in una tabella cambia solo la cella interessata, così righe e colonne
+restano intatte. Nessun testo dei fascicoli finisce nei log (solo i conteggi).

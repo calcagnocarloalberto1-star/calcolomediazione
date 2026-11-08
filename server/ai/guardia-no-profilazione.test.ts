@@ -38,20 +38,29 @@ const buona = await applicaGuardiaNoProfilazione(testo, async righe => righe.map
 assert.ok(buona.includes("Una proposta letta come perdita"));
 assert.ok(buona.includes("Frase neutra"));
 assert.ok(!buona.includes("percepisce"));
-assert.ok(!buona.includes("omessa"));
+assert.ok(!buona.includes("omessa") && !buona.includes("Da verificare"));
 
-// riscrittura che non migliora → omissione, e il resto del testo resta
+// riscrittura che non migliora → domanda aperta (nessun segnaposto di omissione), il resto resta
 const cattiva = await applicaGuardiaNoProfilazione(testo, async righe => righe, [], null);
-assert.equal((cattiva.match(/frase omessa/g) ?? []).length, 2);
+assert.ok(!cattiva.includes("omessa"));
+assert.equal((cattiva.match(/Da verificare con il mediatore, con una domanda aperta/g) ?? []).length, 2);
 assert.ok(cattiva.includes("Frase neutra") && cattiva.startsWith("# Titolo"));
 
 // riscrittore che fallisce → omissione
 const errore = await applicaGuardiaNoProfilazione(testo, async () => { throw new Error("x"); }, [], null);
 assert.ok(!errore.includes("percepisce"));
 
-// riga di tabella → citazione, mai testo nella tabella
+// riga di tabella → resta una riga di tabella, solo la cella che viola è neutralizzata
 const tab = await applicaGuardiaNoProfilazione("| A | Il chiamato percepisce una perdita |", async r => r, [], null);
-assert.ok(tab.startsWith("> [frase omessa"));
+assert.equal(tab, "| A | Da verificare con una domanda aperta |");
+assert.ok(!tab.includes("omessa") && !tab.includes("percepisce"));
+const tab2 = await applicaGuardiaNoProfilazione("| Criterio | Alfa percepisce una perdita | Media |", async r => r, ["Alfa"], null);
+assert.equal(tab2.split("|").length, 5);
+assert.ok(tab2.includes("Criterio") && tab2.includes("Media") && !tab2.includes("percepisce"));
+// un secondo tentativo può riuscire dove il primo non migliora
+let giri = 0;
+const secondo = await applicaGuardiaNoProfilazione("- Il chiamato ritiene il prezzo alto.", async righe => { giri++; return giri === 1 ? righe : righe.map(() => "- Il prezzo può essere letto come alto."); }, [], null);
+assert.equal(secondo, "- Il prezzo può essere letto come alto.");
 
 // nomi reali delle parti (non sigle dei casi di prova)
 assert.ok(rigaViolante("Mario Rossi preferisce il certo dell'accordo.", ["Mario Rossi"]));
