@@ -141,9 +141,18 @@ async function apiGetAnalisi(id: number): Promise<AnalisiCaso | null> {
   }
 }
 
-async function apiPostChat(id: number, message: string, minorsHeaders: Record<string, string>): Promise<{ response: string; chatHistory: any[] } | null> {
+// Esito della chiamata alla chat: in caso di errore porta il messaggio del server
+// (prima ogni errore diventava un generico «Errore nella risposta AI. Riprova.»,
+// anche quando riprovare non poteva servire, ad esempio per un blocco sui minori).
+type EsitoChat =
+  | { ok: true; response: string; chatHistory: any[] }
+  | { ok: false; message: string };
+
+async function apiPostChat(id: number, message: string, minorsHeaders: Record<string, string>): Promise<EsitoChat> {
   const token = getToken(id);
-  if (!token) return null;
+  if (!token) {
+    return { ok: false, message: "Il codice di accesso a questa analisi non è presente in questo browser, quindi la chat non può essere usata." };
+  }
   try {
     const res = await fetch(`/api/analisi/${id}/chat`, {
       method: "POST",
@@ -154,10 +163,15 @@ async function apiPostChat(id: number, message: string, minorsHeaders: Record<st
       },
       body: JSON.stringify({ message }),
     });
-    if (!res.ok) return null;
-    return await res.json();
+    if (!res.ok) {
+      const data = await res.json().catch(() => null);
+      const dettaglio = typeof data?.error === "string" && data.error.trim() ? data.error.trim() : `Il server ha risposto con un errore (codice ${res.status}).`;
+      return { ok: false, message: dettaglio };
+    }
+    const data = await res.json();
+    return { ok: true, response: data.response, chatHistory: data.chatHistory };
   } catch {
-    return null;
+    return { ok: false, message: "Connessione al server non riuscita. Controlla la rete e riprova." };
   }
 }
 
@@ -619,11 +633,11 @@ try {
     } catch (error: any) {
       console.error("Errore avvio analisi:", error);
       setIsRunning(false);
-      let descr = "Si e' verificato un errore durante l'avvio dell'analisi. Riprova tra poco.";
+      let descr = "Si è verificato un errore durante l'avvio dell'analisi. Riprova tra poco.";
       const m = String((error && error.message) || "");
       const j = m.match(/\{.*"error"\s*:\s*"([^"]+)"/);
       if (j) descr = j[1];
-      else if (/^503:/.test(m)) descr = "Il servizio di intelligenza artificiale non e' al momento disponibile. Riprova piu' tardi.";
+      else if (/^503:/.test(m)) descr = "Il servizio di intelligenza artificiale non è al momento disponibile. Riprova più tardi.";
       toast({ title: "Analisi non avviata", description: descr, variant: "destructive" });
     }
   };
@@ -637,14 +651,15 @@ try {
     setIsSending(true);
     try {
       const minorsToken = await getMinorsPreflightToken(`chat:${analisi.id}`);
-      const data = await apiPostChat(analisi.id, msg, { "X-Minors-Preflight-Token": minorsToken, "X-Case-Flow-Id": flowId });
-      if (data) {
-        setChatMessages(prev => [...prev, { role: "assistant", content: data.response, timestamp: new Date().toISOString() }]);
+      const esito = await apiPostChat(analisi.id, msg, { "X-Minors-Preflight-Token": minorsToken, "X-Case-Flow-Id": flowId });
+      if (esito.ok) {
+        setChatMessages(prev => [...prev, { role: "assistant", content: esito.response, timestamp: new Date().toISOString() }]);
       } else {
-        setChatMessages(prev => [...prev, { role: "assistant", content: "Errore nella risposta AI. Riprova.", timestamp: new Date().toISOString() }]);
+        setChatMessages(prev => [...prev, { role: "assistant", content: `Non è stato possibile ottenere la risposta. ${esito.message}`, timestamp: new Date().toISOString() }]);
       }
-    } catch {
-      setChatMessages(prev => [...prev, { role: "assistant", content: "Errore nella risposta AI. Riprova.", timestamp: new Date().toISOString() }]);
+    } catch (err) {
+      const dettaglio = err instanceof Error && err.message ? err.message : "Riprova tra poco.";
+      setChatMessages(prev => [...prev, { role: "assistant", content: `Non è stato possibile ottenere la risposta. ${dettaglio}`, timestamp: new Date().toISOString() }]);
     }
     setIsSending(false);
   };
@@ -1317,7 +1332,7 @@ try {
                       <SelectTrigger className="border-2 border-foreground" aria-label={`Ruolo di ${p.nome || `parte ${i + 1}`}`} data-testid={`select-party-ruolo-${i}`}><SelectValue /></SelectTrigger>
                       <SelectContent className="border-2 border-foreground">
                         <SelectItem value="istante">Istante</SelectItem>
-                        <SelectItem value="convenuto">Convenuto</SelectItem>
+                        <SelectItem value="convenuto">Chiamato</SelectItem>
                         <SelectItem value="terzo">Terzo</SelectItem>
                       </SelectContent>
                     </Select>
@@ -1663,7 +1678,7 @@ function StoricoAnalisi({ onLoadAnalisi }: { onLoadAnalisi: (a: AnalisiCaso) => 
 // EXAMPLE OUTPUT PREVIEW
 // ═══════════════════════════════════════════════════════════════════════════
 const EXAMPLE_SECTIONS = [
-  { step: 1, title: "Estrazione Entità (NER)", content: "**Parti identificate:**\n- **Rossi Mario** (Istante) — proprietario unità immobiliare piano 2°\n- **Condominio Via Garibaldi 15** (Convenuto)\n\n**Importi rilevanti:**\n| Voce | Importo |\n|---|---|\n| Danno da infiltrazioni | € 35.000 |\n| Preventivo riparazione | € 12.500 |" },
+  { step: 1, title: "Estrazione Entità (NER)", content: "**Parti identificate:**\n- **Rossi Mario** (Istante) — proprietario unità immobiliare piano 2°\n- **Condominio Via Garibaldi 15** (Chiamato)\n\n**Importi rilevanti:**\n| Voce | Importo |\n|---|---|\n| Danno da infiltrazioni | € 35.000 |\n| Preventivo riparazione | € 12.500 |" },
   { step: 2, title: "Analisi Giuridica", content: "**Materia:** Condominio (art. 5, co. 1, D.Lgs. 28/2010) — Mediazione obbligatoria\n\n**Inquadramento normativo:**\nLa controversia rientra nella responsabilità del condominio per danni derivanti da parti comuni (art. 1117 c.c.)." },
   { step: 3, title: "Guida Strategica", content: "**Strategia negoziale consigliata: Approccio collaborativo con ZOPA identificata**\n\n1. Presentare la quantificazione completa con documentazione a supporto\n2. ZOPA stimata: € 20.000 – € 28.000\n3. Evidenziare i costi della causa ordinaria vs. il costo della mediazione" },
   { step: 8, title: "Analisi Economica Comparativa", content: "| Voce | Mediazione | Causa Civile |\n|---|---|---|\n| Indennità organismo / C.U. | € 528 | € 518 |\n| Compenso avvocato | € 2.847 | € 5.936 |\n| **Totale** | **€ 3.375** | **€ 9.004** |\n\n**Risparmio con mediazione: € 6.229 (69%)**" },

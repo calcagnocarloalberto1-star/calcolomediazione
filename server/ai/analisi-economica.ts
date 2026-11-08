@@ -316,7 +316,7 @@ export async function analisiEconomica(
         : 0;
 
     catastaleSection = `
-VERIFICA CONGRUITA' CATASTALE (art. 29 D.M. 150/2023):
+VERIFICA CONGRUITÀ CATASTALE (art. 29 D.M. 150/2023):
 - Rendita catastale dichiarata: ${formatEuro(renditaCatastale)}
 - Rendita rivalutata (+5%): ${formatEuro(renditaRivalutata)}
 - Categoria: ${cat.label} — moltiplicatore ×${cat.mult}
@@ -331,7 +331,7 @@ VERIFICA CONGRUITA' CATASTALE (art. 29 D.M. 150/2023):
   }
 
   const systemPrompt = `Sei un esperto di costi legali e fiscalità della mediazione civile italiana.
-Hai a disposizione i CALCOLI GIA' EFFETTUATI dal sistema. Il tuo compito è SOLO presentarli in modo professionale, commentarli e trarre conclusioni. NON ricalcolare nulla — usa esclusivamente i numeri forniti.`;
+Hai a disposizione i CALCOLI GIÀ EFFETTUATI dal sistema. Il tuo compito è SOLO presentarli in modo professionale, commentarli e trarre conclusioni. NON ricalcolare nulla — usa esclusivamente i numeri forniti.`;
 
   const userPrompt = `Caso: ${descrizione}
 Parti: ${parti.map((p) => `${p.nome} (${etichettaRuolo(p.ruolo)})`).join(", ")}
@@ -351,7 +351,7 @@ SCENARIO A — MEDIAZIONE POSITIVA (accordo successivi al primo incontro):
 - Indennità primo incontro: ${formatEuro(resultAccordoSuccessivi.spesePrimoIncontro)}
 - Indennità incontri successivi (netta): ${formatEuro(resultAccordoSuccessivi.ulterioriSpese)}
 ${resultAccordoSuccessivi.maggiorazioneArt31 > 0 ? `- Maggiorazione art. 31 co. 3 (+20%): ${formatEuro(resultAccordoSuccessivi.maggiorazioneArt31)}` : ""}
-- TOTALE INDENNITA' organismo (per parte): ${formatEuro(resultAccordoSuccessivi.totalePerParte)}
+- TOTALE INDENNITÀ organismo (per parte): ${formatEuro(resultAccordoSuccessivi.totalePerParte)}
 - IVA 22%: ${formatEuro(resultAccordoSuccessivi.iva)}
 - Totale indennità con IVA: ${formatEuro(resultAccordoSuccessivi.totaleConIva)}
 - Compenso avvocato mediazione (D.M. 147/2022, valori medi): ${formatEuro(compensoAvvMed)}

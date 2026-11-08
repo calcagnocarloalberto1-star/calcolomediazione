@@ -13,15 +13,15 @@ const QUADRO_NORMATIVO_MEDIAZIONE = `## QUADRO NORMATIVO VINCOLANTE — durata, 
 
 Attieniti SEMPRE e SOLO ai seguenti dati verificati, anche se la tua conoscenza pregressa suggerisce cifre diverse:
 
-- Durata ordinaria del procedimento: 6 (sei) mesi dal deposito della domanda di mediazione (art. 6). NON e' mai stata di 3 mesi dopo la Riforma Cartabia: il termine di 3 mesi era la disciplina PRIMA della riforma ed e' stato raddoppiato, non ridotto.
-- Mediazione volontaria od obbligatoria (condizione di procedibilita' ex art. 5, co. 1): il termine di 6 mesi e' prorogabile con accordo scritto delle parti per periodi successivi di 3 mesi ciascuno, SENZA alcun limite al numero di proroghe (6+3+3+3... mesi).
-- Mediazione demandata dal giudice (art. 5-quater): e' possibile una sola proroga, di ulteriori 3 mesi (tetto massimo assoluto: 9 mesi).
+- Durata ordinaria del procedimento: 6 (sei) mesi dal deposito della domanda di mediazione (art. 6). NON è mai stata di 3 mesi dopo la Riforma Cartabia: il termine di 3 mesi era la disciplina PRIMA della riforma ed è stato raddoppiato, non ridotto.
+- Mediazione volontaria od obbligatoria (condizione di procedibilità ex art. 5, co. 1): il termine di 6 mesi è prorogabile con accordo scritto delle parti per periodi successivi di 3 mesi ciascuno, SENZA alcun limite al numero di proroghe (6+3+3+3... mesi).
+- Mediazione demandata dal giudice (art. 5-quater): è possibile una sola proroga, di ulteriori 3 mesi (tetto massimo assoluto: 9 mesi).
 - Primo incontro: si tiene non prima di 20 e non oltre 40 giorni dal deposito della domanda (art. 8). Le parti devono partecipare personalmente, salvo delega scritta motivata.
-- Numero di incontri: la legge NON fissa alcun numero di "sessioni obbligatorie". Non esistono "due sessioni obbligatorie" ne' "tre sessioni obbligatorie": e' un'invenzione ricorrente da evitare sempre. Il numero di incontri dipende dal caso concreto e dalla valutazione del mediatore, entro il termine massimo sopra indicato.
-- Mediazione telematica: resa strutturale la possibilita' di svolgere gli incontri in videoconferenza (art. 8-ter), con firma digitale degli atti, previo consenso di tutte le parti.
-- Delega alla partecipazione (art. 8, co. 4-bis): ammessa scrittura privata non autenticata con gli estremi del documento d'identita' del delegante.
+- Numero di incontri: la legge NON fissa alcun numero di "sessioni obbligatorie". Non esistono "due sessioni obbligatorie" né "tre sessioni obbligatorie": è un'invenzione ricorrente da evitare sempre. Il numero di incontri dipende dal caso concreto e dalla valutazione del mediatore, entro il termine massimo sopra indicato.
+- Mediazione telematica: resa strutturale la possibilità di svolgere gli incontri in videoconferenza (art. 8-ter), con firma digitale degli atti, previo consenso di tutte le parti.
+- Delega alla partecipazione (art. 8, co. 4-bis): ammessa scrittura privata non autenticata con gli estremi del documento d'identità del delegante.
 - Termine per instaurare il giudizio dopo mediazione fallita: 30 giorni dal deposito del verbale conclusivo presso la segreteria dell'organismo (art. 11, co. 4-bis).
-- Sospensione/interruzione della prescrizione e della decadenza: e' l'art. 5, co. 6, D.Lgs. 28/2010 (NON l'art. 6, co. 2, che riguarda la durata) a prevedere che la comunicazione della domanda di mediazione alle altre parti produce, sulla prescrizione, gli effetti della domanda giudiziale, e impedisce la decadenza per una sola volta.
+- Sospensione/interruzione della prescrizione e della decadenza: è l'art. 5, co. 6, D.Lgs. 28/2010 (NON l'art. 6, co. 2, che riguarda la durata) a prevedere che la comunicazione della domanda di mediazione alle altre parti produce, sulla prescrizione, gli effetti della domanda giudiziale, e impedisce la decadenza per una sola volta.
 
 Se ti serve un dettaglio numerico su durata/incontri non elencato qui sopra, NON inventarlo: scrivi esplicitamente che va verificato sul testo aggiornato del D.Lgs. 28/2010 invece di fornire una cifra inventata.`;
 

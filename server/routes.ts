@@ -585,7 +585,7 @@ const now = Date.now();
 const arr = (AI_HITS.get(ip) || []).filter((t: number) => now - t < 24 * 60 * 60 * 1000);
 const lastHour = arr.filter((t: number) => now - t < 60 * 60 * 1000).length;
 if (lastHour >= AI_MAX_HOUR || arr.length >= AI_MAX_DAY) {
-return res.status(429).json({ error: "Troppe richieste al servizio AI. Riprova piu' tardi." });
+return res.status(429).json({ error: "Troppe richieste al servizio AI. Riprova più tardi." });
 }
 arr.push(now);
 AI_HITS.set(ip, arr);
@@ -602,7 +602,7 @@ const ip = clientIp(req);
 const now = Date.now();
 const arr = (LOGIN_HITS.get(ip) || []).filter((t: number) => now - t < 60 * 60 * 1000);
 if (arr.length >= 10) {
-return res.status(429).json({ error: "Troppi tentativi di accesso. Riprova piu' tardi." });
+return res.status(429).json({ error: "Troppi tentativi di accesso. Riprova più tardi." });
 }
 arr.push(now);
 LOGIN_HITS.set(ip, arr);
@@ -614,7 +614,7 @@ const ip = clientIp(req);
 const now = Date.now();
 const arr = (UPLOAD_HITS.get(ip) || []).filter((t: number) => now - t < 60 * 60 * 1000);
 if (arr.length >= 20) {
-return res.status(429).json({ error: "Troppi caricamenti. Riprova piu' tardi." });
+return res.status(429).json({ error: "Troppi caricamenti. Riprova più tardi." });
 }
 arr.push(now);
 UPLOAD_HITS.set(ip, arr);
@@ -1246,10 +1246,10 @@ if (!titolo || !descrizione) {
 return res.status(400).json({ error: "Titolo e descrizione sono obbligatori" });
 }
 if (String(titolo).length > 300) {
-return res.status(400).json({ error: "Il titolo e' troppo lungo (max 300 caratteri)." });
+return res.status(400).json({ error: "Il titolo è troppo lungo (massimo 300 caratteri)." });
 }
 if (String(descrizione).length > 20000) {
-return res.status(400).json({ error: "La descrizione del caso e' troppo lunga (max 20.000 caratteri)." });
+return res.status(400).json({ error: "La descrizione del caso è troppo lunga (massimo 20.000 caratteri)." });
 }
 if (typeof documentiText === "string" && documentiText.length > 500000) {
 return res.status(413).json({ error: "Il testo complessivo dei documenti supera il limite consentito." });
@@ -1277,7 +1277,7 @@ return res.status(400).json({ error: "Troppe parti indicate (max 20)." });
     }
   }
 if (!serviziAIDisponibili()) {
-return res.status(503).json({ error: "Il servizio di intelligenza artificiale non e' al momento disponibile. Riprova piu' tardi." });
+return res.status(503).json({ error: "Il servizio di intelligenza artificiale non è al momento disponibile. Riprova più tardi." });
 }
 const analisi = await storage.createAnalisi({
 titolo, descrizione,
@@ -1454,6 +1454,9 @@ const accessToken = req.headers["x-access-token"] as string | undefined;
 if (!accessToken) {
 return res.status(401).json({ error: "Token di accesso mancante" });
 }
+if (typeof message !== "string" || !message.trim()) {
+return res.status(400).json({ error: "Scrivi una domanda prima di inviare." });
+}
 const analisi = await storage.getAnalisi(id, accessToken);
 if (!analisi) return res.status(404).json({ error: "Analisi non trovata o accesso non autorizzato" });
 
@@ -1529,9 +1532,20 @@ parti
 );
 const [titoloRedatto, descrizioneRedatta, contextRedatto, prevMessagesRedatto, messageRedatto] = pezziRedatti;
 const partiStr = partiRedatte.map(p => `${p.nome} (${p.ruolo})`).join(", ") || "Non specificate";
-const systemPrompt = `Sei un assistente AI specializzato in mediazione civile e commerciale italiana. Hai già analizzato il seguente caso:\n\nTitolo: ${titoloRedatto}\nDescrizione: ${descrizioneRedatta}\nParti: ${partiStr}\nValore della lite: ${analisi.valoreLite ? `EUR ${analisi.valoreLite}` : "Non specificato"}\nTipo analisi: ${analisi.tipoAnalisi}\n\nRisultati dell'analisi:\n${contextRedatto}\n\nRispondi alle domande dell'utente sul caso, fornendo approfondimenti, chiarimenti e suggerimenti aggiuntivi. Usa un linguaggio professionale ma accessibile. Formatta le risposte in Markdown.`;
+const systemPrompt = `Sei un assistente AI specializzato in mediazione civile e commerciale italiana. Hai già analizzato il seguente caso:\n\nTitolo: ${titoloRedatto}\nDescrizione: ${descrizioneRedatta}\nParti: ${partiStr}\nValore della lite: ${analisi.valoreLite ? `EUR ${analisi.valoreLite}` : "Non specificato"}\nTipo analisi: ${analisi.tipoAnalisi}\n\nRisultati dell'analisi:\n${contextRedatto}\n\nRispondi alle domande dell'utente sul caso, fornendo approfondimenti, chiarimenti e suggerimenti aggiuntivi. Usa un linguaggio professionale ma accessibile e scrivi in italiano corretto, con gli accenti al loro posto (è, più, può, già, così, perché), senza apostrofi al posto degli accenti. Formatta le risposte in Markdown.`;
 const userPrompt = prevMessagesRedatto ? `${prevMessagesRedatto}\n\nUtente: ${messageRedatto}` : messageRedatto;
-const aiResponseRedatta = await callLLM(systemPrompt, userPrompt);
+let aiResponseRedatta: string;
+try {
+aiResponseRedatta = await callLLM(systemPrompt, userPrompt, undefined, { senzaSegnaposto: true });
+} catch (errLLM) {
+// Nessun provider ha risposto: niente testo segnaposto salvato come risposta e
+// niente domanda registrata nello storico; il client mostra questo messaggio.
+logSafeError("Errore chat: il servizio AI non ha risposto", errLLM);
+return res.status(503).json({
+error: "Il servizio di intelligenza artificiale non ha risposto e la domanda non è stata registrata. Riprova tra qualche minuto.",
+code: "AI_UNAVAILABLE",
+});
+}
 const aiResponse = ripristinaTesto(aiResponseRedatta, mappa);
 
 const now = new Date().toISOString();
@@ -1543,7 +1557,7 @@ const updated = await storage.appendChatMessages(id, [
 res.json({ response: aiResponse, chatHistory: updated?.chatHistory || chatHistory });
 } catch (error) {
 logSafeError("Errore chat", error);
-res.status(500).json({ error: "Errore nella risposta AI" });
+res.status(500).json({ error: "Errore imprevisto durante la risposta dell'AI. Riprova tra poco." });
 }
 });
 

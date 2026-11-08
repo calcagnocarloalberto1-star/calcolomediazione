@@ -42,8 +42,8 @@ export async function analisiMaanBatna(
 REGOLE FONDAMENTALI PER LE TABELLE MARKDOWN:
 - Ogni cella deve contenere testo breve su UNA SOLA RIGA (max 50 caratteri)
 - Non usare mai newline o testo lungo dentro una cella
-- La riga separatrice e' sempre del tipo |---|---|---|
-- Se un'informazione e' assente scrivi "-"
+- La riga separatrice è sempre del tipo |---|---|---|
+- Se un'informazione è assente scrivi "-"
 
 ${REGOLE_NO_PROFILAZIONE}
 
@@ -57,9 +57,9 @@ Usa i DATI COSTI CALCOLATI forniti. Tabella con colonne:
 | Voce | Mediazione | Causa Civile |
 |---|---|---|
 
-## 3. Probabilita' di successo
+## 3. Probabilità di successo
 Tabella con colonne:
-| Alternativa | Parte | Probabilita' | Note |
+| Alternativa | Parte | Probabilità | Note |
 |---|---|---|---|
 
 ## 4. BATNA Score
@@ -75,12 +75,12 @@ Tabella con colonne:
 | Parte | Valore minimo | Valore massimo |
 |---|---|---|
 
-## 7. Analisi costo-opportunita'
+## 7. Analisi costo-opportunità
 Testo breve (3-4 righe) sul confronto tempo/costi mediazione vs causa.
 
 ## 8. Rischi processuali
 Tabella con ESATTAMENTE queste 4 colonne, celle brevi max 40 caratteri:
-| Rischio | Parte esposta | Probabilita' | Impatto |
+| Rischio | Parte esposta | Probabilità | Impatto |
 |---|---|---|---|
 Inserisci almeno 4 righe con rischi specifici del caso.
 
