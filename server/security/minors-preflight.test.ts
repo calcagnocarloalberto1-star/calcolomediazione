@@ -219,6 +219,9 @@ try {
   assert.equal(rilevaPossibiliRiferimentiMinori("Nessun indizio", null, undefined, "ma qui si parla di affidamento dei figli").rischio, true);
   // «minori» come comparativo nelle analisi economiche (chat bloccata, 8 novembre 2026)
   assert.equal(rilevaPossibiliRiferimentiMinori("La mediazione comporta costi minori rispetto al giudizio.").rischio, false);
+  // «mediazione familiare» tra adulti (successione aziendale) non e' un minore.
+  assert.equal(rilevaPossibiliRiferimentiMinori("La mediazione familiare riguarda la successione aziendale dei Rossi.").rischio, false);
+  assert.equal(rilevaPossibiliRiferimentiMinori("Mediazione familiare con affidamento dei figli.").rischio, true);
   assert.equal(rilevaPossibiliRiferimentiMinori("Tempi minori e minore incertezza per entrambe le parti.").rischio, false);
   assert.equal(rilevaPossibiliRiferimentiMinori("I costi della mediazione sono minori.").rischio, false);
   assert.equal(rilevaPossibiliRiferimentiMinori("Con minori spese e minor rischio per l'istante.").rischio, false);

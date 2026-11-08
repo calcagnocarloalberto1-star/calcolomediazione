@@ -26,7 +26,11 @@ const PAROLE_CHIAVE: RegExp[] = [
     /\btutore\s+del\s+minore\b/i,
     /\bcuratore\s+speciale\s+del\s+minore\b/i,
     /\baffidamento\s+(dei\s+)?figli/i,
-    /\bmediazione\s+familiare\b/i,
+    // «mediazione familiare» da sola non indica un minore: compare anche in
+    // successioni, imprese di famiglia e conflitti tra adulti (8 novembre 2026:
+    // la chat di un'analisi su una successione aziendale restava bloccata).
+    // I casi con figli sono coperti da «affidamento figli», «genitori separati»,
+    // «minorenne», eta' e dalle altre voci.
     /\bseparazione\s+(?:dei\s+genitori|personale\s+dei\s+coniugi|dei\s+coniugi)\b/i,
     /\bgenitori\s+separat\w*/i,
     /\bfigli?[oa]\b.{0,24}\b(?:\d{1,2}|undici|dodici|tredici|quattordici|quindici|sedici|diciassette)\s+ann[oi]\b/i,
