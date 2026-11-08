@@ -963,7 +963,7 @@ try {
                   )}
                   {chatMessages.map((msg, i) => (
                     <div key={i} className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}>
-                      <div className={`max-w-[85%] p-3 text-sm ${msg.role === "user" ? "bg-primary text-primary-foreground border-2 border-foreground" : "bg-card border-2 border-foreground shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"}`}>
+                      <div className={`min-w-0 max-w-[85%] p-3 text-sm ${msg.role === "assistant" ? "w-full overflow-x-auto" : ""} ${msg.role === "user" ? "bg-primary text-primary-foreground border-2 border-foreground" : "bg-card border-2 border-foreground shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"}`}>
                         {msg.role === "assistant" ? <MarkdownRenderer content={anonymizeText(msg.content)} /> : anonymizeText(msg.content)}
                       </div>
                     </div>
