@@ -13,7 +13,8 @@
 
 const PAROLE_CHIAVE: RegExp[] = [
     /\bminorenn\w*/i,
-    /\bminori?\b/i,
+    // «minor» e «minori» non stanno qui: sono anche un comparativo molto comune
+    // («costi minori», «minor rischio»). Li valuta contieneRiferimentoAiMinori().
     /\bbambin[oaie]\b/i,
     /\bfigli[oa]\s+minor/i,
     /\basilo\s+nido\b/i,
@@ -37,6 +38,34 @@ const PAROLE_CHIAVE: RegExp[] = [
     /\bcollocamento\s+(?:del|della|dei|delle)?\s*minor/i,
     /\bresidenza\s+abituale\s+(?:del|della|dei|delle)?\s*minor/i,
   ];
+
+// «minori» (e «minor») come comparativo: nelle analisi economiche compare di
+// continuo («la mediazione comporta costi minori», «tempi minori», «minor
+// rischio», «i costi sono minori»). Segnalato il 8 novembre 2026: la chat
+// dell'analisi restava bloccata per questo falso positivo, senza spiegazione.
+// Si considera comparativo solo se accanto compare un nome di costo, tempo o
+// rischio e non c'e' un indizio che si parli di persone («spese per i minori»,
+// «tempi di permanenza dei minori» restano segnalati).
+const NOMI_COMPARATIVO = "costi|costo|spese|spesa|oneri|onere|tempi|tempo|tempistiche|durata|durate|rischi|rischio|incertezza|incertezze|importi|importo|somme|esborsi|compensi|probabilit[aà]|possibilit[aà]|perdite|margini|margine|valori|valore|entrate|ricavi|vantaggi|svantaggi|difficolt[aà]|impegni|impegno|rigidit[aà]|formalit[aà]|aleatoriet[aà]|rate|canoni|canone";
+const REGEX_NOME_DOPO = new RegExp(`^\\s+(?:${NOMI_COMPARATIVO})(?![\\wàèéìòù])`, "i");
+const REGEX_NOME_PRIMA = new RegExp(`(?<![\\wàèéìòù])(?:${NOMI_COMPARATIVO})(?![\\wàèéìòù])`, "i");
+const REGEX_CONFRONTO_DOPO = /^\s+rispetto\b/i;
+const REGEX_INDIZIO_PERSONE = /(?<![\wàèéìòù])(?:dei|delle|degli|ai|alle|agli|nei|nelle|negli|per|con|sui|sulle|dai|tra|fra|verso|genitori|figli\w*|famigli\w*|tutela|affid\w*)(?![\wàèéìòù])/i;
+
+function contieneRiferimentoAiMinori(testo: string): boolean {
+    const regex = /(?<![\wàèéìòù])minori?(?![\wàèéìòù])/gi;
+    let m: RegExpExecArray | null;
+    while ((m = regex.exec(testo))) {
+          const dopo = testo.slice(m.index + m[0].length, m.index + m[0].length + 40);
+          if (REGEX_NOME_DOPO.test(dopo) || REGEX_CONFRONTO_DOPO.test(dopo)) continue;
+          // Ultime parole della stessa frase che precedono «minori».
+          const frase = testo.slice(Math.max(0, m.index - 80), m.index).split(/[.;:!?|\n]/).pop() || "";
+          const ultime = frase.trim().split(/\s+/).slice(-4).join(" ");
+          if (REGEX_NOME_PRIMA.test(ultime) && !REGEX_INDIZIO_PERSONE.test(ultime)) continue;
+          return true;
+    }
+    return false;
+}
 
 // "nato/a il ..." con un anno che renderebbe la persona ancora minorenne
 // oggi: indizio di data di nascita di un minore. L'anno limite è ricalcolato
@@ -99,6 +128,7 @@ export function rilevaPossibiliRiferimentiMinori(...testi: Array<string | null |
           PAROLE_CHIAVE.forEach((pattern, i) => {
                   if (pattern.test(testo)) indizi.add(`parola-chiave-${i}`);
           });
+          if (contieneRiferimentoAiMinori(testo)) indizi.add("parola-chiave-minori");
           if (contieneDataNascitaRecente(testo)) indizi.add("data-nascita-recente");
           if (contieneEtaMinorenne(testo)) indizi.add("eta-minorenne");
     }

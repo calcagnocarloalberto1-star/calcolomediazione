@@ -217,6 +217,18 @@ try {
   assert.equal(rilevaPossibiliRiferimentiMinori("I genitori separati concordano le modalità.").rischio, true);
   assert.equal(rilevaPossibiliRiferimentiMinori(`Il minore è nato il 3 marzo ${new Date().getFullYear() - 5}.`).rischio, true);
   assert.equal(rilevaPossibiliRiferimentiMinori("Nessun indizio", null, undefined, "ma qui si parla di affidamento dei figli").rischio, true);
+  // «minori» come comparativo nelle analisi economiche (chat bloccata, 8 novembre 2026)
+  assert.equal(rilevaPossibiliRiferimentiMinori("La mediazione comporta costi minori rispetto al giudizio.").rischio, false);
+  assert.equal(rilevaPossibiliRiferimentiMinori("Tempi minori e minore incertezza per entrambe le parti.").rischio, false);
+  assert.equal(rilevaPossibiliRiferimentiMinori("I costi della mediazione sono minori.").rischio, false);
+  assert.equal(rilevaPossibiliRiferimentiMinori("Con minori spese e minor rischio per l'istante.").rischio, false);
+  assert.equal(rilevaPossibiliRiferimentiMinori("| Rischio | alto | minori |").rischio, true);
+  // ...mentre i riferimenti a persone minori d'età restano segnalati
+  assert.equal(rilevaPossibiliRiferimentiMinori("La tutela dei minori coinvolti.").rischio, true);
+  assert.equal(rilevaPossibiliRiferimentiMinori("Le spese per i minori sono a carico del padre.").rischio, true);
+  assert.equal(rilevaPossibiliRiferimentiMinori("I tempi di permanenza dei minori presso la madre.").rischio, true);
+  assert.equal(rilevaPossibiliRiferimentiMinori("I figli sono minori.").rischio, true);
+  assert.equal(rilevaPossibiliRiferimentiMinori("Il caso riguarda dati di minori.").rischio, true);
 }
 
 // Verifica statica: i gate PRIV-17 devono essere montati prima dei parser globali.

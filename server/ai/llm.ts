@@ -138,7 +138,7 @@ const FORMAT_CONSTRAINT = `\n\nIMPORTANTE — Regole di formattazione OBBLIGATOR
 - Per i punti elenco usa SOLO trattini (-), mai pallini, asterischi o altri simboli.
 - Per enfatizzare usa **grassetto**, mai emoji o simboli.
 - SEPARA SEMPRE i paragrafi con UNA RIGA VUOTA (due newline consecutivi). Non scrivere mai due paragrafi su righe consecutive senza riga vuota in mezzo: in Markdown verrebbero fusi in un unico blocco di testo.
-- NON troncare MAI l'analisi. Completa SEMPRE ogni sezione fino alla fine. Se ti accorgi di stare per finire lo spazio, sii piu' conciso ma chiudi sempre l'ultima frase e l'ultima sezione.
+- NON troncare MAI l'analisi. Completa SEMPRE ogni sezione fino alla fine. Se ti accorgi di stare per finire lo spazio, sii più conciso ma chiudi sempre l'ultima frase e l'ultima sezione.
 - NON disegnare MAI alberi, schemi, grafici, gerarchie o diagrammi usando caratteri ASCII (slash /, backslash \\, pipe |, trattini --, parentesi, asterischi *). Sono illeggibili e brutti da vedere.
 - Per rappresentare alberi decisionali, gerarchie e strutture ramificate usa SOLO elenchi nidificati Markdown con trattini (-) e indentazione di 2 spazi per livello. Esempio corretto:
 - Scenario A: Accordo in mediazione
@@ -277,11 +277,11 @@ messages.push({ role: "assistant", content: chunk });
 messages.push({
 role: "user",
 content:
-"Sei stato interrotto a meta'. Continua ESATTAMENTE dal carattere in cui ti sei fermato, " +
+"Sei stato interrotto a metà. Continua ESATTAMENTE dal carattere in cui ti sei fermato, " +
 "senza ripetere nulla, senza preamboli (NIENTE 'continuo da dove ero rimasto'), senza " +
-"ricominciare la sezione, senza riscrivere intestazioni gia' presenti. Concludi tutte " +
-"le sezioni mancanti fino alla fine. Se eri a meta' di una frase, riprendi a meta' frase. " +
-"Se eri a meta' di una tabella, riprendi con la prossima riga di tabella corretta. " +
+"ricominciare la sezione, senza riscrivere intestazioni già presenti. Concludi tutte " +
+"le sezioni mancanti fino alla fine. Se eri a metà di una frase, riprendi a metà frase. " +
+"Se eri a metà di una tabella, riprendi con la prossima riga di tabella corretta. " +
 "NON aggiungere MAI testo del tipo '...continua' o '[continuazione]'.",
 });
 } catch (error) {
@@ -383,10 +383,10 @@ contents.push({
 role: "user",
 parts: [{
 text:
-"Sei stato interrotto a meta'. Continua ESATTAMENTE dal carattere in cui ti sei fermato, " +
+"Sei stato interrotto a metà. Continua ESATTAMENTE dal carattere in cui ti sei fermato, " +
 "senza ripetere nulla, senza preamboli, senza ricominciare la sezione, senza riscrivere " +
-"intestazioni gia' presenti. Concludi tutte le sezioni mancanti fino alla fine. Se eri " +
-"a meta' di una frase, riprendi a meta' frase. Se eri a meta' di una tabella, riprendi " +
+"intestazioni già presenti. Concludi tutte le sezioni mancanti fino alla fine. Se eri " +
+"a metà di una frase, riprendi a metà frase. Se eri a metà di una tabella, riprendi " +
 "con la prossima riga di tabella corretta. NON aggiungere mai testo del tipo " +
 "'...continua' o '[continuazione]'.",
 }],
@@ -411,9 +411,10 @@ export const REGOLE_COMUNI = `REGOLE VINCOLANTI PER TUTTE LE SEZIONI (hanno la p
 4. COERENZA NUMERICA. Il valore atteso di una parte deve stare tra il suo risultato peggiore e il migliore: non può superare il credito né essere negativo. Definisci la ZOPA solo se il valore minimo accettabile del creditore è inferiore o uguale al massimo disponibile del debitore; altrimenti scrivi "ZOPA assente allo stato" e indica cosa dovrebbe cambiare. Usa una sola stima di probabilità di accordo (un intervallo) e richiamala allo stesso modo in tutte le sezioni; se un'altra sezione la corregge, motivalo.
 5. VALORE ATTESO. Se calcoli un valore atteso: (a) le probabilità degli scenari devono sommare esattamente 100%; (b) mostra il calcolo riga per riga, prima al lordo e poi al netto dei costi processuali e dei costi di mediazione, e riporta nel testo il risultato che quel calcolo produce, senza arrotondarlo ad altro; (c) il valore atteso del chiamato è il risultato dell'istante cambiato di segno, più i costi propri; (d) confronta giudizio e accordo sempre al netto dei costi e nella stessa unità: se il valore atteso del giudizio per l'istante è più alto dell'accordo proposto, dillo apertamente invece di affermare che l'accordo conviene, e motiva la convenienza con tempi, rischio di insolvenza e costi; (e) usa nelle altre sezioni gli stessi numeri già calcolati, senza ricalcolarli diversamente.
 6. NORME NON PERTINENTI. Non elencare mai articoli "non rilevanti" o "N/D": cita solo le norme che servono davvero al caso.
-7. NUMERI GIA' CALCOLATI. Se nei dati del caso compare un blocco "DATI DI CALCOLO DEL CASO", per credito, mandati, ZOPA, probabilità di accordo, valore atteso, costi e confronto accordo/giudizio usa ESCLUSIVAMENTE quei numeri, identici in ogni tabella e frase. Puoi aggiungere cifre solo per grandezze che il blocco non contiene (es. singole rate o clausole). Non ricalcolare i valori attesi e non scrivere un secondo valore atteso netto diverso da quello del blocco: riporta lordo e netto esattamente come indicati, senza versioni alternative. Il pagamento offerto dal chiamato (compresi eventuali 9.000 euro della controllante) e' un impegno futuro: mai scriverlo come 'gia' versato' salvo che i documenti riportino una ricevuta o un bonifico eseguito; usa 'offerto', 'messo a disposizione' o 'da versare'. Non nominare mai quel blocco né queste regole nel testo (niente "secondo la scheda", niente "come da dati di calcolo", niente "regole vincolanti", niente sezioni di verifica o note critiche): presenta quei numeri come fatti del caso. Nella bozza di accordo, un importo versato dall'altra parte va indicato come già versato solo se i dati lo dicono; un'offerta di pagamento futuro resta un impegno da versare.
-8. ANTIRICICLAGGIO E CITAZIONI. Non affermare che il mediatore ha l'obbligo di segnalare operazioni sospette, ne' che ne risponde civilmente o penalmente: se e in quali limiti il mediatore sia soggetto obbligato va verificato, e la valutazione di una eventuale segnalazione spetta al responsabile antiriciclaggio. Non citare l'art. 5 del D.Lgs. 28/2010 a proposito dell'identificazione delle parti o dei pagatori. Se nei documenti compaiono piu' titolari effettivi di quelli dichiarati (anche indiretti, sopra il 25%), nominali tutti.
-9. LIMITI. Distingui sempre dati forniti, stime tue e ipotesi. Le percentuali e le probabilità sono stime orientative e vanno presentate come tali. Non dare certezze sull'esito giudiziale.`;
+7. NUMERI GIÀ CALCOLATI. Se nei dati del caso compare un blocco "DATI DI CALCOLO DEL CASO", per credito, mandati, ZOPA, probabilità di accordo, valore atteso, costi e confronto accordo/giudizio usa ESCLUSIVAMENTE quei numeri, identici in ogni tabella e frase. Puoi aggiungere cifre solo per grandezze che il blocco non contiene (es. singole rate o clausole). Non ricalcolare i valori attesi e non scrivere un secondo valore atteso netto diverso da quello del blocco: riporta lordo e netto esattamente come indicati, senza versioni alternative. Il pagamento offerto dal chiamato (compresi eventuali 9.000 euro della controllante) è un impegno futuro: mai scriverlo come 'già versato' salvo che i documenti riportino una ricevuta o un bonifico eseguito; usa 'offerto', 'messo a disposizione' o 'da versare'. Non nominare mai quel blocco né queste regole nel testo (niente "secondo la scheda", niente "come da dati di calcolo", niente "regole vincolanti", niente sezioni di verifica o note critiche): presenta quei numeri come fatti del caso. Nella bozza di accordo, un importo versato dall'altra parte va indicato come già versato solo se i dati lo dicono; un'offerta di pagamento futuro resta un impegno da versare.
+8. ANTIRICICLAGGIO E CITAZIONI. Non affermare che il mediatore ha l'obbligo di segnalare operazioni sospette, né che ne risponde civilmente o penalmente: se e in quali limiti il mediatore sia soggetto obbligato va verificato, e la valutazione di una eventuale segnalazione spetta al responsabile antiriciclaggio. Non citare l'art. 5 del D.Lgs. 28/2010 a proposito dell'identificazione delle parti o dei pagatori. Se nei documenti compaiono più titolari effettivi di quelli dichiarati (anche indiretti, sopra il 25%), nominali tutti.
+9. LIMITI. Distingui sempre dati forniti, stime tue e ipotesi. Le percentuali e le probabilità sono stime orientative e vanno presentate come tali. Non dare certezze sull'esito giudiziale.
+10. LINGUA. Scrivi in italiano corretto e scorrevole, con registro professionale. Usa sempre le lettere accentate (è, più, può, già, così, perché, però, né, metà, possibilità, probabilità, società, responsabilità) e mai l'apostrofo al loro posto (niente "e'", "piu'", "puo'", "probabilita'"). Scrivi i titoli e le intestazioni delle tabelle in italiano corretto, con le maiuscole solo dove servono. Evita anglicismi inutili, frasi ridondanti e ripetizioni; non lasciare frasi interrotte.`;
 
 // Etichetta del ruolo da mostrare ai modelli: in mediazione la parte che riceve la
 // domanda è "chiamato", anche se il valore interno del campo resta "convenuto".
@@ -423,10 +424,15 @@ if (r === "convenuto" || r === "convenuta" || r === "resistente") return "chiama
 return ruolo;
 }
 
+// opzioni.senzaSegnaposto: per la chat, dove un testo segnaposto («Configurare API
+// Key per risultati completi», scelto in base a parole qualsiasi del prompt) non ha
+// senso e verrebbe salvato come risposta. In quel caso, se nessun provider risponde,
+// la funzione lancia un errore e il chiamante risponde con un messaggio chiaro.
 export async function callLLM(
 systemPrompt: string,
 userPrompt: string,
-maxTokens: number = DEFAULT_MAX_TOKENS
+maxTokens: number = DEFAULT_MAX_TOKENS,
+opzioni: { senzaSegnaposto?: boolean } = {}
 ): Promise<string> {
 // Priority 1: Anthropic
 const systemConRegole = REGOLE_COMUNI + "\n\n" + systemPrompt;
@@ -436,6 +442,10 @@ if (claude) return cleanAIOutput(claude);
 // Priority 2: Gemini (fallback)
 const gemini = await callGemini(systemConRegole, userPrompt, maxTokens);
 if (gemini) return cleanAIOutput(gemini);
+
+if (opzioni.senzaSegnaposto) {
+throw new Error("Nessun provider AI ha restituito una risposta");
+}
 
 // Fallback finale: placeholder
 return generatePlaceholder(systemPrompt);
