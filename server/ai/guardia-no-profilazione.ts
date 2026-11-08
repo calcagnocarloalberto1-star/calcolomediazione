@@ -2,7 +2,10 @@
 // ultimo comma, AI Act: nessuna profilazione di persone fisiche). I prompt riducono il
 // rischio ma non lo azzerano: questa guardia rilegge la risposta, riscrive in forma
 // impersonale le frasi che attribuiscono a una parte un atteggiamento, una percezione o
-// una tendenza e, se la riscrittura non basta, omette la frase. Nei log finiscono solo
+// una tendenza; se la riscrittura non basta riprova una seconda volta e, in ultima istanza,
+// trasforma la frase in una domanda aperta per il mediatore (nelle tabelle solo la cella
+// interessata, così la struttura resta intatta). Non compare più nessun segnaposto di
+// omissione nel testo (8 novembre 2026). Nei log finiscono solo
 // i conteggi, mai il testo (riservatezza dei fascicoli).
 import { callLLM } from "./llm.js";
 
@@ -42,7 +45,22 @@ export function costruisciViolazioni(nomiParti: string[] = []): RegExp[] {
 }
 export const VIOLAZIONI: RegExp[] = costruisciViolazioni();
 
-const OMISSIONE = "[frase omessa dal controllo automatico: attribuiva una valutazione a una persona; il mediatore può verificarla con una domanda aperta]";
+const DOMANDA_APERTA = "Da verificare con il mediatore, con una domanda aperta: quali elementi sostengono questo punto?";
+const CELLA_DA_VERIFICARE = "Da verificare con una domanda aperta";
+
+// Ultima istanza: la frase che non si riesce a riscrivere diventa una domanda aperta.
+// In una tabella si sostituiscono solo le celle che violano, mantenendo righe e colonne.
+function neutralizzaRiga(riga: string, viola: (r: string) => boolean): string {
+  if (/^\s*\|/.test(riga)) {
+    const celle = riga.split("|");
+    const interne = celle.slice(1, celle.length - (riga.trimEnd().endsWith("|") ? 1 : 0));
+    let toccate = 0;
+    const nuove = interne.map(c => { if (c.trim() && viola(c)) { toccate++; return ` ${CELLA_DA_VERIFICARE} `; } return c; });
+    if (toccate === 0) nuove.forEach((_, k) => { if (k > 0 && nuove[k].trim()) nuove[k] = ` ${CELLA_DA_VERIFICARE} `; });
+    return "|" + nuove.join("|") + (riga.trimEnd().endsWith("|") ? "|" : "");
+  }
+  return `${prefisso(riga)}${DOMANDA_APERTA}`;
+}
 
 export function rigaViolante(riga: string, nomiParti: string[] = []): boolean {
   const t = riga.trim();
@@ -128,24 +146,24 @@ export async function applicaGuardiaNoProfilazione(
   const idx = Array.from(new Set([...perParole, ...perSignificato])).sort((a, b) => a - b);
   if (idx.length === 0) return testo;
 
-  let nuove: string[];
-  try {
-    nuove = await riscrivi(idx.map(i => righe[i]));
-  } catch {
-    nuove = idx.map(i => righe[i]); // la riscrittura è fallita: si passa all'omissione
-  }
+  const accettabile = (originale: string, candidata: string | undefined) =>
+    candidata !== undefined && candidata !== originale && !viola(candidata) && (!/\|/.test(originale) === !/\|/.test(candidata));
+  const chiedi = async (indici: number[]): Promise<string[]> => {
+    try { return await riscrivi(indici.map(i => righe[i])); } catch { return indici.map(i => righe[i]); }
+  };
   let riscritte = 0;
-  let omesse = 0;
-  idx.forEach((i, k) => {
-    const candidata = nuove[k] ?? righe[i];
-    if (candidata !== righe[i] && !viola(candidata) && !/\|/.test(righe[i]) === !/\|/.test(candidata)) {
-      righe[i] = candidata;
-      riscritte++;
-    } else {
-      righe[i] = `${/^\s*\|/.test(righe[i]) ? "> " : prefisso(righe[i])}${OMISSIONE}`;
-      omesse++;
-    }
-  });
-  console.warn(`[guardia-no-profilazione] frasi riscritte=${riscritte} omesse=${omesse} (per parole=${perParole.length}, per significato=${perSignificato.filter(i => !perParole.includes(i)).length})`);
+  let neutralizzate = 0;
+  let daFare = idx;
+  // Fino a due tentativi di riscrittura; ciò che resta viene neutralizzato, mai omesso.
+  for (let tentativo = 0; tentativo < 2 && daFare.length > 0; tentativo++) {
+    const nuove = await chiedi(daFare);
+    const restano: number[] = [];
+    daFare.forEach((i, k) => {
+      if (accettabile(righe[i], nuove[k])) { righe[i] = nuove[k]; riscritte++; } else restano.push(i);
+    });
+    daFare = restano;
+  }
+  for (const i of daFare) { righe[i] = neutralizzaRiga(righe[i], viola); neutralizzate++; }
+  console.warn(`[guardia-no-profilazione] frasi riscritte=${riscritte} neutralizzate=${neutralizzate} (per parole=${perParole.length}, per significato=${perSignificato.filter(i => !perParole.includes(i)).length})`);
   return righe.join("\n");
 }
