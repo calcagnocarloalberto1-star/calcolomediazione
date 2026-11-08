@@ -1500,20 +1500,26 @@ analisi.analisiEconomica ? `Analisi Economica Comparativa:\n${analisi.analisiEco
 const prevMessages = chatHistory.map((m: any) => `${m.role === "user" ? "Utente" : "AI"}: ${m.content}`).join("\n");
 
 // La chat costituisce un nuovo trattamento. Per una pratica classificata
-// "no" non basta controllare il solo messaggio appena scritto: vengono
-// riesaminati anche dati originari, parti, risultati e cronologia. In questo
-// modo un'analisi legacy o un riferimento emerso successivamente non può
-// raggiungere il provider attraverso il percorso ordinario.
+// "no" si riesaminano i dati inseriti dall'utente: titolo, descrizione, parti,
+// i suoi messaggi precedenti e quello appena scritto. NON si riesamina il testo
+// generato dall'AI (risultati dell'analisi e risposte precedenti): deriva da dati
+// gia' controllati alla creazione, e contiene spesso formule giuridiche generiche
+// («tutela dei minori», «affidamento dei figli») che bloccavano la chat anche su
+// pratiche tra adulti (8 novembre 2026: patto di famiglia, associazione in
+// partecipazione). Un riferimento a un minore scritto dall'utente nella chat
+// resta intercettato.
+const messaggiUtentePrecedenti = chatHistory
+  .filter((m: any) => m && m.role === "user")
+  .map((m: any) => String(m.content || ""));
 if (rilevaPossibiliRiferimentiMinori(
   analisi.titolo,
   analisi.descrizione,
   ...((analisi.parti as Array<{ nome?: string }>) || []).map(p => String(p.nome || "")),
-  context,
-  prevMessages,
+  ...messaggiUtentePrecedenti,
   String(message || ""),
 ).rischio) {
   return res.status(422).json({
-    error: "Il contenuto complessivo dell'analisi sembra includere possibili riferimenti a persone minorenni. La chat AI resta bloccata.",
+    error: "I dati inseriti sembrano includere possibili riferimenti a persone minorenni. La chat AI resta bloccata.",
     code: "MINORS_HEURISTIC_MISMATCH",
   });
 }
